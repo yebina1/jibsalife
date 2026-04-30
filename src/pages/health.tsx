@@ -1,32 +1,40 @@
 import './health.css'
-import { useNavigate } from 'react-router'
 import Header from '../components/Header'
-import Button from '../components/html/Button'
+import HealthCheck from '../components/HealthCheck'
 import BackButton from '../components/html/BackButton'
-import calendarIcon from '../svg/calendar.svg'
-import notificationIcon from '../svg/notification.svg'
+import aboutIcon from '../svg/About.svg'
 
 function Health() {
-  const navigate = useNavigate()
-
   return (
     <>
       <Header
-        title="집사인생"
+        title="AI 건강 체크"
         leftContent={<BackButton />}
         rightContent={
-          <>
-            <Button type="button" aria-label="calendar" onClick={() => navigate('/mission')}>
-              <img src={calendarIcon} alt="" />
-            </Button>
-            <Button type="button" aria-label="notification">
-              <img src={notificationIcon} alt="" />
-            </Button>
-          </>
+          <div className="health_guide">
+            <img src={aboutIcon} alt="" />
+            <span>내용 가이드</span>
+          </div>
         }
       />
       <main className="page health_page">
-        <h1>건강</h1>
+        <div className="tit">
+          <h1>
+            우리 아이의 상태를
+            <br />
+            확인해 볼까요?
+          </h1>
+          <p>
+            영상, 음성, 사진, 메모 중
+            <br />
+            편한 방법으로 기록해 주세요
+          </p>
+        </div>
+        <button type="button">
+          반려동물 수동 기록 입력하기
+          <i className="bx bx-chevron-right"></i>
+        </button>
+        <HealthCheck />
       </main>
     </>
   )
