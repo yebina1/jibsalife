@@ -1,27 +1,28 @@
 import './health.css'
+import { useNavigate } from 'react-router'
 import Header from '../components/Header'
+import Button from '../components/html/Button'
+import BackButton from '../components/html/BackButton'
 import calendarIcon from '../svg/calendar.svg'
 import notificationIcon from '../svg/notification.svg'
 
 function Health() {
+  const navigate = useNavigate()
+
   return (
     <>
       <Header
         title="집사인생"
-        leftContent={
-          <button type='button'>
-            <i className="bx bx-chevron-left"></i>
-          </button>
-        }
+        leftContent={<BackButton />}
         rightContent={
           <>
-            <button type="button" aria-label="calendar">
+            <Button type="button" aria-label="calendar" onClick={() => navigate('/mission')}>
               <img src={calendarIcon} alt="" />
-            </button>
-            <button type="button" aria-label="notification">
-            <img src={notificationIcon} alt="" />
-          </button>
-        </>
+            </Button>
+            <Button type="button" aria-label="notification">
+              <img src={notificationIcon} alt="" />
+            </Button>
+          </>
         }
       />
       <main className="page health_page">
