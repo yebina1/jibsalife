@@ -1,5 +1,6 @@
 import './App.css'
 import { Navigate, Route, Routes } from 'react-router'
+import Layout from './layouts/Layout'
 import Community from './pages/community'
 import Health from './pages/health'
 import Home from './pages/home'
@@ -9,11 +10,13 @@ function App() {
   return (
     <div className="app">
       <Routes>
-        <Route path="/" element={<Navigate to="/home" replace />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/health" element={<Health />} />
-        <Route path="/community" element={<Community />} />
-        <Route path="/mypage" element={<MyPage />} />
+        <Route element={<Layout />}>
+          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/health" element={<Health />} />
+          <Route path="/community" element={<Community />} />
+          <Route path="/mypage" element={<MyPage />} />
+        </Route>
       </Routes>
     </div>
   )
