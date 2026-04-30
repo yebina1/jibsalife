@@ -9,13 +9,13 @@ const navItems = [
 
 function Nav() {
   return (
-    <nav className="layout-nav" aria-label="주요 메뉴">
+    <nav className="layout_nav" aria-label="주요 메뉴">
       {navItems.map((item) => (
         <NavLink
           key={item.path}
           to={item.path}
           className={({ isActive }) =>
-            isActive ? 'layout-nav-link active' : 'layout-nav-link'
+            isActive ? 'layout_nav_link active' : 'layout_nav_link'
           }
         >
           {item.label}

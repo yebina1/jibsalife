@@ -6,7 +6,7 @@
   min-height: 100vh;
 }
 
-.layout-nav {
+.layout_nav {
   display: flex;
   gap: 8px;
   padding: 16px;
@@ -14,7 +14,7 @@
   background: #ffffff;
 }
 
-.layout-nav-link {
+.layout_nav_link {
   padding: 8px 12px;
   border-radius: 999px;
   color: #4b5563;
@@ -22,7 +22,7 @@
   text-decoration: none;
 }
 
-.layout-nav-link.active {
+.layout_nav_link.active {
   color: #111827;
   background: #f3e8ff;
 }
