@@ -387,7 +387,11 @@ function Community() {
               key={tab}
               type="button"
               className={selectedSecondaryTab === tab ? 'active' : ''}
-              onClick={() => setSelectedSecondaryTab(tab)}
+              onClick={() => {
+                setSelectedSecondaryTab(tab)
+                setIsVoteCandidateOpen(false)
+                setSelectedVoteResultId(null)
+              }}
             >
               {tab}
             </button>
