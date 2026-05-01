@@ -1,6 +1,7 @@
 import './health.css'
 import Header from '../components/Header'
 import HealthCheck from '../components/HealthCheck'
+import HealthConsultBox from '../components/HealthConsultBox'
 import BackButton from '../components/html/BackButton'
 import aboutIcon from '../svg/About.svg'
 
@@ -35,6 +36,9 @@ function Health() {
           <i className="bx bx-chevron-right"></i>
         </button>
         <HealthCheck />
+        <HealthConsultBox />
+        <p>※ 이 결과는 참고용이며,
+          <br />정확한 진단은 수의사 상담을 통해 확인해주세요.</p>
       </main>
     </>
   )
