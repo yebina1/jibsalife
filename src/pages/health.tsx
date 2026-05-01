@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router'
 import './health.css'
 import Header from '../components/Header'
 import HealthCheck from '../components/HealthCheck'
@@ -9,6 +10,8 @@ import aboutIcon from '../svg/About.svg'
 import Button from '../components/html/Button'
 
 function Health() {
+  const navigate = useNavigate()
+
   return (
     <>
       <Header
@@ -43,7 +46,16 @@ function Health() {
           <i className="bx bx-chevron-right"></i>
         </Button>
         <HealthCheck />
-        <HealthConsultBox />
+        <HealthConsultBox
+          buttonText="분석하기"
+          onButtonClick={() => navigate('/health/check-loading')}
+        >
+          <p>
+            기록해 주신 데이터를 바탕으로
+            <br />
+            AI가 아이의 상태를 분석해 드려요.
+          </p>
+        </HealthConsultBox>
         <NoticeText>
           <p>
             ※ 이 결과는 참고용이며,

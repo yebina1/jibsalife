@@ -1,0 +1,70 @@
+.health_result_detail_boxes {
+  display: flex;
+  width: min(100%, 736px);
+  flex-direction: column;
+  gap: 12px;
+}
+
+.health_result_detail_box {
+  box-sizing: border-box;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: #dddddd;
+  text-align: left;
+}
+
+.health_result_detail_box_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.health_result_detail_box_header .title {
+  min-width: 0;
+}
+
+.health_result_detail_box_header span {
+  display: inline-flex;
+  height: 38px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #b7b7b7;
+  color: #000000;
+  font-size: 18px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.health_result_detail_box_message {
+  margin: 22px 0 18px;
+  color: #000000;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.health_result_detail_box_description {
+  margin: -4px 0 18px;
+  color: #9b9b9b;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.health_result_detail_box ul {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-left: 24px;
+  margin: 0;
+}
+
+.health_result_detail_box li {
+  color: #000000;
+  font-size: 18px;
+  line-height: 1.4;
+}

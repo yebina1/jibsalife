@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router'
 import HealthCheckItem from './HealthCheckItem'
 
 const healthCheckOptions = [
@@ -25,17 +24,10 @@ const healthCheckOptions = [
 ]
 
 function HealthCheck() {
-  const navigate = useNavigate()
-
   return (
     <ul className="health_check">
       {healthCheckOptions.map((option) => (
-        <HealthCheckItem
-          key={option.id}
-          icon={option.icon}
-          label={option.label}
-          onClick={() => navigate('/health/check-loading')}
-        />
+        <HealthCheckItem key={option.id} icon={option.icon} label={option.label} />
       ))}
     </ul>
   )
