@@ -1,4 +1,9 @@
 .health_page {
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 14px 16px 120px;
+  box-sizing: border-box;
   background: #f5fbf7;
 }
 
@@ -26,7 +31,7 @@
 
 .health_check {
   display: grid;
-  grid-template-columns: repeat(2, 160px);
+  grid-template-columns: repeat(2, minmax(0, 160px));
   gap: 28px 48px;
   justify-content: center;
   padding: 0;
@@ -57,4 +62,68 @@
 .health_check_item span {
   font-size: 18px;
   line-height: 1.3;
+}
+
+@media (min-width: 768px) {
+  .health_page {
+    padding: 24px 24px 136px;
+  }
+}
+
+@media (max-width: 420px) {
+  .health_page {
+    padding: 14px 14px 120px;
+  }
+
+  .health_guide {
+    gap: 4px;
+  }
+
+  .health_guide img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .health_check {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 12px;
+  }
+
+  .health_check_item button {
+    width: 100%;
+    min-width: 0;
+    height: 156px;
+    gap: 14px;
+  }
+
+  .health_check_item i {
+    font-size: 46px;
+  }
+
+  .health_check_item span {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 360px) {
+  .health_page {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .health_check {
+    gap: 12px 10px;
+  }
+
+  .health_check_item button {
+    height: 142px;
+  }
+
+  .health_check_item i {
+    font-size: 40px;
+  }
+
+  .health_check_item span {
+    font-size: 14px;
+  }
 }
