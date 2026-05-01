@@ -1,0 +1,19 @@
+.health_result_card_top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.health_result_summary {
+  display: flex;
+  flex-direction: column;
+  gap: 54px;
+}
+
+.health_result_thumbnail {
+  width: 140px;
+  height: 132px;
+  flex: 0 0 auto;
+  background: #ca8789;
+}
