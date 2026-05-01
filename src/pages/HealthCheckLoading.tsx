@@ -5,7 +5,7 @@ import './HealthCheckLoading.css'
 import Header from '../components/Header'
 import ProgressCircle from '../components/ProgressCircle'
 import Title from '../components/Title'
-import BackButton from '../components/html/BackButton'
+import CloseButton from '../components/html/CloseButton'
 import NoticeText from '../components/NoticeText'
 
 function HealthCheckLoading() {
@@ -39,7 +39,7 @@ function HealthCheckLoading() {
 
   return (
     <>
-      <Header title="AI 건강 체크" leftContent={<BackButton />} />
+      <Header title="AI 건강 체크" rightContent={<CloseButton />} />
       <main className="page health_page health_check_loading_page">
         <div className="health_check_loading">
           <Title as="h1" title="AI 가 정보를 확인 중이에요">
