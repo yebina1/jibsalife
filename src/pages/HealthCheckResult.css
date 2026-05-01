@@ -1,0 +1,16 @@
+.health_check_result_page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.health_check_result_page .title {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.health_check_result_icon {
+  display: block;
+}
