@@ -4,8 +4,10 @@
 }
 
 .layout {
+  position: relative;
   min-height: 100vh;
   padding-bottom: 78px;
+  overflow-x: hidden;
   box-sizing: border-box;
 }
 
@@ -14,7 +16,7 @@
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 20;
+  z-index: 100;
   border-top: 1px solid #ececf1;
   background: #ffffff;
 }

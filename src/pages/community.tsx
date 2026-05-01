@@ -320,6 +320,18 @@ function Community() {
     )
   }
 
+  const openVoteCandidates = () => {
+    setSelectedSecondaryTab(voteTabs[1])
+    setSelectedVoteResultId(null)
+    setIsVoteCandidateOpen(true)
+  }
+
+  const openVoteResults = (voteResultId: number | null = null) => {
+    setIsVoteCandidateOpen(false)
+    setSelectedSecondaryTab(voteTabs[2])
+    setSelectedVoteResultId(voteResultId)
+  }
+
   const isDailyCommunityView =
     selectedPrimaryTab === '커뮤니티' && selectedSecondaryTab === '일상'
   const isKnowledgeView =
@@ -388,6 +400,11 @@ function Community() {
               type="button"
               className={selectedSecondaryTab === tab ? 'active' : ''}
               onClick={() => {
+                if (isVoteView && tab === voteTabs[2]) {
+                  openVoteResults()
+                  return
+                }
+
                 setSelectedSecondaryTab(tab)
                 setIsVoteCandidateOpen(false)
                 setSelectedVoteResultId(null)
@@ -515,7 +532,11 @@ function Community() {
                   <span className="community_vote_profile_chip">프로필 이미지</span>
                   <span>{candidate.author}</span>
                 </div>
-                <button type="button" className="community_vote_candidate_button">
+                <button
+                  type="button"
+                  className="community_vote_candidate_button"
+                  onClick={() => openVoteResults(voteResultData[0]?.id ?? null)}
+                >
                   투표하기
                 </button>
               </div>
@@ -552,7 +573,7 @@ function Community() {
                 <button
                   type="button"
                   className="community_vote_candidate_button"
-                  onClick={() => setSelectedVoteResultId(item.id)}
+                  onClick={() => openVoteResults(item.id)}
                 >
                   결과보기
                 </button>
@@ -604,7 +625,7 @@ function Community() {
               <button
                 type="button"
                 className="community_vote_button"
-                onClick={() => setIsVoteCandidateOpen(true)}
+                onClick={openVoteCandidates}
               >
                 투표하러 가기(참여 시+10)
               </button>
