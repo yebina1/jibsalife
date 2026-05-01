@@ -1,0 +1,8 @@
+.health_result_card {
+  width: min(100%, 736px);
+  box-sizing: border-box;
+  padding: 16px 14px;
+  border-radius: 22px;
+  background: #eeeeee;
+  text-align: left;
+}

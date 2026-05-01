@@ -6,6 +6,7 @@ import NoticeText from '../components/NoticeText'
 import Title from '../components/Title'
 import BackButton from '../components/html/BackButton'
 import aboutIcon from '../svg/About.svg'
+import Button from '../components/html/Button'
 
 function Health() {
   return (
@@ -37,10 +38,10 @@ function Health() {
             편한 방법으로 기록해 주세요
           </p>
         </Title>
-        <button type="button">
+        <Button type="button" className="health_manual_record_btn">
           반려동물 수동 기록 입력하기
           <i className="bx bx-chevron-right"></i>
-        </button>
+        </Button>
         <HealthCheck />
         <HealthConsultBox />
         <NoticeText>

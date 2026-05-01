@@ -1,7 +1,10 @@
 .health_check_result_page {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  gap: 32px;
+  padding: 32px 20px;
   text-align: center;
 }
 
@@ -13,4 +16,14 @@
 
 .health_check_result_icon {
   display: block;
+}
+
+.health_result_detail_btn {
+  width: min(100%, 472px);
+  height: 64px;
+  border-radius: 18px;
+  background: #7f6cf4;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
 }

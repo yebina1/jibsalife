@@ -29,6 +29,17 @@
   height: 28px;
 }
 
+.health_manual_record_btn {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 4px;
+  margin: 18px 0 0 auto;
+  color: #111827;
+  font-size: 14px;
+  font-weight: 600;
+}
+
 .health_check {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 160px));

@@ -1,0 +1,26 @@
+.health_result_score_row {
+  display: flex;
+  align-items: center;
+  gap: 42px;
+}
+
+/* score */
+.health_result_score_row strong {
+  color: #000000;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* status */
+.health_result_score_row span {
+  display: inline-flex;
+  padding: 12px 24px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #c5c5c5;
+  color: #000000;
+  font-size: 20px;
+  font-weight: 700;
+}

@@ -1,0 +1,32 @@
+.health_result_insights {
+  display: flex;
+  width: min(100%, 736px);
+  flex-direction: column;
+  gap: 12px;
+}
+
+.health_result_insight {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  box-sizing: border-box;
+  padding: 18px 36px;
+  border-radius: 14px;
+  background: #eeeeee;
+  text-align: left;
+}
+
+.health_result_insight img {
+  display: block;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+}
+
+.health_result_insight p {
+  margin: 0;
+  color: #000000;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.4;
+}
