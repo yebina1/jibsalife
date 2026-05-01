@@ -7,7 +7,9 @@ import BackButton from '../components/html/BackButton'
 function HealthResultDetail() {
   return (
     <>
-      <Header title="자세히 보기" rightContent={
+      <Header title="AI 건강 체크" 
+      leftContent={<BackButton />}
+      rightContent={
         <p>오늘 AI 건강체크 1/1회 사용</p>
         } />
       <main className="page health_page health_result_detail_page">
