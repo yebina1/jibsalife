@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router'
 import Layout from './layouts/Layout'
 import Community from './pages/community'
 import Health from './pages/health'
+import HealthCheckLoading from './pages/HealthCheckLoading'
 import Home from './pages/home'
 import Mission from './pages/Mission'
 import MyPage from './pages/mypage'
@@ -16,6 +17,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/mission" element={<Mission />} />
           <Route path="/health" element={<Health />} />
+          <Route path="/health/check-loading" element={<HealthCheckLoading />} />
           <Route path="/community" element={<Community />} />
           <Route path="/mypage" element={<MyPage />} />
         </Route>
