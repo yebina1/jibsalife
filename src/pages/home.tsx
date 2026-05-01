@@ -62,7 +62,7 @@ function Home() {
               <img src={contents4} alt="뿅뿅이 프로필" className="summary_profile_image" />
               <div className="summary_profile_body">
                 <div className="summary_profile_top">
-                  <strong>뿅뿅이</strong>
+                  <strong>뿡뿡이</strong>
                   <span className="summary_badge">푸들</span>
                 </div>
                 <p>나이: 2살 · 몸무게: 5kg · 성별: 남아</p>
@@ -99,25 +99,28 @@ function Home() {
               <h2>이달의 스타 랭킹</h2>
               <p>당첨되면 포인트를 드려요!</p>
             </div>
-            <button
-              type="button"
-              className={`ranking_switch ${rankingType === 'points' ? 'points' : 'subscribers'}`}
-              aria-label={`랭킹 기준: ${rankingType === 'subscribers' ? '구독자' : '포인트'}`}
-              aria-pressed={rankingType === 'points'}
-              onClick={() =>
-                setRankingType((prev) => (prev === 'subscribers' ? 'points' : 'subscribers'))
-              }
-            >
-              <span className="ranking_switch_track" aria-hidden="true">
-                <span className="ranking_switch_thumb" />
-              </span>
-              <span className={`ranking_switch_label ${rankingType === 'subscribers' ? 'active' : ''}`}>
+            <div className="ranking_tabs" aria-label="랭킹 기준">
+              <span
+                className={`ranking_tabs_indicator ${
+                  rankingType === 'points' ? 'points' : 'subscribers'
+                }`}
+                aria-hidden="true"
+              />
+              <button
+                type="button"
+                className={rankingType === 'subscribers' ? 'active' : ''}
+                onClick={() => setRankingType('subscribers')}
+              >
                 구독자
-              </span>
-              <span className={`ranking_switch_label ${rankingType === 'points' ? 'active' : ''}`}>
+              </button>
+              <button
+                type="button"
+                className={rankingType === 'points' ? 'active' : ''}
+                onClick={() => setRankingType('points')}
+              >
                 포인트
-              </span>
-            </button>
+              </button>
+            </div>
           </div>
 
           <div className="ranking_grid" key={rankingType}>
@@ -152,7 +155,11 @@ function Home() {
             ))}
           </div>
 
-          <button type="button" className="more_button">
+          <button
+            type="button"
+            className="more_button"
+            onClick={() => navigate('/community?tab=knowledge')}
+          >
             더보기
           </button>
         </section>
