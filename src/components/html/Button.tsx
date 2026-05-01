@@ -1,3 +1,5 @@
+import './Button.css'
+
 type Buttonprops = React.ComponentPropsWithRef<'button'>;
 
 export default function Button(props: Buttonprops){

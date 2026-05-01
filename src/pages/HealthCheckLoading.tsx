@@ -24,7 +24,7 @@ function HealthCheckLoading() {
         if (nextProgress >= 100) {
           window.clearInterval(intervalId)
           window.setTimeout(() => {
-            navigate('/health/result')
+            navigate('/health/result', { replace: true })
           }, 300)
         }
 

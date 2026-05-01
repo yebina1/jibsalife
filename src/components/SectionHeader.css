@@ -1,0 +1,53 @@
+.section_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.section_header h1,
+.section_header h2,
+.section_header h3,
+.section_header h4,
+.section_header h5 {
+  margin: 0;
+  color: #111111;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.section_header h1 {
+  font-size: 24px;
+}
+
+.section_header h2 {
+  font-size: 18px;
+}
+
+.section_header h3 {
+  font-size: 16px;
+}
+
+.section_header h4 {
+  font-size: 15px;
+}
+
+.section_header h5 {
+  font-size: 14px;
+}
+
+.section_header button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 0;
+  background: transparent;
+  color: #111111;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.section_header i {
+  font-size: 22px;
+  line-height: 1;
+}

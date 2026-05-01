@@ -2,12 +2,36 @@ import { useNavigate } from 'react-router'
 import './health.css'
 import Header from '../components/Header'
 import HealthCheck from '../components/HealthCheck'
+import type { HealthCheckOption } from '../components/HealthCheck'
 import HealthConsultBox from '../components/HealthConsultBox'
 import NoticeText from '../components/NoticeText'
 import Title from '../components/Title'
 import BackButton from '../components/html/BackButton'
 import aboutIcon from '../svg/About.svg'
 import Button from '../components/html/Button'
+
+const healthCheckOptions: HealthCheckOption[] = [
+  {
+    id: 'photo',
+    icon: 'bx bx-camera',
+    label: '사진 촬영',
+  },
+  {
+    id: 'audio',
+    icon: 'bx bx-volume-full',
+    label: '녹음 촬영',
+  },
+  {
+    id: 'video',
+    icon: 'bx bx-video',
+    label: '영상 촬영',
+  },
+  {
+    id: 'memo',
+    icon: 'bx bx-notepad',
+    label: '메모 작성',
+  },
+]
 
 function Health() {
   const navigate = useNavigate()
@@ -20,7 +44,7 @@ function Health() {
         rightContent={
           <div className="health_guide">
             <img src={aboutIcon} alt="" />
-            <span>내용 가이드</span>
+            <span>이용 가이드</span>
           </div>
         }
       />
@@ -30,22 +54,20 @@ function Health() {
           title={
             <>
               우리 아이의 상태를
-              <br />
-              확인해 볼까요?
+              <br />확인해 볼까요?
             </>
           }
         >
           <p>
             영상, 음성, 사진, 메모 중
-            <br />
-            편한 방법으로 기록해 주세요
+            <br />편한 방법으로 기록해 주세요.
           </p>
         </Title>
         <Button type="button" className="health_manual_record_btn">
-          반려동물 수동 기록 입력하기
+          반려동물 행동 기록 입력하기
           <i className="bx bx-chevron-right"></i>
         </Button>
-        <HealthCheck />
+        <HealthCheck options={healthCheckOptions} />
         <HealthConsultBox
           buttonText="분석하기"
           onButtonClick={() => navigate('/health/check-loading')}
@@ -58,9 +80,9 @@ function Health() {
         </HealthConsultBox>
         <NoticeText>
           <p>
-            ※ 이 결과는 참고용이며,
+            이 결과는 참고용이며,
             <br />
-            정확한 진단은 수의사 상담을 통해 확인해주세요.
+            정확한 진단은 수의사 상담을 통해 확인해 주세요.
           </p>
         </NoticeText>
       </main>
