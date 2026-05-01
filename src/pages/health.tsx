@@ -2,6 +2,7 @@ import './health.css'
 import Header from '../components/Header'
 import HealthCheck from '../components/HealthCheck'
 import HealthConsultBox from '../components/HealthConsultBox'
+import NoticeText from '../components/NoticeText'
 import Title from '../components/Title'
 import BackButton from '../components/html/BackButton'
 import aboutIcon from '../svg/About.svg'
@@ -42,8 +43,13 @@ function Health() {
         </button>
         <HealthCheck />
         <HealthConsultBox />
-        <p>※ 이 결과는 참고용이며,
-          <br />정확한 진단은 수의사 상담을 통해 확인해주세요.</p>
+        <NoticeText>
+          <p>
+            ※ 이 결과는 참고용이며,
+            <br />
+            정확한 진단은 수의사 상담을 통해 확인해주세요.
+          </p>
+        </NoticeText>
       </main>
     </>
   )
