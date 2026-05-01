@@ -6,30 +6,3 @@
   background: #eeeeee;
   text-align: left;
 }
-
-.health_result_meter {
-  margin-top: 58px;
-}
-
-.health_result_meter_track {
-  overflow: hidden;
-  height: 25px;
-  border-radius: 999px;
-  background: #d2d2d2;
-}
-
-.health_result_meter_fill {
-  width: 76%;
-  height: 100%;
-  border-radius: inherit;
-  background: #bd7477;
-}
-
-.health_result_meter_labels {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 54px;
-  color: #000000;
-  font-size: 30px;
-  line-height: 1;
-}
