@@ -2,7 +2,7 @@
   width: 100%;
   max-width: 820px;
   margin: 0 auto;
-  padding: 14px 16px 120px;
+  padding: 14px 16px 24px;
   box-sizing: border-box;
   background: #ffffff;
   color: #101010;
@@ -282,7 +282,7 @@
 
 @media (min-width: 768px) {
   .mypage_page {
-    padding: 24px 24px 136px;
+    padding: 24px 24px 34px;
   }
 
   .mypage_topbar {
@@ -315,7 +315,7 @@
 
 @media (max-width: 420px) {
   .mypage_page {
-    padding: 14px 14px 120px;
+    padding: 14px 14px 20px;
   }
 
   .mypage_profile_body {
