@@ -1,5 +1,6 @@
 import './health.css'
 import Header from '../components/Header'
+import Title from '../components/Title'
 import BackButton from '../components/html/BackButton'
 
 function HealthCheckLoading() {
@@ -9,8 +10,9 @@ function HealthCheckLoading() {
       <main className="page health_page health_check_loading_page">
         <div className="health_check_loading">
           <i className="bx bx-loader-alt bx-spin"></i>
-          <h1>건강 상태 확인중</h1>
-          <p>잠시만 기다려주세요.</p>
+          <Title as="h1" title="건강 상태 확인중">
+            <p>잠시만 기다려주세요.</p>
+          </Title>
         </div>
       </main>
     </>
