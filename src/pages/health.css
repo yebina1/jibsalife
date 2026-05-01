@@ -20,14 +20,18 @@
   width: fit-content;
   height: fit-content;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   white-space: nowrap;
 }
 
 .health_guide img {
   display: block;
-  width: 28px;
-  height: 28px;
+  width: 17px;
+  height: 17px;
+}
+
+.health_guide span{
+  color: var(--point-dark-red);
 }
 
 .health_manual_record_btn {
@@ -90,12 +94,12 @@
   }
 
   .health_guide {
-    gap: 4px;
+    gap: 8px;
   }
 
   .health_guide img {
-    width: 24px;
-    height: 24px;
+    width: 17px;
+    height: 17px;
   }
 
   .health_check {

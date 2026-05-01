@@ -41,15 +41,15 @@ function Health() {
       <Header
         title="AI 건강 체크"
         leftContent={<BackButton />}
-        rightContent={
-          <div className="health_guide">
-            <img src={aboutIcon} alt="" />
-            <span>이용 가이드</span>
-          </div>
-        }
       />
       <main className="page health_page">
         <Title
+          beforeTitle={
+            <div className='health_guide'>
+              <img src={aboutIcon} alt="" />
+              <span>이용 가이드</span>
+            </div>
+          }
           as="h1"
           title={
             <>
