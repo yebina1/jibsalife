@@ -4,10 +4,13 @@
 }
 
 .layout {
+  --layout-header-height: 97px;
+  --layout-footer-height: 90px;
+  --layout-content-padding-y: 48px;
   position: relative;
   min-height: 100vh;
-  padding-top: 80px;
-  padding-bottom: 90px;
+  padding-top: var(--layout-header-height);
+  padding-bottom: var(--layout-footer-height);
   overflow-x: hidden;
   box-sizing: border-box;
 }
@@ -31,11 +34,24 @@
 }
 
 .layout_content{
+  min-height: calc(100dvh - var(--layout-header-height) - var(--layout-footer-height));
   padding: 24px 16px;
+  box-sizing: border-box;
 }
 
 .layout_content_no_padding {
+  --layout-content-padding-y: 0px;
   padding: 0;
+}
+
+.layout_content > .page {
+  width: 100%;
+  max-width: 820px;
+  min-height: calc(
+    100dvh - var(--layout-header-height) - var(--layout-footer-height) - var(--layout-content-padding-y)
+  );
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .layout_nav_inner {
@@ -85,7 +101,7 @@
 
 @media (min-width: 768px) {
   .layout {
-    padding-bottom: 90px;
+    padding-bottom: var(--layout-footer-height);
   }
 
   .layout_nav_inner {
@@ -96,7 +112,7 @@
 
 @media (max-width: 420px) {
   .layout {
-    padding-bottom: 90px;
+    padding-bottom: var(--layout-footer-height);
   }
 
   .layout_nav_inner {

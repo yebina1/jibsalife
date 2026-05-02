@@ -1,6 +1,9 @@
 import './Mission.css'
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router'
+import PageHeader from '../components/PageHeader'
+import BackButton from '../components/html/BackButton'
+import HeaderActions from '../components/html/HeaderActions'
+import type { HeaderActionItem } from '../components/html/HeaderActions'
 
 const weekLabels = ['일', '월', '화', '수', '목', '금', '토']
 const CALENDAR_YEAR = 2026
@@ -64,7 +67,6 @@ const historyItems = [
 ]
 
 function Mission() {
-  const navigate = useNavigate()
   const [calendarYear, setCalendarYear] = useState(CALENDAR_YEAR)
   const [calendarMonth, setCalendarMonth] = useState(CALENDAR_MONTH)
   const [selectedDayId, setSelectedDayId] = useState('c-20')
@@ -92,6 +94,12 @@ function Mission() {
 
   const selectedDate = new Date(selectedDay.year, selectedDay.month - 1, Number(selectedDay.label))
   const selectedDateLabel = `${selectedDay.year}년 ${selectedDay.month}월 ${selectedDay.label}일(${weekLabels[selectedDate.getDay()]})`
+  const headerActions: HeaderActionItem[] = [
+    {
+      label: '글쓰기',
+      className: 'mission_header_action',
+    },
+  ]
 
   const moveMonth = (direction: 'prev' | 'next') => {
     if (direction === 'prev') {
@@ -115,18 +123,14 @@ function Mission() {
   }
 
   return (
-    <main className="page mission_page">
-      <section className="mission_header" aria-label="건강 히스토리 상단">
-        <button type="button" className="mission_back_button" onClick={() => navigate(-1)}>
-          <span aria-hidden="true">‹</span>
-        </button>
-        <h1>건강 히스토리</h1>
-        <button type="button" className="mission_header_action">
-          글쓰기
-        </button>
-      </section>
-
-      <section className="mission_calendar_section">
+    <>
+      <PageHeader
+        title="건강 히스토리"
+        leftContent={<BackButton />}
+        rightContent={<HeaderActions actions={headerActions} />}
+      />
+      <main className="page mission_page">
+        <section className="mission_calendar_section">
         <div className="mission_month_bar">
           <button type="button" aria-label="이전 달" onClick={() => moveMonth('prev')}>
             ‹
@@ -185,12 +189,13 @@ function Mission() {
         </div>
       </section>
 
-      <p className="mission_notice">
-        이 결과는 참고용이며
-        <br />
-        정확한 진단은 수의사 상담을 통해 확인해주세요.
-      </p>
-    </main>
+        <p className="mission_notice">
+          이 결과는 참고용이며
+          <br />
+          정확한 진단은 수의사 상담을 통해 확인해주세요.
+        </p>
+      </main>
+    </>
   )
 }
 

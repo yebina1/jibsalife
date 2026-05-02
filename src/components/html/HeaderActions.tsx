@@ -2,7 +2,8 @@ import Button from './Button'
 
 export type HeaderActionItem = {
   label: string
-  icon: string
+  icon?: string
+  iconAlt?: string
   className?: string
   onClick?: () => void
 }
@@ -22,7 +23,7 @@ function HeaderActions({ actions }: HeaderActionsProps) {
           className={action.className}
           onClick={action.onClick}
         >
-          <img src={action.icon} alt="" />
+          {action.icon ? <img src={action.icon} alt={action.iconAlt ?? action.label} /> : action.label}
         </Button>
       ))}
     </>

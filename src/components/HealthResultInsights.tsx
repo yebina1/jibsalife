@@ -10,7 +10,7 @@ function HealthResultInsights({ items }: HealthResultInsightsProps) {
     <div className="health_result_insights">
       {items.map((item) => (
         <div className="health_result_insight" key={item}>
-          <img src={lightIcon} alt="" />
+          <img src={lightIcon} alt="건강 인사이트" />
           <p>{item}</p>
         </div>
       ))}

@@ -9,7 +9,7 @@ import { HeaderContext, type HeaderConfig } from '../contexts/HeaderContext'
 function Layout() {
   const [header, setHeader] = useState<HeaderConfig>(null)
   const { pathname } = useLocation()
-  const noPaddingPaths = ['/community', '/mypage']
+  const noPaddingPaths = ['/community']
   const hasContentPadding = !noPaddingPaths.includes(pathname)
   const contentClassName =
     hasContentPadding ? 'layout_content' : 'layout_content layout_content_no_padding'

@@ -36,7 +36,7 @@ function HealthCheckSummary() {
           <img
             className="health_check_summary_icon"
             src={checkMarkIcon}
-            alt=""
+            alt="확인 완료"
           />
           <Title
             as="h2"

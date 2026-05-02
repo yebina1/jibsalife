@@ -53,7 +53,7 @@ function Health() {
         <section className="health_intro">
           <div className='health_intro_content'>
             <div className='health_guide'>
-              <img src={aboutIcon} alt="" />
+              <img src={aboutIcon} alt="이용 가이드" />
               <span>이용 가이드</span>
             </div>
             <div className="health_intro_text">
@@ -66,7 +66,7 @@ function Health() {
                   <br />AI가 펫의 상태를 한눈에 정리해 드려요.
                 </p>
               </Title>
-              <img className="health_intro_image" src={mypetimg} alt="" />
+              <img className="health_intro_image" src={mypetimg} alt="뿅뿅이 프로필" />
           </div>
           </div>
           <Button type="button" className="white_btn">

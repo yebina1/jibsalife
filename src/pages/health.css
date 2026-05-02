@@ -1,7 +1,4 @@
 .health_page {
-  width: 100%;
-  max-width: 820px;
-  min-height: calc(100vh - 201px);
   display: flex;
   flex-direction: column;
   gap: 48px;
@@ -114,17 +111,7 @@
   font-weight: 500;
 }
 
-@media (min-width: 768px) {
-  .health_page {
-    min-height: calc(100vh - 201px);
-  }
-}
-
 @media (max-width: 420px) {
-  .health_page {
-    min-height: calc(100vh - 201px);
-  }
-
   .health_guide {
     gap: 8px;
   }

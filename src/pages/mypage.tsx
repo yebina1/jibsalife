@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import './mypage.css'
-import Header from '../components/Header'
+import PageHeader from '../components/PageHeader'
 import BackButton from '../components/html/BackButton'
-import Button from '../components/html/Button'
+import HeaderActions from '../components/html/HeaderActions'
+import type { HeaderActionItem } from '../components/html/HeaderActions'
 import calendarIcon from '../svg/calendar.svg'
 import notificationIcon from '../svg/notification.svg'
 
@@ -116,6 +117,18 @@ function MyPage() {
   const [savedLocation, setSavedLocation] = useState<SavedLocation | null>(null)
   const [locationMessage, setLocationMessage] = useState('위치 정보를 등록하고\n맞춤 서비스를 받아 보세요')
   const [isLocating, setIsLocating] = useState(false)
+  const headerActions: HeaderActionItem[] = [
+    {
+      label: '캘린더',
+      icon: calendarIcon,
+      onClick: () => navigate('/mission'),
+    },
+    {
+      label: '알림',
+      icon: notificationIcon,
+      className: 'mypage_notification',
+    },
+  ]
 
   useEffect(() => {
     const savedValue = window.localStorage.getItem(LOCATION_STORAGE_KEY)
@@ -178,19 +191,10 @@ function MyPage() {
 
   return (
     <>
-      <Header
+      <PageHeader
         title="마이페이지"
         leftContent={<BackButton to="/home" />}
-        rightContent={
-          <>
-            <Button type="button" aria-label="calendar" onClick={() => navigate('/mission')}>
-              <img src={calendarIcon} alt="" />
-            </Button>
-            <Button type="button" aria-label="notification" className="mypage_notification">
-              <img src={notificationIcon} alt="" />
-            </Button>
-          </>
-        }
+        rightContent={<HeaderActions actions={headerActions} />}
       />
 
       <main className="page mypage_page">

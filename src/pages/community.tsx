@@ -1,7 +1,7 @@
 import './community.css'
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
-import Header from '../components/Header'
+import PageHeader from '../components/PageHeader'
 import BackButton from '../components/html/BackButton'
 import contents1 from '../img/contents1.png'
 import contents2 from '../img/contents2.png'
@@ -410,7 +410,37 @@ function Community() {
 
   return (
     <>
-      <Header title="커뮤니티" leftContent={<BackButton to="/home" />} />
+      <PageHeader
+        title={
+          selectedChallenge ? '챌린지' :
+          selectedVoteResult ? '투표 결과' :
+          isVoteCandidateOpen ? '투표 참여' :
+          '커뮤니티'
+        }
+        leftContent={
+          showCommunityBackButton ? (
+            <button
+              type="button"
+              className="back_btn"
+              onClick={() => {
+                if (selectedChallenge) {
+                  setSelectedChallengeId(null)
+                  return
+                }
+                if (selectedVoteResult) {
+                  setSelectedVoteResultId(null)
+                  return
+                }
+                setIsVoteCandidateOpen(false)
+              }}
+            >
+              <i className="bx bx-chevron-left"></i>
+            </button>
+          ) : (
+            <BackButton to="/home" />
+          )
+        }
+      />
       <main className="page community_page">
         {/*
             반려인들과 함께하는
@@ -427,29 +457,6 @@ function Community() {
       </Title>
         */}
 
-      {showCommunityBackButton ? (
-        <div className="community_detail_top">
-          <button
-            type="button"
-            className="community_challenge_back"
-            onClick={() => {
-              if (selectedChallenge) {
-                setSelectedChallengeId(null)
-                return
-              }
-
-              if (selectedVoteResult) {
-                setSelectedVoteResultId(null)
-                return
-              }
-
-              setIsVoteCandidateOpen(false)
-            }}
-          >
-            ‹ 뒤로가기
-          </button>
-        </div>
-      ) : null}
 
       <section className="community_tab_bar" aria-label="커뮤니티 상위 탭">
         {primaryTabs.map((tab) => (

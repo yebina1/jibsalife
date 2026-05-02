@@ -61,7 +61,7 @@ function HealthCheckResult() {
       rightContent={<CloseButton />} />
       <main className="page health_page health_check_result_page">
         <Title as="h3" title="확인이 완료되었어요!">
-          <img className="health_check_result_icon" src={checkMarkIcon} alt="" />
+          <img className="health_check_result_icon" src={checkMarkIcon} alt="확인 완료" />
         </Title>
         <HealthResultCard score={mockHealthResult.score} />
         <HealthResultInsights items={mockHealthResult.insights} />
