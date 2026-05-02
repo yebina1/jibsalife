@@ -322,7 +322,7 @@
 .floating_ai_button {
   position: fixed;
   right: 24px;
-  bottom: 68px;
+  bottom: 102px;
   display: flex;
   width: 68px;
   height: 68px;
@@ -419,7 +419,7 @@
 
   .floating_ai_button {
     right: max(24px, calc((100vw - 820px) / 2 + 24px));
-    bottom: 78px;
+    bottom: 102px;
   }
 }
 
@@ -513,7 +513,7 @@
 
   .floating_ai_button {
     right: 16px;
-    bottom: 66px;
+    bottom: 102px;
     width: 60px;
     height: 60px;
   }

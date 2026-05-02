@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Outlet, useLocation } from 'react-router'
 import Header from '../components/Header'
+import HomeIndicator from '../components/HomeIndicator'
 import Nav from '../components/Nav'
 import StateBar from '../components/StateBar'
 import { HeaderContext, type HeaderConfig } from '../contexts/HeaderContext'
@@ -25,6 +26,7 @@ function Layout() {
         </div>
         <footer>
           <Nav />
+          <HomeIndicator />
         </footer>
       </div>
     </HeaderContext.Provider>

@@ -1,0 +1,14 @@
+.home_indicator {
+  display: flex;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+}
+
+.home_indicator span {
+  width: 134px;
+  height: 5px;
+  border-radius: 999px;
+  background: #000000;
+}
