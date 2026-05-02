@@ -2,41 +2,25 @@ import './HealthResultSummary.css'
 import { Link } from 'react-router'
 import Title from './Title'
 
-const summaryItems = [
-  {
-    label: '이상 신호 감지',
-    value: '경미한 변화 감지',
-  },
-  {
-    label: '원인 추정',
-    value: '스트레스 가능성',
-  },
-  {
-    label: '증상 상담',
-    value: '소화 불량 가능성',
-  },
-  {
-    label: '병원 방문 여부 가이드',
-    value: '지켜보고 필요 시 방문',
-  },
-  {
-    label: '병원 방문 리포트 생성',
-    value: '리포트 보기',
-  },
-  {
-    label: '관련 커뮤니티 게시글',
-    value: '3개 추천',
-  },
-]
+export type HealthResultSummaryItem = {
+  label: string
+  value: string
+  to: string
+}
 
-function HealthResultSummary() {
+type HealthResultSummaryProps = {
+  title: string
+  items: HealthResultSummaryItem[]
+}
+
+function HealthResultSummary({ title, items }: HealthResultSummaryProps) {
   return (
     <section className="health_result_summary_box">
-      <Title as="h2" title="확인 결과 요약" />
+      <Title as="h2" title={title} />
       <ul>
-        {summaryItems.map((item) => (
+        {items.map((item) => (
           <li key={item.label}>
-            <Link className="health_result_summary_link" to="/health/result/detail">
+            <Link className="health_result_summary_link" to={item.to}>
               <div className="health_result_summary_label">
                 <span aria-hidden="true"></span>
                 <strong>{item.label}</strong>

@@ -11,6 +11,14 @@
   box-sizing: border-box;
 }
 
+.layout_content{
+  padding: 24px 16px;
+}
+
+.layout_content_no_padding {
+  padding: 0;
+}
+
 .layout_nav {
   position: fixed;
   right: 0;
@@ -25,9 +33,10 @@
   display: grid;
   width: 100%;
   max-width: 820px;
+  height: 56px;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   margin: 0 auto;
-  padding: 10px 12px 18px;
+  padding-inline: 16px;
   box-sizing: border-box;
 }
 
@@ -37,23 +46,21 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 2px;
   color: #a1a1a8;
   font-weight: 500;
   text-decoration: none;
 }
 
 .layout_nav_icon {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   fill: currentColor;
   color: #a1a1a8;
 }
 
 .layout_nav_label {
   font-size: 11px;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
   white-space: nowrap;
 }
 
@@ -82,15 +89,15 @@
   }
 
   .layout_nav_inner {
-    padding: 8px 10px 16px;
+    padding-inline: 16px;
   }
 
   .layout_nav_icon {
-    width: 22px;
-    height: 22px;
+    width: 28px;
+    height: 28px;
   }
 
   .layout_nav_label {
-    font-size: 10px;
+    font-size: 11px;
   }
 }

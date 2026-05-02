@@ -1,40 +1,25 @@
-import { useNavigate } from 'react-router'
 import HealthCheckItem from './HealthCheckItem'
 
-const healthCheckOptions = [
-  {
-    id: 'photo',
-    icon: 'bx bx-camera',
-    label: '사진 촬영',
-  },
-  {
-    id: 'audio',
-    icon: 'bx bx-volume-full',
-    label: '녹음 촬영',
-  },
-  {
-    id: 'video',
-    icon: 'bx bx-video',
-    label: '영상 촬영',
-  },
-  {
-    id: 'memo',
-    icon: 'bx bx-notepad',
-    label: '메모 작성',
-  },
-]
+export type HealthCheckOption = {
+  id: string
+  icon: string
+  label: string
+  onClick?: () => void
+}
 
-function HealthCheck() {
-  const navigate = useNavigate()
+type HealthCheckProps = {
+  options: HealthCheckOption[]
+}
 
+function HealthCheck({ options }: HealthCheckProps) {
   return (
     <ul className="health_check">
-      {healthCheckOptions.map((option) => (
+      {options.map((option) => (
         <HealthCheckItem
           key={option.id}
           icon={option.icon}
           label={option.label}
-          onClick={() => navigate('/health/check-loading')}
+          onClick={option.onClick}
         />
       ))}
     </ul>

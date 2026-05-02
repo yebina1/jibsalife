@@ -1,0 +1,38 @@
+.health_hospital_search_page {
+  display: flex;
+  flex-direction: column;
+  gap: 42px;
+  background: #ffffff;
+}
+
+.health_hospital_search_location {
+  display: flex;
+  width: min(100%, 430px);
+  align-items: center;
+  gap: 16px;
+  margin: 0 auto;
+}
+
+.health_hospital_search_location strong {
+  color: #111111;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.health_hospital_search_location span {
+  width: 24px;
+  height: 24px;
+  background: #a34d50;
+}
+
+.health_hospital_search_page .hospital_list {
+  width: min(100%, 430px);
+  margin: 0 auto;
+}
+
+.health_hospital_search_page .health_result_detail_btn {
+  align-self: center;
+  margin-top: 18px;
+  border: 0;
+  cursor: pointer;
+}

@@ -1,0 +1,73 @@
+import { useNavigate } from 'react-router'
+import './health.css'
+import './HealthCheckSummary.css'
+import PageHeader from '../components/PageHeader'
+import Title from '../components/Title'
+import ActionOptionList from '../components/ActionOptionList'
+import type { ActionOptionItem } from '../components/ActionOptionList'
+import CloseButton from '../components/html/CloseButton'
+import BackButton from '../components/html/BackButton'
+import checkMarkIcon from '../svg/Check Mark.svg'
+
+function HealthCheckSummary() {
+  const navigate = useNavigate()
+  const actionOptions: ActionOptionItem[] = [
+    {
+      title: '간단히 물어보기(Q&A)',
+      description: 'AI가 빠르게 답변해 드려요.',
+      onClick: () => navigate('/health/qna'),
+    },
+    {
+      title: '수의사 상담/병원 연결',
+      description: '전문가와 상담하고 병원 진료를 받아 보세요.',
+      onClick: () => navigate('/health/connect'),
+    },
+  ]
+
+  return (
+    <>
+      <PageHeader
+        title="AI 건강 체크"
+        leftContent={<BackButton />}
+        rightContent={<CloseButton />}
+      />
+      <main className="page health_page health_check_summary_page">
+        <section className="health_check_summary_intro">
+          <img
+            className="health_check_summary_icon"
+            src={checkMarkIcon}
+            alt=""
+          />
+          <Title
+            as="h2"
+            title={
+              <>
+                뿡뿡이의 상태는
+                <br />지켜보면 괜찮을 것 같아요.
+              </>
+            }
+          >
+            <p>
+              지금 당장 병원 방문이 필요해 보이지는 않으나,
+              <br />필요 시 전문가와 상담 또는 병원을 방문해 주세요.
+            </p>
+          </Title>
+        </section>
+
+        <section className="health_check_summary_actions">
+          <h3>다음 행동을 선택해 주세요.</h3>
+          <ActionOptionList items={actionOptions} />
+        </section>
+
+        <section className="health_check_summary_today">
+          <h3>오늘의 요약</h3>
+          <div>
+            <p>요약 내용...</p>
+          </div>
+        </section>
+      </main>
+    </>
+  )
+}
+
+export default HealthCheckSummary
