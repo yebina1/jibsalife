@@ -47,13 +47,8 @@ function Home() {
 
   return (
     <>
-<<<<<<< HEAD
-      <Header
-        title="집사생활"
-=======
       <PageHeader
         title="집사인생"
->>>>>>> 6b0461ffb5aa96f7afc69c1a3640d2e871a05265
         rightContent={
           <>
             <Button type="button" aria-label="calendar" onClick={() => navigate('/mission')}>
