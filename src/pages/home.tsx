@@ -2,13 +2,17 @@ import './home.css'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import PageHeader from '../components/PageHeader'
-import Button from '../components/html/Button'
+import Title from '../components/Title'
+import HeaderActions from '../components/html/HeaderActions'
+import type { HeaderActionItem } from '../components/html/HeaderActions'
 import calendarIcon from '../svg/calendar.svg'
 import notificationIcon from '../svg/notification.svg'
 import contents1 from '../img/contents1.png'
 import contents2 from '../img/contents2.png'
 import contents3 from '../img/contents3.png'
 import contents4 from '../img/contents4.png'
+import mypetimg from '../img/my pet image.jpg'
+import Button from '../components/html/Button'
 
 const rankingData = {
   subscribers: [
@@ -44,32 +48,34 @@ function Home() {
   const [rankingType, setRankingType] = useState<'subscribers' | 'points'>('subscribers')
   const rankingItems = rankingData[rankingType]
   const todaySummaryDate = formatTodaySummaryDate()
+  const headerActions: HeaderActionItem[] = [
+    {
+      label: 'calendar',
+      icon: calendarIcon,
+      onClick: () => navigate('/mission'),
+    },
+    {
+      label: 'notification',
+      icon: notificationIcon,
+      className: 'home_header_notification',
+    },
+  ]
 
   return (
     <>
       <PageHeader
         title="집사인생"
-        rightContent={
-          <>
-            <Button type="button" aria-label="calendar" onClick={() => navigate('/mission')}>
-              <img src={calendarIcon} alt="" />
-            </Button>
-            <Button type="button" aria-label="notification" className="home_header_notification">
-              <img src={notificationIcon} alt="" />
-            </Button>
-          </>
-        }
+        rightContent={<HeaderActions actions={headerActions} />}
       />
       <main className="page home_page">
         <section className="home_section">
-          <div className="home_section_heading">
-            <h2>오늘의 요약</h2>
+          <Title as="h2" className="home_section_heading" title="오늘의 요약">
             <p>{todaySummaryDate}</p>
-          </div>
+          </Title>
 
           <article className="summary_card">
             <div className="summary_profile">
-              <img src={contents4} alt="뿅뿅이 프로필" className="summary_profile_image" />
+              <img src={mypetimg} alt="뿅뿅이 프로필" className="summary_profile_image" />
               <div className="summary_profile_body">
                 <div className="summary_profile_top">
                   <strong>뿅뿅이</strong>
@@ -105,10 +111,9 @@ function Home() {
 
         <section className="home_section">
           <div className="home_section_heading home_section_heading_stack">
-            <div>
-              <h2>이달의 스타 랭킹</h2>
+            <Title as='h2' title='이달의 스타 랭킹'>
               <p>당첨되면 포인트를 드려요!</p>
-            </div>
+            </Title>
             <button
               type="button"
               className={`ranking_switch ${rankingType === 'points' ? 'points' : ''}`}
@@ -158,12 +163,12 @@ function Home() {
 
           <div className="content_grid">
             {contentItems.map((item) => (
-              <article key={item.id} className="content_card">
+              <Button key={item.id} className="content_card">
                 <img src={item.image} alt={item.title} />
                 <div className="content_overlay">
                   <p>{item.title}</p>
                 </div>
-              </article>
+              </Button>
             ))}
           </div>
 

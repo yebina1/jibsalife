@@ -30,6 +30,7 @@
 
 .home_section_heading {
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 16px;
@@ -38,8 +39,16 @@
 .home_section_heading_stack {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
+}
+
+.title.home_section_heading {
+  gap: 0;
+}
+
+.home_section_heading_stack > .title {
+  gap: 0;
 }
 
 .home_section_heading h2 {
@@ -51,7 +60,7 @@
 
 .home_section_heading p {
   margin: 4px 0 0;
-  color: #6a6a6a;
+  color: #505050;
   font-size: clamp(13px, 1.8vw, 14px);
   line-height: 1.4;
 }
