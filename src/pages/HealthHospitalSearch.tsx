@@ -1,6 +1,6 @@
 import './health.css'
 import './HealthHospitalSearch.css'
-import Header from '../components/Header'
+import PageHeader from '../components/PageHeader'
 import BackButton from '../components/html/BackButton'
 import CloseButton from '../components/html/CloseButton'
 import HospitalList from '../components/HospitalList'
@@ -35,7 +35,7 @@ const hospitalItems: HospitalListItem[] = [
 function HealthHospitalSearch() {
   return (
     <>
-      <Header title="병원찾기" 
+      <PageHeader title="병원찾기" 
       leftContent={<BackButton />}
       rightContent={<CloseButton />} />
       <main className="page health_page health_hospital_search_page">
@@ -52,9 +52,9 @@ function HealthHospitalSearch() {
 
         <NoticeText>
           <p>
-            이 결과는 참고용이며,
+            ※ 이 결과는 참고용이며, 정확한 진단은
             <br />
-            정확한 진단은 수의사 상담을 통해 확인해 주세요.
+            수의사 상담을 통해 확인해 주세요.
           </p>
         </NoticeText>
       </main>

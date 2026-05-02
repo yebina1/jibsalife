@@ -1,6 +1,6 @@
 import './health.css'
 import './HealthQna.css'
-import Header from '../components/Header'
+import PageHeader from '../components/PageHeader'
 import ChatRoom from '../components/ChatRoom'
 import type { ChatMessage } from '../components/ChatRoom'
 import BackButton from '../components/html/BackButton'
@@ -31,7 +31,7 @@ const vetChatMessages: ChatMessage[] = [
 function HealthVetChat() {
   return (
     <>
-      <Header
+      <PageHeader
         title="수의사 상담"
         leftContent={<BackButton />}
         rightContent={<span>상담종료</span>}

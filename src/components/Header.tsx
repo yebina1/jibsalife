@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import './Header.css'
 
-type HeaderProps = {
+export type HeaderProps = {
   title: string
   leftContent?: ReactNode
   rightContent?: ReactNode

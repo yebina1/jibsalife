@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router'
 import './health.css'
 import './HealthResultDetail.css'
-import Header from '../components/Header'
+import PageHeader from '../components/PageHeader'
 import BackButton from '../components/html/BackButton'
 import HealthResultCard from '../components/HealthResultCard'
 import HealthResultDetailBox from '../components/HealthResultDetailBox'
@@ -59,7 +59,7 @@ function HealthResultDetail() {
 
   return (
     <>
-      <Header
+      <PageHeader
         title="AI 건강 체크"
         leftContent={<BackButton />}
         rightContent={<p>오늘 AI 건강체크 1/1회 사용</p>}
@@ -80,9 +80,9 @@ function HealthResultDetail() {
         </HealthConsultBox>
         <NoticeText>
           <p>
-            이 결과는 참고용이며,
+            ※ 이 결과는 참고용이며, 정확한 진단은
             <br />
-            정확한 진단은 수의사 상담을 통해 확인해 주세요.
+            수의사 상담을 통해 확인해 주세요.
           </p>
         </NoticeText>
       </main>

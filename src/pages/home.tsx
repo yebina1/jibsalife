@@ -1,7 +1,7 @@
 import './home.css'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import Header from '../components/Header'
+import PageHeader from '../components/PageHeader'
 import Button from '../components/html/Button'
 import calendarIcon from '../svg/calendar.svg'
 import notificationIcon from '../svg/notification.svg'
@@ -37,7 +37,7 @@ function Home() {
 
   return (
     <>
-      <Header
+      <PageHeader
         title="집사인생"
         rightContent={
           <>

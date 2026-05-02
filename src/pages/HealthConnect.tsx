@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router'
 import './health.css'
 import './HealthConnect.css'
-import Header from '../components/Header'
+import PageHeader from '../components/PageHeader'
 import CloseButton from '../components/html/CloseButton'
 import BackButton from '../components/html/BackButton'
 import NoticeText from '../components/NoticeText'
@@ -42,7 +42,7 @@ function HealthConnect() {
 
   return (
     <>
-      <Header
+      <PageHeader
         title="AI 건강 체크"
         leftContent={<BackButton />}
         rightContent={<CloseButton />}
@@ -65,9 +65,9 @@ function HealthConnect() {
 
         <NoticeText>
           <p>
-            이 결과는 참고용이며,
+            ※ 이 결과는 참고용이며, 정확한 진단은
             <br />
-            정확한 진단은 수의사 상담을 통해 확인해 주세요.
+            수의사 상담을 통해 확인해 주세요.
           </p>
         </NoticeText>
       </main>

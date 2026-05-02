@@ -11,8 +11,22 @@
   --sub2-gray: #E5E5EC;
   --sub1-blue: #BEE3F8;
   --primary-purple: #C4B5FD;
+  --app-font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  --app-line-height: 1.45;
+  --app-letter-spacing: -0.025em;
 }
 
+html,
 body{
-  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  font-family: var(--app-font-family);
+  line-height: var(--app-line-height);
+  letter-spacing: var(--app-letter-spacing);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  letter-spacing: inherit;
 }

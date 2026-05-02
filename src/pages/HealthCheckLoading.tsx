@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import './health.css'
 import './HealthCheckLoading.css'
-import Header from '../components/Header'
+import PageHeader from '../components/PageHeader'
 import ProgressCircle from '../components/ProgressCircle'
 import Title from '../components/Title'
 import CloseButton from '../components/html/CloseButton'
@@ -39,7 +39,7 @@ function HealthCheckLoading() {
 
   return (
     <>
-      <Header title="AI 건강 체크" rightContent={<CloseButton />} />
+      <PageHeader title="AI 건강 체크" rightContent={<CloseButton />} />
       <main className="page health_page health_check_loading_page">
         <div className="health_check_loading">
           <Title as="h1" title="AI 가 정보를 확인 중이에요">

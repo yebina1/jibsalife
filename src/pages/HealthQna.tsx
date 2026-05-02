@@ -1,6 +1,6 @@
 import './health.css'
 import './HealthQna.css'
-import Header from '../components/Header'
+import PageHeader from '../components/PageHeader'
 import ChatRoom from '../components/ChatRoom'
 import type { ChatMessage } from '../components/ChatRoom'
 import CloseButton from '../components/html/CloseButton'
@@ -32,7 +32,7 @@ const chatMessages: ChatMessage[] = [
 function HealthQna() {
   return (
     <>
-      <Header
+      <PageHeader
         title="건강 Q&A"
         leftContent={<BackButton />}
         rightContent={<CloseButton />}

@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   gap: 42px;
-  padding: 42px 28px calc(120px + env(safe-area-inset-bottom, 0px));
   background: #ffffff;
 }
 
@@ -36,11 +35,4 @@
   margin-top: 18px;
   border: 0;
   cursor: pointer;
-}
-
-@media (max-width: 360px) {
-  .health_hospital_search_page {
-    padding-right: 18px;
-    padding-left: 18px;
-  }
 }

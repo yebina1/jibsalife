@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router'
 import './health.css'
 import './HealthCheckSummary.css'
-import Header from '../components/Header'
+import PageHeader from '../components/PageHeader'
 import Title from '../components/Title'
 import ActionOptionList from '../components/ActionOptionList'
 import type { ActionOptionItem } from '../components/ActionOptionList'
@@ -26,7 +26,7 @@ function HealthCheckSummary() {
 
   return (
     <>
-      <Header
+      <PageHeader
         title="AI 건강 체크"
         leftContent={<BackButton />}
         rightContent={<CloseButton />}
