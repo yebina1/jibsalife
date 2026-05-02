@@ -68,7 +68,7 @@ function HealthCheckResult() {
         <HealthResultSummary title="확인 결과 요약" items={summaryItems} />
         <Button
           type="button"
-          className="health_result_detail_btn"
+          className="purple_btn"
           onClick={() => navigate('/health/result/detail')}
         >
           결과 자세히 보기

@@ -20,9 +20,9 @@ function Layout() {
           <StateBar />
           {header && <Header {...header} />}
         </header>
-        <main className={contentClassName}>
+        <div className={contentClassName}>
           <Outlet />
-        </main>
+        </div>
         <footer>
           <Nav />
         </footer>

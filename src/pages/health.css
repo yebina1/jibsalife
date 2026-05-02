@@ -1,8 +1,10 @@
 .health_page {
   width: 100%;
   max-width: 820px;
-  min-height: calc(100vh - 44px);
-  margin: 0 auto;
+  min-height: calc(100vh - 201px);
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
 }
 
 .health_page.health_page :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, a, button, li, label, input, textarea, select),
@@ -25,8 +27,14 @@
   gap: 16px;
 }
 
+.health_intro_content{
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .health_intro_text {
-  min-width: 0;
+  min-width: 313px;
   display: flex;
   justify-content: space-between;
 }
@@ -39,8 +47,9 @@
   display: block;
   width: 78px;
   height: 78px;
-  border-radius: 8px;
+  border-radius: 12px;
   object-fit: cover;
+  border: 1px solid #E5E5EC;
 }
 
 .health_guide {
@@ -62,60 +71,58 @@
   color: var(--point-dark-red);
 }
 
-.health_manual_record_btn {
-  display: flex;
-  width: fit-content;
-  align-items: center;
-  gap: 4px;
-  margin: 18px 0 0 auto;
-  color: #111827;
-  font-size: 14px;
-  font-weight: 600;
-}
-
 .health_check {
+  width: 100%;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 160px));
-  gap: 28px 48px;
-  justify-content: center;
+  grid-template-columns: repeat(2, minmax(151px, 1fr));
+  gap: 8px;
   padding: 0;
-  margin: 32px 0 0;
   list-style: none;
 }
 
 .health_check_item button {
   display: flex;
-  width: 160px;
+  width: 100%;
+  min-width: 151px;
   height: 180px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 18px;
+  gap: 8px;
   padding: 0;
   border: 0;
-  background: #a8a1a1;
-  color: #ffffff;
+  background: #F1F1F5;
   cursor: pointer;
+  border-radius: 12px;
 }
 
-.health_check_item i {
+.health_check_item i,
+.health_check_item img {
   font-size: 58px;
   line-height: 1;
 }
 
+.health_check_item img {
+  display: block;
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+}
+
 .health_check_item span {
-  font-size: 18px;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 @media (min-width: 768px) {
   .health_page {
-    min-height: calc(100vh - 52px);
+    min-height: calc(100vh - 201px);
   }
 }
 
 @media (max-width: 420px) {
   .health_page {
-    min-height: calc(100vh - 44px);
+    min-height: calc(100vh - 201px);
   }
 
   .health_guide {
@@ -133,28 +140,34 @@
   }
 
   .health_intro_image {
-    width: 96px;
-    height: 96px;
+    width: 78px;
+    height: 78px;
   }
 
   .health_check {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px 12px;
+    grid-template-columns: repeat(2, minmax(151px, 1fr));
+    gap: 8px;
   }
 
   .health_check_item button {
     width: 100%;
-    min-width: 0;
-    height: 156px;
-    gap: 14px;
+    /* min-width: 160px; */
+    height: 132px;
+    gap: 8px;
   }
 
-  .health_check_item i {
+  .health_check_item i,
+  .health_check_item img {
     font-size: 46px;
   }
 
+  .health_check_item img {
+    width: 46px;
+    height: 46px;
+  }
+
   .health_check_item span {
-    font-size: 16px;
+    font-size: 14px;
   }
 }
 
@@ -177,8 +190,14 @@
     height: 142px;
   }
 
-  .health_check_item i {
+  .health_check_item i,
+  .health_check_item img {
     font-size: 40px;
+  }
+
+  .health_check_item img {
+    width: 40px;
+    height: 40px;
   }
 
   .health_check_item span {
