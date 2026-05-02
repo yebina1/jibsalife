@@ -1,6 +1,8 @@
 import './community.css'
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
+import Header from '../components/Header'
+import BackButton from '../components/html/BackButton'
 import contents1 from '../img/contents1.png'
 import contents2 from '../img/contents2.png'
 import contents3 from '../img/contents3.png'
@@ -82,6 +84,54 @@ const postData: CommunityPost[] = [
     image: contents4,
   },
 ]
+
+const braggingPostData: CommunityPost[] = [
+  {
+    id: 101,
+    tag: '자랑하기',
+    title: '우리 집 막내 미모 좀 봐주세요',
+    author: '모찌엄마',
+    date: '2026.04.30',
+    timeText: '1시간 전',
+    likes: 18,
+    comments: 7,
+    createdAt: '2026-04-30T20:10:00',
+    image: contents1,
+  },
+  {
+    id: 102,
+    tag: '자랑하기',
+    title: '새 옷 입고 산책 다녀온 날',
+    author: '코코아빠',
+    date: '2026.04.30',
+    likes: 14,
+    comments: 4,
+    createdAt: '2026-04-30T17:00:00',
+    image: contents2,
+  },
+  {
+    id: 103,
+    tag: '자랑하기',
+    title: '간식 앞에서 세상 제일 예쁜 표정',
+    author: '뽀삐누나',
+    date: '2026.04.30',
+    likes: 20,
+    comments: 9,
+    createdAt: '2026-04-30T15:20:00',
+    image: contents3,
+  },
+  {
+    id: 104,
+    tag: '자랑하기',
+    title: '목욕하고 보송보송해진 우리 애기',
+    author: '초코집사',
+    date: '2026.04.30',
+    likes: 11,
+    comments: 2,
+    createdAt: '2026-04-30T12:40:00',
+    image: contents4,
+  },
+] 
 
 const knowledgeContentItems = [
   { id: 1, title: '활동량이 줄어든 아이를 위한 추천 장난감', image: contents3 },
@@ -289,10 +339,13 @@ function Community() {
   const [selectedChallengeId, setSelectedChallengeId] = useState<number | null>(null)
   const [isVoteCandidateOpen, setIsVoteCandidateOpen] = useState(false)
   const [selectedVoteResultId, setSelectedVoteResultId] = useState<number | null>(null)
+  const isBraggingView =
+    selectedPrimaryTab === '커뮤니티' && selectedSecondaryTab === '자랑하기'
+  const activePostData = isBraggingView ? braggingPostData : postData
 
   const posts = useMemo(() => {
     const normalizedKeyword = searchTerm.trim().toLowerCase()
-    const filteredPosts = postData.filter((post) =>
+    const filteredPosts = activePostData.filter((post) =>
       [post.title, post.author, post.tag].some((value) =>
         !normalizedKeyword || value.toLowerCase().includes(normalizedKeyword)
       )
@@ -312,7 +365,7 @@ function Community() {
 
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     })
-  }, [likedPostIds, searchTerm, selectedSort])
+  }, [activePostData, likedPostIds, searchTerm, selectedSort])
 
   const toggleLike = (postId: number) => {
     setLikedPostIds((prev) =>
@@ -332,11 +385,14 @@ function Community() {
     setSelectedVoteResultId(voteResultId)
   }
 
+  const isVoteView = selectedPrimaryTab === '투표'
+  const isCommunityOverview =
+    selectedPrimaryTab === '커뮤니티' && selectedSecondaryTab === '전체'
+  const isVoteOverview = isVoteView && selectedSecondaryTab === '전체'
   const isDailyCommunityView =
     selectedPrimaryTab === '커뮤니티' && selectedSecondaryTab === '일상'
   const isKnowledgeView =
     selectedPrimaryTab === '커뮤니티' && selectedSecondaryTab === '반려상식'
-  const isVoteView = selectedPrimaryTab === '투표'
   const isChallengeView = selectedPrimaryTab === '챌린지 인증'
   const currentSecondaryTabs = isVoteView ? voteTabs : communityTabs
   const selectedChallenge = challengeData.find((item) => item.id === selectedChallengeId) ?? null
@@ -346,9 +402,31 @@ function Community() {
     voteResultData.find((item) => item.id === selectedVoteResultId) ?? null
   const showCommunityBackButton =
     selectedChallenge !== null || isVoteCandidateOpen || selectedVoteResult !== null
+  const braggingSummaryPosts = braggingPostData.slice(0, 2)
+  const dailySummaryPosts = postData.slice(0, 2)
+  const knowledgeSummaryItems = knowledgeContentItems.slice(0, 2)
+  const voteSummaryItems = voteData.slice(0, 2)
+  const voteResultSummaryItems = voteResultData.slice(0, 2)
 
   return (
-    <main className="page community_page">
+    <>
+      <Header title="커뮤니티" leftContent={<BackButton to="/home" />} />
+      <main className="page community_page">
+        {/*
+            반려인들과 함께하는
+            <br />
+            커뮤니티 이야기
+          </>
+        }
+      >
+        <p>
+          일상, 정보, 투표와 챌린지까지
+          <br />
+          우리 아이 이야기를 자유롭게 나눠보세요
+        </p>
+      </Title>
+        */}
+
       {showCommunityBackButton ? (
         <div className="community_detail_top">
           <button
@@ -384,7 +462,7 @@ function Community() {
               setSelectedChallengeId(null)
               setIsVoteCandidateOpen(false)
               setSelectedVoteResultId(null)
-              setSelectedSecondaryTab(tab === '투표' ? '목록' : tab === '커뮤니티' ? '일상' : '전체')
+              setSelectedSecondaryTab(tab === '투표' ? '전체' : tab === '커뮤니티' ? '일상' : '전체')
             }}
           >
             {tab}
@@ -581,6 +659,81 @@ function Community() {
             </article>
           ))}
         </section>
+      ) : isVoteOverview ? (
+        <section className="community_overview">
+          <article className="community_overview_section">
+            <div className="community_overview_heading">
+              <h2>목록</h2>
+              <span>참여 가능한 투표</span>
+            </div>
+            <div className="community_vote_feed">
+              {voteSummaryItems.map((vote) => (
+                <article key={vote.id} className="community_vote_card">
+                  <div className="community_vote_header">
+                    <h2>{vote.title}</h2>
+                    {vote.subtitle ? <p>{vote.subtitle}</p> : null}
+                  </div>
+
+                  <div className="community_post_meta community_vote_meta">
+                    <span className="community_profile_avatar" aria-hidden="true">
+                      프로필
+                    </span>
+                    <span className="community_post_author">{vote.author}</span>
+                  </div>
+
+                  <div className="community_post_actions community_vote_actions">
+                    <button type="button">
+                      <span className="community_like_icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                          <path d="M12 20.2 4.9 13.6a4.8 4.8 0 0 1 6.8-6.8L12 7.9l.3-.3a4.8 4.8 0 1 1 6.8 6.8Z" />
+                        </svg>
+                      </span>
+                      좋아요 {vote.likes}
+                    </button>
+                    <button type="button">
+                      <span className="community_comment_icon" aria-hidden="true">
+                        댓글
+                      </span>
+                      댓글 {vote.comments}
+                    </button>
+                  </div>
+
+                  {vote.deadline ? <p className="community_vote_deadline">{vote.deadline}</p> : null}
+                </article>
+              ))}
+            </div>
+          </article>
+
+          <article className="community_overview_section">
+            <div className="community_overview_heading">
+              <h2>투표 결과</h2>
+              <span>최근 마감된 결과</span>
+            </div>
+            <div className="community_vote_result_feed">
+              {voteResultSummaryItems.map((item) => (
+                <article key={item.id} className="community_vote_result_card">
+                  <div className="community_vote_result_image" aria-hidden="true">
+                    투표가
+                    <br />
+                    종료되었어요
+                  </div>
+
+                  <div className="community_vote_result_body">
+                    <span className="community_vote_candidate_badge">{item.badge}</span>
+                    <h2>{item.title}</h2>
+                    <button
+                      type="button"
+                      className="community_vote_candidate_button"
+                      onClick={() => openVoteResults(item.id)}
+                    >
+                      결과보기
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </article>
+        </section>
       ) : isVoteListView ? (
         <section className="community_vote_feed">
           {voteData.map((vote) => (
@@ -636,6 +789,91 @@ function Community() {
         <section className="community_feed">
           <div className="community_empty_state">투표 카테고리를 선택해 주세요.</div>
         </section>
+      ) : isCommunityOverview ? (
+        <section className="community_overview">
+          <article className="community_overview_section">
+            <div className="community_overview_heading">
+              <h2>자랑하기</h2>
+              <span>우리 아이 자랑 모음</span>
+            </div>
+            <div className="community_overview_post_list">
+              {braggingSummaryPosts.map((post) => (
+                <article key={post.id} className="community_post">
+                  <img className="community_post_image" src={post.image} alt={post.title} />
+
+                  <div className="community_post_body">
+                    <div className="community_post_header">
+                      <span className="community_post_tag">{post.tag}</span>
+                      <h2>{post.title}</h2>
+                    </div>
+
+                    <div className="community_post_meta">
+                      <span className="community_profile_avatar" aria-hidden="true">
+                        프로필
+                      </span>
+                      <span className="community_post_author">{post.author}</span>
+                    </div>
+
+                    <p className="community_post_date">
+                      {post.timeText ? <span>{post.timeText}</span> : null}
+                      <span>{post.date}</span>
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </article>
+
+          <article className="community_overview_section">
+            <div className="community_overview_heading">
+              <h2>일상</h2>
+              <span>반려생활 이야기</span>
+            </div>
+            <div className="community_overview_post_list">
+              {dailySummaryPosts.map((post) => (
+                <article key={post.id} className="community_post">
+                  <img className="community_post_image" src={post.image} alt={post.title} />
+
+                  <div className="community_post_body">
+                    <div className="community_post_header">
+                      <span className="community_post_tag">{post.tag}</span>
+                      <h2>{post.title}</h2>
+                    </div>
+
+                    <div className="community_post_meta">
+                      <span className="community_profile_avatar" aria-hidden="true">
+                        프로필
+                      </span>
+                      <span className="community_post_author">{post.author}</span>
+                    </div>
+
+                    <p className="community_post_date">
+                      {post.timeText ? <span>{post.timeText}</span> : null}
+                      <span>{post.date}</span>
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </article>
+
+          <article className="community_overview_section">
+            <div className="community_overview_heading">
+              <h2>반려상식</h2>
+              <span>짧게 보는 추천 정보</span>
+            </div>
+            <div className="community_overview_knowledge">
+              {knowledgeSummaryItems.map((item) => (
+                <article key={item.id} className="community_knowledge_card">
+                  <img src={item.image} alt={item.title} />
+                  <div className="community_knowledge_overlay">
+                    <p>{item.title}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </article>
+        </section>
       ) : isKnowledgeView ? (
         <section className="community_knowledge_feed">
           <div className="community_knowledge_grid">
@@ -649,7 +887,7 @@ function Community() {
             ))}
           </div>
         </section>
-      ) : isDailyCommunityView ? (
+      ) : isDailyCommunityView || isBraggingView ? (
         <section className="community_feed">
           {posts.length > 0 ? (
             posts.map((post) => (
@@ -715,7 +953,8 @@ function Community() {
         </section>
       )}
 
-    </main>
+      </main>
+    </>
   )
 }
 

@@ -12,33 +12,43 @@ import contents4 from '../img/contents4.png'
 
 const rankingData = {
   subscribers: [
-    { id: 1, name: '콩이', image: contents1, crown: '👑', rank: '1위' },
-    { id: 2, name: '꿍냥이', image: contents2, crown: '🐈', rank: '2위' },
-    { id: 3, name: '모카', image: contents4, crown: '🐕', rank: '3위' },
+    { id: 1, name: '콩이', image: contents1, crown: '🥇', rank: '1위' },
+    { id: 2, name: '뽀삐', image: contents2, crown: '🥈', rank: '2위' },
+    { id: 3, name: '모찌', image: contents4, crown: '🥉', rank: '3위' },
   ],
   points: [
-    { id: 1, name: '모카', image: contents4, crown: '🏆', rank: '1위' },
-    { id: 2, name: '콩이', image: contents1, crown: '⭐', rank: '2위' },
-    { id: 3, name: '꿍냥이', image: contents2, crown: '🎖', rank: '3위' },
+    { id: 1, name: '모찌', image: contents4, crown: '🥇', rank: '1위' },
+    { id: 2, name: '콩이', image: contents1, crown: '🥈', rank: '2위' },
+    { id: 3, name: '뽀삐', image: contents2, crown: '🥉', rank: '3위' },
   ],
 } as const
 
 const contentItems = [
-  { id: 1, title: '활동량이 줄어든 아이를 위한 추천 장난감', image: contents3 },
-  { id: 2, title: '우리 아이 상태별 추천 혜택', image: contents1 },
-  { id: 3, title: '우리 아이 상태별 추천 혜택', image: contents2 },
-  { id: 4, title: '반려견을 위한 케어 아이템 3종', image: contents4 },
+  { id: 1, title: '반려동물이 좋아하는 놀이를 위한 추천 가이드', image: contents3 },
+  { id: 2, title: '우리 아이 상태별 맞춤 건강 추천', image: contents1 },
+  { id: 3, title: '우리 아이 상태별 맞춤 산책 루틴', image: contents2 },
+  { id: 4, title: '반려견을 위한 케어 체크리스트 3종', image: contents4 },
 ]
+
+function formatTodaySummaryDate() {
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const day = String(today.getDate()).padStart(2, '0')
+
+  return `${year}년 ${month}월 ${day}일`
+}
 
 function Home() {
   const navigate = useNavigate()
   const [rankingType, setRankingType] = useState<'subscribers' | 'points'>('subscribers')
   const rankingItems = rankingData[rankingType]
+  const todaySummaryDate = formatTodaySummaryDate()
 
   return (
     <>
       <Header
-        title="집사인생"
+        title="집사생활"
         rightContent={
           <>
             <Button type="button" aria-label="calendar" onClick={() => navigate('/mission')}>
@@ -54,7 +64,7 @@ function Home() {
         <section className="home_section">
           <div className="home_section_heading">
             <h2>오늘의 요약</h2>
-            <p>2026년 05월 12일</p>
+            <p>{todaySummaryDate}</p>
           </div>
 
           <article className="summary_card">
@@ -62,10 +72,10 @@ function Home() {
               <img src={contents4} alt="뿅뿅이 프로필" className="summary_profile_image" />
               <div className="summary_profile_body">
                 <div className="summary_profile_top">
-                  <strong>뿡뿡이</strong>
+                  <strong>뿅뿅이</strong>
                   <span className="summary_badge">푸들</span>
                 </div>
-                <p>나이: 2살 · 몸무게: 5kg · 성별: 남아</p>
+                <p>나이: 2살, 몸무게: 5kg, 상태: 좋아요</p>
                 <button type="button" className="summary_link">
                   케어 가이드
                 </button>
@@ -82,7 +92,7 @@ function Home() {
                 <strong>1회</strong>
               </div>
               <div>
-                <span>활동량</span>
+                <span>산책 시간</span>
                 <strong>100분</strong>
               </div>
               <div>
@@ -99,28 +109,30 @@ function Home() {
               <h2>이달의 스타 랭킹</h2>
               <p>당첨되면 포인트를 드려요!</p>
             </div>
-            <div className="ranking_tabs" aria-label="랭킹 기준">
+            <button
+              type="button"
+              className={`ranking_switch ${rankingType === 'points' ? 'points' : ''}`}
+              aria-label="랭킹 기준 전환"
+              onClick={() =>
+                setRankingType((current) => (current === 'subscribers' ? 'points' : 'subscribers'))
+              }
+            >
+              <span className="ranking_switch_track" aria-hidden="true">
+                <span className="ranking_switch_thumb" />
+              </span>
               <span
-                className={`ranking_tabs_indicator ${
-                  rankingType === 'points' ? 'points' : 'subscribers'
+                className={`ranking_switch_label ${
+                  rankingType === 'subscribers' ? 'active' : ''
                 }`}
-                aria-hidden="true"
-              />
-              <button
-                type="button"
-                className={rankingType === 'subscribers' ? 'active' : ''}
-                onClick={() => setRankingType('subscribers')}
               >
                 구독자
-              </button>
-              <button
-                type="button"
-                className={rankingType === 'points' ? 'active' : ''}
-                onClick={() => setRankingType('points')}
+              </span>
+              <span
+                className={`ranking_switch_label ${rankingType === 'points' ? 'active' : ''}`}
               >
                 포인트
-              </button>
-            </div>
+              </span>
+            </button>
           </div>
 
           <div className="ranking_grid" key={rankingType}>
@@ -141,7 +153,7 @@ function Home() {
 
         <section className="home_section home_content_section">
           <div className="home_section_heading">
-            <h2>추천 컨텐츠</h2>
+            <h2>추천 콘텐츠</h2>
           </div>
 
           <div className="content_grid">

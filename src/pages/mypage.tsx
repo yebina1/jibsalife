@@ -1,9 +1,14 @@
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 import './mypage.css'
+import Header from '../components/Header'
+import BackButton from '../components/html/BackButton'
+import Button from '../components/html/Button'
 import calendarIcon from '../svg/calendar.svg'
 import notificationIcon from '../svg/notification.svg'
 
 const topShortcuts = [
-  { id: 1, label: '활동 내역', icon: 'bars' },
+  { id: 1, label: '활동 내역', icon: 'bars', path: '/health/result' },
   { id: 2, label: 'AI', icon: 'spark' },
   { id: 3, label: '가족 정보', icon: 'pet' },
   { id: 4, label: '인스타그램', icon: 'camera' },
@@ -19,11 +24,11 @@ const counters = [
 const sections = [
   {
     title: '활동내역',
-    items: ['미션 수행 내역', '뱃지 획득 내역'],
+    items: ['미션 수행 내역', '받은 혜택 내역'],
   },
   {
     title: '북마크',
-    items: ['장소', '게시글', '제품저장', '커뮤니티 북마크 내역'],
+    items: ['장소', '게시글', '상품정보', '커뮤니티 북마크 내역'],
   },
   {
     title: '설정',
@@ -38,6 +43,14 @@ const sections = [
     items: ['서비스 소개', '개인정보처리방침', '이용약관'],
   },
 ]
+
+const LOCATION_STORAGE_KEY = 'mypage-location'
+
+type SavedLocation = {
+  latitude: number
+  longitude: number
+  savedAt: string
+}
 
 function ShortcutIcon({ type }: { type: string }) {
   if (type === 'bars') {
@@ -79,107 +92,213 @@ function SettingIcon() {
   )
 }
 
+function formatCoordinate(value: number) {
+  return value.toFixed(5)
+}
+
+function formatSavedAt(savedAt: string) {
+  const date = new Date(savedAt)
+
+  if (Number.isNaN(date.getTime())) {
+    return ''
+  }
+
+  return new Intl.DateTimeFormat('ko-KR', {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(date)
+}
+
 function MyPage() {
+  const navigate = useNavigate()
+  const [savedLocation, setSavedLocation] = useState<SavedLocation | null>(null)
+  const [locationMessage, setLocationMessage] = useState('위치 정보를 등록하고\n맞춤 서비스를 받아 보세요')
+  const [isLocating, setIsLocating] = useState(false)
+
+  useEffect(() => {
+    const savedValue = window.localStorage.getItem(LOCATION_STORAGE_KEY)
+
+    if (!savedValue) {
+      return
+    }
+
+    try {
+      const parsedValue = JSON.parse(savedValue) as SavedLocation
+      setSavedLocation(parsedValue)
+      setLocationMessage(
+        `현재 위치 ${formatCoordinate(parsedValue.latitude)}, ${formatCoordinate(parsedValue.longitude)}`,
+      )
+    } catch {
+      window.localStorage.removeItem(LOCATION_STORAGE_KEY)
+    }
+  }, [])
+
+  const handleLocationSetting = () => {
+    if (!navigator.geolocation) {
+      setLocationMessage('이 브라우저에서는 위치 기능을 지원하지 않아요')
+      return
+    }
+
+    setIsLocating(true)
+    setLocationMessage('GPS로 현재 위치를 확인하고 있어요...')
+
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        const nextLocation = {
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+          savedAt: new Date().toISOString(),
+        }
+
+        window.localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(nextLocation))
+        setSavedLocation(nextLocation)
+        setLocationMessage(
+          `현재 위치 ${formatCoordinate(nextLocation.latitude)}, ${formatCoordinate(nextLocation.longitude)}`,
+        )
+        setIsLocating(false)
+      },
+      (error) => {
+        const nextMessage =
+          error.code === error.PERMISSION_DENIED
+            ? '위치 권한이 거부되었어요. 브라우저 권한을 확인해 주세요'
+            : '위치를 가져오지 못했어요. 잠시 후 다시 시도해 주세요'
+
+        setLocationMessage(nextMessage)
+        setIsLocating(false)
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      },
+    )
+  }
+
   return (
-    <main className="page mypage_page">
-      <section className="mypage_topbar" aria-label="마이페이지 상단">
-        <button type="button" aria-label="calendar" className="mypage_icon_button">
-          <img src={calendarIcon} alt="" />
-        </button>
-        <button type="button" aria-label="notification" className="mypage_icon_button mypage_notification">
-          <img src={notificationIcon} alt="" />
-        </button>
-      </section>
+    <>
+      <Header
+        title="마이페이지"
+        leftContent={<BackButton to="/home" />}
+        rightContent={
+          <>
+            <Button type="button" aria-label="calendar" onClick={() => navigate('/mission')}>
+              <img src={calendarIcon} alt="" />
+            </Button>
+            <Button type="button" aria-label="notification" className="mypage_notification">
+              <img src={notificationIcon} alt="" />
+            </Button>
+          </>
+        }
+      />
 
-      <section className="mypage_profile_card">
-        <div className="mypage_profile_header">
-          <h1>뿍지뿍지</h1>
-          <button type="button">정보수정</button>
-        </div>
+      <main className="page mypage_page">
+        <section className="mypage_profile_card">
+          <div className="mypage_profile_header">
+            <h1>집사집사</h1>
+            <button type="button">정보수정</button>
+          </div>
 
-        <div className="mypage_profile_body">
-          <div className="mypage_avatar" aria-hidden="true" />
+          <div className="mypage_profile_body">
+            <div className="mypage_avatar" aria-hidden="true" />
 
-          <div className="mypage_stats">
-            <div>
-              <strong>0</strong>
-              <span>게시글</span>
-            </div>
-            <div>
-              <strong>0</strong>
-              <span>댓글</span>
-            </div>
-            <div>
-              <strong>0</strong>
-              <span>댓글등급</span>
-            </div>
-            <div>
-              <strong>0</strong>
-              <span>뱃지</span>
+            <div className="mypage_stats">
+              <div>
+                <strong>0</strong>
+                <span>게시글</span>
+              </div>
+              <div>
+                <strong>0</strong>
+                <span>팔로잉</span>
+              </div>
+              <div>
+                <strong>0</strong>
+                <span>팔로워</span>
+              </div>
+              <div>
+                <strong>0</strong>
+                <span>받은 혜택</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="mypage_location_card">
-          <p>
-            위치 정보를 등록하고
-            <br />
-            맞춤 서비스를 받아 보세요
-          </p>
-          <button type="button" className="mypage_location_button">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 14.5 9 2.5 2.5 0 0 1 12 11.5Z" />
-            </svg>
-            위치설정
-          </button>
-        </div>
-      </section>
-
-      <section className="mypage_shortcuts" aria-label="바로가기">
-        {topShortcuts.map((item) => (
-          <button type="button" key={item.id} className="mypage_round_menu">
-            <span className="mypage_round_icon">
-              <ShortcutIcon type={item.icon} />
-            </span>
-            <span>{item.label}</span>
-          </button>
-        ))}
-      </section>
-
-      <section className="mypage_counters" aria-label="카운터">
-        {counters.map((item) => (
-          <div key={item.id} className="mypage_counter_item">
-            <span className="mypage_counter_dot" aria-hidden="true" />
-            <span>{item.label}</span>
-          </div>
-        ))}
-      </section>
-
-      <div className="mypage_sections">
-        {sections.map((section) => (
-          <section key={section.title} className="mypage_section_block">
-            <h2>{section.title}</h2>
-            <ul>
-              {section.items.map((item) => (
-                <li key={item}>
-                  <button type="button" className="mypage_list_button">
-                    <span className="mypage_list_left">
-                      <span className="mypage_list_icon">
-                        <SettingIcon />
-                      </span>
-                      <span>{item}</span>
-                    </span>
-                    <span className="mypage_list_arrow" aria-hidden="true">
-                      ›
-                    </span>
-                  </button>
-                </li>
+          <div className="mypage_location_card">
+            <p className="mypage_location_text">
+              {locationMessage.split('\n').map((line) => (
+                <span key={line}>{line}</span>
               ))}
-            </ul>
-          </section>
-        ))}
-      </div>
-    </main>
+              {savedLocation ? <small>최근 저장: {formatSavedAt(savedLocation.savedAt)}</small> : null}
+            </p>
+            <button
+              type="button"
+              className="mypage_location_button"
+              onClick={handleLocationSetting}
+              disabled={isLocating}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 14.5 9 2.5 2.5 0 0 1 12 11.5Z" />
+              </svg>
+              {isLocating ? '확인 중...' : '위치설정'}
+            </button>
+          </div>
+        </section>
+
+        <section className="mypage_shortcuts" aria-label="바로가기">
+          {topShortcuts.map((item) => (
+            <button
+              type="button"
+              key={item.id}
+              className="mypage_round_menu"
+              onClick={() => {
+                if (item.path) {
+                  navigate(item.path)
+                }
+              }}
+            >
+              <span className="mypage_round_icon">
+                <ShortcutIcon type={item.icon} />
+              </span>
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </section>
+
+        <section className="mypage_counters" aria-label="카운터">
+          {counters.map((item) => (
+            <div key={item.id} className="mypage_counter_item">
+              <span className="mypage_counter_dot" aria-hidden="true" />
+              <span>{item.label}</span>
+            </div>
+          ))}
+        </section>
+
+        <div className="mypage_sections">
+          {sections.map((section) => (
+            <section key={section.title} className="mypage_section_block">
+              <h2>{section.title}</h2>
+              <ul>
+                {section.items.map((item) => (
+                  <li key={item}>
+                    <button type="button" className="mypage_list_button">
+                      <span className="mypage_list_left">
+                        <span className="mypage_list_icon">
+                          <SettingIcon />
+                        </span>
+                        <span>{item}</span>
+                      </span>
+                      <span className="mypage_list_arrow" aria-hidden="true">
+                        &gt;
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </main>
+    </>
   )
 }
 
