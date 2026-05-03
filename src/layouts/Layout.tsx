@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Outlet, useLocation } from 'react-router'
 import Header from '../components/Header'
+import FloatingAiButton from '../components/FloatingAiButton'
 import HomeIndicator from '../components/HomeIndicator'
 import Nav from '../components/Nav'
 import StateBar from '../components/StateBar'
@@ -13,6 +14,7 @@ function Layout() {
   const hasContentPadding = !noPaddingPaths.includes(pathname)
   const contentClassName =
     hasContentPadding ? 'layout_content' : 'layout_content layout_content_no_padding'
+  const hideFloatingAiButton = pathname === '/mypage'
 
   return (
     <HeaderContext.Provider value={setHeader}>
@@ -24,6 +26,7 @@ function Layout() {
         <div className={contentClassName}>
           <Outlet />
         </div>
+        {!hideFloatingAiButton ? <FloatingAiButton /> : null}
         <footer>
           <Nav />
           <HomeIndicator />

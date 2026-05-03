@@ -10,10 +10,97 @@ import contents4 from '../img/contents4.png'
 import calendarIcon from '../svg/calendar.svg'
 import notificationIcon from '../svg/notification.svg'
 
-const primaryTabs = ['전체', '커뮤니티', '챌린지', '투표'] as const
-const communityTabs = ['전체', '자랑하기', '일상', '반려상식'] as const
-const voteTabs = ['전체', '목록', '투표 결과'] as const
+const challengeItems = [
+  {
+    id: 1,
+    title: '오늘의 미션',
+    description: '반 먹는 사진 중 BEST를 골라주세요!',
+    date: '2026.04.30',
+    participants: 8,
+  },
+  {
+    id: 2,
+    title: '산책 인증 챌린지',
+    description: '우리아이 즐겁게 산책하는 순간을 자랑해보세요',
+    date: '2026.04.30',
+    participants: 8,
+  },
+  {
+    id: 3,
+    title: '비포 애프터 콘텐츠',
+    description: '우리아이 미용 전과 후 사진을 올려주세요',
+    date: '2026.04.30',
+    participants: 8,
+  },
+  {
+    id: 4,
+    title: '코오잠 챌린지',
+    description: '우리아이 잠든 모습 자랑해보세요',
+    date: '2026.04.30',
+    participants: 8,
+  },
+] as const
+
+const voteListItems = [
+  {
+    id: 1,
+    title: '오늘의 미션 투표',
+    description: '밥 먹는 사진 중 BEST를 골라주세요!',
+    deadline: '마감시간 23:59',
+  },
+  {
+    id: 2,
+    title: '투표2.',
+    description: '',
+    deadline: '',
+  },
+  {
+    id: 3,
+    title: '투표3.',
+    description: '',
+    deadline: '',
+  },
+  {
+    id: 4,
+    title: '투표4.',
+    description: '',
+    deadline: '',
+  },
+  {
+    id: 5,
+    title: '투표5.',
+    description: '',
+    deadline: '',
+  },
+] as const
+
+const voteCandidateItems = [
+  { id: 1, badge: '챌린지 인증', title: '맛있는 밥시간!', author: '버찌부찌' },
+  { id: 2, badge: '챌린지 인증', title: '남남 잘 먹는 우리 댕댕이', author: '초코송이' },
+  { id: 3, badge: '챌린지 인증', title: '밥이 제일 좋아!', author: '코코애나' },
+  { id: 4, badge: '챌린지 인증', title: '오늘도 클리어', author: '콩이맘' },
+] as const
+
+const voteResultItems = [
+  { id: 1, badge: '챌린지 인증', title: '밥 먹는 사진 중 BEST를 골라주세요!' },
+  { id: 2, badge: '산책 인증', title: '산책 인증 사진 중 BEST를 골라주세요!' },
+  { id: 3, badge: '산책 인증', title: '산책 인증 사진 중 BEST를 골라주세요!' },
+] as const
+
+const voteResultRankings = [
+  { id: 1, rank: '2위', name: '초코송이', votes: '53표' },
+  { id: 2, rank: '1위', name: '버찌부찌', votes: '88표' },
+  { id: 3, rank: '3위', name: '코코아빠', votes: '32표' },
+] as const
+
+const topTabs = ['전체', '커뮤니티', '챌린지 인증', '투표'] as const
+const communitySubTabs = ['전체', '자랑하기', '일상', '반려상식'] as const
+const voteSubTabs = ['전체', '목록', '투표결과'] as const
 const sortOptions = ['인기순', '최신순'] as const
+
+type TopTab = (typeof topTabs)[number]
+type CommunitySubTab = (typeof communitySubTabs)[number]
+type VoteSubTab = (typeof voteSubTabs)[number]
 
 type CommunityPost = {
   id: number
@@ -32,44 +119,47 @@ const postData: CommunityPost[] = [
   {
     id: 1,
     tag: '일상',
-    title: '강아지가 산책 가자고 보채면 어떻게 하세요?',
-    author: '뽀짝집사',
+    title: '강아지 산책하러 나가면 자는척 해요',
+    author: '뿌직뿌직',
     date: '2026.04.30',
     timeText: '3시간 전',
-    likes: 8,
-    comments: 3,
+    likes: 4,
+    comments: 4,
     createdAt: '2026-04-30T09:00:00',
     image: contents4,
   },
   {
     id: 2,
     tag: '일상',
-    title: '퇴근 후 산책 루틴 공유해요',
-    author: '그날의집사',
+    title: '냉전중',
+    author: '뿌직뿌직',
     date: '2026.04.30',
-    likes: 6,
-    comments: 1,
+    timeText: '3시간 전',
+    likes: 4,
+    comments: 4,
     createdAt: '2026-04-30T18:20:00',
     image: contents2,
   },
   {
     id: 3,
-    tag: 'Q&A',
-    title: '강아지 발사탕 줄이는 방법 추천해주세요',
-    author: '조용한바다',
+    tag: '일상',
+    title: '강아지 발사탕 스프레이 추천해주세요!',
+    author: '뿌직뿌직',
     date: '2026.04.30',
-    likes: 6,
-    comments: 1,
+    timeText: '3시간 전',
+    likes: 4,
+    comments: 4,
     createdAt: '2026-04-30T14:10:00',
     image: contents1,
   },
   {
     id: 4,
     tag: '일상',
-    title: '오늘 우리 아이 첫 산책 성공했어요',
-    author: '여름멍멍',
+    title: '뽀미랑 부산 여행기',
+    author: '뿌직뿌직',
     date: '2026.04.30',
-    likes: 12,
+    timeText: '3시간 전',
+    likes: 4,
     comments: 4,
     createdAt: '2026-04-30T11:00:00',
     image: contents3,
@@ -81,7 +171,7 @@ const braggingPostData: CommunityPost[] = [
     id: 101,
     tag: '자랑하기',
     title: '우리 집 막내 미모 좀 봐주세요',
-    author: '모찌엄마',
+    author: '몽실엄마',
     date: '2026.04.30',
     timeText: '1시간 전',
     likes: 18,
@@ -92,9 +182,10 @@ const braggingPostData: CommunityPost[] = [
   {
     id: 102,
     tag: '자랑하기',
-    title: '오늘 미용하고 산책 다녀왔어요',
+    title: '오늘 미용하고 산책 나왔어요',
     author: '코코산책',
     date: '2026.04.30',
+    timeText: '2시간 전',
     likes: 14,
     comments: 4,
     createdAt: '2026-04-30T17:00:00',
@@ -103,9 +194,10 @@ const braggingPostData: CommunityPost[] = [
   {
     id: 103,
     tag: '자랑하기',
-    title: '간식 앞에서 눈빛이 반짝이는 순간',
-    author: '뽀삐누나',
+    title: '간식 앞에서 반짝이는 눈빛',
+    author: '복실누나',
     date: '2026.04.30',
+    timeText: '5시간 전',
     likes: 20,
     comments: 9,
     createdAt: '2026-04-30T15:20:00',
@@ -113,130 +205,41 @@ const braggingPostData: CommunityPost[] = [
   },
 ]
 
-const knowledgeContentItems = [
-  { id: 1, title: '초보 집사를 위한 추천 산책 가이드', image: contents3 },
-  { id: 2, title: '우리 아이 상태별 맞춤 생활 팁', image: contents1 },
-  { id: 3, title: '산책 후 꼭 확인해야 할 체크 포인트', image: contents2 },
-  { id: 4, title: '반려견을 위한 케어 체크리스트 3종', image: contents4 },
-] as const
-
-type VotePost = {
-  id: number
-  title: string
-  subtitle?: string
-  author: string
-  likes: number
-  comments: number
-  deadline: string
-}
-
-const voteData: VotePost[] = [
-  {
-    id: 1,
-    title: '오늘의 미션 투표',
-    subtitle: '밥 먹는 사진 중 BEST를 골라주세요',
-    author: '운영팀',
-    likes: 8,
-    comments: 3,
-    deadline: '마감시간 23:59',
-  },
-  {
-    id: 2,
-    title: '산책룩 투표',
-    subtitle: '오늘 가장 귀여운 산책룩을 골라주세요',
-    author: '운영팀',
-    likes: 12,
-    comments: 5,
-    deadline: '마감시간 21:00',
-  },
-] as const
-
-type VoteResultItem = {
-  id: number
-  badge: string
-  title: string
-  results: {
-    id: number
-    rank: string
-    name: string
-    votes: string
-    image: string
-  }[]
-}
-
-const voteResultData: VoteResultItem[] = [
-  {
-    id: 1,
-    badge: '챌린지 인증',
-    title: '밥 먹는 사진 중 BEST를 골라주세요',
-    results: [
-      { id: 1, rank: '2위', name: '초코송이', votes: '53표', image: contents2 },
-      { id: 2, rank: '1위', name: '별빛모찌', votes: '88표', image: contents4 },
-      { id: 3, rank: '3위', name: '코코산책', votes: '32표', image: contents1 },
-    ],
-  },
-  {
-    id: 2,
-    badge: '산책 인증',
-    title: '산책 인증 사진 중 BEST를 골라주세요',
-    results: [
-      { id: 1, rank: '1위', name: '여름멍멍', votes: '71표', image: contents3 },
-      { id: 2, rank: '2위', name: '하루집사', votes: '59표', image: contents4 },
-      { id: 3, rank: '3위', name: '초코송이', votes: '28표', image: contents2 },
-    ],
-  },
-] as const
-
-type ChallengeItem = {
-  id: number
-  title: string
-  description: string
-  date: string
-  participants: number
-}
-
-const challengeData: ChallengeItem[] = [
-  {
-    id: 1,
-    title: '오늘의 미션',
-    description: '밥 먹는 사진 중 BEST를 골라주세요',
-    date: '2026.04.30',
-    participants: 60,
-  },
-  {
-    id: 2,
-    title: '산책 인증 챌린지',
-    description: '우리 아이의 즐거운 산책 시간을 자랑해보세요',
-    date: '2026.04.30',
-    participants: 48,
-  },
+const knowledgeFeedItems = [
+  { id: 1, tag: '산책', title: '댕꿀잠자는 산책법 TOP3', image: contents2, likes: 8, comments: 3 },
+  { id: 2, tag: '케어', title: '섬세하게 케어해달라냥', image: contents3, likes: 8, comments: 3 },
+  { id: 3, tag: '일상', title: '고양이 점프의 비밀', image: contents1, likes: 8, comments: 3 },
+  { id: 4, tag: '일상', title: '수술 전 피, 검사 꼭 필요할까?', image: contents4, likes: 8, comments: 3 },
 ] as const
 
 function Community() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const initialKnowledgeView = searchParams.get('tab') === 'knowledge'
-  const [selectedPrimaryTab, setSelectedPrimaryTab] = useState<(typeof primaryTabs)[number]>(
-    '커뮤니티'
+
+  const [selectedTopTab, setSelectedTopTab] = useState<TopTab>('커뮤니티')
+  const [selectedCommunitySubTab, setSelectedCommunitySubTab] = useState<CommunitySubTab>(
+    initialKnowledgeView ? '반려상식' : '자랑하기'
   )
-  const [selectedSecondaryTab, setSelectedSecondaryTab] = useState<
-    (typeof communityTabs)[number] | (typeof voteTabs)[number]
-  >(initialKnowledgeView ? '반려상식' : '자랑하기')
+  const [selectedVoteSubTab, setSelectedVoteSubTab] = useState<VoteSubTab>('투표결과')
   const [selectedSort, setSelectedSort] = useState<(typeof sortOptions)[number]>('인기순')
   const [isSortOpen, setIsSortOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [likedPostIds, setLikedPostIds] = useState<number[]>([])
+  const [selectedChallengeId, setSelectedChallengeId] = useState<number | null>(null)
+  const [selectedVoteListId, setSelectedVoteListId] = useState<number | null>(null)
+  const [selectedVoteResultId, setSelectedVoteResultId] = useState<number | null>(null)
 
-  const isVoteView = selectedPrimaryTab === '투표'
-  const isChallengeView = selectedPrimaryTab === '챌린지'
-  const isBraggingView =
-    selectedPrimaryTab === '커뮤니티' && selectedSecondaryTab === '자랑하기'
-  const isKnowledgeView =
-    selectedPrimaryTab === '커뮤니티' && selectedSecondaryTab === '반려상식'
-  const isCommunityOverview =
-    selectedPrimaryTab === '커뮤니티' && selectedSecondaryTab === '전체'
+  const isOverviewTab = selectedTopTab === '전체'
+  const isCommunityTab = selectedTopTab === '커뮤니티'
+  const isChallengeTab = selectedTopTab === '챌린지 인증'
+  const isVoteTab = selectedTopTab === '투표'
+
+  const isBraggingView = isCommunityTab && selectedCommunitySubTab === '자랑하기'
+  const isKnowledgeView = isCommunityTab && selectedCommunitySubTab === '반려상식'
+  const isCommunityOverview = isCommunityTab && selectedCommunitySubTab === '전체'
   const activePostData = isBraggingView ? braggingPostData : postData
-  const currentSecondaryTabs = isVoteView ? voteTabs : communityTabs
+  const selectedChallenge = challengeItems.find((item) => item.id === selectedChallengeId) ?? null
 
   const posts = useMemo(() => {
     const keyword = searchTerm.trim().toLowerCase()
@@ -265,6 +268,21 @@ function Community() {
     )
   }
 
+  const sectionTitle = isOverviewTab
+    ? '전체'
+    : isKnowledgeView
+      ? '반려상식'
+      : isVoteTab
+        ? '투표'
+        : isChallengeTab
+          ? '챌린지 인증'
+          : '커뮤니티'
+
+  const showSearch = isOverviewTab || isCommunityTab
+  const showCommunitySubTabs = isCommunityTab
+  const showVoteSubTabs = isVoteTab
+  const showSort = !isOverviewTab && !isKnowledgeView && !isChallengeTab
+
   return (
     <>
       <PageHeader
@@ -286,7 +304,7 @@ function Community() {
       />
 
       <main className="page community_page">
-        {!isVoteView && !isChallengeView ? (
+        {showSearch ? (
           <section className="community_search_box">
             <label className="community_search_field">
               <input
@@ -303,32 +321,20 @@ function Community() {
           </section>
         ) : null}
 
-        {!isChallengeView ? (
-          <section className="community_subtab_bar" aria-label="커뮤니티 하위 탭">
-            {currentSecondaryTabs.map((tab) => (
-              <button
-                key={tab}
-                type="button"
-                className={selectedSecondaryTab === tab ? 'active' : ''}
-                onClick={() => setSelectedSecondaryTab(tab)}
-              >
-                {tab}
-              </button>
-            ))}
-          </section>
-        ) : null}
-
-        <section className="community_tab_bar" aria-label="커뮤니티 상위 탭">
-          {primaryTabs.map((tab) => (
+        <section className="community_tab_bar" aria-label="커뮤니티 상위 카테고리">
+          {topTabs.map((tab) => (
             <button
               key={tab}
               type="button"
-              className={selectedPrimaryTab === tab ? 'active' : ''}
+              className={selectedTopTab === tab ? 'active' : ''}
               onClick={() => {
-                setSelectedPrimaryTab(tab)
-                setSelectedSecondaryTab(
-                  tab === '투표' ? '전체' : tab === '커뮤니티' ? '자랑하기' : '전체'
-                )
+                setSelectedTopTab(tab)
+                setIsSortOpen(false)
+                setSelectedCommunitySubTab('전체')
+                setSelectedVoteSubTab('전체')
+                setSelectedChallengeId(null)
+                setSelectedVoteListId(null)
+                setSelectedVoteResultId(null)
               }}
             >
               {tab}
@@ -336,136 +342,415 @@ function Community() {
           ))}
         </section>
 
-        {!isVoteView ? (
-          <section className="community_sort_bar" aria-label="정렬">
-            <div className={`community_sort_dropdown ${isSortOpen ? 'open' : ''}`}>
+        {showCommunitySubTabs ? (
+          <section className="community_subtab_bar" aria-label="커뮤니티 하위 카테고리">
+            {communitySubTabs.map((tab) => (
               <button
+                key={tab}
                 type="button"
-                className="community_sort_toggle active"
-                onClick={() => setIsSortOpen((prev) => !prev)}
+                className={selectedCommunitySubTab === tab ? 'active' : ''}
+                onClick={() => setSelectedCommunitySubTab(tab)}
               >
-                {selectedSort}
+                {tab}
               </button>
-              {isSortOpen ? (
-                <div className="community_sort_menu">
-                  {sortOptions
-                    .filter((option) => option !== selectedSort)
-                    .map((option) => (
-                      <button
-                        key={option}
-                        type="button"
-                        className="community_sort_option"
-                        onClick={() => {
-                          setSelectedSort(option)
-                          setIsSortOpen(false)
-                        }}
-                      >
-                        {option}
-                      </button>
-                    ))}
-                </div>
-              ) : null}
-            </div>
+            ))}
           </section>
         ) : null}
 
-        {isChallengeView ? (
-          <section className="community_challenge_view">
-            <article className="community_challenge_featured">
-              <h2>이번주 핫한 챌린지</h2>
-              <div className="community_challenge_progress">
-                <div className="community_challenge_progress_fill" />
-                <span>30% 달성</span>
-              </div>
-              <strong>60</strong>
-              <button type="button">챌린지 참여하기</button>
-            </article>
+        {showVoteSubTabs ? (
+          <section className="community_subtab_bar" aria-label="투표 하위 카테고리">
+            {voteSubTabs.map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                className={selectedVoteSubTab === tab ? 'active' : ''}
+                onClick={() => setSelectedVoteSubTab(tab)}
+              >
+                {tab}
+              </button>
+            ))}
+          </section>
+        ) : null}
 
-            <section className="community_challenge_section">
-              <h2>챌린지</h2>
-              <div className="community_challenge_list">
-                {challengeData.map((item) => (
-                  <article key={item.id} className="community_challenge_item">
-                    <div className="community_challenge_copy">
+        {!isKnowledgeView && !isOverviewTab && !isChallengeTab ? (
+          <section
+            className={`community_list_header ${isChallengeTab ? 'community_list_header_challenge' : ''}`}
+          >
+            <h2>{sectionTitle}</h2>
+            {showSort ? (
+              <div className={`community_sort_dropdown ${isSortOpen ? 'open' : ''}`}>
+                <button
+                  type="button"
+                  className="community_sort_toggle"
+                  onClick={() => setIsSortOpen((prev) => !prev)}
+                >
+                  {selectedSort}
+                </button>
+                {isSortOpen ? (
+                  <div className="community_sort_menu">
+                    {sortOptions
+                      .filter((option) => option !== selectedSort)
+                      .map((option) => (
+                        <button
+                          key={option}
+                          type="button"
+                          className="community_sort_option"
+                          onClick={() => {
+                            setSelectedSort(option)
+                            setIsSortOpen(false)
+                          }}
+                        >
+                          {option}
+                        </button>
+                      ))}
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+          </section>
+        ) : null}
+
+        {isOverviewTab ? (
+          <section className="community_overview">
+            <section className="community_overview_section">
+              <div className="community_overview_heading">
+                <h2>커뮤니티</h2>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedTopTab('커뮤니티')
+                    setSelectedCommunitySubTab('전체')
+                  }}
+                >
+                  바로가기
+                </button>
+              </div>
+              <div className="community_overview_post_list">
+                {[braggingPostData[0], postData[0]].map((post) => (
+                  <article key={post.id} className="community_post">
+                    <img className="community_post_image" src={post.image} alt={post.title} />
+                    <div className="community_post_body">
+                      <div className="community_post_header">
+                        <span className="community_post_tag">{post.tag}</span>
+                        <h2>{post.title}</h2>
+                      </div>
+                      <div className="community_post_meta">
+                        <span className="community_post_author">{post.author}</span>
+                      </div>
+                      <p className="community_post_date">
+                        {post.timeText ? <span>{post.timeText}</span> : null}
+                        <span>{post.date}</span>
+                      </p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+
+            <section className="community_overview_section">
+              <div className="community_overview_heading">
+                <h2>챌린지 인증</h2>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedTopTab('챌린지 인증')
+                    setSelectedChallengeId(null)
+                  }}
+                >
+                  바로가기
+                </button>
+              </div>
+              <div className="community_challenge_simple_list">
+                {challengeItems.slice(0, 2).map((item) => (
+                  <article key={item.id} className="community_challenge_simple_item">
+                    <div className="community_challenge_simple_copy">
                       <h3>{item.title}</h3>
                       <p>{item.description}</p>
                       <span>{item.date}</span>
-                      <strong>참여자 수 {item.participants}</strong>
+                      <strong>참여자수 {item.participants}</strong>
                     </div>
-                    <button type="button" className="community_challenge_join">
+                    <button type="button" className="community_challenge_simple_join">
                       참여하기
                     </button>
                   </article>
                 ))}
               </div>
             </section>
-          </section>
-        ) : isVoteView ? (
-          <section className="community_overview">
-            <article className="community_overview_section">
-              <div className="community_overview_heading">
-                <h2>목록</h2>
-                <span>참여 가능한 투표</span>
-              </div>
-              <div className="community_vote_feed">
-                {voteData.map((vote) => (
-                  <article key={vote.id} className="community_vote_card">
-                    <div className="community_vote_header">
-                      <h2>{vote.title}</h2>
-                      {vote.subtitle ? <p>{vote.subtitle}</p> : null}
-                    </div>
-                    <div className="community_post_meta community_vote_meta">
-                      <span className="community_profile_avatar" aria-hidden="true">
-                        프로필
-                      </span>
-                      <span className="community_post_author">{vote.author}</span>
-                    </div>
-                    <div className="community_post_actions community_vote_actions">
-                      <button type="button">좋아요 {vote.likes}</button>
-                      <button type="button">댓글 {vote.comments}</button>
-                    </div>
-                    <p className="community_vote_deadline">{vote.deadline}</p>
-                    <button type="button" className="community_vote_button">
-                      투표하러 가기
-                    </button>
-                  </article>
-                ))}
-              </div>
-            </article>
 
-            <article className="community_overview_section">
+            <section className="community_overview_section">
               <div className="community_overview_heading">
-                <h2>투표 결과</h2>
-                <span>최근 마감된 결과</span>
+                <h2>투표</h2>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedTopTab('투표')
+                    setSelectedVoteSubTab('전체')
+                    setSelectedVoteListId(null)
+                    setSelectedVoteResultId(null)
+                  }}
+                >
+                  바로가기
+                </button>
               </div>
-              <div className="community_vote_result_feed">
-                {voteResultData.map((item) => (
-                  <article key={item.id} className="community_vote_result_card">
-                    <div className="community_vote_result_image" aria-hidden="true">
+              <div className="community_vote_result_screen community_overview_vote_preview">
+                {voteResultItems.slice(0, 2).map((item) => (
+                  <article key={item.id} className="community_vote_result_entry">
+                    <div className="community_vote_result_placeholder">
                       투표가
                       <br />
-                      종료됐어요
+                      종료되었습니다.
                     </div>
-                    <div className="community_vote_result_body">
-                      <span className="community_vote_candidate_badge">{item.badge}</span>
-                      <h2>{item.title}</h2>
-                      <button type="button" className="community_vote_candidate_button">
+                    <div className="community_vote_result_panel">
+                      <span className="community_vote_result_label">{item.badge}</span>
+                      <h3>{item.title}</h3>
+                      <button type="button" className="community_vote_result_action">
                         결과보기
                       </button>
                     </div>
                   </article>
                 ))}
               </div>
-            </article>
+            </section>
           </section>
+        ) : isChallengeTab ? (
+          <section className="community_challenge_screen">
+            <article className="community_challenge_summary_card">
+              <h3>이번주 특별 상금 챌린지</h3>
+              <div className="community_challenge_summary_progress">
+                <div className="community_challenge_summary_fill" />
+                <span>30% 달성</span>
+              </div>
+              <strong>60</strong>
+              <button type="button">특별 포인트 받기</button>
+            </article>
+
+            <div className="community_challenge_section_title">
+              <h2>챌린지</h2>
+            </div>
+
+            {selectedChallenge ? (
+              <article className="community_challenge_join_detail">
+                <button
+                  type="button"
+                  className="community_detail_back_button"
+                  onClick={() => setSelectedChallengeId(null)}
+                >
+                  이전
+                </button>
+                <div className="community_challenge_join_copy">
+                  <h3>{selectedChallenge.title}</h3>
+                  <p>{selectedChallenge.description}</p>
+                  <span>{selectedChallenge.date}</span>
+                  <strong>참여자수 {selectedChallenge.participants}</strong>
+                </div>
+                <button type="button" className="community_challenge_upload_cta">
+                  사진 업로드하기
+                </button>
+              </article>
+            ) : (
+              <div className="community_challenge_simple_list">
+                {challengeItems.map((item) => (
+                  <article key={item.id} className="community_challenge_simple_item">
+                    <div className="community_challenge_simple_copy">
+                      <h3>{item.title}</h3>
+                      <p>{item.description}</p>
+                      <span>{item.date}</span>
+                      <strong>참여자수 {item.participants}</strong>
+                    </div>
+                    <button
+                      type="button"
+                      className="community_challenge_simple_join"
+                      onClick={() => setSelectedChallengeId(item.id)}
+                    >
+                      참여하기
+                    </button>
+                  </article>
+                ))}
+              </div>
+            )}
+          </section>
+        ) : isVoteTab ? (
+          selectedVoteSubTab === '목록' ? (
+            selectedVoteListId ? (
+              <section className="community_vote_candidate_screen">
+                <button
+                  type="button"
+                  className="community_detail_back_button"
+                  onClick={() => setSelectedVoteListId(null)}
+                >
+                  이전
+                </button>
+                {voteCandidateItems.map((item, index) => (
+                  <article key={item.id} className="community_vote_candidate_entry">
+                    <div className="community_vote_candidate_placeholder">후보 {index + 1}</div>
+                    <div className="community_vote_candidate_panel">
+                      <span className="community_vote_candidate_label">{item.badge}</span>
+                      <h3>{item.title}</h3>
+                      <div className="community_vote_candidate_meta_row">
+                        <span>프로필 이미지</span>
+                        <span>{item.author}</span>
+                      </div>
+                      <button type="button" className="community_vote_candidate_action">
+                        투표하기
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </section>
+            ) : (
+              <section className="community_vote_list_screen">
+                {voteListItems.map((item) => (
+                  <article key={item.id} className="community_vote_list_item">
+                    <div className="community_vote_list_header">
+                      <h3>{item.title}</h3>
+                      {item.deadline ? <span>{item.deadline}</span> : null}
+                    </div>
+                    {item.description ? <p>{item.description}</p> : null}
+                    <div className="community_vote_list_meta">
+                      <span>프로필 이미지</span>
+                      <span>운영팀</span>
+                    </div>
+                    <div className="community_vote_list_actions">
+                      <button type="button" aria-label="좋아요">
+                        <span className="community_like_icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24">
+                            <path d="M12 20.2 4.9 13.6a4.8 4.8 0 0 1 6.8-6.8L12 7.9l.3-.3a4.8 4.8 0 1 1 6.8 6.8Z" />
+                          </svg>
+                        </span>
+                        <span>좋아요 8</span>
+                      </button>
+                      <button type="button" aria-label="댓글">
+                        <span className="community_comment_icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24">
+                            <path d="M12 4.8c-4.4 0-8 2.9-8 6.6 0 2.1 1.2 4 3.1 5.2l-.8 3 3.3-1.8c.8.2 1.6.3 2.4.3 4.4 0 8-2.9 8-6.7s-3.6-6.6-8-6.6Z" />
+                            <circle cx="9" cy="11.4" r="0.8" />
+                            <circle cx="12" cy="11.4" r="0.8" />
+                            <circle cx="15" cy="11.4" r="0.8" />
+                          </svg>
+                        </span>
+                        <span>댓글 3</span>
+                      </button>
+                      <button type="button" aria-label="공유하기">
+                        <span className="community_share_icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24">
+                            <path d="M20 4 9.4 14.6" />
+                            <path d="m20 4-6.7 15-3.3-6.7L3.3 9 20 4Z" />
+                          </svg>
+                        </span>
+                        <span>공유하기</span>
+                      </button>
+                    </div>
+                    <button
+                      type="button"
+                      className="community_vote_list_cta"
+                      onClick={() => setSelectedVoteListId(item.id)}
+                    >
+                      투표하러 가기(참여 시+10)
+                    </button>
+                  </article>
+                ))}
+              </section>
+            )
+          ) : selectedVoteSubTab === '투표결과' ? (
+            selectedVoteResultId ? (
+              <section className="community_vote_result_detail_screen">
+                <button
+                  type="button"
+                  className="community_detail_back_button"
+                  onClick={() => setSelectedVoteResultId(null)}
+                >
+                  이전
+                </button>
+                <h3>미션 투표 결과</h3>
+                <div className="community_vote_result_podium">
+                  {voteResultRankings.map((item) => (
+                    <article
+                      key={item.id}
+                      className={`community_vote_result_podium_item ${
+                        item.rank === '1위' ? 'is-winner' : ''
+                      }`}
+                    >
+                      <div className="community_vote_result_podium_box">{item.rank}</div>
+                      <strong>{item.name}</strong>
+                      <span>{item.votes}</span>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            ) : (
+              <section className="community_vote_result_screen">
+                {voteResultItems.map((item) => (
+                  <article key={item.id} className="community_vote_result_entry">
+                    <div className="community_vote_result_placeholder">
+                      투표가
+                      <br />
+                      종료되었습니다.
+                    </div>
+                    <div className="community_vote_result_panel">
+                      <span className="community_vote_result_label">{item.badge}</span>
+                      <h3>{item.title}</h3>
+                      <button
+                        type="button"
+                        className="community_vote_result_action"
+                        onClick={() => setSelectedVoteResultId(item.id)}
+                      >
+                        결과보기
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </section>
+            )
+          ) : (
+            <section className="community_feed">
+              <div className="community_empty_state">투표 콘텐츠 준비중이에요.</div>
+            </section>
+          )
         ) : isKnowledgeView ? (
           <section className="community_knowledge_feed">
-            <div className="community_knowledge_grid">
-              {knowledgeContentItems.map((item) => (
-                <article key={item.id} className="community_knowledge_card">
-                  <img src={item.image} alt={item.title} />
-                  <div className="community_knowledge_overlay">
-                    <p>{item.title}</p>
+            <div className="community_knowledge_list">
+              {knowledgeFeedItems.map((item) => (
+                <article key={item.id} className="community_knowledge_feed_card">
+                  <img
+                    className="community_knowledge_feed_image"
+                    src={item.image}
+                    alt={item.title}
+                  />
+                  <div className="community_knowledge_feed_body">
+                    <div className="community_knowledge_feed_title_row">
+                      <span className="community_knowledge_feed_tag">{item.tag}</span>
+                      <h3>{item.title}</h3>
+                    </div>
+                    <div className="community_knowledge_feed_actions">
+                      <button type="button" aria-label="좋아요">
+                        <span className="community_like_icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24">
+                            <path d="M12 20.2 4.9 13.6a4.8 4.8 0 0 1 6.8-6.8L12 7.9l.3-.3a4.8 4.8 0 1 1 6.8 6.8Z" />
+                          </svg>
+                        </span>
+                        <span>좋아요 {item.likes}</span>
+                      </button>
+                      <button type="button" aria-label="댓글">
+                        <span className="community_comment_icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24">
+                            <path d="M12 4.8c-4.4 0-8 2.9-8 6.6 0 2.1 1.2 4 3.1 5.2l-.8 3 3.3-1.8c.8.2 1.6.3 2.4.3 4.4 0 8-2.9 8-6.7s-3.6-6.6-8-6.6Z" />
+                            <circle cx="9" cy="11.4" r="0.8" />
+                            <circle cx="12" cy="11.4" r="0.8" />
+                            <circle cx="15" cy="11.4" r="0.8" />
+                          </svg>
+                        </span>
+                        <span>댓글 {item.comments}</span>
+                      </button>
+                      <button type="button" aria-label="공유하기">
+                        <span className="community_share_icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24">
+                            <path d="M20 4 9.4 14.6" />
+                            <path d="m20 4-6.7 15-3.3-6.7L3.3 9 20 4Z" />
+                          </svg>
+                        </span>
+                        <span>공유하기</span>
+                      </button>
+                    </div>
                   </div>
                 </article>
               ))}
@@ -473,10 +758,12 @@ function Community() {
           </section>
         ) : isCommunityOverview ? (
           <section className="community_overview">
-            <article className="community_overview_section">
+            <section className="community_overview_section">
               <div className="community_overview_heading">
                 <h2>자랑하기</h2>
-                <span>우리 아이 자랑 모음</span>
+                <button type="button" onClick={() => setSelectedCommunitySubTab('자랑하기')}>
+                  바로가기
+                </button>
               </div>
               <div className="community_overview_post_list">
                 {braggingPostData.slice(0, 2).map((post) => (
@@ -488,9 +775,6 @@ function Community() {
                         <h2>{post.title}</h2>
                       </div>
                       <div className="community_post_meta">
-                        <span className="community_profile_avatar" aria-hidden="true">
-                          프로필
-                        </span>
                         <span className="community_post_author">{post.author}</span>
                       </div>
                       <p className="community_post_date">
@@ -501,7 +785,85 @@ function Community() {
                   </article>
                 ))}
               </div>
-            </article>
+            </section>
+
+            <section className="community_overview_section">
+              <div className="community_overview_heading">
+                <h2>일상</h2>
+                <button type="button" onClick={() => setSelectedCommunitySubTab('일상')}>
+                  바로가기
+                </button>
+              </div>
+              <div className="community_overview_post_list">
+                {postData.slice(0, 2).map((post) => (
+                  <article key={post.id} className="community_post">
+                    <img className="community_post_image" src={post.image} alt={post.title} />
+                    <div className="community_post_body">
+                      <div className="community_post_header">
+                        <span className="community_post_tag">{post.tag}</span>
+                        <h2>{post.title}</h2>
+                      </div>
+                      <div className="community_post_meta">
+                        <span className="community_post_author">{post.author}</span>
+                      </div>
+                      <p className="community_post_date">
+                        {post.timeText ? <span>{post.timeText}</span> : null}
+                        <span>{post.date}</span>
+                      </p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+
+            <section className="community_overview_section">
+              <div className="community_overview_heading">
+                <h2>반려상식</h2>
+                <button type="button" onClick={() => setSelectedCommunitySubTab('반려상식')}>
+                  바로가기
+                </button>
+              </div>
+              <div className="community_overview_post_list">
+                {knowledgeFeedItems.slice(0, 2).map((item) => (
+                  <article key={item.id} className="community_post">
+                    <img className="community_post_image" src={item.image} alt={item.title} />
+                    <div className="community_post_body">
+                      <div className="community_post_header">
+                        <span className="community_post_tag">{item.tag}</span>
+                        <h3>{item.title}</h3>
+                      </div>
+                      <div className="community_post_meta">
+                        <span className="community_post_author">운영팀</span>
+                      </div>
+                      <p className="community_post_date">
+                        <span>2026.04.30</span>
+                      </p>
+                      <div className="community_post_actions">
+                        <button type="button" aria-label="좋아요">
+                          <span className="community_like_icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                              <path d="M12 20.2 4.9 13.6a4.8 4.8 0 0 1 6.8-6.8L12 7.9l.3-.3a4.8 4.8 0 1 1 6.8 6.8Z" />
+                            </svg>
+                          </span>
+                          <span className="community_action_count">{item.likes}</span>
+                        </button>
+                        <button type="button" aria-label="댓글">
+                          <span className="community_comment_icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                              <path d="M12 4.8c-4.4 0-8 2.9-8 6.6 0 2.1 1.2 4 3.1 5.2l-.8 3 3.3-1.8c.8.2 1.6.3 2.4.3 4.4 0 8-2.9 8-6.7s-3.6-6.6-8-6.6Z" />
+                              <circle cx="9" cy="11.4" r="0.8" />
+                              <circle cx="12" cy="11.4" r="0.8" />
+                              <circle cx="15" cy="11.4" r="0.8" />
+                            </svg>
+                          </span>
+                          <span className="community_action_count">{item.comments}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
           </section>
         ) : (
           <section className="community_feed">
@@ -514,19 +876,13 @@ function Community() {
                       <span className="community_post_tag">{post.tag}</span>
                       <h2>{post.title}</h2>
                     </div>
-
                     <div className="community_post_meta">
-                      <span className="community_profile_avatar" aria-hidden="true">
-                        프로필
-                      </span>
                       <span className="community_post_author">{post.author}</span>
                     </div>
-
                     <p className="community_post_date">
                       {post.timeText ? <span>{post.timeText}</span> : null}
                       <span>{post.date}</span>
                     </p>
-
                     <div className="community_post_actions">
                       <button
                         type="button"
@@ -538,16 +894,36 @@ function Community() {
                             <path d="M12 20.2 4.9 13.6a4.8 4.8 0 0 1 6.8-6.8L12 7.9l.3-.3a4.8 4.8 0 1 1 6.8 6.8Z" />
                           </svg>
                         </span>
-                        좋아요 {post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}
+                        <span className="community_action_count">
+                          {post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}
+                        </span>
                       </button>
-                      <button type="button">댓글 {post.comments}</button>
-                      <button type="button">공유하기</button>
+                      <button type="button" aria-label="댓글">
+                        <span className="community_comment_icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24">
+                            <path d="M12 4.8c-4.4 0-8 2.9-8 6.6 0 2.1 1.2 4 3.1 5.2l-.8 3 3.3-1.8c.8.2 1.6.3 2.4.3 4.4 0 8-2.9 8-6.7s-3.6-6.6-8-6.6Z" />
+                            <circle cx="9" cy="11.4" r="0.8" />
+                            <circle cx="12" cy="11.4" r="0.8" />
+                            <circle cx="15" cy="11.4" r="0.8" />
+                          </svg>
+                        </span>
+                        <span className="community_action_count">{post.comments}</span>
+                      </button>
+                      <button type="button" aria-label="공유">
+                        <span className="community_share_icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24">
+                            <path d="M20 4 9.4 14.6" />
+                            <path d="m20 4-6.7 15-3.3-6.7L3.3 9 20 4Z" />
+                          </svg>
+                        </span>
+                        <span className="community_action_count">4</span>
+                      </button>
                     </div>
                   </div>
                 </article>
               ))
             ) : (
-              <div className="community_empty_state">검색 결과가 없어요</div>
+              <div className="community_empty_state">검색 결과가 없어요.</div>
             )}
           </section>
         )}
