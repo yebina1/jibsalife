@@ -11,8 +11,7 @@ function PageHeader({ title, leftContent, rightContent }: HeaderProps) {
     return () => {
       setHeader(null)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setHeader, title])
+  }, [setHeader, title, leftContent])
 
   return null
 }

@@ -23,6 +23,13 @@ const navIconMap = {
   mypage: { active: navMypageIcon, inactive: navMypageOffIcon },
 } as const
 
+const navIconAltMap = {
+  home: '홈 아이콘',
+  health: '건강 아이콘',
+  community: '커뮤니티 아이콘',
+  mypage: '마이페이지 아이콘',
+} as const
+
 function NavIcon({ type, active }: { type: (typeof navItems)[number]['icon']; active: boolean }) {
   const className = active ? 'layout_nav_icon active' : 'layout_nav_icon'
 
@@ -46,7 +53,7 @@ function NavIcon({ type, active }: { type: (typeof navItems)[number]['icon']; ac
 
   const icon = active ? navIconMap[type].active : navIconMap[type].inactive
 
-  return <img src={icon} className={className} alt="" aria-hidden="true" />
+  return <img src={icon} className={className} alt={navIconAltMap[type]} />
 }
 
 function Nav() {

@@ -8,10 +8,10 @@ function StateBar() {
   return (
     <div className="state_bar" aria-label="status bar">
       <Time />
-      <div className="state_bar_icons" aria-hidden="true">
-        <img className="state_bar_cellular" src={cellularIcon} alt="" />
-        <img className="state_bar_wifi" src={wifiIcon} alt="" />
-        <img className="state_bar_battery" src={batteryIcon} alt="" />
+      <div className="state_bar_icons">
+        <img className="state_bar_cellular" src={cellularIcon} alt="셀룰러 신호" />
+        <img className="state_bar_wifi" src={wifiIcon} alt="와이파이" />
+        <img className="state_bar_battery" src={batteryIcon} alt="배터리" />
       </div>
     </div>
   )

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Outlet, useLocation } from 'react-router'
 import Header from '../components/Header'
+import HomeIndicator from '../components/HomeIndicator'
 import Nav from '../components/Nav'
 import StateBar from '../components/StateBar'
 import { HeaderContext, type HeaderConfig } from '../contexts/HeaderContext'
@@ -8,7 +9,7 @@ import { HeaderContext, type HeaderConfig } from '../contexts/HeaderContext'
 function Layout() {
   const [header, setHeader] = useState<HeaderConfig>(null)
   const { pathname } = useLocation()
-  const noPaddingPaths = ['/community', '/mypage']
+  const noPaddingPaths = ['/community']
   const hasContentPadding = !noPaddingPaths.includes(pathname)
   const contentClassName =
     hasContentPadding ? 'layout_content' : 'layout_content layout_content_no_padding'
@@ -20,11 +21,12 @@ function Layout() {
           <StateBar />
           {header && <Header {...header} />}
         </header>
-        <main className={contentClassName}>
+        <div className={contentClassName}>
           <Outlet />
-        </main>
+        </div>
         <footer>
           <Nav />
+          <HomeIndicator />
         </footer>
       </div>
     </HeaderContext.Provider>

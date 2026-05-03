@@ -36,7 +36,7 @@ function HealthCheckSummary() {
           <img
             className="health_check_summary_icon"
             src={checkMarkIcon}
-            alt=""
+            alt="확인 완료"
           />
           <Title
             as="h2"
@@ -48,8 +48,7 @@ function HealthCheckSummary() {
             }
           >
             <p>
-              지금 당장 병원 방문이 필요해 보이지는 않으나,
-              <br />필요 시 전문가와 상담 또는 병원을 방문해 주세요.
+              지금 당장 병원 방문이 필요해 보이지는 않으나, 필요 시 전문가와 상담 또는 병원을 방문해 주세요.
             </p>
           </Title>
         </section>

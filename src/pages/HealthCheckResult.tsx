@@ -61,14 +61,14 @@ function HealthCheckResult() {
       rightContent={<CloseButton />} />
       <main className="page health_page health_check_result_page">
         <Title as="h3" title="확인이 완료되었어요!">
-          <img className="health_check_result_icon" src={checkMarkIcon} alt="" />
+          <img className="health_check_result_icon" src={checkMarkIcon} alt="확인 완료" />
         </Title>
         <HealthResultCard score={mockHealthResult.score} />
         <HealthResultInsights items={mockHealthResult.insights} />
         <HealthResultSummary title="확인 결과 요약" items={summaryItems} />
         <Button
           type="button"
-          className="health_result_detail_btn"
+          className="purple_btn"
           onClick={() => navigate('/health/result/detail')}
         >
           결과 자세히 보기

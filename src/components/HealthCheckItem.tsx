@@ -8,7 +8,7 @@ function HealthCheckItem({ icon, label, onClick }: HealthCheckItemProps) {
   return (
     <li className="health_check_item">
       <button type="button" onClick={onClick}>
-        <i className={icon}></i>
+        <img src={icon} alt={`${label} 아이콘`} />
         <span>{label}</span>
       </button>
     </li>

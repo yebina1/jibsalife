@@ -6,11 +6,12 @@ type TitleProps = {
   title: ReactNode
   beforeTitle?: ReactNode
   children?: ReactNode
+  className?: string
 }
 
-function Title({ as: Heading = 'h1', title, beforeTitle, children }: TitleProps) {
+function Title({ as: Heading = 'h1', title, beforeTitle, children, className }: TitleProps) {
   return (
-    <div className="title">
+    <div className={className ? `title ${className}` : 'title'}>
       {beforeTitle}
       <Heading>{title}</Heading>
       {children}

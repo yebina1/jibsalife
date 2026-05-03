@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import './ChatRoom.css'
 
@@ -27,6 +27,11 @@ function ChatRoom({
 }: ChatRoomProps) {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages)
   const [message, setMessage] = useState('')
+  const bottomRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'instant' })
+  }, [messages])
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -53,12 +58,23 @@ function ChatRoom({
             className={`chat_message chat_message_${chatMessage.sender}`}
             key={chatMessage.id}
           >
-            <p>{chatMessage.text}</p>
-            {chatMessage.sender === 'bot' && (
-              <span className="chat_message_help">{helpText}</span>
-            )}
+            <div className="chat_message_avatar" aria-hidden="true">
+              {chatMessage.sender === 'bot' ? '✦' : '🐾'}
+            </div>
+            <div className="chat_message_content">
+              <span className="chat_message_name">
+                {chatMessage.sender === 'bot' ? 'AI' : '나'}
+              </span>
+              <div className="chat_message_bubble">
+                <p>{chatMessage.text}</p>
+                {chatMessage.sender === 'bot' && (
+                  <span className="chat_message_help">{helpText}</span>
+                )}
+              </div>
+            </div>
           </div>
         ))}
+        <div ref={bottomRef} />
       </div>
 
       <form className="chat_room_form" onSubmit={handleSubmit}>
@@ -69,7 +85,11 @@ function ChatRoom({
           value={message}
           onChange={(event) => setMessage(event.target.value)}
         />
-        <button type="submit">{submitLabel}</button>
+        <button type="submit" aria-label={submitLabel}>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+          </svg>
+        </button>
       </form>
     </section>
   )

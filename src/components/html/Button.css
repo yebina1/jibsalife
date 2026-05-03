@@ -1,4 +1,4 @@
-.health_result_detail_btn {
+.purple_btn {
   width: min(100%, 472px);
   height: 64px;
   border-radius: 18px;
@@ -6,4 +6,16 @@
   color: #ffffff;
   font-size: 18px;
   font-weight: 600;
+}
+
+.white_btn {
+  width: 100%;
+  min-width: 313px;
+  height: 54px;
+  border-radius: 8px;
+  background: var(--white);
+  color: #111111;
+  font-size: 16px;
+  font-weight: 600;
+  border: 1px solid #E5E5EC;
 }

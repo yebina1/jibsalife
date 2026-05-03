@@ -46,7 +46,7 @@ function HealthHospitalSearch() {
 
         <HospitalList items={hospitalItems} />
 
-        <Button type="button" className="health_result_detail_btn">
+        <Button type="button" className="purple_btn">
           지도에서 더 보기
         </Button>
 
