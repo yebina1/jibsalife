@@ -9,9 +9,10 @@ import navMypageIcon from '../svg/nav mypage.svg'
 import navMypageOffIcon from '../svg/nav mypage off.svg'
 
 const navItems = [
-  { path: '/home', label: '홈', icon: 'home' },
   { path: '/health', label: '건강', icon: 'health' },
   { path: '/community', label: '커뮤니티', icon: 'community' },
+  { path: '/home', label: '홈', icon: 'home' },
+  { path: '/place', label: '장소', icon: 'place' },
   { path: '/mypage', label: '마이페이지', icon: 'mypage' },
 ] as const
 
@@ -24,6 +25,25 @@ const navIconMap = {
 
 function NavIcon({ type, active }: { type: (typeof navItems)[number]['icon']; active: boolean }) {
   const className = active ? 'layout_nav_icon active' : 'layout_nav_icon'
+
+  if (type === 'place') {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        className={className}
+        aria-hidden="true"
+        fill="none"
+        style={{ fill: 'none' }}
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M12 4.5 18.2 17a1.4 1.4 0 0 1-1.93 1.88L12 16.6l-4.27 2.28A1.4 1.4 0 0 1 5.8 17L12 4.5Z" />
+      </svg>
+    )
+  }
+
   const icon = active ? navIconMap[type].active : navIconMap[type].inactive
 
   return <img src={icon} className={className} alt="" aria-hidden="true" />

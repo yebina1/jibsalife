@@ -14,6 +14,7 @@ import HealthVetChat from './pages/HealthVetChat'
 import Home from './pages/home'
 import Mission from './pages/Mission'
 import MyPage from './pages/mypage'
+import Place from './pages/Place'
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/place" element={<Place />} />
           <Route path="/mission" element={<Mission />} />
           <Route path="/health" element={<Health />} />
           <Route path="/health/check-loading" element={<HealthCheckLoading />} />

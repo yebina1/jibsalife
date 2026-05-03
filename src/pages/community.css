@@ -8,6 +8,22 @@
   color: #131313;
 }
 
+.community_header_notification {
+  position: relative;
+}
+
+.community_header_notification::after {
+  position: absolute;
+  top: 3px;
+  right: 2px;
+  width: 7px;
+  height: 7px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  background: #ff6d4d;
+  content: '';
+}
+
 .community_page > .title {
   margin: 0 12px 20px;
 }
@@ -54,10 +70,10 @@
 }
 
 .community_tab_bar {
-  gap: 42px;
+  gap: 34px;
   padding-top: 8px;
   padding-bottom: 0;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   background: #ffffff;
   border-bottom: 1px solid #e9e9ee;
 }
@@ -71,7 +87,7 @@
 }
 
 .community_tab_bar button.active {
-  color: #a28bfa;
+  color: #111111;
 }
 
 .community_tab_bar button.active::after {
@@ -79,9 +95,9 @@
   right: 0;
   bottom: 0;
   left: 0;
-  height: 3px;
+  height: 4px;
   border-radius: 999px;
-  background: #a28bfa;
+  background: #7560f6;
   content: '';
 }
 
@@ -91,32 +107,39 @@
 
 .community_subtab_bar {
   gap: 12px;
-  margin-bottom: 14px;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  background: #e2f2fc;
+  margin-bottom: 18px;
+  padding-top: 16px;
+  padding-bottom: 14px;
+  background: #ffffff;
 }
 
 .community_subtab_bar button {
-  height: 50px;
-  padding: 0 24px;
-  border: 1px solid #d9dbe4;
-  border-radius: 999px;
+  min-width: 116px;
+  height: 52px;
+  padding: 0 22px;
+  border: 1px solid #d8dbe7;
+  border-radius: 15px;
   background: #ffffff;
-  color: #30323a;
-  font-size: 16px;
-  font-weight: 700;
+  color: #50535c;
+  font-size: 15px;
+  font-weight: 800;
+  box-shadow: 0 2px 10px rgba(17, 24, 39, 0.04);
 }
 
 .community_subtab_bar button.active {
-  border-color: #10547c;
-  background: #10547c;
+  border-color: #7560f6;
+  background: linear-gradient(180deg, #7f69f7 0%, #6f5cf1 100%);
   color: #ffffff;
+  box-shadow: 0 10px 20px rgba(111, 92, 241, 0.22);
 }
 
 .community_search_box {
   margin-bottom: 14px;
   padding: 0 6px;
+}
+
+.community_subtab_bar ~ .community_search_box {
+  display: none;
 }
 
 .community_search_field {
@@ -902,7 +925,7 @@
   }
 
   .community_tab_bar {
-    gap: 28px;
+    gap: 24px;
     padding-top: 8px;
     padding-bottom: 0;
   }
@@ -913,9 +936,11 @@
   }
 
   .community_subtab_bar button {
+    min-width: 104px;
     height: 46px;
-    padding: 0 20px;
-    font-size: 15px;
+    padding: 0 18px;
+    border-radius: 13px;
+    font-size: 14px;
   }
 
   .community_sort_bar button {
