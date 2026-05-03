@@ -1,8 +1,8 @@
 import './community.css'
 import { useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router'
+import { useNavigate, useSearchParams } from 'react-router'
 import PageHeader from '../components/PageHeader'
-import BackButton from '../components/html/BackButton'
+import Button from '../components/html/Button'
 import contents1 from '../img/contents1.png'
 import contents2 from '../img/contents2.png'
 import contents3 from '../img/contents3.png'
@@ -32,8 +32,8 @@ const postData: CommunityPost[] = [
   {
     id: 1,
     tag: '일상',
-    title: '강아지가 산책 나가자고 보채면 어떻게 하세요?',
-    author: '뽀짝뽀짝',
+    title: '강아지가 산책 가자고 보채면 어떻게 하세요?',
+    author: '뽀짝집사',
     date: '2026.04.30',
     timeText: '3시간 전',
     likes: 8,
@@ -268,58 +268,23 @@ function Community() {
   return (
     <>
       <PageHeader
-<<<<<<< HEAD
         title="집사인생"
         rightContent={
           <>
             <Button type="button" aria-label="calendar" onClick={() => navigate('/mission')}>
               <img src={calendarIcon} alt="" />
             </Button>
-            <Button type="button" aria-label="notification" className="community_header_notification">
+            <Button
+              type="button"
+              aria-label="notification"
+              className="community_header_notification"
+            >
               <img src={notificationIcon} alt="" />
             </Button>
-=======
-        title={
-          selectedChallenge ? '챌린지' :
-          selectedVoteResult ? '투표 결과' :
-          isVoteCandidateOpen ? '투표 참여' :
-          '커뮤니티'
-        }
-        leftContent={
-          showCommunityBackButton ? (
-            <button
-              type="button"
-              className="back_btn"
-              onClick={() => {
-                if (selectedChallenge) {
-                  setSelectedChallengeId(null)
-                  return
-                }
-                if (selectedVoteResult) {
-                  setSelectedVoteResultId(null)
-                  return
-                }
-                setIsVoteCandidateOpen(false)
-              }}
-            >
-              <i className="bx bx-chevron-left"></i>
-            </button>
-          ) : (
-            <BackButton to="/home" />
-          )
-        }
-      />
-      <main className="page community_page">
-        {/*
-            반려인들과 함께하는
-            <br />
-            커뮤니티 이야기
->>>>>>> 5150d2f3044d8ca6247b153219a63f50e35c0d74
           </>
         }
       />
 
-<<<<<<< HEAD
       <main className="page community_page">
         {!isVoteView && !isChallengeView ? (
           <section className="community_search_box">
@@ -355,31 +320,6 @@ function Community() {
 
         <section className="community_tab_bar" aria-label="커뮤니티 상위 탭">
           {primaryTabs.map((tab) => (
-=======
-
-      <section className="community_tab_bar" aria-label="커뮤니티 상위 탭">
-        {primaryTabs.map((tab) => (
-          <button
-            key={tab}
-            type="button"
-            className={selectedPrimaryTab === tab ? 'active' : ''}
-            onClick={() => {
-              setSelectedPrimaryTab(tab)
-              setSelectedChallengeId(null)
-              setIsVoteCandidateOpen(false)
-              setSelectedVoteResultId(null)
-              setSelectedSecondaryTab(tab === '투표' ? '전체' : tab === '커뮤니티' ? '일상' : '전체')
-            }}
-          >
-            {tab}
-          </button>
-        ))}
-      </section>
-
-      {!isChallengeView ? (
-        <section className="community_subtab_bar" aria-label="커뮤니티 하위 탭">
-          {currentSecondaryTabs.map((tab) => (
->>>>>>> 5150d2f3044d8ca6247b153219a63f50e35c0d74
             <button
               key={tab}
               type="button"
