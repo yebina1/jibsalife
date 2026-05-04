@@ -6,23 +6,15 @@ import HealthResultInsights from '../components/HealthResultInsights'
 import HealthResultSummary from '../components/HealthResultSummary'
 import BackButton from '../components/html/BackButton'
 import CloseButton from '../components/html/CloseButton'
-import { createHealthResultSummaryItems, type CareChangeFactor } from '../utils/healthResultPolicy'
-
-const mockHealthResult: {
-  score: number
-  changeFactor: CareChangeFactor
-  insights: string[]
-} = {
-  score: 82,
-  changeFactor: 'none',
-  insights: ['기록상 큰 변화는 없고 전반적으로 좋은 상태예요.'],
-}
+import {
+  calculateHealthResult,
+  createHealthResultSummaryItems,
+  readStoredHealthResultInput,
+} from '../utils/healthResultPolicy'
 
 function HealthCheckResult() {
-  const summaryItems = createHealthResultSummaryItems({
-    score: mockHealthResult.score,
-    changeFactor: mockHealthResult.changeFactor,
-  })
+  const result = calculateHealthResult(readStoredHealthResultInput())
+  const summaryItems = createHealthResultSummaryItems(result.summary)
 
   return (
     <>
@@ -39,8 +31,8 @@ function HealthCheckResult() {
           </span>
         </section>
 
-        <HealthResultCard score={mockHealthResult.score} />
-        <HealthResultInsights items={mockHealthResult.insights} />
+        <HealthResultCard score={result.score} />
+        <HealthResultInsights items={result.insights} />
         <HealthResultSummary title="확인 결과 요약" items={summaryItems} />
       </main>
     </>

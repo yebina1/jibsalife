@@ -5,7 +5,7 @@ export type HealthResultSummaryItem = {
   icon: 'warning' | 'search' | 'chat' | 'hospital' | 'report'
   label: string
   value: string
-  to: string
+  to?: string
 }
 
 type HealthResultSummaryProps = {
@@ -76,16 +76,28 @@ function HealthResultSummary({ title, items }: HealthResultSummaryProps) {
       <ul>
         {items.map((item) => (
           <li key={item.label}>
-            <Link className="health_result_summary_link" to={item.to}>
-              <div className="health_result_summary_label">
-                <SummaryIcon type={item.icon} />
-                <strong>{item.label}</strong>
+            {item.to ? (
+              <Link className="health_result_summary_link" to={item.to}>
+                <div className="health_result_summary_label">
+                  <SummaryIcon type={item.icon} />
+                  <strong>{item.label}</strong>
+                </div>
+                <div className="health_result_summary_value">
+                  <span>{item.value}</span>
+                  <i className="bx bx-chevron-right" aria-hidden="true"></i>
+                </div>
+              </Link>
+            ) : (
+              <div className="health_result_summary_link health_result_summary_link_static">
+                <div className="health_result_summary_label">
+                  <SummaryIcon type={item.icon} />
+                  <strong>{item.label}</strong>
+                </div>
+                <div className="health_result_summary_value">
+                  <span>{item.value}</span>
+                </div>
               </div>
-              <div className="health_result_summary_value">
-                <span>{item.value}</span>
-                <i className="bx bx-chevron-right" aria-hidden="true"></i>
-              </div>
-            </Link>
+            )}
           </li>
         ))}
       </ul>

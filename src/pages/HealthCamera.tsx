@@ -6,13 +6,48 @@ import PageHeader from '../components/PageHeader'
 import Button from '../components/html/Button'
 import BackButton from '../components/html/BackButton'
 import calendarIcon from '../svg/calendar.svg'
+import calendarGuideIcon from '../svg/calendar.svg?raw'
+import cameraGuideIcon from '../svg/camera.svg?raw'
+import camcorderGuideIcon from '../svg/camcorder.svg?raw'
 import guideExampleImage from '../img/ex.png'
+import guideVideoImage from '../img/guide_video.png'
+import communicateGuideIcon from '../svg/nav communicate off.svg?raw'
+import memoGuideIcon from '../svg/memo.svg?raw'
 import notificationIcon from '../svg/notification.svg'
 
-const GUIDE_DURATION_MS = 5000
-
 type GuideMode = 'photo' | 'audio' | 'video' | 'memo'
-type GuideIconType = 'target' | 'light' | 'camera' | 'mic' | 'chat' | 'timer'
+type GuideIconType =
+  | 'target'
+  | 'light'
+  | 'camera'
+  | 'mic'
+  | 'chat'
+  | 'timer'
+  | 'note'
+  | 'video'
+  | 'phone'
+  | 'info'
+  | 'meal'
+  | 'calendar'
+  | 'activity'
+
+const memoExamples = [
+  {
+    icon: 'meal' as const,
+    title: '식사량 감소',
+    description: '평소보다 밥을 잘 안 먹어요',
+  },
+  {
+    icon: 'calendar' as const,
+    title: '2일 지속',
+    description: '2일째 지속되고 있어요',
+  },
+  {
+    icon: 'activity' as const,
+    title: '활동량 줄어듦',
+    description: '산책이나 놀이 활동이 줄었어요',
+  },
+]
 
 const guideConfigs: Record<
   GuideMode,
@@ -81,12 +116,12 @@ const guideConfigs: Record<
     actionLabel: '동영상 촬영',
     items: [
       {
-        icon: 'target',
+        icon: 'video',
         title: '문제가 보이는 순간을 촬영해주세요',
         description: '증상이나 움직임이 드러나는 장면을 중심으로 담아주세요.',
       },
       {
-        icon: 'camera',
+        icon: 'phone',
         title: '카메라는 흔들리지 않게 유지해주세요',
         description: '화면이 흔들리지 않으면 상태를 더 잘 확인할 수 있어요.',
       },
@@ -104,17 +139,17 @@ const guideConfigs: Record<
     actionLabel: '메모 작성',
     items: [
       {
-        icon: 'target',
+        icon: 'note',
         title: '증상이나 변화를 중심으로 작성해주세요',
         description: '가장 걱정되는 변화부터 적어주세요.',
       },
       {
-        icon: 'light',
+        icon: 'timer',
         title: '시간이나 횟수를 함께 적어주세요',
         description: '언제, 몇 번 있었는지 함께 적으면 좋아요.',
       },
       {
-        icon: 'camera',
+        icon: 'note',
         title: '짧고 이해하기 쉽게 작성해주세요',
         description: '핵심만 간단히 정리해 주세요.',
       },
@@ -169,6 +204,73 @@ function GuideIcon({ type }: { type: GuideIconType }) {
     )
   }
 
+  if (type === 'note') {
+    return (
+      <svg viewBox="0 0 48 48" aria-hidden="true">
+        <path d="M15 8h13l9 9v18a5 5 0 0 1-5 5H15a5 5 0 0 1-5-5V13a5 5 0 0 1 5-5Z" />
+        <path d="M28 8v10h10" />
+        <path d="M18 22h12M18 28h8" />
+        <path d="M28 34l3-3 4 4" />
+      </svg>
+    )
+  }
+
+  if (type === 'video') {
+    return (
+      <svg viewBox="0 0 48 48" aria-hidden="true">
+        <rect x="8" y="13" width="23" height="22" rx="5" />
+        <path d="M31 21l9-6v18l-9-6" />
+      </svg>
+    )
+  }
+
+  if (type === 'phone') {
+    return (
+      <svg viewBox="0 0 48 48" aria-hidden="true">
+        <rect x="14" y="7" width="20" height="34" rx="6" />
+        <path d="M21 12h6M21 36h6M35 17a6 6 0 0 1 0 14M39 13a11 11 0 0 1 0 22" />
+      </svg>
+    )
+  }
+
+  if (type === 'info') {
+    return (
+      <svg viewBox="0 0 48 48" aria-hidden="true">
+        <circle cx="24" cy="24" r="18" />
+        <path d="M24 21v10" />
+        <circle cx="24" cy="15" r="2" fill="currentColor" stroke="none" />
+      </svg>
+    )
+  }
+
+  if (type === 'meal') {
+    return (
+      <svg viewBox="0 0 48 48" aria-hidden="true">
+        <path d="M10 25a14 14 0 0 1 14-14h0a14 14 0 0 1 14 14v1H10v-1Z" />
+        <path d="M12 27h24a4 4 0 0 1 4 4v2a5 5 0 0 1-5 5H13a5 5 0 0 1-5-5v-2a4 4 0 0 1 4-4ZM18 15v-3M24 14V9M30 15v-3" />
+      </svg>
+    )
+  }
+
+  if (type === 'calendar') {
+    return (
+      <svg viewBox="0 0 48 48" aria-hidden="true">
+        <rect x="8" y="10" width="32" height="30" rx="4" />
+        <path d="M8 18h32M15 6v6M33 6v6" />
+        <path d="M18 25h.1M24 25h.1M30 25h.1M18 31h.1M24 31h.1" />
+      </svg>
+    )
+  }
+
+  if (type === 'activity') {
+    return (
+      <svg viewBox="0 0 48 48" aria-hidden="true">
+        <circle cx="29" cy="10" r="4" />
+        <path d="M17 39l6-9 4 3 2 6M21 18l6 4 6-1M24 22l-4 7-7 1M30 20l4 5 6 3M16 16l6-6 6 1" />
+      </svg>
+    )
+  }
+
   return (
     <svg viewBox="0 0 48 48" aria-hidden="true">
       <path d="M15 17h5l2-4h8l2 4h5a4 4 0 0 1 4 4v13a4 4 0 0 1-4 4H11a4 4 0 0 1-4-4V21a4 4 0 0 1 4-4h4Z" />
@@ -177,46 +279,271 @@ function GuideIcon({ type }: { type: GuideIconType }) {
   )
 }
 
+const guideIconAssets: Partial<Record<GuideIconType, string>> = {
+  camera: cameraGuideIcon,
+  video: camcorderGuideIcon,
+  chat: communicateGuideIcon,
+  note: memoGuideIcon,
+  calendar: calendarGuideIcon,
+}
+
+function GuideAssetIcon({ type }: { type: GuideIconType }) {
+  if (type === 'chat') {
+    return (
+      <span className="health_camera_guide_asset_icon health_camera_guide_asset_icon_chat" aria-hidden="true">
+        <svg viewBox="0 0 48 48">
+          <path d="M24 10c8.8 0 16 5.9 16 13.2S32.8 36.4 24 36.4c-1.8 0-3.5-.2-5.2-.7L11 39l2.5-6.6C10.7 30 8 26.8 8 23.2 8 15.9 15.2 10 24 10Z" />
+          <path d="M19 23.2h.1M24 23.2h.1M29 23.2h.1" />
+        </svg>
+      </span>
+    )
+  }
+
+  const asset = guideIconAssets[type]
+
+  if (!asset) {
+    return <GuideIcon type={type} />
+  }
+
+  return (
+    <span
+      className={`health_camera_guide_asset_icon health_camera_guide_asset_icon_${type}`}
+      aria-hidden="true"
+      dangerouslySetInnerHTML={{ __html: asset }}
+    />
+  )
+}
+
 function HealthCamera() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const videoRef = useRef<HTMLVideoElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const recordedChunksRef = useRef<Blob[]>([])
+  const shouldNavigateAfterRecordRef = useRef(false)
   const [cameraError, setCameraError] = useState('')
+  const [isRecording, setIsRecording] = useState(false)
   const [showGuide] = useState(searchParams.get('guide') !== 'false')
   const modeParam = searchParams.get('mode')
   const mode: GuideMode =
     modeParam === 'audio' || modeParam === 'video' || modeParam === 'memo' ? modeParam : 'photo'
   const guideConfig = guideConfigs[mode]
   const isCaptureMode = mode === 'photo' || mode === 'video'
+  const isAudioMode = mode === 'audio'
   const actionLabel = guideConfig.actionLabel
+  const isEditFlow = searchParams.get('edit') === 'true'
 
   const continueAfterGuide = () => {
+    navigate(`/health/register?section=${mode}`, { replace: true })
+  }
+
+  const returnToRegister = (
+    section: Exclude<GuideMode, 'memo'>,
+    state?: {
+      capturedEntry?: {
+        section: Exclude<GuideMode, 'memo'>
+        entry: {
+          id: string
+          preview?: string
+          label?: string
+          mediaType?: 'image' | 'video' | 'audio'
+        }
+      }
+      pendingEdit?: {
+        section: 'photo' | 'video'
+        src: string
+        mediaType: 'image' | 'video'
+        label: string
+      }
+    },
+  ) => {
+    navigate(`/health/register?section=${section}`, {
+      replace: true,
+      state,
+    })
+  }
+
+  const capturePhotoPreview = () => {
+    const video = videoRef.current
+
+    if (!video || !video.videoWidth || !video.videoHeight) {
+      return ''
+    }
+
+    const canvas = document.createElement('canvas')
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    const context = canvas.getContext('2d')
+
+    if (!context) {
+      return ''
+    }
+
+    context.drawImage(video, 0, 0, canvas.width, canvas.height)
+    return canvas.toDataURL('image/jpeg', 0.92)
+  }
+
+  const handleCapture = () => {
+    if (mode === 'audio') {
+      if (isRecording) {
+        shouldNavigateAfterRecordRef.current = true
+        mediaRecorderRef.current?.stop()
+        return
+      }
+
+      const stream = streamRef.current
+
+      if (!stream) {
+        setCameraError('녹음을 시작할 수 없어요. 잠시 후 다시 시도해주세요.')
+        return
+      }
+
+      recordedChunksRef.current = []
+
+      try {
+        const mediaRecorder = new MediaRecorder(stream)
+        mediaRecorderRef.current = mediaRecorder
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            recordedChunksRef.current.push(event.data)
+          }
+        }
+
+        mediaRecorder.onstop = () => {
+          setIsRecording(false)
+          if (shouldNavigateAfterRecordRef.current) {
+            shouldNavigateAfterRecordRef.current = false
+            returnToRegister('audio', {
+              capturedEntry: {
+                section: 'audio',
+                entry: {
+                  id: `audio-capture-${Date.now()}`,
+                  label: '녹음 완료',
+                  mediaType: 'audio',
+                },
+              },
+            })
+          }
+        }
+
+        mediaRecorder.start()
+        setIsRecording(true)
+      } catch {
+        setCameraError('녹음을 시작할 수 없어요. 마이크 권한을 확인해주세요.')
+      }
+
+      return
+    }
+
     if (mode === 'photo') {
-      navigate('/health/register')
+      const preview = capturePhotoPreview()
+
+      if (!preview) {
+        setCameraError('사진을 저장할 수 없어요. 잠시 후 다시 시도해주세요.')
+        return
+      }
+
+      if (isEditFlow) {
+        returnToRegister('photo', {
+          pendingEdit: {
+            section: 'photo',
+            src: preview,
+            mediaType: 'image',
+            label: '사진 편집본',
+          },
+        })
+        return
+      }
+
+      returnToRegister('photo', {
+        capturedEntry: {
+          section: 'photo',
+          entry: {
+            id: `photo-capture-${Date.now()}`,
+            preview,
+            label: '사진 촬영 완료',
+            mediaType: 'image',
+          },
+        },
+      })
       return
     }
 
-    if (isCaptureMode) {
-      navigate(`/health/camera?mode=${mode}&guide=false`, { replace: true })
+    if (mode !== 'video') {
       return
     }
 
-    navigate('/health/check-loading')
+    if (isRecording) {
+      shouldNavigateAfterRecordRef.current = true
+      mediaRecorderRef.current?.stop()
+      return
+    }
+
+    const stream = streamRef.current
+
+    if (!stream) {
+      setCameraError('동영상 촬영을 시작할 수 없어요. 잠시 후 다시 시도해주세요.')
+      return
+    }
+
+    recordedChunksRef.current = []
+
+    try {
+      const mediaRecorder = new MediaRecorder(stream)
+      mediaRecorderRef.current = mediaRecorder
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          recordedChunksRef.current.push(event.data)
+        }
+      }
+
+        mediaRecorder.onstop = () => {
+          setIsRecording(false)
+          const videoUrl =
+            recordedChunksRef.current.length > 0
+              ? URL.createObjectURL(new Blob(recordedChunksRef.current, { type: 'video/webm' }))
+              : undefined
+
+          if (shouldNavigateAfterRecordRef.current) {
+            shouldNavigateAfterRecordRef.current = false
+            if (isEditFlow && videoUrl) {
+              returnToRegister('video', {
+                pendingEdit: {
+                  section: 'video',
+                  src: videoUrl,
+                  mediaType: 'video',
+                  label: '동영상 편집본',
+                },
+              })
+              return
+            }
+
+            returnToRegister('video', {
+              capturedEntry: {
+                section: 'video',
+                entry: {
+                  id: `video-capture-${Date.now()}`,
+                  preview: videoUrl,
+                  label: '동영상 촬영 완료',
+                  mediaType: 'video',
+                },
+              },
+            })
+          }
+        }
+
+      mediaRecorder.start()
+      setIsRecording(true)
+    } catch {
+      setCameraError('동영상 녹화를 시작할 수 없어요. 기기 설정을 확인해주세요.')
+    }
   }
 
   useEffect(() => {
-    if (!showGuide) {
-      return
-    }
-
-    const guideTimer = window.setTimeout(continueAfterGuide, GUIDE_DURATION_MS)
-
-    return () => window.clearTimeout(guideTimer)
-  }, [showGuide, isCaptureMode, navigate])
-
-  useEffect(() => {
-    if (showGuide || !isCaptureMode) {
+    if (showGuide || (!isCaptureMode && !isAudioMode)) {
       return
     }
 
@@ -225,8 +552,8 @@ function HealthCamera() {
     const startCamera = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment' },
-          audio: mode === 'video',
+          video: isAudioMode ? false : { facingMode: 'environment' },
+          audio: mode === 'video' || isAudioMode,
         })
 
         if (!mounted) {
@@ -236,7 +563,7 @@ function HealthCamera() {
 
         streamRef.current = stream
 
-        if (videoRef.current) {
+        if (!isAudioMode && videoRef.current) {
           videoRef.current.srcObject = stream
         }
       } catch {
@@ -249,11 +576,20 @@ function HealthCamera() {
     startCamera()
 
     return () => {
+      const currentRecorder = mediaRecorderRef.current
+
+      if (currentRecorder && currentRecorder.state !== 'inactive') {
+        shouldNavigateAfterRecordRef.current = false
+        currentRecorder.stop()
+      }
+      mediaRecorderRef.current = null
+      recordedChunksRef.current = []
+      setIsRecording(false)
       mounted = false
       streamRef.current?.getTracks().forEach((track) => track.stop())
       streamRef.current = null
     }
-  }, [mode, showGuide, isCaptureMode])
+  }, [mode, showGuide, isCaptureMode, isAudioMode, navigate])
 
   if (showGuide) {
     return (
@@ -278,7 +614,12 @@ function HealthCamera() {
         >
           <section className="health_camera_guide" aria-label="촬영 안내">
             <div className="health_camera_guide_copy">
-              <p>{guideConfig.label}</p>
+              <div className="health_camera_guide_copy_top">
+                <p>{guideConfig.label}</p>
+                <button type="button" className="health_camera_guide_skip" onClick={continueAfterGuide}>
+                  건너뛰기
+                </button>
+              </div>
               <h1>
                 <span>{guideConfig.highlight}</span>{' '}
                 {guideConfig.title.replace(guideConfig.highlight, '').trim()}
@@ -312,12 +653,43 @@ function HealthCamera() {
                 </div>
               ) : null}
 
+              {mode === 'memo' ? (
+                <div className="health_camera_memo_example" aria-hidden="true">
+                  <span className="health_camera_memo_example_label">예시 메모</span>
+                  <div className="health_camera_memo_example_cards">
+                    {memoExamples.map((item) => (
+                      <article className="health_camera_memo_example_card" key={item.title}>
+                        <span className="health_camera_memo_example_icon">
+                          <GuideAssetIcon type={item.icon} />
+                        </span>
+                        <div>
+                          <h2>{item.title}</h2>
+                          <p>{item.description}</p>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              {mode === 'video' ? (
+                <div className="health_camera_video_visual" aria-hidden="true">
+                  <div className="health_camera_video_preview">
+                    <img src={guideVideoImage} alt="동영상 촬영 가이드 예시" />
+                  </div>
+                  <div className="health_camera_video_notice">
+                    <GuideIcon type="info" />
+                    <strong>臾몄젣媛 蹂댁씠???쒓컙??珥ъ쁺?댁＜?몄슂</strong>
+                  </div>
+                </div>
+              ) : null}
+
               <div className="health_camera_guide_list">
-                {guideConfig.items.map((item) => (
-                  <article className="health_camera_guide_item" key={item.title}>
-                    <span className="health_camera_guide_card_icon">
-                      <GuideIcon type={item.icon} />
-                    </span>
+                    {guideConfig.items.map((item) => (
+                      <article className="health_camera_guide_item" key={item.title}>
+                        <span className="health_camera_guide_card_icon">
+                          <GuideAssetIcon type={item.icon} />
+                        </span>
                     <div>
                       <h2>{item.title}</h2>
                       <p>{item.description}</p>
@@ -326,10 +698,6 @@ function HealthCamera() {
                 ))}
               </div>
             </section>
-
-            <button type="button" className="health_camera_guide_skip" onClick={continueAfterGuide}>
-              건너뛰기
-            </button>
           </section>
         </main>
       </>
@@ -350,6 +718,22 @@ function HealthCamera() {
       <section className="health_camera_view" aria-label={actionLabel}>
         {cameraError ? (
           <div className="health_camera_error">{cameraError}</div>
+        ) : isAudioMode ? (
+          <div className="health_camera_audio_capture" aria-hidden="true">
+            <div className="health_camera_audio_wave">
+              {Array.from({ length: 34 }).map((_, index) => (
+                <span key={index} style={{ '--wave-index': index } as CSSProperties} />
+              ))}
+            </div>
+            <div className="health_camera_audio_meter">
+              <GuideIcon type="mic" />
+              <strong>{isRecording ? 'REC' : 'READY'}</strong>
+            </div>
+            <div className="health_camera_audio_recording">
+              <span />
+              {isRecording ? '녹음 중' : '녹음 준비'}
+            </div>
+          </div>
         ) : (
           <video ref={videoRef} autoPlay muted playsInline />
         )}
@@ -360,9 +744,9 @@ function HealthCamera() {
           type="button"
           className="health_camera_shutter"
           aria-label={actionLabel}
-          onClick={() => navigate('/health/check-loading')}
+          onClick={handleCapture}
         >
-          <span />
+          <span className={isRecording ? 'health_camera_shutter_recording' : ''} />
         </Button>
       </div>
     </main>

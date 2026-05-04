@@ -30,6 +30,10 @@
   text-decoration: none;
 }
 
+.health_result_summary_link_static {
+  cursor: default;
+}
+
 .health_result_summary_label,
 .health_result_summary_value {
   display: flex;
