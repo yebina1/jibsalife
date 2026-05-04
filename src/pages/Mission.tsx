@@ -1,7 +1,9 @@
 import './Mission.css'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import PageHeader from '../components/PageHeader'
 import BackButton from '../components/html/BackButton'
+import NoticeText from '../components/NoticeText'
+import DatePicker from '../components/html/DatePicker'
 
 const weekLabels = ['일', '월', '화', '수', '목', '금', '토']
 const CALENDAR_YEAR = 2026
@@ -71,6 +73,8 @@ function Mission() {
   const [monthSlideDirection, setMonthSlideDirection] = useState<'prev' | 'next'>('next')
   const [calendarView, setCalendarView] = useState<'월간' | '주간'>('월간')
   const [isViewSortOpen, setIsViewSortOpen] = useState(false)
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
+  const calendarRef = useRef<HTMLElement>(null)
   const calendarDays = useMemo(
     () => createCalendarDays(calendarYear, calendarMonth),
     [calendarMonth, calendarYear]
@@ -104,26 +108,57 @@ function Mission() {
 
   const moveMonth = (direction: 'prev' | 'next') => {
     setMonthSlideDirection(direction)
-
-    if (direction === 'prev') {
-      if (calendarMonth === 1) {
-        setCalendarYear((prev) => prev - 1)
-        setCalendarMonth(12)
-        return
+    setCalendarMonth((prev) => {
+      if (direction === 'prev') {
+        if (prev === 1) { setCalendarYear((y) => y - 1); return 12 }
+        return prev - 1
       }
-
-      setCalendarMonth((prev) => prev - 1)
-      return
-    }
-
-    if (calendarMonth === 12) {
-      setCalendarYear((prev) => prev + 1)
-      setCalendarMonth(1)
-      return
-    }
-
-    setCalendarMonth((prev) => prev + 1)
+      if (prev === 12) { setCalendarYear((y) => y + 1); return 1 }
+      return prev + 1
+    })
   }
+
+  useEffect(() => {
+    const el = calendarRef.current
+    if (!el) return
+
+    let startX = 0
+    let startY = 0
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.deltaY > 5) setCalendarView('주간')
+      else if (e.deltaY < -5) setCalendarView('월간')
+    }
+
+    const handleTouchStart = (e: TouchEvent) => {
+      startX = e.touches[0].clientX
+      startY = e.touches[0].clientY
+    }
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      const dx = e.changedTouches[0].clientX - startX
+      const dy = e.changedTouches[0].clientY - startY
+      const absDx = Math.abs(dx)
+      const absDy = Math.abs(dy)
+
+      if (absDx > absDy && absDx >= 40) {
+        moveMonth(dx < 0 ? 'next' : 'prev')
+      } else if (absDy > absDx && absDy >= 30) {
+        if (dy > 0) setCalendarView('주간')
+        else setCalendarView('월간')
+      }
+    }
+
+    window.addEventListener('wheel', handleWheel, { passive: true })
+    el.addEventListener('touchstart', handleTouchStart, { passive: true })
+    el.addEventListener('touchend', handleTouchEnd, { passive: true })
+
+    return () => {
+      window.removeEventListener('wheel', handleWheel)
+      el.removeEventListener('touchstart', handleTouchStart)
+      el.removeEventListener('touchend', handleTouchEnd)
+    }
+  }, [moveMonth])
 
   return (
     <>
@@ -164,14 +199,18 @@ function Mission() {
         }
       />
       <main className="page mission_page">
-        <section className="mission_calendar_section">
+        <section className="mission_calendar_section" ref={calendarRef}>
         <div className="mission_month_bar">
-          <button type="button" aria-label="이전 달" onClick={() => moveMonth('prev')}>
-            ‹
+          <button type="button" aria-label="메뉴">
+            <i className="bx bx-menu" />
           </button>
-          <strong>{calendarYear}년 {calendarMonth}월</strong>
-          <button type="button" aria-label="다음 달" onClick={() => moveMonth('next')}>
-            ›
+          <strong>{calendarYear}.{String(calendarMonth).padStart(2, '0')}</strong>
+          <button
+            type="button"
+            aria-label="날짜 선택"
+            onClick={() => setIsDatePickerOpen(true)}
+          >
+            <i className={`bx bx-chevron-${calendarView === '주간' ? 'down' : 'up'}`} />
           </button>
         </div>
 
@@ -203,14 +242,9 @@ function Mission() {
         </div>
         </div>
 
-        <button
-          type="button"
-          className="mission_calendar_dock"
-          aria-label={calendarView === '주간' ? '월간 달력으로 보기' : '주간 달력으로 보기'}
-          onClick={() => setCalendarView((current) => (current === '주간' ? '월간' : '주간'))}
-        >
+        <div className="mission_calendar_dock">
           <span />
-        </button>
+        </div>
 
         <div className="mission_legends" aria-label="기록 범례">
           {legends.map((label) => (
@@ -238,17 +272,35 @@ function Mission() {
         </div>
       </section>
 
-        <p className="mission_notice">
-          이 결과는 참고용이며
-          <br />
-          정확한 진단은 수의사 상담을 통해 확인해주세요.
-        </p>
+        <NoticeText>
+          <p>
+            ※ 이 결과는 참고용이며, 정확한 진단은
+            <br />
+            수의사 상담을 통해 확인해 주세요.
+          </p>
+        </NoticeText>
+
         <button type="button" className="mission_fab" aria-label="글쓰기">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M12 5v14M5 12h14" />
           </svg>
         </button>
       </main>
+
+      {isDatePickerOpen && (
+        <DatePicker
+          year={calendarYear}
+          month={calendarMonth}
+          day={Number(selectedDay.label)}
+          onConfirm={(y, m, d) => {
+            setCalendarYear(y)
+            setCalendarMonth(m)
+            setSelectedDayId(`c-${d}`)
+            setIsDatePickerOpen(false)
+          }}
+          onCancel={() => setIsDatePickerOpen(false)}
+        />
+      )}
     </>
   )
 }
