@@ -14,6 +14,7 @@
   height: 100%;
   border-radius: inherit;
   background: #0077a7;
+  transition: width 80ms linear;
 }
 
 .health_result_meter_labels {

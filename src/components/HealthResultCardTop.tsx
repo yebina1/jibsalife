@@ -14,7 +14,9 @@ function HealthResultCardTop({ score }: HealthResultCardTopProps) {
         <h2>종합 컨디션</h2>
         <HealthResultScoreRow score={score} />
       </div>
-      <img className="health_result_thumbnail" src={checkIcon} alt="" aria-hidden="true" />
+      <div className="health_result_thumbnail_box">
+        <img className="health_result_thumbnail" src={checkIcon} alt="" aria-hidden="true" />
+      </div>
     </div>
   )
 }

@@ -1,5 +1,8 @@
 .health_result_card_top {
+  display: grid;
   min-height: 172px;
+  grid-template-columns: minmax(0, 1fr) 204px;
+  gap: 20px;
 }
 
 .health_result_summary {
@@ -17,20 +20,24 @@
   line-height: 1.3;
 }
 
+.health_result_thumbnail_box {
+  display: grid;
+  height: 172px;
+  place-items: center;
+}
+
 .health_result_thumbnail {
-  position: absolute;
-  top: 50%;
-  right: 62px;
   display: block;
   width: 104px;
   height: auto;
   object-fit: contain;
-  transform: translateY(-50%);
 }
 
 @media (max-width: 420px) {
   .health_result_card_top {
     min-height: 150px;
+    grid-template-columns: minmax(0, 1fr) 118px;
+    gap: 8px;
   }
 
   .health_result_summary {
@@ -41,9 +48,11 @@
     font-size: 22px;
   }
 
+  .health_result_thumbnail_box {
+    height: 150px;
+  }
+
   .health_result_thumbnail {
-    top: 50%;
-    right: 22px;
     width: 74px;
   }
 }

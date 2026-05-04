@@ -46,17 +46,45 @@
   height: 34px;
   flex: 0 0 34px;
   color: #b40000;
-  fill: currentColor;
+  fill: none;
   stroke: currentColor;
-  stroke-width: 3.6;
+  stroke-width: 3.8;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-.health_result_summary_label > svg path,
-.health_result_summary_label > svg circle,
-.health_result_summary_label > svg rect {
+.health_result_summary_label > svg * {
   vector-effect: non-scaling-stroke;
+}
+
+.health_result_summary_label > .summary_icon_warning path:first-child,
+.health_result_summary_label > .summary_icon_chat path,
+.health_result_summary_label > .summary_icon_hospital rect,
+.health_result_summary_label > .summary_icon_report rect {
+  fill: currentColor;
+  stroke: none;
+}
+
+.health_result_summary_label > .summary_icon_warning path:not(:first-child) {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 4;
+}
+
+.health_result_summary_label > .summary_icon_warning circle {
+  fill: #ffffff;
+  stroke: none;
+}
+
+.health_result_summary_label > .summary_icon_chat circle {
+  stroke: none;
+}
+
+.health_result_summary_label > .summary_icon_hospital path,
+.health_result_summary_label > .summary_icon_report path {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 4;
 }
 
 .health_result_summary_label strong,
