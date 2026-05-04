@@ -1494,8 +1494,7 @@
   }
 
   .community_tab_bar,
-  .community_subtab_bar,
-  {
+  .community_subtab_bar {
     gap: 8px;
     padding: 10px 12px;
   }
