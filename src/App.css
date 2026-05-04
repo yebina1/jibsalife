@@ -117,11 +117,11 @@
 }
 
 .layout_nav_link.active {
-  color: var(--point-dark-red);
+  color: #6c59f7;
 }
 
 .layout_nav_link.active .layout_nav_icon {
-  color: var(--point-dark-red);
+  color: #6c59f7;
 }
 
 @media (min-width: 768px) {

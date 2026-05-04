@@ -21,7 +21,7 @@ function Health() {
       id: 'photo',
       icon: cameraIcon,
       label: '사진 촬영',
-      onClick: () => navigate('/health/check-loading'),
+      onClick: () => navigate('/health/camera?mode=photo'),
     },
     {
       id: 'audio',
@@ -33,7 +33,7 @@ function Health() {
       id: 'video',
       icon: camcorderIcon,
       label: '영상 촬영',
-      onClick: () => navigate('/health/check-loading'),
+      onClick: () => navigate('/health/camera?mode=video'),
     },
     {
       id: 'memo',

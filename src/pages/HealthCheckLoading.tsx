@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import type { CSSProperties } from 'react'
 import { useNavigate } from 'react-router'
 import './health.css'
 import './HealthCheckLoading.css'
@@ -11,20 +10,21 @@ import calendarIcon from '../svg/calendar.svg'
 import notificationIcon from '../svg/notification.svg'
 
 const loadingSteps = [
-  { label: '건강 기록 확인 중...', active: true },
-  { label: '식사 변화 분석 중...', active: true },
-  { label: '활동량 확인 중...', active: false },
-  { label: '이상 신호 탐지 중...', active: false },
-  { label: 'AI 리포트 준비 중...', active: false },
+  '건강 기록 확인 중...',
+  '식사 변화 분석 중...',
+  '활동량 확인 중...',
+  '이상 신호 탐지 중...',
+  'AI 리포트 준비 중...',
 ] as const
 
 function HealthCheckLoading() {
   const navigate = useNavigate()
   const [progress, setProgress] = useState(0)
   const checkIcon = `${import.meta.env.BASE_URL}check.svg`
-  const checkIconStyle = {
-    '--health-check-loading-icon': `url("${checkIcon}")`,
-  } as CSSProperties
+  const activeStepCount = Math.min(
+    loadingSteps.length,
+    Math.max(1, Math.ceil((progress / 100) * loadingSteps.length)),
+  )
 
   useEffect(() => {
     const duration = 3000
@@ -75,17 +75,13 @@ function HealthCheckLoading() {
           </section>
 
           <ProgressCircle value={Math.round(progress)}>
-            <span
-              className="health_check_loading_logo"
-              style={checkIconStyle}
-              aria-hidden="true"
-            />
+            <img className="health_check_loading_logo" src={checkIcon} alt="" aria-hidden="true" />
           </ProgressCircle>
 
           <ul className="health_check_loading_steps" aria-label="AI 건강 체크 진행 단계">
-            {loadingSteps.map((step) => (
-              <li key={step.label} className={step.active ? 'active' : undefined}>
-                {step.label}
+            {loadingSteps.map((step, index) => (
+              <li key={step} className={index < activeStepCount ? 'active' : undefined}>
+                {step}
               </li>
             ))}
           </ul>

@@ -1,12 +1,7 @@
 import { NavLink } from 'react-router'
-import type { CSSProperties } from 'react'
-import navCommunicateIcon from '../svg/nav communicate.svg'
 import navCommunicateOffIcon from '../svg/nav communicate off.svg'
-import navHealthIcon from '../svg/nav health.svg'
 import navHealthOffIcon from '../svg/nav health off.svg'
-import navHomeIcon from '../svg/nav home.svg'
 import navHomeOffIcon from '../svg/nav home off.svg'
-import navMypageIcon from '../svg/nav mypage.svg'
 import navMypageOffIcon from '../svg/nav mypage off.svg'
 
 const navItems = [
@@ -18,10 +13,10 @@ const navItems = [
 ] as const
 
 const navIconMap = {
-  home: { active: navHomeIcon, inactive: navHomeOffIcon },
-  health: { active: navHealthIcon, inactive: navHealthOffIcon },
-  community: { active: navCommunicateIcon, inactive: navCommunicateOffIcon },
-  mypage: { active: navMypageIcon, inactive: navMypageOffIcon },
+  home: navHomeOffIcon,
+  health: navHealthOffIcon,
+  community: navCommunicateOffIcon,
+  mypage: navMypageOffIcon,
 } as const
 
 const navIconAltMap = {
@@ -34,6 +29,53 @@ const navIconAltMap = {
 function NavIcon({ type, active }: { type: (typeof navItems)[number]['icon']; active: boolean }) {
   const className = active ? 'layout_nav_icon active' : 'layout_nav_icon'
 
+  if (active && type === 'home') {
+    return (
+      <svg viewBox="0 0 28 28" className={className} aria-hidden="true">
+        <ellipse cx="9.2" cy="9" rx="2.1" ry="3" transform="rotate(-22 9.2 9)" />
+        <ellipse cx="13" cy="7.2" rx="2.2" ry="3.2" />
+        <ellipse cx="17" cy="7.2" rx="2.2" ry="3.2" />
+        <ellipse cx="20.8" cy="9" rx="2.1" ry="3" transform="rotate(22 20.8 9)" />
+        <path d="M8.2 18.2c0-3.8 3.5-7 6.8-7s6.8 3.2 6.8 7c0 2.1-1.6 3.5-3.6 3.5-1.3 0-2.1-.6-3.2-.6s-1.9.6-3.2.6c-2 0-3.6-1.4-3.6-3.5Z" />
+      </svg>
+    )
+  }
+
+  if (active && type === 'health') {
+    return (
+      <svg viewBox="0 0 28 28" className={className} aria-hidden="true">
+        <path d="M15.2 3.5a2.2 2.2 0 0 1 2.2 2.2v5h5a2.2 2.2 0 0 1 2.2 2.2v2.2a2.2 2.2 0 0 1-2.2 2.2h-5v5a2.2 2.2 0 0 1-2.2 2.2H13a2.2 2.2 0 0 1-2.2-2.2v-5h-5a2.2 2.2 0 0 1-2.2-2.2v-2.2a2.2 2.2 0 0 1 2.2-2.2h5v-5A2.2 2.2 0 0 1 13 3.5h2.2Z" />
+      </svg>
+    )
+  }
+
+  if (active && type === 'community') {
+    return (
+      <svg viewBox="0 0 28 28" className={className} aria-hidden="true">
+        <path d="M14 3.7c6 0 10.9 4.4 10.9 9.9s-4.9 9.9-10.9 9.9c-1.7 0-3.3-.3-4.7-1L4.8 24c-.6.2-1.1-.4-.9-.9l1.4-4.2a9 9 0 0 1-2.2-5.3c0-5.5 4.9-9.9 10.9-9.9Z" />
+        <circle cx="9.7" cy="13.8" r="1.1" fill="#ffffff" />
+        <circle cx="14" cy="13.8" r="1.1" fill="#ffffff" />
+        <circle cx="18.3" cy="13.8" r="1.1" fill="#ffffff" />
+      </svg>
+    )
+  }
+
+  if (active && type === 'mypage') {
+    return (
+      <svg viewBox="0 0 28 28" className={className} aria-hidden="true">
+        <circle cx="14" cy="14" r="11.5" />
+        <circle cx="14" cy="10.8" r="3.1" fill="#ffffff" />
+        <path
+          d="M5.6 21.4c1.8-3.3 4.8-5.2 8.4-5.2s6.6 1.9 8.4 5.2"
+          fill="none"
+          stroke="#ffffff"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+        />
+      </svg>
+    )
+  }
+
   if (type === 'place') {
     return (
       <svg
@@ -42,29 +84,16 @@ function NavIcon({ type, active }: { type: (typeof navItems)[number]['icon']; ac
         aria-hidden="true"
         fill={active ? 'currentColor' : 'none'}
         stroke="currentColor"
-        strokeWidth="1.8"
+        strokeWidth={active ? '1.8' : '2.6'}
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        <path d="M12 4.5 18.2 17a1.4 1.4 0 0 1-1.93 1.88L12 16.6l-4.27 2.28A1.4 1.4 0 0 1 5.8 17L12 4.5Z" />
+        <path d="M12 4.2 18.7 18a1.45 1.45 0 0 1-2 1.9L12 17.3l-4.7 2.6a1.45 1.45 0 0 1-2-1.9L12 4.2Z" />
       </svg>
     )
   }
 
-  const icon = active ? navIconMap[type].active : navIconMap[type].inactive
-  const iconStyle = active
-    ? ({ '--layout-nav-icon-url': `url("${icon}")` } as CSSProperties)
-    : undefined
-
-  if (active) {
-    return (
-      <span
-        className={`${className} layout_nav_icon_mask`}
-        style={iconStyle}
-        aria-hidden="true"
-      />
-    )
-  }
+  const icon = navIconMap[type]
 
   return <img src={icon} className={className} alt={navIconAltMap[type]} />
 }

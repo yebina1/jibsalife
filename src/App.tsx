@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router'
 import Layout from './layouts/Layout'
 import Community from './pages/community'
 import Health from './pages/health'
+import HealthCamera from './pages/HealthCamera'
 import HealthCheckLoading from './pages/HealthCheckLoading'
 import HealthCheckResult from './pages/HealthCheckResult'
 import HealthCheckSummary from './pages/HealthCheckSummary'
@@ -26,6 +27,7 @@ function App() {
           <Route path="/place" element={<Place />} />
           <Route path="/mission" element={<Mission />} />
           <Route path="/health" element={<Health />} />
+          <Route path="/health/camera" element={<HealthCamera />} />
           <Route path="/health/check-loading" element={<HealthCheckLoading />} />
           <Route path="/health/result" element={<HealthCheckResult />} />
           <Route path="/health/result/detail" element={<HealthResultDetail />} />
