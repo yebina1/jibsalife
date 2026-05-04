@@ -15,7 +15,7 @@ const activityItems = [
   { label: '저장한 게시글', icon: 'bookmark' },
   { label: '미션 수행 내역', icon: 'paw' },
   { label: '뱃지 획득 내역', icon: 'badge' },
-  { label: '내 구독 관리', icon: 'diamond' },
+  { label: '구독 관리', icon: 'diamond' },
 ] as const
 
 const supportItems = [
@@ -26,11 +26,70 @@ const supportItems = [
 ] as const
 
 const LOCATION_STORAGE_KEY = 'mypage-location'
+const DEFAULT_LOCATION_MESSAGE = '위치 정보를 등록하고\n맞춤 서비스를 받아 보세요.'
 
 type SavedLocation = {
   latitude: number
   longitude: number
   savedAt: string
+  address?: string
+}
+
+function formatCoordinateLocation(latitude: number, longitude: number) {
+  return `현재 위치 ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`
+}
+
+function formatAddressLocation(address: string) {
+  return `현재 위치 ${address}`
+}
+
+function pickAddressPart(...values: Array<string | undefined>) {
+  return values.find((value) => typeof value === 'string' && value.trim().length > 0)?.trim()
+}
+
+async function reverseGeocodeLocation(latitude: number, longitude: number) {
+  const response = await fetch(
+    `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&accept-language=ko`,
+    {
+      headers: {
+        Accept: 'application/json',
+      },
+    },
+  )
+
+  if (!response.ok) {
+    throw new Error('Failed to reverse geocode location')
+  }
+
+  const data = (await response.json()) as {
+    address?: {
+      city?: string
+      province?: string
+      state?: string
+      borough?: string
+      suburb?: string
+      town?: string
+      village?: string
+      county?: string
+      city_district?: string
+      quarter?: string
+      neighbourhood?: string
+    }
+  }
+
+  const city = pickAddressPart(
+    data.address?.city,
+    data.address?.town,
+    data.address?.village,
+    data.address?.county,
+    data.address?.state,
+    data.address?.province,
+  )
+  const district = pickAddressPart(data.address?.borough, data.address?.city_district, data.address?.suburb)
+  const dong = pickAddressPart(data.address?.quarter, data.address?.neighbourhood)
+  const formattedAddress = [city, district, dong].filter(Boolean).join(' ')
+
+  return formattedAddress || null
 }
 
 function MyPageIcon({ type }: { type: string }) {
@@ -136,9 +195,7 @@ function HeaderGearIcon() {
 function MyPage() {
   const navigate = useNavigate()
   const [savedLocation, setSavedLocation] = useState<SavedLocation | null>(null)
-  const [locationMessage, setLocationMessage] = useState(
-    '위치 정보를 등록하고\n맞춤 서비스를 받아 보세요',
-  )
+  const [locationMessage, setLocationMessage] = useState(DEFAULT_LOCATION_MESSAGE)
   const [isLocating, setIsLocating] = useState(false)
 
   useEffect(() => {
@@ -150,7 +207,9 @@ function MyPage() {
       const parsedValue = JSON.parse(savedValue) as SavedLocation
       setSavedLocation(parsedValue)
       setLocationMessage(
-        `현재 위치 ${parsedValue.latitude.toFixed(5)}, ${parsedValue.longitude.toFixed(5)}`,
+        parsedValue.address
+          ? formatAddressLocation(parsedValue.address)
+          : formatCoordinateLocation(parsedValue.latitude, parsedValue.longitude),
       )
     } catch {
       window.localStorage.removeItem(LOCATION_STORAGE_KEY)
@@ -159,7 +218,7 @@ function MyPage() {
 
   const handleLocationSetting = () => {
     if (!navigator.geolocation) {
-      setLocationMessage('이 브라우저에서는 위치 기능을 지원하지 않아요')
+      setLocationMessage('이 브라우저에서는 위치 기능을 지원하지 않아요.')
       return
     }
 
@@ -168,24 +227,38 @@ function MyPage() {
 
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
-        const nextLocation = {
+        const nextLocation: SavedLocation = {
           latitude: coords.latitude,
           longitude: coords.longitude,
           savedAt: new Date().toISOString(),
         }
 
-        window.localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(nextLocation))
-        setSavedLocation(nextLocation)
-        setLocationMessage(
-          `현재 위치 ${nextLocation.latitude.toFixed(5)}, ${nextLocation.longitude.toFixed(5)}`,
-        )
-        setIsLocating(false)
+        reverseGeocodeLocation(nextLocation.latitude, nextLocation.longitude)
+          .then((address) => {
+            const nextSavedLocation = address ? { ...nextLocation, address } : nextLocation
+
+            window.localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(nextSavedLocation))
+            setSavedLocation(nextSavedLocation)
+            setLocationMessage(
+              address
+                ? formatAddressLocation(address)
+                : formatCoordinateLocation(nextLocation.latitude, nextLocation.longitude),
+            )
+          })
+          .catch(() => {
+            window.localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(nextLocation))
+            setSavedLocation(nextLocation)
+            setLocationMessage(formatCoordinateLocation(nextLocation.latitude, nextLocation.longitude))
+          })
+          .finally(() => {
+            setIsLocating(false)
+          })
       },
       (error) => {
         setLocationMessage(
           error.code === error.PERMISSION_DENIED
-            ? '위치 권한이 거부되었어요. 브라우저 권한을 확인해 주세요'
-            : '위치를 가져오지 못했어요. 잠시 후 다시 시도해 주세요',
+            ? '위치 권한이 거부됐어요. 브라우저 권한을 확인해 주세요.'
+            : '위치를 가져오지 못했어요. 잠시 후 다시 시도해 주세요.',
         )
         setIsLocating(false)
       },
@@ -219,17 +292,17 @@ function MyPage() {
 
       <main className="page mypage_page">
         <section className="mypage_profile_card">
-          <img className="mypage_profile_avatar" src={contents2} alt="뿌직뿌직 프로필" />
+          <img className="mypage_profile_avatar" src={contents2} alt="프로필 이미지" />
 
           <div className="mypage_profile_content">
             <div className="mypage_profile_title_row">
-              <h1>뿌직뿌직</h1>
-              <span aria-hidden="true">👑</span>
+              <h1>몽실몽실</h1>
+              <span aria-hidden="true">🐾</span>
               <button type="button">정보 수정</button>
             </div>
 
             <div className="mypage_point">
-              <span aria-hidden="true">ⓟ</span>
+              <span aria-hidden="true">P</span>
               <strong>1,200p</strong>
             </div>
 
@@ -240,7 +313,7 @@ function MyPage() {
               </div>
               <div>
                 <strong>23</strong>
-                <span>댓글</span>
+                <span>팔로워</span>
               </div>
               <div>
                 <strong>8</strong>
@@ -255,9 +328,9 @@ function MyPage() {
             <div className="mypage_badges">
               <span>보유 뱃지</span>
               <div className="mypage_badge_icons" aria-hidden="true">
-                <b>🐯</b>
-                <b>🐾</b>
-                <b>🐱</b>
+                <b>🏅</b>
+                <b>⭐</b>
+                <b>🎖</b>
               </div>
               <button type="button" aria-label="보유 뱃지 보기">
                 <i className="bx bx-chevron-right" aria-hidden="true" />
@@ -281,10 +354,10 @@ function MyPage() {
 
         <section className="mypage_pet_area">
           <article className="mypage_pet_card">
-            <img src={contents1} alt="뿡뿡이 프로필" />
+            <img src={contents1} alt="반려동물 프로필" />
             <div className="mypage_pet_body">
-              <h2>뿡뿡이</h2>
-              <p>브리티시 숏헤어 · 여아 · 4개월</p>
+              <h2>콩이</h2>
+              <p>브리티시 숏헤어 · 수컷 · 4개월</p>
               <span>2.5kg</span>
             </div>
             <button type="button" className="mypage_pet_more">
@@ -294,7 +367,7 @@ function MyPage() {
           </article>
 
           <button type="button" className="mypage_add_pet">
-            <span>＋</span>
+            <span>+</span>
             반려동물 추가
           </button>
         </section>

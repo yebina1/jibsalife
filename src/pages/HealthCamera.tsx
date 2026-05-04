@@ -266,13 +266,11 @@ function GuideIcon({ type }: { type: GuideIconType }) {
   if (type === 'activity') {
     return (
       <svg viewBox="0 0 48 48" aria-hidden="true">
-        <circle cx="30" cy="10" r="4.2" />
-        <path d="M24 18l5-4 5 2" />
-        <path d="M22 24l6-5 4 3 4 1" />
-        <path d="M26 23l-4 8-7 1" />
-        <path d="M29 25l5 6 6 2" />
-        <path d="M24 31l4 2 2 7" />
-        <path d="M21 32l-5 8" />
+        <circle cx="16" cy="16" r="3.6" />
+        <circle cx="23.5" cy="12.8" r="3.6" />
+        <circle cx="31.2" cy="16" r="3.6" />
+        <circle cx="36.6" cy="23.2" r="3.6" />
+        <path d="M17.6 32.8c1.4-4.7 4.5-7.9 8.4-7.9s7 3.2 8.4 7.9c.8 2.8-1.5 5.2-4.3 4.3-1.3-.4-2.3-1.2-4.1-1.2s-2.8.8-4.1 1.2c-2.8.9-5.1-1.5-4.3-4.3Z" />
       </svg>
     )
   }

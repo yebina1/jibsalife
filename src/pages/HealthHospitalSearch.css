@@ -89,7 +89,7 @@
   gap: 12px;
 }
 
-.health_hospital_search_nearby_header button {
+.health_hospital_search_nearby_header a {
   display: inline-flex;
   width: auto;
   height: auto;
@@ -101,9 +101,10 @@
   font-weight: 500;
   line-height: 1.4;
   letter-spacing: -0.025em;
+  text-decoration: none;
 }
 
-.health_hospital_search_nearby_header button i {
+.health_hospital_search_nearby_header a i {
   font-size: 18px;
   line-height: 1;
 }
@@ -210,13 +211,26 @@
   width: 24px;
   height: 24px;
   place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: #4a3d3d;
   justify-self: end;
+}
+
+.health_hospital_search_favorite.is_active {
+  color: #ff5a5f;
 }
 
 .health_hospital_search_favorite i {
   font-size: 22px;
   line-height: 1;
+}
+
+.health_hospital_search_favorite svg {
+  display: block;
+  width: 24px;
+  height: 24px;
 }
 
 @media (max-width: 420px) {

@@ -1,37 +1,12 @@
 import { useState } from 'react'
 import './health.css'
-import './HealthHospitalSearch.css'
+import './HealthHospitalList.css'
 import PageHeader from '../components/PageHeader'
 import BackButton from '../components/html/BackButton'
 import Button from '../components/html/Button'
-import { Link } from 'react-router'
 import calendarIcon from '../svg/calendar.svg'
 import notificationIcon from '../svg/notification.svg'
-import hospital3d from '../img/hospital_3d.png'
-import message3d from '../img/message_3d.png'
 import { getOperatingState, hospitalSearchItems } from './healthHospitalData'
-
-type ServiceCard = {
-  title: string
-  description: string
-  image: string
-  to: string
-}
-
-const serviceCards: ServiceCard[] = [
-  {
-    title: '병원 찾기',
-    description: '내 주변 병원 검색\n및 정보 확인',
-    image: hospital3d,
-    to: '/health/hospitals/list',
-  },
-  {
-    title: '수의사 상담',
-    description: '실시간 상담으로\n전문가와 대화',
-    image: message3d,
-    to: '/health/vet-chat',
-  },
-]
 
 function HeartIcon({ filled }: { filled: boolean }) {
   return (
@@ -48,7 +23,7 @@ function HeartIcon({ filled }: { filled: boolean }) {
   )
 }
 
-function HealthHospitalSearch() {
+function HealthHospitalList() {
   const [favoriteNames, setFavoriteNames] = useState<string[]>([])
 
   const handleFavoriteToggle = (hospitalName: string) => {
@@ -69,68 +44,50 @@ function HealthHospitalSearch() {
             <Button type="button" aria-label="캘린더">
               <img src={calendarIcon} alt="" />
             </Button>
-            <Button type="button" aria-label="알림" className="health_hospital_search_notification">
+            <Button type="button" aria-label="알림" className="health_hospital_list_notification">
               <img src={notificationIcon} alt="" />
             </Button>
           </>
         }
       />
 
-      <main className="page health_page health_hospital_search_page">
-        <section className="health_hospital_search_services">
-          <h2>어떤 서비스를 원하시나요?</h2>
-          <div className="health_hospital_search_service_grid">
-            {serviceCards.map((item) => (
-              <Link key={item.title} className="health_hospital_search_service_card" to={item.to}>
-                <img src={item.image} alt="" aria-hidden="true" />
-                <strong>{item.title}</strong>
-                <p>{item.description}</p>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        <section className="health_hospital_search_nearby">
-          <div className="health_hospital_search_nearby_header">
-            <h2>내 주변 추천 병원</h2>
-            <Link to="/health/hospitals/list">
-              더보기
-              <i className="bx bx-chevron-right" aria-hidden="true"></i>
-            </Link>
+      <main className="page health_page health_hospital_list_page">
+        <section className="health_hospital_list_section">
+          <div className="health_hospital_list_header">
+            <h2>병원 목록</h2>
+            <p>내 주변 추천 병원을 한눈에 확인해 보세요.</p>
           </div>
 
-          <ul className="health_hospital_search_list">
+          <ul className="health_hospital_list">
             {hospitalSearchItems.map((item) => {
               const operatingState = getOperatingState(item.open, item.close)
               const isFavorite = favoriteNames.includes(item.name)
 
               return (
                 <li key={item.name}>
-                  <div className="health_hospital_search_item">
+                  <div className="health_hospital_list_item">
                     <img src={item.image} alt="" aria-hidden="true" />
-                    <div className="health_hospital_search_item_body">
-                      <div className="health_hospital_search_item_top">
+                    <div className="health_hospital_list_item_body">
+                      <div className="health_hospital_list_item_top">
                         <strong>{item.name}</strong>
                       </div>
 
-                      <p className="health_hospital_search_rating">
+                      <p className="health_hospital_list_rating">
                         <i className="bx bxs-star" aria-hidden="true"></i>
                         {item.rating} ({item.reviewCount})
                         <span>{item.distanceKm.toFixed(1)} KM</span>
                       </p>
 
-                      <p className="health_hospital_search_tags">{item.tags.join(' · ')}</p>
+                      <p className="health_hospital_list_tags">{item.tags.join(' · ')}</p>
 
-                      <span
-                        className={`health_hospital_search_hours ${operatingState.isOpen ? 'is_open' : ''}`}
-                      >
+                      <span className={`health_hospital_list_hours ${operatingState.isOpen ? 'is_open' : ''}`}>
                         {operatingState.isOpen ? '진료중' : '진료 마감'} {item.open} ~ {item.close}
                       </span>
                     </div>
 
                     <button
                       type="button"
-                      className={`health_hospital_search_favorite ${isFavorite ? 'is_active' : ''}`}
+                      className={`health_hospital_list_favorite ${isFavorite ? 'is_active' : ''}`}
                       aria-label={isFavorite ? `${item.name} 찜 해제` : `${item.name} 찜`}
                       aria-pressed={isFavorite}
                       onClick={() => handleFavoriteToggle(item.name)}
@@ -148,4 +105,4 @@ function HealthHospitalSearch() {
   )
 }
 
-export default HealthHospitalSearch
+export default HealthHospitalList

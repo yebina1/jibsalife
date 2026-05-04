@@ -8,6 +8,7 @@ import HealthCheckLoading from './pages/HealthCheckLoading'
 import HealthCheckResult from './pages/HealthCheckResult'
 import HealthCheckSummary from './pages/HealthCheckSummary'
 import HealthConnect from './pages/HealthConnect'
+import HealthHospitalList from './pages/HealthHospitalList'
 import HealthHospitalSearch from './pages/HealthHospitalSearch'
 import HealthResultDetail from './pages/HealthResultDetail'
 import HealthResultActions from './pages/HealthResultActions'
@@ -42,6 +43,7 @@ function App() {
           <Route path="/health/check-summary" element={<HealthCheckSummary />} />
           <Route path="/health/connect" element={<HealthConnect />} />
           <Route path="/health/hospitals" element={<HealthHospitalSearch />} />
+          <Route path="/health/hospitals/list" element={<HealthHospitalList />} />
           <Route path="/health/qna" element={<HealthQna />} />
           <Route path="/health/vet-chat" element={<HealthVetChat />} />
           <Route path="/community" element={<Community />} />

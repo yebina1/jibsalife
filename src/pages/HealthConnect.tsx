@@ -18,7 +18,7 @@ function HealthConnect() {
     {
       title: '병원 찾기',
       description: '내 주변 병원 검색 및 정보 확인',
-      onClick: () => navigate('/health/hospitals'),
+      onClick: () => navigate('/health/hospitals/list'),
     },
     {
       title: '수의사 상담',
@@ -58,14 +58,14 @@ function HealthConnect() {
             title="내 주변 추천 병원"
             actionText="더보기"
             actionIcon={<i className="bx bx-chevron-right" aria-hidden="true"></i>}
-            onActionClick={() => navigate('/health/hospitals')}
+            onActionClick={() => navigate('/health/hospitals/list')}
           />
           <HospitalList items={hospitalItems} />
         </section>
 
         <NoticeText>
           <p>
-            ※ 이 결과는 참고용이며, 정확한 진단은
+            건강 체크 결과는 참고용이며 정확한 진단은
             <br />
             수의사 상담을 통해 확인해 주세요.
           </p>

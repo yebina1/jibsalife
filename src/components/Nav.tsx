@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { NavLink } from 'react-router'
 import navCommunicateOffIcon from '../svg/nav communicate off.svg'
 import navHealthOffIcon from '../svg/nav health off.svg'
@@ -19,43 +20,43 @@ const navIconMap = {
   mypage: navMypageOffIcon,
 } as const
 
-const navIconAltMap = {
-  home: '홈 아이콘',
-  health: '건강 아이콘',
-  community: '커뮤니티 아이콘',
-  mypage: '마이페이지 아이콘',
-} as const
-
 function NavIcon({ type, active }: { type: (typeof navItems)[number]['icon']; active: boolean }) {
   const className = active ? 'layout_nav_icon active' : 'layout_nav_icon'
 
   if (active && type === 'home') {
     return (
       <svg viewBox="0 0 28 28" className={className} aria-hidden="true">
-        <ellipse cx="9.2" cy="9" rx="2.1" ry="3" transform="rotate(-22 9.2 9)" />
-        <ellipse cx="13" cy="7.2" rx="2.2" ry="3.2" />
-        <ellipse cx="17" cy="7.2" rx="2.2" ry="3.2" />
-        <ellipse cx="20.8" cy="9" rx="2.1" ry="3" transform="rotate(22 20.8 9)" />
-        <path d="M8.2 18.2c0-3.8 3.5-7 6.8-7s6.8 3.2 6.8 7c0 2.1-1.6 3.5-3.6 3.5-1.3 0-2.1-.6-3.2-.6s-1.9.6-3.2.6c-2 0-3.6-1.4-3.6-3.5Z" />
+        <circle cx="14" cy="14" r="11.2" fill="currentColor" opacity="0.14" />
+        <circle cx="9.6" cy="10.3" r="1.9" fill="#ffffff" stroke="currentColor" strokeWidth="1.6" />
+        <circle cx="14" cy="8.6" r="1.9" fill="#ffffff" stroke="currentColor" strokeWidth="1.6" />
+        <circle cx="18.4" cy="10.3" r="1.9" fill="#ffffff" stroke="currentColor" strokeWidth="1.6" />
+        <circle cx="21.1" cy="14.4" r="1.9" fill="#ffffff" stroke="currentColor" strokeWidth="1.6" />
+        <path
+          d="M9.9 18.7c.7-2.5 2.5-4.3 4.6-4.3s3.9 1.8 4.6 4.3c.4 1.6-.8 2.9-2.3 2.3-.8-.3-1.3-.8-2.3-.8s-1.5.5-2.3.8c-1.5.6-2.8-.7-2.3-2.3Z"
+          fill="#ffffff"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinejoin="round"
+        />
       </svg>
     )
   }
 
   if (active && type === 'health') {
     return (
-      <svg viewBox="0 0 28 28" className={className} aria-hidden="true">
-        <path d="M15.2 3.5a2.2 2.2 0 0 1 2.2 2.2v5h5a2.2 2.2 0 0 1 2.2 2.2v2.2a2.2 2.2 0 0 1-2.2 2.2h-5v5a2.2 2.2 0 0 1-2.2 2.2H13a2.2 2.2 0 0 1-2.2-2.2v-5h-5a2.2 2.2 0 0 1-2.2-2.2v-2.2a2.2 2.2 0 0 1 2.2-2.2h5v-5A2.2 2.2 0 0 1 13 3.5h2.2Z" />
+      <svg viewBox="0 0 28 28" className={className} aria-hidden="true" fill="currentColor">
+        <path d="M15 3C16.6569 3 18 4.34315 18 6V10H22C23.6569 10 25 11.3431 25 13V15C25 16.6569 23.6569 18 22 18H18V22C18 23.6569 16.6569 25 15 25H13C11.3431 25 10 23.6569 10 22V18H6C4.34315 18 3 16.6569 3 15V13C3 11.3431 4.34315 10 6 10H10V6C10 4.34315 11.3431 3 13 3H15Z" />
       </svg>
     )
   }
 
   if (active && type === 'community') {
     return (
-      <svg viewBox="0 0 28 28" className={className} aria-hidden="true">
-        <path d="M14 3.7c6 0 10.9 4.4 10.9 9.9s-4.9 9.9-10.9 9.9c-1.7 0-3.3-.3-4.7-1L4.8 24c-.6.2-1.1-.4-.9-.9l1.4-4.2a9 9 0 0 1-2.2-5.3c0-5.5 4.9-9.9 10.9-9.9Z" />
-        <circle cx="9.7" cy="13.8" r="1.1" fill="#ffffff" />
-        <circle cx="14" cy="13.8" r="1.1" fill="#ffffff" />
-        <circle cx="18.3" cy="13.8" r="1.1" fill="#ffffff" />
+      <svg viewBox="0 0 28 28" className={className} aria-hidden="true" fill="currentColor">
+        <path d="M14 4.2c5.9 0 10.8 4.4 10.8 9.8 0 5.5-4.9 9.9-10.8 9.9-1.6 0-3.2-.3-4.6-.9L5 24.5l1.5-4.4c-1.5-1.7-2.3-3.8-2.3-6.1 0-5.4 4.9-9.8 10.8-9.8Z" />
+        <circle cx="13.9999" cy="14" r="1.16667" fill="#ffffff" />
+        <circle cx="18.6667" cy="14" r="1.16667" fill="#ffffff" />
+        <circle cx="9.33342" cy="14" r="1.16667" fill="#ffffff" />
       </svg>
     )
   }
@@ -63,7 +64,7 @@ function NavIcon({ type, active }: { type: (typeof navItems)[number]['icon']; ac
   if (active && type === 'mypage') {
     return (
       <svg viewBox="0 0 28 28" className={className} aria-hidden="true">
-        <circle cx="14" cy="14" r="11.5" />
+        <circle cx="14" cy="14" r="11.5" fill="currentColor" />
         <circle cx="14" cy="10.8" r="3.1" fill="#ffffff" />
         <path
           d="M5.6 21.4c1.8-3.3 4.8-5.2 8.4-5.2s6.6 1.9 8.4 5.2"
@@ -77,14 +78,27 @@ function NavIcon({ type, active }: { type: (typeof navItems)[number]['icon']; ac
   }
 
   if (type === 'place') {
+    if (active) {
+      return (
+        <svg
+          viewBox="0 0 24 24"
+          className={`${className} layout_nav_icon_place`}
+          aria-hidden="true"
+          fill="currentColor"
+        >
+          <path d="M12 3.6 19.2 18a1.5 1.5 0 0 1-2.1 2L12 17.2 6.9 20a1.5 1.5 0 0 1-2.1-2L12 3.6Z" />
+        </svg>
+      )
+    }
+
     return (
       <svg
         viewBox="0 0 24 24"
         className={`${className} layout_nav_icon_place`}
         aria-hidden="true"
-        fill={active ? 'currentColor' : 'none'}
+        fill="none"
         stroke="currentColor"
-        strokeWidth={active ? '1.8' : '1.5'}
+        strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       >
@@ -95,7 +109,13 @@ function NavIcon({ type, active }: { type: (typeof navItems)[number]['icon']; ac
 
   const icon = navIconMap[type]
 
-  return <img src={icon} className={className} alt={navIconAltMap[type]} />
+  return (
+    <span
+      className={`${className} layout_nav_icon_mask`}
+      aria-hidden="true"
+      style={{ '--layout-nav-icon-url': `url("${icon}")` } as CSSProperties}
+    />
+  )
 }
 
 function Nav() {

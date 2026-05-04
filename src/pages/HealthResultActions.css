@@ -162,6 +162,8 @@
 }
 
 .health_result_actions_card strong {
+  display: block;
+  min-height: 52px;
   color: #17171c;
   font-size: 18px;
   font-weight: 700;
@@ -171,6 +173,7 @@
 
 .health_result_actions_card p {
   margin: 0;
+  min-height: 44px;
   color: #31313a;
   font-size: 13px;
   font-weight: 500;
@@ -180,14 +183,14 @@
 
 .health_result_actions_card img {
   align-self: end;
-  justify-self: end;
+  justify-self: start;
   width: 94px;
   height: auto;
   object-fit: contain;
 }
 
 .health_result_actions_card.is_consult img {
-  width: 86px;
+  width: 94px;
 }
 
 @media (max-width: 420px) {
@@ -245,10 +248,12 @@
   }
 
   .health_result_actions_card strong {
+    min-height: 50px;
     font-size: 17px;
   }
 
   .health_result_actions_card p {
+    min-height: 40px;
     font-size: 12px;
   }
 
@@ -257,6 +262,6 @@
   }
 
   .health_result_actions_card.is_consult img {
-    width: 80px;
+    width: 88px;
   }
 }
