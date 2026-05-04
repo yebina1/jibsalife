@@ -1447,6 +1447,10 @@
 }
 
 @media (min-width: 768px) {
+  .community_fab {
+    right: max(18px, calc((100vw - var(--layout-max-width, 1440px)) / 2 + 18px));
+  }
+
   .community_page {
     padding: 24px 10px 34px;
   }

@@ -10,7 +10,7 @@
 
 .white_btn {
   width: 100%;
-  min-width: 313px;
+  min-width: 0;
   height: 54px;
   border-radius: 8px;
   background: var(--white);

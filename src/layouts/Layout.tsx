@@ -14,7 +14,8 @@ function Layout() {
   const hasContentPadding = !noPaddingPaths.includes(pathname)
   const contentClassName =
     hasContentPadding ? 'layout_content' : 'layout_content layout_content_no_padding'
-  const hideFloatingAiButton = pathname === '/mypage'
+  const hideFloatingAiButtonPaths = ['/mypage', '/health/qna', '/health/vet-chat']
+  const hideFloatingAiButton = hideFloatingAiButtonPaths.includes(pathname)
 
   return (
     <HeaderContext.Provider value={setHeader}>

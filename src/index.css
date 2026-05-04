@@ -18,9 +18,16 @@
 
 html,
 body{
+  min-width: 320px;
+  min-height: 100%;
+  overflow-x: hidden;
   font-family: var(--app-font-family);
   line-height: var(--app-line-height);
   letter-spacing: var(--app-letter-spacing);
+}
+
+#root {
+  min-height: 100vh;
 }
 
 button,

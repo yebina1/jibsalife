@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  padding-inline: 16px 20px;
+  padding-inline: var(--layout-inline-padding, 16px);
   background-color: #ffffff;
   border-bottom: 1px solid #E5E5E5;
 }

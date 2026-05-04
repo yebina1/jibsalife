@@ -4,9 +4,11 @@
 }
 
 .layout {
+  --layout-max-width: 1440px;
   --layout-header-height: 97px;
   --layout-footer-height: 90px;
   --layout-content-padding-y: 48px;
+  --layout-inline-padding: clamp(12px, 2.5vw, 32px);
   position: relative;
   min-height: 100vh;
   padding-top: var(--layout-header-height);
@@ -35,7 +37,7 @@
 
 .layout_content{
   min-height: calc(100dvh - var(--layout-header-height) - var(--layout-footer-height));
-  padding: 24px 16px;
+  padding: 24px var(--layout-inline-padding);
   box-sizing: border-box;
 }
 
@@ -46,7 +48,7 @@
 
 .layout_content > .page {
   width: 100%;
-  max-width: 820px;
+  max-width: var(--layout-max-width);
   min-height: calc(
     100dvh - var(--layout-header-height) - var(--layout-footer-height) - var(--layout-content-padding-y)
   );
@@ -57,13 +59,24 @@
 .layout_nav_inner {
   display: grid;
   width: 100%;
-  max-width: 820px;
+  max-width: var(--layout-max-width);
   height: 56px;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   margin: 0 auto;
+  padding-right: var(--layout-inline-padding);
+  padding-left: var(--layout-inline-padding);
   box-sizing: border-box;
   background: #ffffff;
   border-top: 1px solid #ececf1;
+}
+
+.layout > header > *,
+.layout > footer > * {
+  width: 100%;
+  max-width: var(--layout-max-width);
+  margin-right: auto;
+  margin-left: auto;
+  box-sizing: border-box;
 }
 
 .layout_nav_link {
@@ -103,20 +116,11 @@
   .layout {
     padding-bottom: var(--layout-footer-height);
   }
-
-  .layout_nav_inner {
-    padding-right: 24px;
-    padding-left: 24px;
-  }
 }
 
 @media (max-width: 420px) {
   .layout {
     padding-bottom: var(--layout-footer-height);
-  }
-
-  .layout_nav_inner {
-    padding-inline: 16px;
   }
 
   .layout_nav_icon {

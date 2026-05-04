@@ -31,9 +31,10 @@
 }
 
 .health_intro_text {
-  min-width: 313px;
   display: flex;
   justify-content: space-between;
+  gap: 16px;
+  min-width: 0;
 }
 
 .health_intro_text .title {
@@ -71,7 +72,7 @@
 .health_check {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(2, minmax(151px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   padding: 0;
   list-style: none;
@@ -80,7 +81,7 @@
 .health_check_item button {
   display: flex;
   width: 100%;
-  min-width: 151px;
+  min-width: 0;
   height: 180px;
   flex-direction: column;
   align-items: center;
@@ -132,7 +133,7 @@
   }
 
   .health_check {
-    grid-template-columns: repeat(2, minmax(151px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
 
@@ -160,7 +161,7 @@
 
 @media (max-width: 360px) {
   .health_check {
-    gap: 12px 10px;
+    gap: 10px 8px;
   }
 
   .health_intro {
@@ -174,7 +175,7 @@
   }
 
   .health_check_item button {
-    height: 142px;
+    height: 124px;
   }
 
   .health_check_item i,
