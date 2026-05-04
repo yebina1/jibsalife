@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import type { FormEvent } from 'react'
 import './ChatRoom.css'
+import Form from './html/Form'
 
 export type ChatMessage = {
   id: number
@@ -33,9 +33,7 @@ function ChatRoom({
     bottomRef.current?.scrollIntoView({ behavior: 'instant' })
   }, [messages])
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-
+  const handleSubmit = () => {
     const trimmedMessage = message.trim()
     if (!trimmedMessage) return
 
@@ -77,20 +75,20 @@ function ChatRoom({
         <div ref={bottomRef} />
       </div>
 
-      <form className="chat_room_form" onSubmit={handleSubmit}>
-        <input
-          aria-label={inputAriaLabel}
-          placeholder={placeholder}
-          type="text"
-          value={message}
-          onChange={(event) => setMessage(event.target.value)}
-        />
-        <button type="submit" aria-label={submitLabel}>
+      <Form
+        className="chat_room_form"
+        value={message}
+        placeholder={placeholder}
+        inputAriaLabel={inputAriaLabel}
+        submitLabel={submitLabel}
+        onChange={setMessage}
+        onSubmit={handleSubmit}
+        icon={
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
           </svg>
-        </button>
-      </form>
+        }
+      />
     </section>
   )
 }
