@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import PageHeader from '../components/PageHeader'
 import Button from '../components/html/Button'
+import Form from '../components/html/Form'
 import contents1 from '../img/contents1.png'
 import contents2 from '../img/contents2.png'
 import contents3 from '../img/contents3.png'
@@ -401,18 +402,21 @@ function Community() {
       <main className="page community_page">
         {showSearch ? (
           <section className="community_search_box">
-            <label className="community_search_field">
-              <input
-                type="search"
-                value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-                placeholder="검색어를 입력해주세요"
-                aria-label="커뮤니티 검색"
-              />
-              <span className="community_search_icon" aria-hidden="true">
-                ⌕
-              </span>
-            </label>
+            <Form
+              className="chat_room_form community_search_form"
+              value={searchTerm}
+              placeholder="검색어를 입력해주세요"
+              inputAriaLabel="커뮤니티 검색"
+              submitLabel="검색"
+              onChange={setSearchTerm}
+              onSubmit={() => undefined}
+              icon={
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle cx="10.5" cy="10.5" r="6.5" />
+                  <path d="m15.5 15.5 4.5 4.5" />
+                </svg>
+              }
+            />
           </section>
         ) : null}
 

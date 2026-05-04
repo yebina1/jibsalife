@@ -1,14 +1,18 @@
-import { useEffect, useRef, useState } from 'react'
+import { type CSSProperties, useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import './health.css'
 import './HealthCamera.css'
+import PageHeader from '../components/PageHeader'
 import Button from '../components/html/Button'
+import BackButton from '../components/html/BackButton'
+import calendarIcon from '../svg/calendar.svg'
 import guideExampleImage from '../img/ex.png'
+import notificationIcon from '../svg/notification.svg'
 
 const GUIDE_DURATION_MS = 5000
 
 type GuideMode = 'photo' | 'audio' | 'video' | 'memo'
-type GuideIconType = 'target' | 'light' | 'camera'
+type GuideIconType = 'target' | 'light' | 'camera' | 'mic' | 'chat' | 'timer'
 
 const guideConfigs: Record<
   GuideMode,
@@ -54,19 +58,19 @@ const guideConfigs: Record<
     actionLabel: '음성 기록',
     items: [
       {
-        icon: 'light',
+        icon: 'mic',
         title: '조용한 환경에서 녹음해주세요',
-        description: '주변 소음이 적을수록 내용을 더 정확하게 확인할 수 있어요.',
+        description: '주변 소음이 적은 곳에서 녹음하면 더 잘 들려요.',
       },
       {
-        icon: 'target',
+        icon: 'chat',
         title: '증상이나 변화를 구체적으로 말씀해주세요',
-        description: '언제부터 어떤 변화가 있었는지 함께 말해주세요.',
+        description: '언제부터, 어떤 변화가 있는지 자세히 말씀해주시면 좋아요.',
       },
       {
-        icon: 'camera',
+        icon: 'timer',
         title: '짧고 간단하게 말씀해주세요',
-        description: '핵심 내용을 또렷하게 남겨주세요.',
+        description: '핵심 내용을 중심으로 짧게 말씀해주시면 충분해요.',
       },
     ],
   },
@@ -138,6 +142,33 @@ function GuideIcon({ type }: { type: GuideIconType }) {
     )
   }
 
+  if (type === 'mic') {
+    return (
+      <svg viewBox="0 0 48 48" aria-hidden="true">
+        <rect x="18" y="7" width="12" height="22" rx="6" />
+        <path d="M12 22a12 12 0 0 0 24 0M24 34v7M18 41h12" />
+      </svg>
+    )
+  }
+
+  if (type === 'chat') {
+    return (
+      <svg viewBox="0 0 48 48" aria-hidden="true">
+        <path d="M10 14a6 6 0 0 1 6-6h18a6 6 0 0 1 6 6v12a6 6 0 0 1-6 6H22l-10 8v-8h-2a6 6 0 0 1-6-6V14Z" />
+        <path d="M17 20h.1M24 20h.1M31 20h.1" />
+      </svg>
+    )
+  }
+
+  if (type === 'timer') {
+    return (
+      <svg viewBox="0 0 48 48" aria-hidden="true">
+        <circle cx="24" cy="25" r="15" />
+        <path d="M20 6h8M24 25V15M24 25l6 4M34 11l4 4" />
+      </svg>
+    )
+  }
+
   return (
     <svg viewBox="0 0 48 48" aria-hidden="true">
       <path d="M15 17h5l2-4h8l2 4h5a4 4 0 0 1 4 4v13a4 4 0 0 1-4 4H11a4 4 0 0 1-4-4V21a4 4 0 0 1 4-4h4Z" />
@@ -152,7 +183,7 @@ function HealthCamera() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const [cameraError, setCameraError] = useState('')
-  const [showGuide, setShowGuide] = useState(searchParams.get('guide') !== 'false')
+  const [showGuide] = useState(searchParams.get('guide') !== 'false')
   const modeParam = searchParams.get('mode')
   const mode: GuideMode =
     modeParam === 'audio' || modeParam === 'video' || modeParam === 'memo' ? modeParam : 'photo'
@@ -167,7 +198,7 @@ function HealthCamera() {
     }
 
     if (isCaptureMode) {
-      setShowGuide(false)
+      navigate(`/health/camera?mode=${mode}&guide=false`, { replace: true })
       return
     }
 
@@ -226,42 +257,82 @@ function HealthCamera() {
 
   if (showGuide) {
     return (
-      <main className="page health_page health_camera_page health_camera_page_guide">
-        <section className="health_camera_guide" aria-label="촬영 안내">
-          <div className="health_camera_guide_copy">
-            <p>{guideConfig.label}</p>
-            <h1>
-              <span>{guideConfig.highlight}</span>{' '}
-              {guideConfig.title.replace(guideConfig.highlight, '').trim()}
-            </h1>
-          </div>
+      <>
+        <PageHeader
+          title="AI 건강 체크"
+          leftContent={<BackButton to="/health" />}
+          rightContent={
+            <>
+              <Button type="button" aria-label="캘린더" onClick={() => navigate('/mission')}>
+                <img src={calendarIcon} alt="" />
+              </Button>
+              <Button type="button" aria-label="알림" className="health_camera_notification">
+                <img src={notificationIcon} alt="" />
+              </Button>
+            </>
+          }
+        />
 
-          <section className="health_camera_guide_panel" aria-label={`${guideConfig.actionLabel} 안내`}>
-            <div className="health_camera_example">
-              <span>예시 이미지</span>
-              <img src={guideExampleImage} alt="피부 상태 촬영 예시" />
+        <main
+          className={`page health_page health_camera_page health_camera_page_guide health_camera_page_guide_${mode}`}
+        >
+          <section className="health_camera_guide" aria-label="촬영 안내">
+            <div className="health_camera_guide_copy">
+              <p>{guideConfig.label}</p>
+              <h1>
+                <span>{guideConfig.highlight}</span>{' '}
+                {guideConfig.title.replace(guideConfig.highlight, '').trim()}
+              </h1>
             </div>
 
-            <div className="health_camera_guide_list">
-              {guideConfig.items.map((item) => (
-                <article className="health_camera_guide_item" key={item.title}>
-                  <span className="health_camera_guide_card_icon">
-                    <GuideIcon type={item.icon} />
-                  </span>
-                  <div>
-                    <h2>{item.title}</h2>
-                    <p>{item.description}</p>
+            <section className="health_camera_guide_panel" aria-label={`${guideConfig.actionLabel} 안내`}>
+              {mode === 'photo' ? (
+                <div className="health_camera_example">
+                  <span>예시 이미지</span>
+                  <img src={guideExampleImage} alt="피부 상태 촬영 예시" />
+                </div>
+              ) : null}
+
+              {mode === 'audio' ? (
+                <div className="health_camera_audio_visual" aria-hidden="true">
+                  <div className="health_camera_audio_bubble">"밥을 잘 안 먹어요"</div>
+                  <div className="health_camera_audio_wave">
+                    {Array.from({ length: 34 }).map((_, index) => (
+                      <span key={index} style={{ '--wave-index': index } as CSSProperties} />
+                    ))}
                   </div>
-                </article>
-              ))}
-            </div>
-          </section>
+                  <div className="health_camera_audio_meter">
+                    <GuideIcon type="mic" />
+                    <strong>00:12</strong>
+                  </div>
+                  <div className="health_camera_audio_recording">
+                    <span />
+                    녹음 중
+                  </div>
+                </div>
+              ) : null}
 
-          <button type="button" className="health_camera_guide_skip" onClick={continueAfterGuide}>
-            건너뛰기
-          </button>
-        </section>
-      </main>
+              <div className="health_camera_guide_list">
+                {guideConfig.items.map((item) => (
+                  <article className="health_camera_guide_item" key={item.title}>
+                    <span className="health_camera_guide_card_icon">
+                      <GuideIcon type={item.icon} />
+                    </span>
+                    <div>
+                      <h2>{item.title}</h2>
+                      <p>{item.description}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+
+            <button type="button" className="health_camera_guide_skip" onClick={continueAfterGuide}>
+              건너뛰기
+            </button>
+          </section>
+        </main>
+      </>
     )
   }
 

@@ -102,6 +102,44 @@
   transform: rotate(90deg);
 }
 
+.health_register_memo_slot {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  min-height: 104px;
+  align-items: stretch;
+  padding: 12px 14px;
+  border: 1px solid #d9dbe6;
+  border-radius: 8px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.health_register_memo_slot:focus-within {
+  border-color: rgba(109, 89, 248, 0.5);
+  box-shadow: 0 0 0 3px rgba(109, 89, 248, 0.08);
+}
+
+.health_register_memo_slot textarea {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  min-height: 72px;
+  resize: none;
+  border: 0;
+  background: transparent;
+  color: #111111;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+  outline: 0;
+}
+
+.health_register_memo_slot textarea::placeholder {
+  color: #a0a0a0;
+  font-weight: 500;
+}
+
 .health_register_sheet_layer {
   position: fixed;
   inset: 0;

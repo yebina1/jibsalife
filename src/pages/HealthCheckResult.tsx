@@ -4,49 +4,26 @@ import PageHeader from '../components/PageHeader'
 import HealthResultCard from '../components/HealthResultCard'
 import HealthResultInsights from '../components/HealthResultInsights'
 import HealthResultSummary from '../components/HealthResultSummary'
-import type { HealthResultSummaryItem } from '../components/HealthResultSummary'
 import BackButton from '../components/html/BackButton'
 import CloseButton from '../components/html/CloseButton'
+import { createHealthResultSummaryItems, type CareChangeFactor } from '../utils/healthResultPolicy'
 
-const mockHealthResult = {
+const mockHealthResult: {
+  score: number
+  changeFactor: CareChangeFactor
+  insights: string[]
+} = {
   score: 82,
-  insights: ['이전보다 몸무게가 줄었어요!'],
+  changeFactor: 'none',
+  insights: ['기록상 큰 변화는 없고 전반적으로 좋은 상태예요.'],
 }
 
-const summaryItems: HealthResultSummaryItem[] = [
-  {
-    icon: 'warning',
-    label: '이상 신호 감지',
-    value: '경미한 변화 감지',
-    to: '/health/result/detail',
-  },
-  {
-    icon: 'search',
-    label: '원인 추정',
-    value: '스트레스 가능성',
-    to: '/health/result/detail',
-  },
-  {
-    icon: 'chat',
-    label: '증상 상담',
-    value: '소화 불량 가능성',
-    to: '/health/result/detail',
-  },
-  {
-    icon: 'hospital',
-    label: '병원 방문 여부 가이드',
-    value: '지켜보고 필요 시 방문',
-    to: '/health/result/detail',
-  },
-  {
-    icon: 'report',
-    label: '병원 방문 리포트 생성',
-    value: '리포트 보기',
-    to: '/health/result/detail',
-  },
-]
-
 function HealthCheckResult() {
+  const summaryItems = createHealthResultSummaryItems({
+    score: mockHealthResult.score,
+    changeFactor: mockHealthResult.changeFactor,
+  })
+
   return (
     <>
       <PageHeader

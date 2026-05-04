@@ -3,47 +3,27 @@ import { useNavigate } from 'react-router'
 import './mypage.css'
 import PageHeader from '../components/PageHeader'
 import BackButton from '../components/html/BackButton'
-import HeaderActions from '../components/html/HeaderActions'
-import type { HeaderActionItem } from '../components/html/HeaderActions'
+import Button from '../components/html/Button'
 import calendarIcon from '../svg/calendar.svg'
 import notificationIcon from '../svg/notification.svg'
+import contents1 from '../img/contents1.png'
+import contents2 from '../img/contents2.png'
 
-const topShortcuts = [
-  { id: 1, label: '활동 내역', icon: 'bars', path: '/health/result' },
-  { id: 2, label: 'AI', icon: 'spark' },
-  { id: 3, label: '가족 정보', icon: 'pet' },
-  { id: 4, label: '인스타그램', icon: 'camera' },
-]
+const activityItems = [
+  { label: '활동 내역', icon: 'activity' },
+  { label: '저장한 장소', icon: 'pin' },
+  { label: '저장한 게시글', icon: 'bookmark' },
+  { label: '미션 수행 내역', icon: 'paw' },
+  { label: '뱃지 획득 내역', icon: 'badge' },
+  { label: '내 구독 관리', icon: 'diamond' },
+] as const
 
-const counters = [
-  { id: 1, label: '구독' },
-  { id: 2, label: '쿠폰' },
-  { id: 3, label: '포인트' },
-  { id: 4, label: '게시글' },
-]
-
-const sections = [
-  {
-    title: '활동내역',
-    items: ['미션 수행 내역', '받은 혜택 내역'],
-  },
-  {
-    title: '북마크',
-    items: ['장소', '게시글', '상품정보', '커뮤니티 북마크 내역'],
-  },
-  {
-    title: '설정',
-    items: ['알림 설정', '개인정보 설정', '앱 환경 설정'],
-  },
-  {
-    title: '고객센터',
-    items: ['FAQ', '문의하기', '공지사항'],
-  },
-  {
-    title: '회사소개',
-    items: ['서비스 소개', '개인정보처리방침', '이용약관'],
-  },
-]
+const supportItems = [
+  { label: '공지사항', icon: 'megaphone' },
+  { label: '고객센터', icon: 'headset' },
+  { label: '자주 묻는 질문(FAQ)', icon: 'help' },
+  { label: '앱 설정', icon: 'gear' },
+] as const
 
 const LOCATION_STORAGE_KEY = 'mypage-location'
 
@@ -53,63 +33,104 @@ type SavedLocation = {
   savedAt: string
 }
 
-function ShortcutIcon({ type }: { type: string }) {
-  if (type === 'bars') {
+function MyPageIcon({ type }: { type: string }) {
+  if (type === 'activity') {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M4 18h16v2H4Zm2-5h3v4H6Zm5-7h3v11h-3Zm5 3h3v8h-3Z" />
+        <path d="M3 12h4l2-6 4 12 2-6h6" />
       </svg>
     )
   }
 
-  if (type === 'spark') {
+  if (type === 'pin') {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="m12 2 1.3 3.7L17 7l-3.7 1.3L12 12l-1.3-3.7L7 7l3.7-1.3Zm-6.5 9 1 2.5L9 14.5 6.5 15.5 5.5 18l-1-2.5L2 14.5l2.5-1ZM18.5 11l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1ZM12 13c-2.8 0-5 2.2-5 5v1h2v-1c0-1.7 1.3-3 3-3s3 1.3 3 3v1h2v-1c0-2.8-2.2-5-5-5Z" />
+        <path d="M12 21s7-6.2 7-12A7 7 0 1 0 5 9c0 5.8 7 12 7 12Z" />
+        <circle cx="12" cy="9" r="2.5" />
       </svg>
     )
   }
 
-  if (type === 'pet') {
+  if (type === 'bookmark') {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M7 10a2 2 0 1 0-2-2 2 2 0 0 0 2 2Zm10 0a2 2 0 1 0-2-2 2 2 0 0 0 2 2ZM5 15a2 2 0 1 0-2-2 2 2 0 0 0 2 2Zm14 0a2 2 0 1 0-2-2 2 2 0 0 0 2 2Zm-7-3c-3 0-5 2.1-5 4.6 0 1.5 1.2 2.4 2.7 2.4 1 0 1.6-.4 2.3-.9.7.5 1.3.9 2.3.9 1.5 0 2.7-.9 2.7-2.4C17 14.1 15 12 12 12Z" />
+        <path d="M6 4h12v17l-6-4-6 4Z" />
+      </svg>
+    )
+  }
+
+  if (type === 'paw') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="6.8" cy="8.2" r="1.8" />
+        <circle cx="11.2" cy="6.2" r="1.8" />
+        <circle cx="15.8" cy="8.2" r="1.8" />
+        <circle cx="18.4" cy="12.2" r="1.8" />
+        <path d="M7.8 15.3c.8-2.5 2.4-4 4.3-4s3.4 1.5 4.2 4c.5 1.7-.8 3.1-2.4 2.5-.8-.3-1.2-.7-1.8-.7s-1 .4-1.8.7c-1.6.6-3-.8-2.5-2.5Z" />
+      </svg>
+    )
+  }
+
+  if (type === 'badge') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 4h10l2 4-7 12L5 8Z" />
+        <path d="M7 4l5 16M17 4l-5 16M5 8h14" />
+      </svg>
+    )
+  }
+
+  if (type === 'diamond') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 3 3 9l9 12 9-12Z" />
+        <path d="M3 9h18M8 9l4 12 4-12M8 9l4-6 4 6" />
+      </svg>
+    )
+  }
+
+  if (type === 'megaphone') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 13h4l9 4V7l-9 4H4Z" />
+        <path d="M8 13v5M19 10a4 4 0 0 1 0 4" />
+      </svg>
+    )
+  }
+
+  if (type === 'headset') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 13a8 8 0 0 1 16 0v4a3 3 0 0 1-3 3h-3" />
+        <path d="M6 13h3v5H6a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2ZM18 13h-3v5h3a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2Z" />
+      </svg>
+    )
+  }
+
+  if (type === 'help') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="8" />
+        <path d="M9.8 9.4a2.3 2.3 0 0 1 4.4 1c0 1.8-2.2 2-2.2 3.6M12 17h.1" />
       </svg>
     )
   }
 
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm5 5.5A4.5 4.5 0 1 0 16.5 12 4.5 4.5 0 0 0 12 7.5Zm5.2-.9a1.1 1.1 0 1 0 1.1 1.1 1.1 1.1 0 0 0-1.1-1.1Z" />
+      <path d="M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z" />
+      <path d="m19.4 13 .1-1-.1-1 2-1.6-2-3.4-2.4 1a7.8 7.8 0 0 0-1.7-1l-.4-2.6h-4l-.4 2.6a7.8 7.8 0 0 0-1.7 1l-2.4-1-2 3.4 2 1.6-.1 1 .1 1-2 1.6 2 3.4 2.4-1a7.8 7.8 0 0 0 1.7 1l.4 2.6h4l.4-2.6a7.8 7.8 0 0 0 1.7-1l2.4 1 2-3.4Z" />
     </svg>
   )
 }
 
-function SettingIcon() {
+function HeaderGearIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m19.4 13 .1-1-.1-1 2-1.6-2-3.4-2.4 1a7.8 7.8 0 0 0-1.7-1l-.4-2.6h-4l-.4 2.6a7.8 7.8 0 0 0-1.7 1l-2.4-1-2 3.4 2 1.6-.1 1 .1 1-2 1.6 2 3.4 2.4-1a7.8 7.8 0 0 0 1.7 1l.4 2.6h4l.4-2.6a7.8 7.8 0 0 0 1.7-1l2.4 1 2-3.4ZM12 15.5A3.5 3.5 0 1 1 15.5 12 3.5 3.5 0 0 1 12 15.5Z" />
+      <path d="M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z" />
+      <path d="m19.4 13 .1-1-.1-1 2-1.6-2-3.4-2.4 1a7.8 7.8 0 0 0-1.7-1l-.4-2.6h-4l-.4 2.6a7.8 7.8 0 0 0-1.7 1l-2.4-1-2 3.4 2 1.6-.1 1 .1 1-2 1.6 2 3.4 2.4-1a7.8 7.8 0 0 0 1.7 1l.4 2.6h4l.4-2.6a7.8 7.8 0 0 0 1.7-1l2.4 1 2-3.4Z" />
     </svg>
   )
-}
-
-function formatCoordinate(value: number) {
-  return value.toFixed(5)
-}
-
-function formatSavedAt(savedAt: string) {
-  const date = new Date(savedAt)
-
-  if (Number.isNaN(date.getTime())) {
-    return ''
-  }
-
-  return new Intl.DateTimeFormat('ko-KR', {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(date)
 }
 
 function MyPage() {
@@ -119,31 +140,17 @@ function MyPage() {
     '위치 정보를 등록하고\n맞춤 서비스를 받아 보세요',
   )
   const [isLocating, setIsLocating] = useState(false)
-  const headerActions: HeaderActionItem[] = [
-    {
-      label: '캘린더',
-      icon: calendarIcon,
-      onClick: () => navigate('/mission'),
-    },
-    {
-      label: '알림',
-      icon: notificationIcon,
-      className: 'mypage_notification',
-    },
-  ]
 
   useEffect(() => {
     const savedValue = window.localStorage.getItem(LOCATION_STORAGE_KEY)
 
-    if (!savedValue) {
-      return
-    }
+    if (!savedValue) return
 
     try {
       const parsedValue = JSON.parse(savedValue) as SavedLocation
       setSavedLocation(parsedValue)
       setLocationMessage(
-        `현재 위치 ${formatCoordinate(parsedValue.latitude)}, ${formatCoordinate(parsedValue.longitude)}`,
+        `현재 위치 ${parsedValue.latitude.toFixed(5)}, ${parsedValue.longitude.toFixed(5)}`,
       )
     } catch {
       window.localStorage.removeItem(LOCATION_STORAGE_KEY)
@@ -170,17 +177,16 @@ function MyPage() {
         window.localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(nextLocation))
         setSavedLocation(nextLocation)
         setLocationMessage(
-          `현재 위치 ${formatCoordinate(nextLocation.latitude)}, ${formatCoordinate(nextLocation.longitude)}`,
+          `현재 위치 ${nextLocation.latitude.toFixed(5)}, ${nextLocation.longitude.toFixed(5)}`,
         )
         setIsLocating(false)
       },
       (error) => {
-        const nextMessage =
+        setLocationMessage(
           error.code === error.PERMISSION_DENIED
             ? '위치 권한이 거부되었어요. 브라우저 권한을 확인해 주세요'
-            : '위치를 가져오지 못했어요. 잠시 후 다시 시도해 주세요'
-
-        setLocationMessage(nextMessage)
+            : '위치를 가져오지 못했어요. 잠시 후 다시 시도해 주세요',
+        )
         setIsLocating(false)
       },
       {
@@ -196,113 +202,136 @@ function MyPage() {
       <PageHeader
         title="마이페이지"
         leftContent={<BackButton to="/home" />}
-        rightContent={<HeaderActions actions={headerActions} />}
+        rightContent={
+          <>
+            <Button type="button" aria-label="캘린더" onClick={() => navigate('/mission')}>
+              <img src={calendarIcon} alt="" />
+            </Button>
+            <Button type="button" aria-label="알림" className="mypage_notification">
+              <img src={notificationIcon} alt="" />
+            </Button>
+            <Button type="button" aria-label="설정" className="mypage_header_gear">
+              <HeaderGearIcon />
+            </Button>
+          </>
+        }
       />
 
       <main className="page mypage_page">
         <section className="mypage_profile_card">
-          <div className="mypage_profile_header">
-            <h1>집사집사</h1>
-            <button type="button">정보수정</button>
-          </div>
+          <img className="mypage_profile_avatar" src={contents2} alt="뿌직뿌직 프로필" />
 
-          <div className="mypage_profile_body">
-            <div className="mypage_avatar" aria-hidden="true" />
+          <div className="mypage_profile_content">
+            <div className="mypage_profile_title_row">
+              <h1>뿌직뿌직</h1>
+              <span aria-hidden="true">👑</span>
+              <button type="button">정보 수정</button>
+            </div>
 
-            <div className="mypage_stats">
+            <div className="mypage_point">
+              <span aria-hidden="true">ⓟ</span>
+              <strong>1,200p</strong>
+            </div>
+
+            <div className="mypage_profile_stats">
               <div>
-                <strong>0</strong>
+                <strong>12</strong>
                 <span>게시글</span>
               </div>
               <div>
-                <strong>0</strong>
-                <span>팔로잉</span>
+                <strong>23</strong>
+                <span>댓글</span>
               </div>
               <div>
-                <strong>0</strong>
-                <span>팔로워</span>
+                <strong>8</strong>
+                <span>뱃지</span>
               </div>
               <div>
-                <strong>0</strong>
-                <span>받은 혜택</span>
+                <strong>1장</strong>
+                <span>쿠폰</span>
               </div>
             </div>
-          </div>
 
-          <div className="mypage_location_card">
-            <p className="mypage_location_text">
-              {locationMessage.split('\n').map((line) => (
-                <span key={line}>{line}</span>
-              ))}
-              {savedLocation ? <small>최근 저장: {formatSavedAt(savedLocation.savedAt)}</small> : null}
-            </p>
-            <button
-              type="button"
-              className="mypage_location_button"
-              onClick={handleLocationSetting}
-              disabled={isLocating}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 14.5 9 2.5 2.5 0 0 1 12 11.5Z" />
-              </svg>
-              {isLocating ? '확인 중...' : '위치설정'}
-            </button>
-          </div>
-        </section>
-
-        <section className="mypage_shortcuts" aria-label="바로가기">
-          {topShortcuts.map((item) => (
-            <button
-              type="button"
-              key={item.id}
-              className="mypage_round_menu"
-              onClick={() => {
-                if (item.path) {
-                  navigate(item.path)
-                }
-              }}
-            >
-              <span className="mypage_round_icon">
-                <ShortcutIcon type={item.icon} />
-              </span>
-              <span>{item.label}</span>
-            </button>
-          ))}
-        </section>
-
-        <section className="mypage_counters" aria-label="카운터">
-          {counters.map((item) => (
-            <div key={item.id} className="mypage_counter_item">
-              <span className="mypage_counter_dot" aria-hidden="true" />
-              <span>{item.label}</span>
+            <div className="mypage_badges">
+              <span>보유 뱃지</span>
+              <div className="mypage_badge_icons" aria-hidden="true">
+                <b>🐯</b>
+                <b>🐾</b>
+                <b>🐱</b>
+              </div>
+              <button type="button" aria-label="보유 뱃지 보기">
+                <i className="bx bx-chevron-right" aria-hidden="true" />
+              </button>
             </div>
-          ))}
+          </div>
         </section>
 
-        <div className="mypage_sections">
-          {sections.map((section) => (
-            <section key={section.title} className="mypage_section_block">
-              <h2>{section.title}</h2>
-              <ul>
-                {section.items.map((item) => (
-                  <li key={item}>
-                    <button type="button" className="mypage_list_button">
-                      <span className="mypage_list_left">
-                        <span className="mypage_list_icon">
-                          <SettingIcon />
-                        </span>
-                        <span>{item}</span>
-                      </span>
-                      <span className="mypage_list_arrow" aria-hidden="true">
-                        &gt;
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))}
-        </div>
+        <section className="mypage_location_card">
+          <p>
+            {locationMessage.split('\n').map((line) => (
+              <span key={line}>{line}</span>
+            ))}
+            {savedLocation ? <small>위치 저장 완료</small> : null}
+          </p>
+          <button type="button" onClick={handleLocationSetting} disabled={isLocating}>
+            <MyPageIcon type="pin" />
+            {isLocating ? '확인 중...' : '위치설정'}
+          </button>
+        </section>
+
+        <section className="mypage_pet_area">
+          <article className="mypage_pet_card">
+            <img src={contents1} alt="뿡뿡이 프로필" />
+            <div className="mypage_pet_body">
+              <h2>뿡뿡이</h2>
+              <p>브리티시 숏헤어 · 여아 · 4개월</p>
+              <span>2.5kg</span>
+            </div>
+            <button type="button" className="mypage_pet_more">
+              자세히 보기
+              <i className="bx bx-chevron-right" aria-hidden="true" />
+            </button>
+          </article>
+
+          <button type="button" className="mypage_add_pet">
+            <span>＋</span>
+            반려동물 추가
+          </button>
+        </section>
+
+        <section className="mypage_menu_section">
+          <h2>내 활동</h2>
+          <ul>
+            {activityItems.map((item) => (
+              <li key={item.label}>
+                <button type="button" className="mypage_menu_button">
+                  <span className="mypage_menu_left">
+                    <MyPageIcon type={item.icon} />
+                    {item.label}
+                  </span>
+                  <i className="bx bx-chevron-right" aria-hidden="true" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="mypage_menu_section">
+          <h2>고객 지원</h2>
+          <ul>
+            {supportItems.map((item) => (
+              <li key={item.label}>
+                <button type="button" className="mypage_menu_button">
+                  <span className="mypage_menu_left">
+                    <MyPageIcon type={item.icon} />
+                    {item.label}
+                  </span>
+                  <i className="bx bx-chevron-right" aria-hidden="true" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
       </main>
     </>
   )

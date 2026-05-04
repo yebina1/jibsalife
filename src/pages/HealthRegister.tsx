@@ -29,6 +29,7 @@ function HealthRegister() {
   const [galleryImages, setGalleryImages] = useState<string[]>([])
   const [registeredPhotos, setRegisteredPhotos] = useState<string[]>([])
   const [selectedGalleryItems, setSelectedGalleryItems] = useState<number[]>([])
+  const [memoEntry, setMemoEntry] = useState('')
 
   useEffect(() => {
     return () => {
@@ -122,23 +123,35 @@ function HealthRegister() {
               <span>{section.limit}</span>
             </div>
 
-            <div className="health_register_slots">
-              {Array.from({ length: 3 }).map((_, index) => (
-                <button
-                  key={`${section.id}-${index}`}
-                  type="button"
-                  className="health_register_slot"
-                  aria-label={`${section.title} ${index + 1}번째 추가`}
-                  onClick={() => setIsActionSheetOpen(true)}
-                >
-                  {section.id === 'photo' && registeredPhotos[index] ? (
-                    <img src={registeredPhotos[index]} alt={`등록된 사진 ${index + 1}`} />
-                  ) : (
-                    <span aria-hidden="true" />
-                  )}
-                </button>
-              ))}
-            </div>
+            {section.id === 'memo' ? (
+              <div className="health_register_memo_slot">
+                <textarea
+                  value={memoEntry}
+                  rows={3}
+                  placeholder="메모를 입력해주세요"
+                  aria-label="메모 작성"
+                  onChange={(event) => setMemoEntry(event.target.value)}
+                />
+              </div>
+            ) : (
+              <div className="health_register_slots">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <button
+                    key={`${section.id}-${index}`}
+                    type="button"
+                    className="health_register_slot"
+                    aria-label={`${section.title} ${index + 1}번째 추가`}
+                    onClick={() => setIsActionSheetOpen(true)}
+                  >
+                    {section.id === 'photo' && registeredPhotos[index] ? (
+                      <img src={registeredPhotos[index]} alt={`등록된 사진 ${index + 1}`} />
+                    ) : (
+                      <span aria-hidden="true" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
           </section>
         ))}
       </main>
