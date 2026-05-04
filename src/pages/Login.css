@@ -1,0 +1,178 @@
+.login_page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  max-width: 1440px;
+  gap: 20px;
+}
+
+/* Hero */
+.login_hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.login_hero_text h1 {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #1a1a2e;
+}
+
+.login_hero_text p {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #9090a8;
+  line-height: 1.7;
+}
+
+.login_hero_img {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* Form */
+.login_form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0;
+  margin-top: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.login_form:focus-within {
+  border: none;
+  box-shadow: none;
+}
+
+.login_form input {
+  width: 100%;
+  height: 52px;
+  border: 1px solid #e5e5ee;
+  border-radius: 12px;
+  padding: 0 16px;
+  font-size: 15px;
+  color: #1a1a2e;
+  background: #ffffff;
+  flex: none;
+}
+
+.login_error {
+  font-size: 13px;
+  color: #ff4d4d;
+}
+
+.login_form input:focus {
+  border-color: rgba(109, 89, 248, 0.5);
+  box-shadow: 0 0 0 3px rgba(109, 89, 248, 0.06);
+  outline: none;
+}
+
+.login_form input::placeholder {
+  color: #b0b0c3;
+}
+
+/* Actions */
+.login_actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.login_guest_link {
+  font-size: 13px;
+  color: #9090a8;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.login_links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: #5a5a72;
+}
+
+.login_links a {
+  color: #5a5a72;
+}
+
+.login_links span {
+  color: #d0d0de;
+}
+
+/* Social */
+.login_social {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.login_social_divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.login_social_divider hr {
+  flex: 1;
+  border: none;
+  border-top: 1px solid #e5e5ee;
+}
+
+.login_social_divider span {
+  font-size: 12px;
+  color: #9090a8;
+  white-space: nowrap;
+}
+
+.login_social_buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.social_btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.social_btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+.kakao_btn {
+  background: #FFE835;
+  color: #3C1E1E;
+  border: none;
+}
+
+.google_btn {
+  background: #ffffff;
+  border: 1px solid #D4D4D4;
+}
+
+.naver_btn {
+  background: #03C75A;
+  border: none;
+}
+
+.apple_btn {
+  background: #111111;
+  border: none;
+}

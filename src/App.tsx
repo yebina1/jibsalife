@@ -13,6 +13,7 @@ import HealthResultDetail from './pages/HealthResultDetail'
 import HealthQna from './pages/HealthQna'
 import HealthVetChat from './pages/HealthVetChat'
 import Home from './pages/home'
+import Login from './pages/Login'
 import Mission from './pages/Mission'
 import MyPage from './pages/mypage'
 import Place from './pages/Place'
@@ -21,8 +22,11 @@ function App() {
   return (
     <div className="app">
       <Routes>
+        <Route element={<Layout showHeader={false} showNav={false} />}>
+          <Route path="/login" element={<Login />} />
+        </Route>
         <Route element={<Layout />}>
-          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/home" element={<Home />} />
           <Route path="/place" element={<Place />} />
           <Route path="/mission" element={<Mission />} />

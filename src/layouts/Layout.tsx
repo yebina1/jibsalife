@@ -7,7 +7,12 @@ import Nav from '../components/Nav'
 import StateBar from '../components/StateBar'
 import { HeaderContext, type HeaderConfig } from '../contexts/HeaderContext'
 
-function Layout() {
+type LayoutProps = {
+  showHeader?: boolean
+  showNav?: boolean
+}
+
+function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const [header, setHeader] = useState<HeaderConfig>(null)
   const { pathname } = useLocation()
   const isCameraPage = pathname === '/health/camera'
@@ -25,13 +30,15 @@ function Layout() {
   ]
   const hideFloatingAiButton = hideFloatingAiButtonPaths.includes(pathname)
 
+  const isMinimal = !showHeader && !showNav
+
   return (
     <HeaderContext.Provider value={setHeader}>
-      <div className={isCameraPage ? 'layout layout_camera' : 'layout'}>
+      <div className={isCameraPage ? 'layout layout_camera' : isMinimal ? 'layout layout_minimal' : 'layout'}>
         {!isCameraPage ? (
           <header>
             <StateBar />
-            {header && <Header {...header} />}
+            {showHeader && header && <Header {...header} />}
           </header>
         ) : null}
         <div className={contentClassName}>
@@ -40,7 +47,7 @@ function Layout() {
         {!hideFloatingAiButton ? <FloatingAiButton /> : null}
         {!isCameraPage ? (
           <footer>
-            <Nav />
+            {showNav && <Nav />}
             <HomeIndicator />
           </footer>
         ) : null}

@@ -58,6 +58,11 @@
   padding-bottom: 0;
 }
 
+.layout_minimal {
+  --layout-header-height: 41px;
+  --layout-footer-height: 34px;
+}
+
 .layout_camera .layout_content {
   min-height: 100dvh;
   padding: 0;
