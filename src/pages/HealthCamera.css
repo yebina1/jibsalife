@@ -428,6 +428,10 @@
   transform: translate(-2.5px, -4.5px);
 }
 
+.health_camera_guide_asset_icon_video {
+  transform: translate(-3px, -3px);
+}
+
 .health_camera_guide_asset_icon_chat {
   transform: translate(-2.5px, -2px);
   transform-origin: center;
@@ -569,24 +573,46 @@
   display: grid;
   gap: 12px;
   align-content: start;
+  padding: 20px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgb(153 114 245 / 9%), rgb(153 114 245 / 3%));
+  box-sizing: border-box;
 }
 
 .health_camera_video_preview {
   position: relative;
   min-height: clamp(220px, 34dvh, 300px);
   overflow: hidden;
-  border-radius: 26px;
-  background: linear-gradient(135deg, rgb(153 114 245 / 14%), rgb(153 114 245 / 5%));
-  box-shadow: 0 12px 28px rgb(31 32 62 / 8%);
+  border-radius: 16px;
+  background: transparent;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .health_camera_video_preview img {
   display: block;
   width: 100%;
   height: 100%;
-  min-height: clamp(220px, 34dvh, 300px);
+  min-height: clamp(180px, 28dvh, 256px);
+  border-radius: 16px;
   object-fit: cover;
   filter: saturate(0.92) contrast(0.92);
+}
+
+.health_camera_video_preview span {
+  position: absolute;
+  top: 26px;
+  left: 26px;
+  z-index: 1;
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  padding: 0 18px;
+  border-radius: 12px;
+  background: #a77cf1;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 800;
 }
 
 .health_camera_video_overlay {
@@ -743,14 +769,16 @@
 }
 
 .health_camera_video_notice {
-  display: flex;
-  align-items: baseline;
-  justify-content: flex-start;
-  gap: 12px;
-  min-height: 48px;
-  padding: 0 18px;
-  border-radius: 18px;
-  background: linear-gradient(90deg, rgb(153 114 245 / 12%), rgb(153 114 245 / 4%));
+  display: grid;
+  grid-template-columns: max-content max-content;
+  align-items: center;
+  justify-content: center;
+  column-gap: 12px;
+  min-height: 32px;
+  width: 100%;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
   color: #8c63e7;
   box-sizing: border-box;
 }
@@ -758,29 +786,19 @@
 .health_camera_video_notice svg {
   width: 24px;
   height: 24px;
-  flex: 0 0 auto;
-  align-self: baseline;
+  display: block;
   fill: none;
   stroke: currentColor;
   stroke-width: 2.8;
-  transform: translateY(2px);
 }
 
 .health_camera_video_notice strong {
-  position: relative;
-  display: inline-flex;
-  align-items: baseline;
+  display: flex;
+  align-items: center;
   font-size: clamp(16px, 1.8vw, 20px);
   font-weight: 800;
-  line-height: 1.2;
+  line-height: 1.3;
   letter-spacing: -0.03em;
-  color: transparent;
-}
-
-.health_camera_video_notice strong::after {
-  content: '문제가 보이는 순간을 촬영해주세요';
-  position: absolute;
-  inset: 0;
   color: #8c63e7;
 }
 
@@ -1273,16 +1291,27 @@
   }
 
   .health_camera_video_visual {
-    gap: 12px;
+    gap: 10px;
+    padding: 14px;
+    border-radius: 18px;
   }
 
   .health_camera_video_preview {
-    min-height: 210px;
+    min-height: 200px;
     border-radius: 18px;
   }
 
   .health_camera_video_preview img {
-    min-height: 210px;
+    min-height: 172px;
+    border-radius: 14px;
+  }
+
+  .health_camera_video_preview span {
+    top: 14px;
+    left: 14px;
+    min-height: 34px;
+    padding: 0 12px;
+    font-size: 14px;
   }
 
   .health_camera_video_rec,
@@ -1378,9 +1407,8 @@
   }
 
   .health_camera_video_notice {
-    min-height: 48px;
-    padding: 0 14px;
-    border-radius: 14px;
+    min-height: 32px;
+    padding: 0;
     gap: 8px;
   }
 

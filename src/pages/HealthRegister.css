@@ -74,12 +74,23 @@
 .health_register_section_header h2,
 .health_register_section_header span {
   margin: 0;
-  color: #111111;
-  font-size: 15px;
-  font-weight: 800;
-  line-height: 1.35;
-  letter-spacing: -0.025em;
   white-space: nowrap;
+}
+
+.health_register_section_header h2 {
+  color: #111111;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+}
+
+.health_register_section_header span {
+  color: #111111;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
 }
 
 .health_register_slots {
@@ -239,8 +250,9 @@
   width: auto;
   height: auto;
   border: 0;
-  background: rgb(0 0 0 / 24%);
-  backdrop-filter: blur(2px);
+  background: rgb(0 0 0 / 22%);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
 }
 
 .health_register_sheet {
@@ -312,11 +324,12 @@
 
 .health_gallery_layer::before {
   position: fixed;
-  inset: auto 0 0;
+  inset: 0;
   z-index: -1;
-  height: 100dvh;
+  height: auto;
   background: rgb(0 0 0 / 22%);
   backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   content: '';
 }
 
@@ -456,18 +469,25 @@
   position: fixed;
   inset: 0;
   z-index: 1002;
-  display: flex;
-  align-items: flex-end;
+  display: grid;
+  place-items: start center;
   justify-content: center;
-  padding: 0 16px max(16px, env(safe-area-inset-bottom));
+  overflow-y: auto;
+  padding: max(24px, calc(env(safe-area-inset-top) + 14px)) 16px max(24px, env(safe-area-inset-bottom));
   box-sizing: border-box;
 }
 
 .health_register_editor_dim {
   position: absolute;
   inset: 0;
+  display: block;
+  width: auto;
+  height: auto;
+  padding: 0;
   border: 0;
-  background: rgb(0 0 0 / 28%);
+  background: rgb(0 0 0 / 22%);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
 }
 
 .health_register_editor {
@@ -475,19 +495,23 @@
   z-index: 1;
   display: grid;
   width: 100%;
-  max-width: 520px;
-  gap: 16px;
-  padding: 20px 16px 16px;
-  border-radius: 20px;
+  max-width: 375px;
+  gap: 14px;
+  padding: 10px 16px 10px;
+  border-radius: 0;
   background: #ffffff;
   box-sizing: border-box;
+  margin: 0 auto;
+  max-height: none;
+  overflow-y: auto;
 }
 
 .health_register_editor_header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
+  padding: 0;
 }
 
 .health_register_editor_header h2 {
@@ -500,45 +524,441 @@
 }
 
 .health_register_editor_header button,
-.health_register_editor_actions button {
+.health_register_editor_tools button,
+.health_register_crop_header button,
+.health_register_crop_ratio_bar button,
+.health_register_crop_footer button {
   border: 0;
   background: transparent;
-  color: #6d59f8;
   cursor: pointer;
 }
 
 .health_register_editor_preview {
   display: grid;
-  min-height: 240px;
+  min-height: 0;
+  aspect-ratio: 343 / 430;
+  max-height: min(52dvh, 520px);
   place-items: center;
   overflow: hidden;
-  border-radius: 16px;
-  background: #f1f1f5;
+  border-radius: 24px;
+  background: #f6f4ff;
 }
 
 .health_register_editor_preview img,
 .health_register_editor_preview video {
   display: block;
   width: 100%;
-  max-height: 320px;
+  height: 100%;
   object-fit: contain;
 }
 
-.health_register_editor_actions {
-  display: flex;
-  justify-content: center;
+.health_register_editor_preview.is_photo {
+  display: block;
+  aspect-ratio: auto;
+  max-height: none;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(233, 230, 247, 0.7);
+}
+
+.health_register_editor_preview.is_photo img {
+  width: 100%;
+  height: auto;
+  object-fit: initial;
+}
+
+.health_register_editor_tip {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  padding: 16px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #fbfaff, #f6f4ff);
+}
+
+.health_register_editor_tip_icon {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  color: #7d65ef;
+}
+
+.health_register_editor_tip_icon svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.health_register_editor_tip strong,
+.health_register_editor_tip p {
+  margin: 0;
+  letter-spacing: -0.025em;
+}
+
+.health_register_editor_tip strong {
+  color: #2e2f3a;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.health_register_editor_tip p {
+  margin-top: 2px;
+  color: #767676;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.health_register_editor_tools {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
 
-.health_register_editor_actions button {
-  min-height: 40px;
-  padding: 0 14px;
-  border-radius: 999px;
-  background: rgb(109 89 248 / 10%);
-  font-size: 14px;
+.health_register_editor_tools button {
+  display: grid;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  gap: 10px;
+  justify-items: center;
+  align-content: center;
+  min-height: 120px;
+  padding: 18px 10px 14px;
+  border-radius: 18px;
+  background: #faf9ff;
+  color: #232632;
+  box-shadow: inset 0 0 0 1px rgba(240, 236, 251, 0.9);
+}
+
+.health_register_editor_tools button span {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  color: #7c64ef;
+}
+
+.health_register_editor_tools button svg {
+  width: 38px;
+  height: 38px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.health_register_editor_tools button strong {
+  color: #202331;
+  font-size: 15px;
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 1.35;
   letter-spacing: -0.025em;
+  text-align: center;
+  word-break: keep-all;
+  margin-top: 4px;
+}
+
+.health_register_photo_editor > .health_register_submit_button,
+.health_register_editor > .health_register_submit_button {
+  width: 100%;
+  margin-top: 2px;
+}
+
+.health_register_crop_editor {
+  gap: 14px;
+}
+
+.health_register_crop_header {
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.health_register_crop_header > button:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  color: #111111;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+}
+
+.health_register_crop_header > button:first-child i {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.health_register_crop_viewport {
+  position: relative;
+  display: grid;
+  align-items: center;
+  width: 100%;
+  min-height: 0;
+  aspect-ratio: 343 / 430;
+  max-height: min(52dvh, 520px);
+  overflow: hidden;
+  border-radius: 24px;
+  background: #0f1117;
+  touch-action: none;
+}
+
+.health_register_crop_viewport img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.health_register_crop_rect {
+  position: absolute;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 0 0 9999px rgb(0 0 0 / 38%);
+  box-sizing: border-box;
+}
+
+.health_register_crop_drag {
+  position: absolute;
+  inset: 0;
+  cursor: move;
+}
+
+.health_register_crop_grid {
+  position: absolute;
+  background: rgb(255 255 255 / 38%);
+}
+
+.health_register_crop_grid.is_vertical_start,
+.health_register_crop_grid.is_vertical_end {
+  top: 0;
+  bottom: 0;
+  width: 1px;
+}
+
+.health_register_crop_grid.is_vertical_start {
+  left: 33.333%;
+}
+
+.health_register_crop_grid.is_vertical_end {
+  left: 66.666%;
+}
+
+.health_register_crop_grid.is_horizontal_start,
+.health_register_crop_grid.is_horizontal_end {
+  left: 0;
+  right: 0;
+  height: 1px;
+}
+
+.health_register_crop_grid.is_horizontal_start {
+  top: 33.333%;
+}
+
+.health_register_crop_grid.is_horizontal_end {
+  top: 66.666%;
+}
+
+.health_register_crop_handle {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 0;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 18%);
+}
+
+.health_register_crop_handle.is_n,
+.health_register_crop_handle.is_s {
+  left: calc(50% - 14px);
+  width: 28px;
+  height: 8px;
+}
+
+.health_register_crop_handle.is_e,
+.health_register_crop_handle.is_w {
+  top: calc(50% - 14px);
+  width: 8px;
+  height: 28px;
+}
+
+.health_register_crop_handle.is_nw {
+  top: -8px;
+  left: -8px;
+  cursor: nwse-resize;
+}
+
+.health_register_crop_handle.is_ne {
+  top: -8px;
+  right: -8px;
+  cursor: nesw-resize;
+}
+
+.health_register_crop_handle.is_sw {
+  bottom: -8px;
+  left: -8px;
+  cursor: nesw-resize;
+}
+
+.health_register_crop_handle.is_se {
+  right: -8px;
+  bottom: -8px;
+  cursor: nwse-resize;
+}
+
+.health_register_crop_handle.is_n {
+  top: -4px;
+  cursor: ns-resize;
+}
+
+.health_register_crop_handle.is_s {
+  bottom: -4px;
+  cursor: ns-resize;
+}
+
+.health_register_crop_handle.is_e {
+  right: -4px;
+  cursor: ew-resize;
+}
+
+.health_register_crop_handle.is_w {
+  left: -4px;
+  cursor: ew-resize;
+}
+
+.health_register_crop_ratio_bar {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+  padding: 16px 12px 14px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #fcfbff, #f7f5ff);
+  box-shadow: inset 0 0 0 1px rgba(240, 236, 251, 0.9);
+}
+
+.health_register_crop_ratio_bar button {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  align-content: start;
+  min-height: 88px;
+  padding: 8px 0 6px;
+  border: 0;
+  border-radius: 18px;
+  color: #5f6273;
+  background: transparent;
+}
+
+.health_register_crop_ratio_bar button.is_active {
+  border: 1.5px solid #836bea;
+  color: #7b63ef;
+  background: #ffffff;
+  box-shadow: none;
+}
+
+.health_register_crop_ratio_bar button strong {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+}
+
+.health_register_ratio_icon {
+  display: block;
+  width: 28px;
+  border: 1.8px solid currentColor;
+  border-radius: 6px;
+}
+
+.health_register_ratio_icon.is_free {
+  height: 28px;
+}
+
+.health_register_ratio_icon.is_1_1 {
+  height: 28px;
+}
+
+.health_register_ratio_icon.is_3_4 {
+  width: 22px;
+  height: 30px;
+}
+
+.health_register_ratio_icon.is_4_3 {
+  width: 30px;
+  height: 22px;
+}
+
+.health_register_ratio_icon.is_9_16 {
+  width: 16px;
+  height: 30px;
+}
+
+.health_register_ratio_icon.is_16_9 {
+  width: 30px;
+  height: 16px;
+}
+
+.health_register_crop_tip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 2px 4px 0;
+  color: #767676;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.025em;
+}
+
+.health_register_crop_tip i {
+  color: #7b63ef;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.health_register_crop_footer {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding-top: 12px;
+  padding-bottom: 4px;
+}
+
+.health_register_crop_footer .health_register_crop_cancel,
+.health_register_crop_footer .health_register_crop_confirm {
+  display: flex;
+  width: 100%;
+  min-height: 60px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 18px;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+}
+
+.health_register_crop_footer .health_register_crop_cancel {
+  background: #f5f4fa;
+  color: #262838;
+}
+
+.health_register_crop_footer .health_register_crop_confirm {
+  background: linear-gradient(90deg, #8f72f4, #6d59f8);
+  color: #ffffff;
 }
 
 .health_register_alert_layer {
@@ -559,9 +979,9 @@
   height: auto;
   padding: 0;
   border: 0;
-  background: rgb(0 0 0 / 18%);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgb(0 0 0 / 22%);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
 }
 
 .health_register_alert {
@@ -700,12 +1120,52 @@
   }
 
   .health_register_editor {
-    gap: 14px;
-    padding: 18px 14px 14px;
+    max-width: 100%;
+    gap: 12px;
+    padding: 8px 16px 8px;
   }
 
   .health_register_editor_preview {
-    min-height: 200px;
+    aspect-ratio: 343 / 430;
+    max-height: min(46dvh, 460px);
+    border-radius: 22px;
+  }
+
+  .health_register_editor_preview.is_photo {
+    aspect-ratio: auto;
+    max-height: none;
+  }
+
+  .health_register_crop_viewport {
+    aspect-ratio: 343 / 430;
+    max-height: min(46dvh, 460px);
+  }
+
+  .health_register_editor_tools button {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    min-height: 112px;
+    padding: 16px 8px 12px;
+  }
+
+  .health_register_editor_tools button strong {
+    font-size: 14px;
+  }
+
+  .health_register_crop_ratio_bar {
+    gap: 6px;
+    padding: 14px 10px 12px;
+  }
+
+  .health_register_crop_ratio_bar button {
+    min-height: 82px;
+    padding: 8px 0 6px;
+  }
+
+  .health_register_crop_footer .health_register_crop_cancel,
+  .health_register_crop_footer .health_register_crop_confirm {
+    min-height: 56px;
   }
 
   .health_register_alert {

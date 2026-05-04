@@ -19,6 +19,10 @@
   text-align: left;
 }
 
+.health_result_detail_box.is_link {
+  text-decoration: none;
+}
+
 .health_result_detail_box.warning {
   background: linear-gradient(135deg, #ff4f60 0%, #ff7656 100%);
 }
@@ -36,8 +40,24 @@
 }
 
 .health_result_detail_box.consult {
-  min-height: 170px;
+  min-height: 142px;
   background: linear-gradient(135deg, #1786ff 0%, #8b45ff 100%);
+}
+
+.health_result_detail_box.consult .health_result_detail_content {
+  align-self: center;
+}
+
+.health_result_detail_box.consult .health_result_detail_box_message {
+  margin: 8px 0 10px;
+  font-size: 18px;
+  line-height: 1.45;
+}
+
+.health_result_detail_box.consult .health_result_detail_box_description {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .health_result_detail_content {
@@ -172,7 +192,7 @@
   }
 
   .health_result_detail_box.consult {
-    min-height: 152px;
+    min-height: 116px;
   }
 
   .health_result_detail_content {
@@ -184,7 +204,18 @@
   }
 
   .health_result_detail_box.consult .health_result_detail_content {
-    max-width: calc(100% - 112px);
+    max-width: calc(100% - 124px);
+  }
+
+  .health_result_detail_box.consult .health_result_detail_box_message {
+    margin: 4px 0 8px;
+    font-size: 16px;
+    line-height: 1.45;
+  }
+
+  .health_result_detail_box.consult .health_result_detail_box_description {
+    font-size: 12px;
+    line-height: 1.4;
   }
 
   .health_result_detail_box_header {
@@ -264,8 +295,8 @@
   }
 
   .health_result_detail_box.consult .health_result_detail_visual {
-    width: 122px;
-    right: 8px;
-    bottom: 14px;
+    width: 114px;
+    right: 10px;
+    bottom: 10px;
   }
 }

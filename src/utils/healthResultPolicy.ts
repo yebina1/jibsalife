@@ -353,8 +353,9 @@ export function createHealthResultDetailItems(result: HealthEvaluationResult): H
     {
       variant: 'consult',
       title: '',
-      message: result.summary.report,
-      description: '필요한 경우 현재 기록을 정리해 다음 단계에서 활용해 보세요.',
+      message: '궁금한 점이 있으시다면\n수의사와 상담해 보세요',
+      description: '전문가의 의견으로 더 안심할 수 있어요.',
+      to: '/health/result/actions',
     },
   ]
 }

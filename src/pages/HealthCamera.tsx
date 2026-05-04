@@ -246,8 +246,9 @@ function GuideIcon({ type }: { type: GuideIconType }) {
   if (type === 'meal') {
     return (
       <svg viewBox="0 0 48 48" aria-hidden="true">
-        <path d="M10 25a14 14 0 0 1 14-14h0a14 14 0 0 1 14 14v1H10v-1Z" />
-        <path d="M12 27h24a4 4 0 0 1 4 4v2a5 5 0 0 1-5 5H13a5 5 0 0 1-5-5v-2a4 4 0 0 1 4-4ZM18 15v-3M24 14V9M30 15v-3" />
+        <path d="M12 27.5c0-6.8 5.4-12.5 12-12.5s12 5.7 12 12.5" />
+        <path d="M9.5 28.5h29a3.5 3.5 0 0 1 3.5 3.5v1.2c0 4.3-3.5 7.8-7.8 7.8H13.8C9.5 41 6 37.5 6 33.2V32a3.5 3.5 0 0 1 3.5-3.5Z" />
+        <path d="M17.5 17.5V13M24 16v-5M30.5 17.5V13" />
       </svg>
     )
   }
@@ -265,8 +266,13 @@ function GuideIcon({ type }: { type: GuideIconType }) {
   if (type === 'activity') {
     return (
       <svg viewBox="0 0 48 48" aria-hidden="true">
-        <circle cx="29" cy="10" r="4" />
-        <path d="M17 39l6-9 4 3 2 6M21 18l6 4 6-1M24 22l-4 7-7 1M30 20l4 5 6 3M16 16l6-6 6 1" />
+        <circle cx="30" cy="10" r="4.2" />
+        <path d="M24 18l5-4 5 2" />
+        <path d="M22 24l6-5 4 3 4 1" />
+        <path d="M26 23l-4 8-7 1" />
+        <path d="M29 25l5 6 6 2" />
+        <path d="M24 31l4 2 2 7" />
+        <path d="M21 32l-5 8" />
       </svg>
     )
   }
@@ -675,11 +681,12 @@ function HealthCamera() {
               {mode === 'video' ? (
                 <div className="health_camera_video_visual" aria-hidden="true">
                   <div className="health_camera_video_preview">
+                    <span>예시 이미지</span>
                     <img src={guideVideoImage} alt="동영상 촬영 가이드 예시" />
                   </div>
                   <div className="health_camera_video_notice">
                     <GuideIcon type="info" />
-                    <strong>臾몄젣媛 蹂댁씠???쒓컙??珥ъ쁺?댁＜?몄슂</strong>
+                    <strong>문제가 보이는 순간을 촬영해주세요</strong>
                   </div>
                 </div>
               ) : null}

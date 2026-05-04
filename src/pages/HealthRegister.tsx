@@ -7,7 +7,7 @@ import Button from '../components/html/Button'
 import samplePetImage from '../img/my pet image.jpg'
 import calendarIcon from '../svg/calendar.svg'
 import notificationIcon from '../svg/notification.svg'
-import { writeStoredHealthResultInput } from '../utils/healthResultPolicy'
+import { type ObservationStatus, writeStoredHealthResultInput } from '../utils/healthResultPolicy'
 
 const registerSections = [
   { id: 'photo', title: '사진 등록', limit: '최대 3장' },
@@ -16,8 +16,25 @@ const registerSections = [
   { id: 'memo', title: '메모 등록', limit: '최대 3줄' },
 ] as const
 
+const cropPresets = [
+  { id: 'free', label: '자유', aspect: null },
+  { id: '1:1', label: '1:1', aspect: 1 },
+  { id: '3:4', label: '3:4', aspect: 3 / 4 },
+  { id: '4:3', label: '4:3', aspect: 4 / 3 },
+  { id: '9:16', label: '9:16', aspect: 9 / 16 },
+  { id: '16:9', label: '16:9', aspect: 16 / 9 },
+] as const
+
 type RegisterSectionId = (typeof registerSections)[number]['id']
 type ActionSheetSection = Exclude<RegisterSectionId, 'memo'>
+type CropPresetId = (typeof cropPresets)[number]['id']
+type CropHandle = 'move' | 'n' | 's' | 'e' | 'w' | 'nw' | 'ne' | 'sw' | 'se'
+type CropRect = {
+  x: number
+  y: number
+  width: number
+  height: number
+}
 type RegisteredEntry = {
   id: string
   preview?: string
@@ -44,15 +61,202 @@ type RegisterLocationState = {
     label: string
   }
 }
+type CropInteraction = {
+  pointerId: number
+  handle: CropHandle
+  startX: number
+  startY: number
+  startRect: CropRect
+}
 
 const REGISTER_LIMIT = 3
 const HEALTH_REGISTER_DRAFT_KEY = 'health-register-draft'
+const DEFAULT_CROP_RECT: CropRect = {
+  x: 0.08,
+  y: 0.12,
+  width: 0.84,
+  height: 0.7,
+}
+
+const actionSheetOptions: Record<ActionSheetSection, readonly string[]> = {
+  photo: ['사진 촬영', '사진 업로드', '촬영하고 편집 후 추가', '사진 선택하고 편집 후 추가'],
+  video: ['동영상 촬영', '동영상 업로드', '촬영하고 편집 후 추가', '동영상 선택하고 편집 후 추가'],
+  audio: ['녹음', '녹음 업로드'],
+}
 
 const createEmptyEntries = (): RegisteredEntries => ({
   photo: [],
   video: [],
   audio: [],
 })
+
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
+
+const revokeObjectUrl = (value?: string) => {
+  if (value?.startsWith('blob:')) {
+    URL.revokeObjectURL(value)
+  }
+}
+
+const loadImageElement = (src: string) =>
+  new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image()
+    image.onload = () => resolve(image)
+    image.onerror = () => reject(new Error('image-load-failed'))
+    image.src = src
+  })
+
+const canvasToObjectUrl = (canvas: HTMLCanvasElement) =>
+  new Promise<string>((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) {
+          reject(new Error('canvas-export-failed'))
+          return
+        }
+
+        resolve(URL.createObjectURL(blob))
+      },
+      'image/jpeg',
+      0.92,
+    )
+  })
+
+const getCropAspect = (presetId: CropPresetId) =>
+  cropPresets.find((preset) => preset.id === presetId)?.aspect ?? null
+
+const severeKeywords = [
+  '구토',
+  '설사',
+  '피',
+  '출혈',
+  '발작',
+  '경련',
+  '호흡곤란',
+  '숨을',
+  '숨이',
+  '헐떡',
+  '절뚝',
+  '무기력',
+  '심하게',
+  '심한',
+  '아파',
+  '통증',
+]
+
+const mildKeywords = [
+  '약간',
+  '조금',
+  '가끔',
+  '살짝',
+  '평소보다',
+  '줄었',
+  '감소',
+  '이상',
+  '변화',
+  '불편',
+  '낯설',
+]
+
+const stableKeywords = ['정상', '괜찮', '평소와 비슷', '비슷', '활발', '잘 먹', '좋아요']
+
+const stoolKeywords = ['변', '배변', '설사', '대변', '소변', '배설']
+const activityKeywords = ['활동', '산책', '뛰', '걷', '움직', '기운', '무기력', '놀']
+const mealKeywords = ['식사', '사료', '밥', '물', '간식', '먹', '식욕']
+const weightKeywords = ['체중', '몸무게', '살', '마름', '빠졌', '쪘']
+const symptomKeywords = ['증상', '상태', '변화', '아파', '기침', '헐떡', '구토', '설사']
+
+const includesAny = (source: string, keywords: string[]) =>
+  keywords.some((keyword) => source.includes(keyword))
+
+function inferStatusFromText(source: string, keywords: string[]): ObservationStatus {
+  const trimmed = source.trim()
+
+  if (!trimmed || !includesAny(trimmed, keywords)) {
+    return 'missing'
+  }
+
+  if (includesAny(trimmed, severeKeywords)) {
+    return 'warning'
+  }
+
+  if (includesAny(trimmed, stableKeywords) && !includesAny(trimmed, mildKeywords)) {
+    return 'stable'
+  }
+
+  if (includesAny(trimmed, mildKeywords)) {
+    return 'minor'
+  }
+
+  return 'minor'
+}
+
+function inferSymptomStatus(source: string, hasAudio: boolean, hasMemo: boolean): ObservationStatus {
+  const trimmed = source.trim()
+
+  if (!trimmed && !hasAudio && !hasMemo) {
+    return 'missing'
+  }
+
+  if (trimmed && includesAny(trimmed, severeKeywords)) {
+    return 'warning'
+  }
+
+  if (trimmed && includesAny(trimmed, stableKeywords) && !includesAny(trimmed, mildKeywords)) {
+    return 'stable'
+  }
+
+  if (trimmed && (includesAny(trimmed, mildKeywords) || includesAny(trimmed, symptomKeywords))) {
+    return 'minor'
+  }
+
+  if (hasAudio || hasMemo) {
+    return 'minor'
+  }
+
+  return 'missing'
+}
+
+function inferPhotoStatus(photoCount: number, videoCount: number): ObservationStatus {
+  const totalCount = photoCount + videoCount
+
+  if (totalCount === 0) {
+    return 'missing'
+  }
+
+  if ((photoCount > 0 && videoCount > 0) || videoCount >= 1 || photoCount >= 2) {
+    return 'stable'
+  }
+
+  if (photoCount === 1) {
+    return 'minor'
+  }
+
+  return 'missing'
+}
+
+function createPresetCropRect(aspect: number | null): CropRect {
+  if (!aspect) {
+    return DEFAULT_CROP_RECT
+  }
+
+  const maxWidth = 0.84
+  const maxHeight = 0.72
+  let width = maxWidth
+  let height = width / aspect
+
+  if (height > maxHeight) {
+    height = maxHeight
+    width = height * aspect
+  }
+
+  return {
+    x: (1 - width) / 2,
+    y: (1 - height) / 2,
+    width,
+    height,
+  }
+}
 
 const readRegisterDraft = () => {
   if (typeof window === 'undefined') {
@@ -84,10 +288,235 @@ const readRegisterDraft = () => {
   }
 }
 
-const actionSheetOptions: Record<ActionSheetSection, readonly string[]> = {
-  photo: ['사진 촬영', '사진 업로드', '촬영하고 편집 후 추가', '사진 선택하고 편집 후 추가'],
-  video: ['동영상 촬영', '동영상 업로드', '촬영하고 편집 후 추가', '동영상 선택하고 편집 후 추가'],
-  audio: ['녹음', '녹음 업로드'],
+function fitRectToAspect(rect: CropRect, aspect: number | null): CropRect {
+  if (!aspect) return rect
+
+  const centerX = rect.x + rect.width / 2
+  const centerY = rect.y + rect.height / 2
+  let width = rect.width
+  let height = rect.height
+
+  if (width / height > aspect) {
+    width = height * aspect
+  } else {
+    height = width / aspect
+  }
+
+  width = Math.min(width, 1)
+  height = Math.min(height, 1)
+
+  const x = clamp(centerX - width / 2, 0, 1 - width)
+  const y = clamp(centerY - height / 2, 0, 1 - height)
+
+  return { x, y, width, height }
+}
+
+function updateCropRect(
+  startRect: CropRect,
+  handle: CropHandle,
+  deltaX: number,
+  deltaY: number,
+  aspect: number | null,
+) {
+  const minSize = 0.18
+  const startLeft = startRect.x
+  const startTop = startRect.y
+  const startRight = startRect.x + startRect.width
+  const startBottom = startRect.y + startRect.height
+  const centerX = startRect.x + startRect.width / 2
+  const centerY = startRect.y + startRect.height / 2
+
+  if (handle === 'move') {
+    return {
+      ...startRect,
+      x: clamp(startRect.x + deltaX, 0, 1 - startRect.width),
+      y: clamp(startRect.y + deltaY, 0, 1 - startRect.height),
+    }
+  }
+
+  let left = startLeft
+  let top = startTop
+  let right = startRight
+  let bottom = startBottom
+
+  if (handle.includes('w')) {
+    left = clamp(startLeft + deltaX, 0, startRight - minSize)
+  }
+
+  if (handle.includes('e')) {
+    right = clamp(startRight + deltaX, startLeft + minSize, 1)
+  }
+
+  if (handle.includes('n')) {
+    top = clamp(startTop + deltaY, 0, startBottom - minSize)
+  }
+
+  if (handle.includes('s')) {
+    bottom = clamp(startBottom + deltaY, startTop + minSize, 1)
+  }
+
+  if (handle === 'n' || handle === 's') {
+    left = startLeft
+    right = startRight
+  }
+
+  if (handle === 'e' || handle === 'w') {
+    top = startTop
+    bottom = startBottom
+  }
+
+  let width = clamp(right - left, minSize, 1)
+  let height = clamp(bottom - top, minSize, 1)
+
+  if (!aspect) {
+    return {
+      x: clamp(left, 0, 1 - width),
+      y: clamp(top, 0, 1 - height),
+      width,
+      height,
+    }
+  }
+
+  if (handle === 'n' || handle === 's') {
+    height = clamp(bottom - top, minSize, 1)
+    width = clamp(height * aspect, minSize, 1)
+    const nextLeft = clamp(centerX - width / 2, 0, 1 - width)
+
+    return {
+      x: nextLeft,
+      y: clamp(top, 0, 1 - height),
+      width,
+      height,
+    }
+  }
+
+  if (handle === 'e' || handle === 'w') {
+    width = clamp(right - left, minSize, 1)
+    height = clamp(width / aspect, minSize, 1)
+    const nextTop = clamp(centerY - height / 2, 0, 1 - height)
+
+    return {
+      x: clamp(left, 0, 1 - width),
+      y: nextTop,
+      width,
+      height,
+    }
+  }
+
+  const anchorX = handle.includes('w') ? startRight : startLeft
+  const anchorY = handle.includes('n') ? startBottom : startTop
+  const rawWidth = Math.abs(anchorX - (handle.includes('w') ? left : right))
+  const rawHeight = Math.abs(anchorY - (handle.includes('n') ? top : bottom))
+  const baseSize = Math.max(rawWidth, rawHeight * aspect, minSize)
+  width = clamp(baseSize, minSize, 1)
+  height = clamp(width / aspect, minSize, 1)
+
+  const nextX = handle.includes('w') ? anchorX - width : anchorX
+  const nextY = handle.includes('n') ? anchorY - height : anchorY
+
+  return {
+    x: clamp(nextX, 0, 1 - width),
+    y: clamp(nextY, 0, 1 - height),
+    width,
+    height,
+  }
+}
+
+async function exportEditedPhoto(
+  src: string,
+  rotation: number,
+  cropRect?: CropRect,
+): Promise<string> {
+  const image = await loadImageElement(src)
+  const normalizedRotation = ((rotation % 360) + 360) % 360
+  const quarterTurns = normalizedRotation / 90
+  const swapAxis = quarterTurns % 2 !== 0
+  const baseWidth = swapAxis ? image.naturalHeight : image.naturalWidth
+  const baseHeight = swapAxis ? image.naturalWidth : image.naturalHeight
+  const baseCanvas = document.createElement('canvas')
+  const baseContext = baseCanvas.getContext('2d')
+
+  if (!baseContext) {
+    throw new Error('canvas-context-failed')
+  }
+
+  baseCanvas.width = baseWidth
+  baseCanvas.height = baseHeight
+
+  baseContext.translate(baseWidth / 2, baseHeight / 2)
+  baseContext.rotate((normalizedRotation * Math.PI) / 180)
+  baseContext.drawImage(image, -image.naturalWidth / 2, -image.naturalHeight / 2)
+
+  if (!cropRect) {
+    return canvasToObjectUrl(baseCanvas)
+  }
+
+  const cropCanvas = document.createElement('canvas')
+  const cropContext = cropCanvas.getContext('2d')
+
+  if (!cropContext) {
+    throw new Error('crop-context-failed')
+  }
+
+  const sourceX = Math.round(cropRect.x * baseWidth)
+  const sourceY = Math.round(cropRect.y * baseHeight)
+  const sourceWidth = Math.max(1, Math.round(cropRect.width * baseWidth))
+  const sourceHeight = Math.max(1, Math.round(cropRect.height * baseHeight))
+
+  cropCanvas.width = sourceWidth
+  cropCanvas.height = sourceHeight
+  cropContext.drawImage(
+    baseCanvas,
+    sourceX,
+    sourceY,
+    sourceWidth,
+    sourceHeight,
+    0,
+    0,
+    sourceWidth,
+    sourceHeight,
+  )
+
+  return canvasToObjectUrl(cropCanvas)
+}
+
+function CropIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M7 4v13.2A1.8 1.8 0 0 0 8.8 19H20" />
+      <path d="M4 7h11.2A1.8 1.8 0 0 1 17 8.8V20" />
+    </svg>
+  )
+}
+
+function RotateLeftIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8.2 7.2H4V3" />
+      <path d="M4 7.2A8 8 0 1 1 7.5 18" />
+      <path d="m10.6 9.1-2.8 2.8 2.8 2.8" />
+    </svg>
+  )
+}
+
+function RotateRightIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M15.8 7.2H20V3" />
+      <path d="M20 7.2A8 8 0 1 0 16.5 18" />
+      <path d="m13.4 9.1 2.8 2.8-2.8 2.8" />
+    </svg>
+  )
+}
+
+function TipIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 3.5a6.8 6.8 0 0 0-4.2 12.2c.8.7 1.2 1.4 1.4 2.3h5.6c.2-.9.6-1.6 1.4-2.3A6.8 6.8 0 0 0 12 3.5Z" />
+      <path d="M9.8 20.2h4.4" />
+      <path d="M10.4 22h3.2" />
+    </svg>
+  )
 }
 
 function HealthRegister() {
@@ -99,16 +528,21 @@ function HealthRegister() {
   const videoInputRef = useRef<HTMLInputElement>(null)
   const videoEditInputRef = useRef<HTMLInputElement>(null)
   const audioUploadInputRef = useRef<HTMLInputElement>(null)
+  const cropViewportRef = useRef<HTMLDivElement>(null)
+  const cropInteractionRef = useRef<CropInteraction | null>(null)
   const [isActionSheetOpen, setIsActionSheetOpen] = useState(false)
   const [currentActionSection, setCurrentActionSection] = useState<ActionSheetSection>('photo')
   const [isGalleryOpen, setIsGalleryOpen] = useState(false)
   const [isEmptyAlertOpen, setIsEmptyAlertOpen] = useState(false)
   const [galleryImages, setGalleryImages] = useState<string[]>([])
   const [selectedGalleryItems, setSelectedGalleryItems] = useState<number[]>([])
+  const [editorAsset, setEditorAsset] = useState<EditorAsset | null>(null)
+  const [isCropMode, setIsCropMode] = useState(false)
+  const [cropPreset, setCropPreset] = useState<CropPresetId>('free')
+  const [cropRect, setCropRect] = useState<CropRect>(DEFAULT_CROP_RECT)
   const draft = readRegisterDraft()
   const [registeredEntries, setRegisteredEntries] = useState<RegisteredEntries>(draft.entries)
   const [memoEntry, setMemoEntry] = useState(draft.memo)
-  const [editorAsset, setEditorAsset] = useState<EditorAsset | null>(null)
   const preferredSection = searchParams.get('section')
   const locationState = location.state as RegisterLocationState | null
   const orderedSections =
@@ -126,7 +560,7 @@ function HealthRegister() {
 
   useEffect(() => {
     return () => {
-      galleryImages.forEach((image) => URL.revokeObjectURL(image))
+      galleryImages.forEach((image) => revokeObjectUrl(image))
     }
   }, [galleryImages])
 
@@ -169,6 +603,9 @@ function HealthRegister() {
         ...locationState.pendingEdit,
         rotation: 0,
       })
+      setIsCropMode(false)
+      setCropPreset('free')
+      setCropRect(DEFAULT_CROP_RECT)
     }
 
     navigate(`/health/register?section=${preferredSection ?? 'photo'}`, { replace: true, state: null })
@@ -184,13 +621,20 @@ function HealthRegister() {
     }))
   }
 
+  const closeEditor = () => {
+    setEditorAsset((current) => {
+      if (!current) return current
+      return null
+    })
+    setIsCropMode(false)
+    setCropPreset('free')
+    setCropRect(DEFAULT_CROP_RECT)
+  }
+
   const removeEntry = (section: ActionSheetSection, entryId: string) => {
     setRegisteredEntries((current) => {
       const nextEntry = current[section].find((entry) => entry.id === entryId)
-
-      if (nextEntry?.preview?.startsWith('blob:')) {
-        URL.revokeObjectURL(nextEntry.preview)
-      }
+      revokeObjectUrl(nextEntry?.preview)
 
       return {
         ...current,
@@ -271,7 +715,7 @@ function HealthRegister() {
   const handleGalleryFiles = (files: FileList | null) => {
     if (!files?.length) return
 
-    galleryImages.forEach((image) => URL.revokeObjectURL(image))
+    galleryImages.forEach((image) => revokeObjectUrl(image))
 
     const nextImages = Array.from(files)
       .filter((file) => file.type.startsWith('image/'))
@@ -355,6 +799,9 @@ function HealthRegister() {
       mediaType: 'image',
       label: file.name || '사진 편집본',
     })
+    setIsCropMode(false)
+    setCropPreset('free')
+    setCropRect(DEFAULT_CROP_RECT)
   }
 
   const handleVideoEditFiles = (files: FileList | null) => {
@@ -371,14 +818,85 @@ function HealthRegister() {
     })
   }
 
-  const saveEditedAsset = () => {
+  const handleRotate = (direction: 'left' | 'right') => {
+    setEditorAsset((current) =>
+      current
+        ? {
+            ...current,
+            rotation: current.rotation + (direction === 'left' ? -90 : 90),
+          }
+        : current,
+    )
+  }
+
+  const normalizeEditorImage = async () => {
+    if (!editorAsset || editorAsset.mediaType !== 'image' || editorAsset.rotation === 0) {
+      return editorAsset
+    }
+
+    const nextSrc = await exportEditedPhoto(editorAsset.src, editorAsset.rotation)
+    revokeObjectUrl(editorAsset.src)
+
+    const nextAsset = {
+      ...editorAsset,
+      src: nextSrc,
+      rotation: 0,
+    }
+
+    setEditorAsset(nextAsset)
+    return nextAsset
+  }
+
+  const openCropEditor = async () => {
+    if (!editorAsset || editorAsset.mediaType !== 'image') return
+
+    try {
+      const normalizedAsset = await normalizeEditorImage()
+      setEditorAsset(normalizedAsset)
+      setCropPreset('free')
+      setCropRect(DEFAULT_CROP_RECT)
+      setIsCropMode(true)
+    } catch {
+      setIsCropMode(true)
+    }
+  }
+
+  const applyCropPreset = (presetId: CropPresetId) => {
+    setCropPreset(presetId)
+    setCropRect(createPresetCropRect(getCropAspect(presetId)))
+  }
+
+  const finishCropping = async () => {
+    if (!editorAsset || editorAsset.mediaType !== 'image') return
+
+    try {
+      const nextSrc = await exportEditedPhoto(editorAsset.src, 0, cropRect)
+      revokeObjectUrl(editorAsset.src)
+      setEditorAsset({
+        ...editorAsset,
+        src: nextSrc,
+      })
+      setIsCropMode(false)
+      setCropPreset('free')
+      setCropRect(DEFAULT_CROP_RECT)
+    } catch {
+      setIsCropMode(false)
+    }
+  }
+
+  const saveEditedAsset = async () => {
     if (!editorAsset) return
 
     if (editorAsset.section === 'photo') {
+      const preview =
+        editorAsset.rotation !== 0
+          ? await exportEditedPhoto(editorAsset.src, editorAsset.rotation)
+          : editorAsset.src
+
       appendEntries('photo', [
         {
           id: `photo-edit-${Date.now()}`,
-          preview: editorAsset.src,
+          preview,
           label: editorAsset.label,
           mediaType: 'image',
         },
@@ -396,7 +914,7 @@ function HealthRegister() {
       ])
     }
 
-    setEditorAsset(null)
+    closeEditor()
   }
 
   const handleSubmit = () => {
@@ -405,17 +923,21 @@ function HealthRegister() {
       return
     }
 
+    const memoText = memoEntry.trim()
+    const audioLabels = registeredEntries.audio.map((entry) => entry.label ?? '').join(' ')
+    const combinedText = `${memoText} ${audioLabels}`.trim()
+
     writeStoredHealthResultInput({
-      stoolStatus: 'missing',
-      activityStatus: 'missing',
-      mealStatus: 'missing',
-      weightStatus: 'missing',
-      symptomStatus:
-        memoEntry.trim().length > 0 || registeredEntries.audio.length > 0 ? 'minor' : 'missing',
-      photoStatus:
-        registeredEntries.photo.length > 0 || registeredEntries.video.length > 0
-          ? 'stable'
-          : 'missing',
+      stoolStatus: inferStatusFromText(combinedText, stoolKeywords),
+      activityStatus: inferStatusFromText(combinedText, activityKeywords),
+      mealStatus: inferStatusFromText(combinedText, mealKeywords),
+      weightStatus: inferStatusFromText(combinedText, weightKeywords),
+      symptomStatus: inferSymptomStatus(
+        combinedText,
+        registeredEntries.audio.length > 0,
+        memoText.length > 0,
+      ),
+      photoStatus: inferPhotoStatus(registeredEntries.photo.length, registeredEntries.video.length),
     })
 
     navigate('/health/check-loading')
@@ -426,11 +948,202 @@ function HealthRegister() {
       {
         id: `photo-demo-${Date.now()}`,
         preview: samplePetImage,
-        label: '테스트 사진',
+        label: '테스트용 이미지',
         mediaType: 'image',
       },
     ])
     setIsEmptyAlertOpen(false)
+  }
+
+  const startCropInteraction = (
+    event: React.PointerEvent<HTMLButtonElement | HTMLDivElement>,
+    handle: CropHandle,
+  ) => {
+    if (!cropViewportRef.current) return
+
+    event.preventDefault()
+    cropInteractionRef.current = {
+      pointerId: event.pointerId,
+      handle,
+      startX: event.clientX,
+      startY: event.clientY,
+      startRect: cropRect,
+    }
+    event.currentTarget.setPointerCapture(event.pointerId)
+  }
+
+  const handleCropPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const interaction = cropInteractionRef.current
+    const viewport = cropViewportRef.current
+
+    if (!interaction || !viewport || interaction.pointerId !== event.pointerId) return
+
+    const bounds = viewport.getBoundingClientRect()
+    const deltaX = (event.clientX - interaction.startX) / bounds.width
+    const deltaY = (event.clientY - interaction.startY) / bounds.height
+    const nextRect = updateCropRect(
+      interaction.startRect,
+      interaction.handle,
+      deltaX,
+      deltaY,
+      getCropAspect(cropPreset),
+    )
+
+    setCropRect(nextRect)
+  }
+
+  const stopCropInteraction = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (cropInteractionRef.current?.pointerId === event.pointerId) {
+      cropInteractionRef.current = null
+    }
+  }
+
+  const renderEditorContent = () => {
+    if (!editorAsset) return null
+
+    if (editorAsset.mediaType === 'video') {
+      return (
+        <section className="health_register_editor" aria-label="동영상 편집">
+          <header className="health_register_editor_header">
+            <h2>편집 후 추가</h2>
+            <button type="button" onClick={closeEditor}>
+              닫기
+            </button>
+          </header>
+          <div className="health_register_editor_preview">
+            <video src={editorAsset.src} controls playsInline />
+          </div>
+          <Button type="button" className="health_register_submit_button" onClick={saveEditedAsset}>
+            추가하기
+          </Button>
+        </section>
+      )
+    }
+
+    if (isCropMode) {
+      return (
+        <section className="health_register_editor health_register_crop_editor" aria-label="사진 자르기">
+          <header className="health_register_crop_header">
+            <button type="button" onClick={() => setIsCropMode(false)}>
+              <i className="bx bx-chevron-left" aria-hidden="true" />
+              자르기
+            </button>
+          </header>
+
+          <div
+            ref={cropViewportRef}
+            className="health_register_crop_viewport"
+            onPointerMove={handleCropPointerMove}
+            onPointerUp={stopCropInteraction}
+            onPointerCancel={stopCropInteraction}
+          >
+            <img src={editorAsset.src} alt="자르기 미리보기" />
+            <div
+              className="health_register_crop_rect"
+              style={{
+                left: `${cropRect.x * 100}%`,
+                top: `${cropRect.y * 100}%`,
+                width: `${cropRect.width * 100}%`,
+                height: `${cropRect.height * 100}%`,
+              }}
+            >
+              <div
+                className="health_register_crop_drag"
+                onPointerDown={(event) => startCropInteraction(event, 'move')}
+              />
+              <span className="health_register_crop_grid is_vertical_start" />
+              <span className="health_register_crop_grid is_vertical_end" />
+              <span className="health_register_crop_grid is_horizontal_start" />
+              <span className="health_register_crop_grid is_horizontal_end" />
+              {(['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'] as CropHandle[]).map((handle) => (
+                <button
+                  key={handle}
+                  type="button"
+                  className={`health_register_crop_handle is_${handle}`}
+                  onPointerDown={(event) => startCropInteraction(event, handle)}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="health_register_crop_ratio_bar">
+            {cropPresets.map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                className={cropPreset === preset.id ? 'is_active' : ''}
+                onClick={() => applyCropPreset(preset.id)}
+              >
+                <span className={`health_register_ratio_icon is_${preset.id.replace(':', '_')}`} />
+                <strong>{preset.label}</strong>
+              </button>
+            ))}
+          </div>
+          <div className="health_register_crop_footer">
+            <button type="button" className="health_register_crop_cancel" onClick={() => setIsCropMode(false)}>
+              취소
+            </button>
+            <button type="button" className="health_register_crop_confirm" onClick={finishCropping}>
+              완료
+            </button>
+          </div>
+        </section>
+      )
+    }
+
+    return (
+      <section className="health_register_editor health_register_photo_editor" aria-label="사진 편집">
+        <header className="health_register_editor_header">
+          <h2>편집 후 추가</h2>
+          <button type="button" onClick={closeEditor}>
+            닫기
+          </button>
+        </header>
+
+        <div className="health_register_editor_preview is_photo">
+          <img
+            src={editorAsset.src}
+            alt="편집할 사진"
+            style={{ transform: `rotate(${editorAsset.rotation}deg)` }}
+          />
+        </div>
+
+        <div className="health_register_editor_tip">
+          <span className="health_register_editor_tip_icon" aria-hidden="true">
+            <TipIcon />
+          </span>
+          <div>
+            <strong>사진을 편집해서 더 잘 보이게 만들어보세요.</strong>
+            <p>회전하거나 자를 수 있어요.</p>
+          </div>
+        </div>
+
+        <div className="health_register_editor_tools">
+          <button type="button" onClick={() => handleRotate('left')}>
+            <span aria-hidden="true">
+              <RotateLeftIcon />
+            </span>
+            <strong>왼쪽 회전</strong>
+          </button>
+          <button type="button" onClick={openCropEditor}>
+            <span aria-hidden="true">
+              <CropIcon />
+            </span>
+            <strong>자르기</strong>
+          </button>
+          <button type="button" onClick={() => handleRotate('right')}>
+            <span aria-hidden="true">
+              <RotateRightIcon />
+            </span>
+            <strong>오른쪽 회전</strong>
+          </button>
+        </div>
+
+        <Button type="button" className="health_register_submit_button" onClick={saveEditedAsset}>
+          추가하기
+        </Button>
+      </section>
+    )
   }
 
   return (
@@ -457,14 +1170,20 @@ function HealthRegister() {
           accept="image/*"
           multiple
           className="health_register_file_input"
-          onChange={(event) => handleGalleryFiles(event.target.files)}
+          onChange={(event) => {
+            handleGalleryFiles(event.target.files)
+            event.target.value = ''
+          }}
         />
         <input
           ref={photoEditInputRef}
           type="file"
           accept="image/*"
           className="health_register_file_input"
-          onChange={(event) => handlePhotoEditFiles(event.target.files)}
+          onChange={(event) => {
+            handlePhotoEditFiles(event.target.files)
+            event.target.value = ''
+          }}
         />
         <input
           ref={videoInputRef}
@@ -472,14 +1191,20 @@ function HealthRegister() {
           accept="video/*"
           multiple
           className="health_register_file_input"
-          onChange={(event) => handleVideoFiles(event.target.files)}
+          onChange={(event) => {
+            handleVideoFiles(event.target.files)
+            event.target.value = ''
+          }}
         />
         <input
           ref={videoEditInputRef}
           type="file"
           accept="video/*"
           className="health_register_file_input"
-          onChange={(event) => handleVideoEditFiles(event.target.files)}
+          onChange={(event) => {
+            handleVideoEditFiles(event.target.files)
+            event.target.value = ''
+          }}
         />
         <input
           ref={audioUploadInputRef}
@@ -487,7 +1212,10 @@ function HealthRegister() {
           accept="audio/*"
           multiple
           className="health_register_file_input"
-          onChange={(event) => handleAudioFiles(event.target.files)}
+          onChange={(event) => {
+            handleAudioFiles(event.target.files)
+            event.target.value = ''
+          }}
         />
 
         {orderedSections.map((section) => (
@@ -509,51 +1237,54 @@ function HealthRegister() {
               </div>
             ) : (
               <div className="health_register_slots">
-                {Array.from({ length: 3 }).map((_, index) => (
-                  (() => {
-                    const entry = registeredEntries[section.id][index]
+                {Array.from({
+                  length: Math.min(
+                    REGISTER_LIMIT,
+                    Math.max(1, registeredEntries[section.id].length + (registeredEntries[section.id].length < REGISTER_LIMIT ? 1 : 0)),
+                  ),
+                }).map((_, index) => {
+                  const entry = registeredEntries[section.id][index]
 
-                    return (
-                      <button
-                        key={`${section.id}-${index}`}
-                        type="button"
-                        className={`health_register_slot ${entry ? 'is_filled' : ''}`}
-                        aria-label={`${section.title} ${index + 1}번째 추가`}
-                        onClick={() => {
-                          setCurrentActionSection(section.id)
-                          setIsActionSheetOpen(true)
-                        }}
-                      >
-                        {entry ? (
-                          <>
-                            {entry.preview ? (
-                              entry.mediaType === 'video' ? (
-                                <video src={entry.preview} muted playsInline />
-                              ) : (
-                                <img src={entry.preview} alt={`등록된 ${section.title} ${index + 1}`} />
-                              )
+                  return (
+                    <button
+                      key={`${section.id}-${index}`}
+                      type="button"
+                      className={`health_register_slot ${entry ? 'is_filled' : ''}`}
+                      aria-label={`${section.title} ${index + 1}번째 추가`}
+                      onClick={() => {
+                        setCurrentActionSection(section.id)
+                        setIsActionSheetOpen(true)
+                      }}
+                    >
+                      {entry ? (
+                        <>
+                          {entry.preview ? (
+                            entry.mediaType === 'video' ? (
+                              <video src={entry.preview} muted playsInline />
                             ) : (
-                              <strong>{entry.label ?? `${section.title} ${index + 1}`}</strong>
-                            )}
-                            <button
-                              type="button"
-                              className="health_register_slot_delete"
-                              aria-label={`${section.title} ${index + 1}번째 삭제`}
-                              onClick={(event) => {
-                                event.stopPropagation()
-                                removeEntry(section.id, entry.id)
-                              }}
-                            >
-                              <i className="bx bx-x" aria-hidden="true" />
-                            </button>
-                          </>
-                        ) : (
-                          <span aria-hidden="true" />
-                        )}
-                      </button>
-                    )
-                  })()
-                ))}
+                              <img src={entry.preview} alt={`${section.title} ${index + 1}`} />
+                            )
+                          ) : (
+                            <strong>{entry.label ?? `${section.title} ${index + 1}`}</strong>
+                          )}
+                          <button
+                            type="button"
+                            className="health_register_slot_delete"
+                            aria-label={`${section.title} ${index + 1}번째 삭제`}
+                            onClick={(event) => {
+                              event.stopPropagation()
+                              removeEntry(section.id, entry.id)
+                            }}
+                          >
+                            <i className="bx bx-x" aria-hidden="true" />
+                          </button>
+                        </>
+                      ) : (
+                        <span aria-hidden="true" />
+                      )}
+                    </button>
+                  )
+                })}
               </div>
             )}
           </section>
@@ -611,11 +1342,7 @@ function HealthRegister() {
               <i className="bx bx-x" aria-hidden="true" />
             </button>
             <h2>사진</h2>
-            <button
-              type="button"
-              className="health_gallery_upload"
-              onClick={uploadSelectedGalleryItems}
-            >
+            <button type="button" className="health_gallery_upload" onClick={uploadSelectedGalleryItems}>
               업로드
             </button>
           </header>
@@ -637,9 +1364,7 @@ function HealthRegister() {
                   disabled={!image}
                 >
                   {image ? <img src={image} alt={`앨범 사진 ${index + 1}`} /> : null}
-                  <span className="health_gallery_badge">
-                    {isSelected ? selectedIndex + 1 : ''}
-                  </span>
+                  <span className="health_gallery_badge">{isSelected ? selectedIndex + 1 : ''}</span>
                 </button>
               )
             })}
@@ -653,54 +1378,9 @@ function HealthRegister() {
             type="button"
             className="health_register_editor_dim"
             aria-label="편집 닫기"
-            onClick={() => setEditorAsset(null)}
+            onClick={closeEditor}
           />
-          <section className="health_register_editor" aria-label="미디어 편집">
-            <header className="health_register_editor_header">
-              <h2>편집 후 추가</h2>
-              <button type="button" onClick={() => setEditorAsset(null)}>
-                닫기
-              </button>
-            </header>
-            <div className="health_register_editor_preview">
-              {editorAsset.mediaType === 'video' ? (
-                <video src={editorAsset.src} controls playsInline />
-              ) : (
-                <img
-                  src={editorAsset.src}
-                  alt="편집할 사진"
-                  style={{ transform: `rotate(${editorAsset.rotation}deg)` }}
-                />
-              )}
-            </div>
-            {editorAsset.mediaType === 'image' ? (
-              <div className="health_register_editor_actions">
-                <button
-                  type="button"
-                  onClick={() =>
-                    setEditorAsset((current) =>
-                      current ? { ...current, rotation: current.rotation - 90 } : current,
-                    )
-                  }
-                >
-                  왼쪽 회전
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setEditorAsset((current) =>
-                      current ? { ...current, rotation: current.rotation + 90 } : current,
-                    )
-                  }
-                >
-                  오른쪽 회전
-                </button>
-              </div>
-            ) : null}
-            <Button type="button" className="health_register_submit_button" onClick={saveEditedAsset}>
-              추가하기
-            </Button>
-          </section>
+          {renderEditorContent()}
         </div>
       ) : null}
 
@@ -712,12 +1392,7 @@ function HealthRegister() {
             aria-label="알림 닫기"
             onClick={() => setIsEmptyAlertOpen(false)}
           />
-          <section
-            className="health_register_alert"
-            role="alertdialog"
-            aria-modal="true"
-            aria-label="등록 안내"
-          >
+          <section className="health_register_alert" role="alertdialog" aria-modal="true" aria-label="등록 안내">
             <div className="health_register_alert_copy">
               <span className="health_register_alert_icon" aria-hidden="true">
                 <svg viewBox="0 0 48 48">
@@ -728,12 +1403,8 @@ function HealthRegister() {
               </span>
               <strong>등록된 기록이 없어요</strong>
               <p>사진, 동영상, 음성, 메모 중 하나를 추가해주세요.</p>
-              <button
-                type="button"
-                className="health_register_alert_browse"
-                onClick={handleBrowseDemo}
-              >
-                테스트용 이미지 넣기
+              <button type="button" className="health_register_alert_browse" onClick={handleBrowseDemo}>
+                테스트용 이미지로 둘러보기
               </button>
             </div>
             <div className="health_register_alert_action">
