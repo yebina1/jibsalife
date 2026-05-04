@@ -25,6 +25,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
     '/community',
     '/mission',
     '/health/camera',
+    '/health/register',
     '/health/qna',
     '/health/vet-chat',
   ]

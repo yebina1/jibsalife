@@ -27,7 +27,7 @@ function Health() {
       id: 'audio',
       icon: voiceIcon,
       label: '녹음',
-      onClick: () => navigate('/health/check-loading'),
+      onClick: () => navigate('/health/camera?mode=audio'),
     },
     {
       id: 'video',
@@ -39,7 +39,7 @@ function Health() {
       id: 'memo',
       icon: memoIcon,
       label: '메모 작성',
-      onClick: () => navigate('/health/check-loading'),
+      onClick: () => navigate('/health/camera?mode=memo'),
     },
   ]
 

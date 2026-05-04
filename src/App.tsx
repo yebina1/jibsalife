@@ -11,6 +11,7 @@ import HealthConnect from './pages/HealthConnect'
 import HealthHospitalSearch from './pages/HealthHospitalSearch'
 import HealthResultDetail from './pages/HealthResultDetail'
 import HealthQna from './pages/HealthQna'
+import HealthRegister from './pages/HealthRegister'
 import HealthVetChat from './pages/HealthVetChat'
 import Home from './pages/home'
 import Login from './pages/Login'
@@ -32,6 +33,7 @@ function App() {
           <Route path="/mission" element={<Mission />} />
           <Route path="/health" element={<Health />} />
           <Route path="/health/camera" element={<HealthCamera />} />
+          <Route path="/health/register" element={<HealthRegister />} />
           <Route path="/health/check-loading" element={<HealthCheckLoading />} />
           <Route path="/health/result" element={<HealthCheckResult />} />
           <Route path="/health/result/detail" element={<HealthResultDetail />} />
