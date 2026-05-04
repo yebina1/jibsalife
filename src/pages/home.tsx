@@ -12,12 +12,12 @@ import contents4 from '../img/contents4.png'
 
 const rankingData = {
   subscribers: [
-    { id: 1, name: '코코', image: contents1, crown: '🥇', rank: '1위' },
+    { id: 1, name: '코코', image: contents1, crown: '👑', rank: '1위' },
     { id: 2, name: '보리', image: contents2, crown: '🥈', rank: '2위' },
-    { id: 3, name: '모찌', image: contents4, crown: '🥉', rank: '3위' },
+    { id: 3, name: '몽실', image: contents4, crown: '🥉', rank: '3위' },
   ],
   points: [
-    { id: 1, name: '모찌', image: contents4, crown: '🥇', rank: '1위' },
+    { id: 1, name: '몽실', image: contents4, crown: '👑', rank: '1위' },
     { id: 2, name: '코코', image: contents1, crown: '🥈', rank: '2위' },
     { id: 3, name: '보리', image: contents2, crown: '🥉', rank: '3위' },
   ],
@@ -25,7 +25,7 @@ const rankingData = {
 
 const contentItems = [
   { id: 1, title: '반려견이 좋아하는 산책 루트 추천 가이드', image: contents3 },
-  { id: 2, title: '우리 아이 상태별 맞춤 건강 체크 포인트', image: contents1 },
+  { id: 2, title: '우리 아이 상태별 맞춤 건강 체크 사인', image: contents1 },
   { id: 3, title: '산책 후 꼭 확인해야 할 케어 루틴', image: contents2 },
   { id: 4, title: '반려생활을 위한 필수 체크리스트 3종', image: contents4 },
 ]
@@ -33,10 +33,10 @@ const contentItems = [
 const summarySlides = [
   {
     id: 1,
-    name: '뽕뽕이',
+    name: '뿡뿡이',
     breed: '푸들',
     image: contents4,
-    details: '나이: 2살 · 몸무게: 5kg · 성별: 남아',
+    details: '나이: 2살 · 몸무게: 5kg · 성별: 수컷',
     stats: [
       { label: '식사', value: '3회' },
       { label: '배변', value: '1회' },
@@ -46,7 +46,7 @@ const summarySlides = [
   {
     id: 2,
     name: '코코',
-    breed: '말티푸',
+    breed: '말티즈',
     image: contents1,
     details: '나이: 4살 · 몸무게: 3.8kg · 성별: 여아',
     stats: [
@@ -118,10 +118,10 @@ function Home() {
         title="집사인생"
         rightContent={
           <>
-            <Button type="button" aria-label="calendar" onClick={() => navigate('/mission')}>
+            <Button type="button" aria-label="캘린더" onClick={() => navigate('/mission')}>
               <img src={calendarIcon} alt="" />
             </Button>
-            <Button type="button" aria-label="notification" className="home_header_notification">
+            <Button type="button" aria-label="알림" className="home_header_notification">
               <img src={notificationIcon} alt="" />
             </Button>
           </>
@@ -179,11 +179,7 @@ function Home() {
                           </div>
                           <p>{slide.details}</p>
                         </div>
-                        <button
-                          type="button"
-                          className="summary_icon_button"
-                          aria-label="프로필 편집"
-                        >
+                        <button type="button" className="summary_icon_button" aria-label="프로필 편집">
                           <svg viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M14 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                             <path d="M4.5 18.5c1.2-2.4 3.7-3.7 6.5-3.7 1.3 0 2.5.3 3.6.8" />
@@ -230,7 +226,7 @@ function Home() {
         <section className="home_section">
           <div className="home_section_heading home_section_heading_stack">
             <div>
-              <h2>이달의 펫 랭킹</h2>
+              <h2>이달의 랭킹</h2>
               <p>참여할수록 순위가 올라가요</p>
             </div>
             <button

@@ -103,7 +103,7 @@
   align-items: center;
   justify-content: center;
   gap: 2px;
-  color: #a1a1a8;
+  color: #111111;
   font-weight: 500;
   text-decoration: none;
 }
@@ -112,7 +112,11 @@
   width: 28px;
   height: 28px;
   fill: currentColor;
-  color: #a1a1a8;
+  color: #111111;
+}
+
+.layout_nav_icon_place:not(.active) {
+  fill: none;
 }
 
 .layout_nav_icon_mask {
@@ -124,8 +128,10 @@
 
 .layout_nav_label {
   font-size: 11px;
+  line-height: 1.2;
   white-space: nowrap;
   letter-spacing: -0.02em;
+  word-break: keep-all;
 }
 
 .layout_nav_link.active {

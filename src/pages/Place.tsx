@@ -6,7 +6,7 @@ import Button from '../components/html/Button'
 
 const nearbyPlaces: HospitalListItem[] = [
   {
-    name: '24시 행복 동물병원',
+    name: '24시 해맑은 동물병원',
     rating: '4.8 (120)',
     distance: '1.2KM',
     status: '영업중',
@@ -39,7 +39,7 @@ function Place() {
           <p className="place_eyebrow">내 주변 맞춤 장소</p>
           <h2>가까운 반려생활 스팟을 한 번에 찾아보세요</h2>
           <p className="place_description">
-            병원, 응급 진료, 돌봄 관련 장소를 빠르게 확인할 수 있어요.
+            병원, 응급 진료, 미용 관련 장소를 빠르게 확인할 수 있어요.
           </p>
           <div className="place_filters" aria-label="장소 빠른 필터">
             {quickFilters.map((filter) => (

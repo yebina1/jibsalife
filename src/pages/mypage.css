@@ -55,11 +55,15 @@
 }
 
 .mypage_profile_header button {
+  flex: 0 0 auto;
   padding: 0;
   border: 0;
   background: transparent;
   color: #4f4f55;
   font-size: 12px;
+  line-height: 1.2;
+  white-space: nowrap;
+  word-break: keep-all;
   cursor: pointer;
 }
 
@@ -108,6 +112,7 @@
   font-size: 11px;
   font-weight: 700;
   line-height: 1.2;
+  white-space: nowrap;
   word-break: keep-all;
 }
 
@@ -141,6 +146,7 @@
 
 .mypage_location_button {
   display: inline-flex;
+  flex: 0 0 auto;
   height: 34px;
   align-items: center;
   gap: 8px;
@@ -170,7 +176,9 @@
 .mypage_counters {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
+  column-gap: 0;
+  row-gap: 12px;
+  width: 100%;
 }
 
 .mypage_shortcuts {
@@ -180,9 +188,13 @@
 .mypage_round_menu,
 .mypage_counter_item {
   display: flex;
+  width: 100%;
+  min-width: 0;
   flex-direction: column;
   align-items: center;
+  justify-self: stretch;
   gap: 10px;
+  text-align: center;
 }
 
 .mypage_round_menu {
@@ -195,6 +207,7 @@
 .mypage_round_icon,
 .mypage_counter_dot {
   display: inline-flex;
+  flex: 0 0 38px;
   width: 38px;
   height: 38px;
   align-items: center;
@@ -205,9 +218,13 @@
 }
 
 .mypage_round_icon svg {
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   fill: currentColor;
+}
+
+.mypage_round_icon {
+  overflow: hidden;
 }
 
 .mypage_round_menu span:last-child,
@@ -216,6 +233,8 @@
   font-size: 13px;
   line-height: 1.2;
   text-align: center;
+  white-space: nowrap;
+  word-break: keep-all;
 }
 
 .mypage_counters {
@@ -312,7 +331,8 @@
 
   .mypage_shortcuts,
   .mypage_counters {
-    gap: 18px;
+    column-gap: 0;
+    row-gap: 18px;
   }
 }
 
@@ -356,11 +376,13 @@
 
   .mypage_shortcuts,
   .mypage_counters {
-    gap: 8px;
+    column-gap: 0;
+    row-gap: 8px;
   }
 
   .mypage_round_icon,
   .mypage_counter_dot {
+    flex-basis: 34px;
     width: 34px;
     height: 34px;
   }
@@ -372,7 +394,7 @@
 
   .mypage_round_menu span:last-child,
   .mypage_counter_item span:last-child {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .mypage_list_left span:last-child {
@@ -395,7 +417,7 @@
   }
 
   .mypage_stats span {
-    font-size: 9px;
+    font-size: 8px;
   }
 
   .mypage_location_card {
@@ -405,6 +427,11 @@
 
   .mypage_location_button {
     justify-content: center;
+  }
+
+  .mypage_round_menu span:last-child,
+  .mypage_counter_item span:last-child {
+    font-size: 10px;
   }
 
   .mypage_list_left span:last-child {

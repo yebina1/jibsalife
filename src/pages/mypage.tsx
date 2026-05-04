@@ -115,7 +115,9 @@ function formatSavedAt(savedAt: string) {
 function MyPage() {
   const navigate = useNavigate()
   const [savedLocation, setSavedLocation] = useState<SavedLocation | null>(null)
-  const [locationMessage, setLocationMessage] = useState('위치 정보를 등록하고\n맞춤 서비스를 받아 보세요')
+  const [locationMessage, setLocationMessage] = useState(
+    '위치 정보를 등록하고\n맞춤 서비스를 받아 보세요',
+  )
   const [isLocating, setIsLocating] = useState(false)
   const headerActions: HeaderActionItem[] = [
     {

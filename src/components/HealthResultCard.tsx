@@ -9,9 +9,9 @@ type HealthResultCardProps = {
 
 function HealthResultCard({ score }: HealthResultCardProps) {
   const [animatedScore, setAnimatedScore] = useState(0)
+  const safeScore = Math.min(100, Math.max(0, score))
 
   useEffect(() => {
-    const safeScore = Math.min(100, Math.max(0, score))
     const duration = 1200
     let animationFrameId = 0
     let startTime = 0
@@ -42,7 +42,7 @@ function HealthResultCard({ score }: HealthResultCardProps) {
 
   return (
     <section className="health_result_card">
-      <HealthResultCardTop score={animatedScore} />
+      <HealthResultCardTop score={animatedScore} statusScore={safeScore} />
       <HealthResultMeter score={animatedScore} />
     </section>
   )

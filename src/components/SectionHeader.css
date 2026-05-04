@@ -1,8 +1,10 @@
 .section_header {
   display: flex;
+  min-width: 0;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  font-family: var(--app-font-family);
 }
 
 .section_header h1,
@@ -10,10 +12,15 @@
 .section_header h3,
 .section_header h4,
 .section_header h5 {
+  min-width: 0;
+  flex: 1 1 auto;
   margin: 0;
   color: #111111;
   font-weight: 700;
   line-height: 1.35;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+  word-break: keep-all;
 }
 
 .section_header h1 {
@@ -38,12 +45,14 @@
 
 .section_header button {
   display: flex;
+  flex: 0 0 auto;
   align-items: center;
   gap: 12px;
   border: 0;
   background: transparent;
   color: #111111;
   font-size: 13px;
+  white-space: nowrap;
   cursor: pointer;
 }
 

@@ -80,11 +80,11 @@ function NavIcon({ type, active }: { type: (typeof navItems)[number]['icon']; ac
     return (
       <svg
         viewBox="0 0 24 24"
-        className={className}
+        className={`${className} layout_nav_icon_place`}
         aria-hidden="true"
         fill={active ? 'currentColor' : 'none'}
         stroke="currentColor"
-        strokeWidth={active ? '1.8' : '2.6'}
+        strokeWidth={active ? '1.8' : '1.5'}
         strokeLinecap="round"
         strokeLinejoin="round"
       >

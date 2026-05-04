@@ -19,7 +19,7 @@
   font-weight: 500;
 }
 
-.health_result_score_row em {
+.health_result_score_status {
   display: inline-flex;
   min-width: 72px;
   min-height: 34px;
@@ -35,6 +35,23 @@
   line-height: 1;
 }
 
+.health_result_score_status.excellent,
+.health_result_score_status.good {
+  background: #35c65a;
+}
+
+.health_result_score_status.normal {
+  background: #1f9fd1;
+}
+
+.health_result_score_status.caution {
+  background: #ff9f2f;
+}
+
+.health_result_score_status.danger {
+  background: #ff4f60;
+}
+
 @media (max-width: 420px) {
   .health_result_score_row {
     gap: 12px;
@@ -44,7 +61,7 @@
     font-size: 50px;
   }
 
-  .health_result_score_row em {
+  .health_result_score_status {
     min-width: 64px;
     min-height: 32px;
     padding: 0 14px;
