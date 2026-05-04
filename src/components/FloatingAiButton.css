@@ -9,9 +9,9 @@
   justify-content: center;
   border: 0;
   border-radius: 50%;
-  background: linear-gradient(180deg, #9bacff 0%, #7f8ff5 100%);
+  background: linear-gradient(180deg, #6D59F8 0%, #6D59F8 100%);
   color: #ffffff;
-  box-shadow: 0 16px 28px rgba(127, 143, 245, 0.32);
+  box-shadow: 0 16px 28px rgba(109, 89, 248, 0.32);
   cursor: pointer;
 }
 

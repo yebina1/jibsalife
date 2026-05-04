@@ -14,7 +14,7 @@ function Layout() {
   const hasContentPadding = !noPaddingPaths.includes(pathname)
   const contentClassName =
     hasContentPadding ? 'layout_content' : 'layout_content layout_content_no_padding'
-  const hideFloatingAiButtonPaths = ['/mypage', '/community', '/health/qna', '/health/vet-chat']
+  const hideFloatingAiButtonPaths = ['/mypage', '/community', '/mission', '/health/qna', '/health/vet-chat']
   const hideFloatingAiButton = hideFloatingAiButtonPaths.includes(pathname)
 
   return (

@@ -91,7 +91,7 @@
   left: 0;
   height: 4px;
   border-radius: 999px;
-  background: #7560f6;
+  background: #6D59F8;
   content: '';
 }
 
@@ -121,10 +121,10 @@
 }
 
 .community_subtab_bar button.active {
-  border-color: #7560f6;
-  background: #7560f6;
+  border-color: #6D59F8;
+  background: #6D59F8;
   color: #ffffff;
-  box-shadow: 0 4px 10px rgba(117, 96, 246, 0.12);
+  box-shadow: 0 4px 10px rgba(109, 89, 248, 0.12);
 }
 
 .community_search_box {
@@ -225,7 +225,7 @@
 .community_sort_toggle::after {
   display: inline-block;
   margin-left: 10px;
-  color: #b9acf8;
+  color: #6D59F8;
   content: '▼';
   transform: scale(0.8);
 }
@@ -251,7 +251,7 @@
 }
 
 .community_sort_option.active {
-  color: #7560f6;
+  color: #6D59F8;
   font-weight: 800;
 }
 
@@ -1442,9 +1442,9 @@
   justify-content: center;
   border: 0;
   border-radius: 50%;
-  background: #7560f6;
+  background: #6D59F8;
   color: #ffffff;
-  box-shadow: 0 12px 24px rgba(117, 96, 246, 0.28);
+  box-shadow: 0 12px 24px rgba(109, 89, 248, 0.28);
   cursor: pointer;
 }
 
@@ -1574,7 +1574,7 @@
 .community_create_submit {
   height: 48px;
   border-radius: 12px;
-  background: #7560f6;
+  background: #6D59F8;
   color: #ffffff;
   font-size: 16px;
   font-weight: 800;

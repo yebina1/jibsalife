@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router'
+import type { CSSProperties } from 'react'
 import navCommunicateIcon from '../svg/nav communicate.svg'
 import navCommunicateOffIcon from '../svg/nav communicate off.svg'
 import navHealthIcon from '../svg/nav health.svg'
@@ -39,8 +40,7 @@ function NavIcon({ type, active }: { type: (typeof navItems)[number]['icon']; ac
         viewBox="0 0 24 24"
         className={className}
         aria-hidden="true"
-        fill="none"
-        style={{ fill: 'none' }}
+        fill={active ? 'currentColor' : 'none'}
         stroke="currentColor"
         strokeWidth="1.8"
         strokeLinecap="round"
@@ -52,6 +52,19 @@ function NavIcon({ type, active }: { type: (typeof navItems)[number]['icon']; ac
   }
 
   const icon = active ? navIconMap[type].active : navIconMap[type].inactive
+  const iconStyle = active
+    ? ({ '--layout-nav-icon-url': `url("${icon}")` } as CSSProperties)
+    : undefined
+
+  if (active) {
+    return (
+      <span
+        className={`${className} layout_nav_icon_mask`}
+        style={iconStyle}
+        aria-hidden="true"
+      />
+    )
+  }
 
   return <img src={icon} className={className} alt={navIconAltMap[type]} />
 }

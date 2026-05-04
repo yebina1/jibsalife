@@ -36,18 +36,6 @@
   height: 28px;
 }
 
-.mypage_notification::after {
-  position: absolute;
-  top: 4px;
-  right: 2px;
-  width: 7px;
-  height: 7px;
-  border: 2px solid #ffffff;
-  border-radius: 50%;
-  background: #ff6d4d;
-  content: '';
-}
-
 .mypage_profile_card {
   margin-bottom: 28px;
 }

@@ -10,7 +10,10 @@
   --layout-content-padding-y: 48px;
   --layout-inline-padding: clamp(12px, 2.5vw, 32px);
   position: relative;
+  width: 100%;
+  max-width: var(--layout-max-width);
   min-height: 100vh;
+  margin: 0 auto;
   padding-top: var(--layout-header-height);
   padding-bottom: var(--layout-footer-height);
   overflow-x: hidden;
@@ -20,19 +23,21 @@
 .layout > header {
   position: fixed;
   top: 0;
-  right: 0;
-  left: 0;
+  left: 50%;
+  width: min(100%, var(--layout-max-width));
   z-index: 110;
   background: #ffffff;
+  transform: translateX(-50%);
 }
 
 .layout > footer {
   position: fixed;
-  right: 0;
   bottom: 0;
-  left: 0;
+  left: 50%;
+  width: min(100%, var(--layout-max-width));
   z-index: 100;
   background: #ffffff;
+  transform: translateX(-50%);
 }
 
 .layout_content{
@@ -98,6 +103,13 @@
   color: #a1a1a8;
 }
 
+.layout_nav_icon_mask {
+  display: block;
+  background-color: currentColor;
+  -webkit-mask: var(--layout-nav-icon-url) center / contain no-repeat;
+  mask: var(--layout-nav-icon-url) center / contain no-repeat;
+}
+
 .layout_nav_label {
   font-size: 11px;
   white-space: nowrap;
@@ -105,11 +117,11 @@
 }
 
 .layout_nav_link.active {
-  color: #121212;
+  color: var(--point-dark-red);
 }
 
 .layout_nav_link.active .layout_nav_icon {
-  color: #121212;
+  color: var(--point-dark-red);
 }
 
 @media (min-width: 768px) {

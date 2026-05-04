@@ -2,8 +2,6 @@ import './Mission.css'
 import { useEffect, useMemo, useState } from 'react'
 import PageHeader from '../components/PageHeader'
 import BackButton from '../components/html/BackButton'
-import HeaderActions from '../components/html/HeaderActions'
-import type { HeaderActionItem } from '../components/html/HeaderActions'
 
 const weekLabels = ['일', '월', '화', '수', '목', '금', '토']
 const CALENDAR_YEAR = 2026
@@ -70,6 +68,9 @@ function Mission() {
   const [calendarYear, setCalendarYear] = useState(CALENDAR_YEAR)
   const [calendarMonth, setCalendarMonth] = useState(CALENDAR_MONTH)
   const [selectedDayId, setSelectedDayId] = useState('c-20')
+  const [monthSlideDirection, setMonthSlideDirection] = useState<'prev' | 'next'>('next')
+  const [calendarView, setCalendarView] = useState<'월간' | '주간'>('월간')
+  const [isViewSortOpen, setIsViewSortOpen] = useState(false)
   const calendarDays = useMemo(
     () => createCalendarDays(calendarYear, calendarMonth),
     [calendarMonth, calendarYear]
@@ -94,14 +95,16 @@ function Mission() {
 
   const selectedDate = new Date(selectedDay.year, selectedDay.month - 1, Number(selectedDay.label))
   const selectedDateLabel = `${selectedDay.year}년 ${selectedDay.month}월 ${selectedDay.label}일(${weekLabels[selectedDate.getDay()]})`
-  const headerActions: HeaderActionItem[] = [
-    {
-      label: '글쓰기',
-      className: 'mission_header_action',
-    },
-  ]
+  const selectedDayIndex = calendarDays.findIndex((day) => day.id === selectedDayId)
+  const selectedWeekStartIndex = Math.max(0, Math.floor(Math.max(selectedDayIndex, 0) / 7) * 7)
+  const visibleCalendarDays =
+    calendarView === '주간'
+      ? calendarDays.slice(selectedWeekStartIndex, selectedWeekStartIndex + 7)
+      : calendarDays
 
   const moveMonth = (direction: 'prev' | 'next') => {
+    setMonthSlideDirection(direction)
+
     if (direction === 'prev') {
       if (calendarMonth === 1) {
         setCalendarYear((prev) => prev - 1)
@@ -127,7 +130,38 @@ function Mission() {
       <PageHeader
         title="건강 히스토리"
         leftContent={<BackButton />}
-        rightContent={<HeaderActions actions={headerActions} />}
+        rightContent={
+          <div className={`mission_view_sort ${isViewSortOpen ? 'open' : ''}`}>
+            <button
+              type="button"
+              className="mission_view_sort_toggle"
+              onClick={() => setIsViewSortOpen((prev) => !prev)}
+            >
+              {calendarView}
+            </button>
+            {isViewSortOpen ? (
+              <div className="mission_view_sort_menu">
+                {(['월간', '주간'] as const).map((view) => (
+                  <button
+                    key={view}
+                    type="button"
+                    className={
+                      view === calendarView
+                        ? 'mission_view_sort_option active'
+                        : 'mission_view_sort_option'
+                    }
+                    onClick={() => {
+                      setCalendarView(view)
+                      setIsViewSortOpen(false)
+                    }}
+                  >
+                    {view}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        }
       />
       <main className="page mission_page">
         <section className="mission_calendar_section">
@@ -147,8 +181,13 @@ function Mission() {
           ))}
         </div>
 
-        <div className="mission_calendar_grid" aria-label={`${calendarYear}년 ${calendarMonth}월 달력`}>
-          {calendarDays.map((day) => (
+        <div className="mission_calendar_viewport">
+        <div
+          key={`${calendarYear}-${calendarMonth}`}
+          className={`mission_calendar_grid slide_${monthSlideDirection}`}
+          aria-label={`${calendarYear}년 ${calendarMonth}월 달력`}
+        >
+          {visibleCalendarDays.map((day) => (
             <button
               key={day.id}
               type="button"
@@ -162,6 +201,16 @@ function Mission() {
             </button>
           ))}
         </div>
+        </div>
+
+        <button
+          type="button"
+          className="mission_calendar_dock"
+          aria-label={calendarView === '주간' ? '월간 달력으로 보기' : '주간 달력으로 보기'}
+          onClick={() => setCalendarView((current) => (current === '주간' ? '월간' : '주간'))}
+        >
+          <span />
+        </button>
 
         <div className="mission_legends" aria-label="기록 범례">
           {legends.map((label) => (
@@ -194,6 +243,11 @@ function Mission() {
           <br />
           정확한 진단은 수의사 상담을 통해 확인해주세요.
         </p>
+        <button type="button" className="mission_fab" aria-label="글쓰기">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+        </button>
       </main>
     </>
   )
