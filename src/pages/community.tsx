@@ -1,5 +1,5 @@
 import './community.css'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import PageHeader from '../components/PageHeader'
 import Button from '../components/html/Button'
@@ -96,7 +96,8 @@ const voteResultRankings = [
 const topTabs = ['전체', '커뮤니티', '챌린지 인증', '투표'] as const
 const communitySubTabs = ['전체', '자랑하기', '일상', '반려상식'] as const
 const voteSubTabs = ['전체', '목록', '투표결과'] as const
-const sortOptions = ['인기순', '최신순'] as const
+const sortOptions = ['인기순', '최신순', '댓글순', '공유순'] as const
+const createdPostsStorageKey = 'jibsalife.community.createdPosts'
 
 type TopTab = (typeof topTabs)[number]
 type CommunitySubTab = (typeof communitySubTabs)[number]
@@ -111,8 +112,22 @@ type CommunityPost = {
   timeText?: string
   likes: number
   comments: number
+  shares: number
   createdAt: string
   image: string
+}
+
+function loadCreatedPosts(): CommunityPost[] {
+  if (typeof window === 'undefined') return []
+
+  try {
+    const savedPosts = window.localStorage.getItem(createdPostsStorageKey)
+    const parsedPosts = savedPosts ? JSON.parse(savedPosts) : []
+
+    return Array.isArray(parsedPosts) ? (parsedPosts as CommunityPost[]) : []
+  } catch {
+    return []
+  }
 }
 
 const postData: CommunityPost[] = [
@@ -125,6 +140,7 @@ const postData: CommunityPost[] = [
     timeText: '3시간 전',
     likes: 4,
     comments: 4,
+    shares: 4,
     createdAt: '2026-04-30T09:00:00',
     image: contents4,
   },
@@ -137,6 +153,7 @@ const postData: CommunityPost[] = [
     timeText: '3시간 전',
     likes: 4,
     comments: 4,
+    shares: 2,
     createdAt: '2026-04-30T18:20:00',
     image: contents2,
   },
@@ -149,6 +166,7 @@ const postData: CommunityPost[] = [
     timeText: '3시간 전',
     likes: 4,
     comments: 4,
+    shares: 6,
     createdAt: '2026-04-30T14:10:00',
     image: contents1,
   },
@@ -161,6 +179,7 @@ const postData: CommunityPost[] = [
     timeText: '3시간 전',
     likes: 4,
     comments: 4,
+    shares: 1,
     createdAt: '2026-04-30T11:00:00',
     image: contents3,
   },
@@ -176,6 +195,7 @@ const braggingPostData: CommunityPost[] = [
     timeText: '1시간 전',
     likes: 18,
     comments: 7,
+    shares: 9,
     createdAt: '2026-04-30T20:10:00',
     image: contents1,
   },
@@ -188,6 +208,7 @@ const braggingPostData: CommunityPost[] = [
     timeText: '2시간 전',
     likes: 14,
     comments: 4,
+    shares: 5,
     createdAt: '2026-04-30T17:00:00',
     image: contents2,
   },
@@ -200,6 +221,7 @@ const braggingPostData: CommunityPost[] = [
     timeText: '5시간 전',
     likes: 20,
     comments: 9,
+    shares: 7,
     createdAt: '2026-04-30T15:20:00',
     image: contents3,
   },
@@ -229,6 +251,16 @@ function Community() {
   const [selectedChallengeId, setSelectedChallengeId] = useState<number | null>(null)
   const [selectedVoteListId, setSelectedVoteListId] = useState<number | null>(null)
   const [selectedVoteResultId, setSelectedVoteResultId] = useState<number | null>(null)
+  const [createdPosts, setCreatedPosts] = useState<CommunityPost[]>(loadCreatedPosts)
+  const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [draftTag, setDraftTag] = useState<CommunitySubTab>(communitySubTabs[1])
+  const [draftTitle, setDraftTitle] = useState('')
+  const [draftContent, setDraftContent] = useState('')
+  const [draftImage, setDraftImage] = useState('')
+
+  useEffect(() => {
+    window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(createdPosts))
+  }, [createdPosts])
 
   const isOverviewTab = selectedTopTab === '전체'
   const isCommunityTab = selectedTopTab === '커뮤니티'
@@ -238,7 +270,15 @@ function Community() {
   const isBraggingView = isCommunityTab && selectedCommunitySubTab === '자랑하기'
   const isKnowledgeView = isCommunityTab && selectedCommunitySubTab === '반려상식'
   const isCommunityOverview = isCommunityTab && selectedCommunitySubTab === '전체'
-  const activePostData = isBraggingView ? braggingPostData : postData
+  const visibleCreatedPosts =
+    isCommunityTab && !isKnowledgeView
+      ? createdPosts.filter(
+          (post) => selectedCommunitySubTab === communitySubTabs[0] || post.tag === selectedCommunitySubTab
+        )
+      : []
+  const activePostData = isBraggingView
+    ? [...visibleCreatedPosts, ...braggingPostData]
+    : [...visibleCreatedPosts, ...postData]
   const selectedChallenge = challengeItems.find((item) => item.id === selectedChallengeId) ?? null
 
   const posts = useMemo(() => {
@@ -258,6 +298,16 @@ function Community() {
         return b.comments - a.comments
       }
 
+      if (selectedSort === '댓글순') {
+        if (b.comments !== a.comments) return b.comments - a.comments
+        return bLikes - aLikes
+      }
+
+      if (selectedSort === '공유순') {
+        if (b.shares !== a.shares) return b.shares - a.shares
+        return bLikes - aLikes
+      }
+
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     })
   }, [activePostData, likedPostIds, searchTerm, selectedSort])
@@ -266,6 +316,51 @@ function Community() {
     setLikedPostIds((prev) =>
       prev.includes(postId) ? prev.filter((id) => id !== postId) : [...prev, postId]
     )
+  }
+
+  const openCreatePost = () => {
+    setDraftTag(isBraggingView ? communitySubTabs[1] : communitySubTabs[2])
+    setDraftTitle('')
+    setDraftContent('')
+    setDraftImage('')
+    setIsCreateOpen(true)
+  }
+
+  const closeCreatePost = () => {
+    setIsCreateOpen(false)
+  }
+
+  const createPost = () => {
+    const title = draftTitle.trim()
+    const content = draftContent.trim()
+
+    if (!title) return
+
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+
+    setCreatedPosts((prev) => [
+      {
+        id: Date.now(),
+        tag: draftTag,
+        title,
+        author: '나',
+        date: `${year}.${month}.${day}`,
+        timeText: '방금 전',
+        likes: 0,
+        comments: content ? 1 : 0,
+        shares: 0,
+        createdAt: now.toISOString(),
+        image: draftImage || contents4,
+      },
+      ...prev,
+    ])
+    setSelectedTopTab(topTabs[1])
+    setSelectedCommunitySubTab(draftTag)
+    setSelectedSort(sortOptions[1])
+    closeCreatePost()
   }
 
   const sectionTitle = isOverviewTab
@@ -388,21 +483,23 @@ function Community() {
                 </button>
                 {isSortOpen ? (
                   <div className="community_sort_menu">
-                    {sortOptions
-                      .filter((option) => option !== selectedSort)
-                      .map((option) => (
-                        <button
-                          key={option}
-                          type="button"
-                          className="community_sort_option"
-                          onClick={() => {
-                            setSelectedSort(option)
-                            setIsSortOpen(false)
-                          }}
-                        >
-                          {option}
-                        </button>
-                      ))}
+                    {sortOptions.map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        className={
+                          option === selectedSort
+                            ? 'community_sort_option active'
+                            : 'community_sort_option'
+                        }
+                        onClick={() => {
+                          setSelectedSort(option)
+                          setIsSortOpen(false)
+                        }}
+                      >
+                        {option}
+                      </button>
+                    ))}
                   </div>
                 ) : null}
               </div>
@@ -916,7 +1013,7 @@ function Community() {
                             <path d="m20 4-6.7 15-3.3-6.7L3.3 9 20 4Z" />
                           </svg>
                         </span>
-                        <span className="community_action_count">4</span>
+                        <span className="community_action_count">{post.shares}</span>
                       </button>
                     </div>
                   </div>
@@ -927,6 +1024,92 @@ function Community() {
             )}
           </section>
         )}
+        {isCreateOpen ? (
+          <section className="community_create_sheet" role="dialog" aria-modal="true" aria-label="글쓰기">
+            <form
+              className="community_create_form"
+              onSubmit={(event) => {
+                event.preventDefault()
+                createPost()
+              }}
+            >
+              <div className="community_create_header">
+                <h2>글쓰기</h2>
+                <button type="button" onClick={closeCreatePost} aria-label="닫기">
+                  ×
+                </button>
+              </div>
+
+              <label className="community_create_field">
+                <span>카테고리</span>
+                <select
+                  value={draftTag}
+                  onChange={(event) => setDraftTag(event.target.value as CommunitySubTab)}
+                >
+                  {communitySubTabs.slice(1, 3).map((tab) => (
+                    <option key={tab} value={tab}>
+                      {tab}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="community_create_field">
+                <span>제목</span>
+                <input
+                  value={draftTitle}
+                  onChange={(event) => setDraftTitle(event.target.value)}
+                  placeholder="제목을 입력해 주세요"
+                  maxLength={40}
+                />
+              </label>
+
+              <label className="community_create_field">
+                <span>내용</span>
+                <textarea
+                  value={draftContent}
+                  onChange={(event) => setDraftContent(event.target.value)}
+                  placeholder="내용을 입력해 주세요"
+                  rows={5}
+                />
+              </label>
+
+              <label className="community_create_upload">
+                <span>사진</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0]
+                    if (!file) return
+
+                    const reader = new FileReader()
+                    reader.addEventListener('load', () => {
+                      if (typeof reader.result === 'string') {
+                        setDraftImage(reader.result)
+                      }
+                    })
+                    reader.readAsDataURL(file)
+                  }}
+                />
+                {draftImage ? (
+                  <img src={draftImage} alt="업로드한 사진 미리보기" />
+                ) : (
+                  <strong>사진 업로드</strong>
+                )}
+              </label>
+
+              <button type="submit" className="community_create_submit" disabled={!draftTitle.trim()}>
+                등록하기
+              </button>
+            </form>
+          </section>
+        ) : null}
+        <button type="button" className="community_fab" onClick={openCreatePost} aria-label="글쓰기">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+        </button>
       </main>
     </>
   )
