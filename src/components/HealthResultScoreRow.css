@@ -1,26 +1,53 @@
 .health_result_score_row {
   display: flex;
   align-items: center;
-  gap: 42px;
+  gap: 18px;
 }
 
-/* score */
 .health_result_score_row strong {
+  display: inline-flex;
+  align-items: baseline;
   color: #000000;
-  font-size: 32px;
+  font-size: 58px;
   font-weight: 800;
   line-height: 1;
 }
 
-/* status */
-.health_result_score_row span {
+.health_result_score_row strong span {
+  margin-left: 2px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.health_result_score_row em {
   display: inline-flex;
-  padding: 12px 24px;
+  min-width: 72px;
+  min-height: 34px;
   align-items: center;
   justify-content: center;
+  padding: 0 18px;
   border-radius: 999px;
-  background: #c5c5c5;
-  color: #000000;
-  font-size: 20px;
+  background: #35c65a;
+  color: #ffffff;
+  font-size: 16px;
+  font-style: normal;
   font-weight: 700;
+  line-height: 1;
+}
+
+@media (max-width: 420px) {
+  .health_result_score_row {
+    gap: 12px;
+  }
+
+  .health_result_score_row strong {
+    font-size: 50px;
+  }
+
+  .health_result_score_row em {
+    min-width: 64px;
+    min-height: 32px;
+    padding: 0 14px;
+    font-size: 15px;
+  }
 }

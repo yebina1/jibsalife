@@ -1,8 +1,15 @@
 .health_result_card {
+  position: relative;
   width: min(100%, 736px);
   box-sizing: border-box;
-  padding: 16px 14px;
-  border-radius: 22px;
-  background: #eeeeee;
+  padding: 28px 36px 26px;
+  border-radius: 10px;
+  background: #bda9ff;
   text-align: left;
+}
+
+@media (max-width: 420px) {
+  .health_result_card {
+    padding: 24px 22px 20px;
+  }
 }

@@ -51,6 +51,18 @@
   padding: 0;
 }
 
+.layout_camera {
+  --layout-header-height: 0px;
+  --layout-footer-height: 0px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.layout_camera .layout_content {
+  min-height: 100dvh;
+  padding: 0;
+}
+
 .layout_content > .page {
   width: 100%;
   max-width: var(--layout-max-width);

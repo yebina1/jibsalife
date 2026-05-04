@@ -1,26 +1,27 @@
 .health_result_meter {
-  margin-top: 58px;
+  margin-top: 14px;
 }
 
 .health_result_meter_track {
   overflow: hidden;
-  height: 25px;
+  height: 12px;
   border-radius: 999px;
-  background: #d2d2d2;
+  background: #d2c8ef;
 }
 
 .health_result_meter_fill {
   width: var(--score);
   height: 100%;
   border-radius: inherit;
-  background: #bd7477;
+  background: #0077a7;
 }
 
 .health_result_meter_labels {
   display: flex;
   justify-content: space-between;
-  margin-top: 54px;
+  margin-top: 36px;
   color: #000000;
-  font-size: 30px;
+  font-size: 14px;
+  font-weight: 500;
   line-height: 1;
 }

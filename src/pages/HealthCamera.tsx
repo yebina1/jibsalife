@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import './health.css'
 import './HealthCamera.css'
-import PageHeader from '../components/PageHeader'
-import BackButton from '../components/html/BackButton'
 import Button from '../components/html/Button'
 
 function HealthCamera() {
@@ -52,29 +50,35 @@ function HealthCamera() {
   }, [mode])
 
   return (
-    <>
-      <PageHeader title="AI 건강 체크" leftContent={<BackButton />} />
-      <main className="page health_page health_camera_page">
-        <section className="health_camera_view" aria-label={actionLabel}>
-          {cameraError ? (
-            <div className="health_camera_error">{cameraError}</div>
-          ) : (
-            <video ref={videoRef} autoPlay muted playsInline />
-          )}
-        </section>
+    <main className="page health_page health_camera_page">
+      <button
+        type="button"
+        className="health_camera_back"
+        aria-label="뒤로가기"
+        onClick={() => navigate(-1)}
+      >
+        <i className="bx bx-chevron-left" aria-hidden="true"></i>
+      </button>
 
-        <div className="health_camera_actions">
-          <Button
-            type="button"
-            className="health_camera_shutter"
-            aria-label={actionLabel}
-            onClick={() => navigate('/health/check-loading')}
-          >
-            <span />
-          </Button>
-        </div>
-      </main>
-    </>
+      <section className="health_camera_view" aria-label={actionLabel}>
+        {cameraError ? (
+          <div className="health_camera_error">{cameraError}</div>
+        ) : (
+          <video ref={videoRef} autoPlay muted playsInline />
+        )}
+      </section>
+
+      <div className="health_camera_actions">
+        <Button
+          type="button"
+          className="health_camera_shutter"
+          aria-label={actionLabel}
+          onClick={() => navigate('/health/check-loading')}
+        >
+          <span />
+        </Button>
+      </div>
+    </main>
   )
 }
 

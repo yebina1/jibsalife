@@ -4,14 +4,18 @@
   text-align: left;
 }
 
-.health_result_summary_box .title {
-  margin-bottom: 18px;
+.health_result_summary_box h2 {
+  margin: 0 0 24px;
+  color: #000000;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.35;
 }
 
 .health_result_summary_box ul {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
   padding: 0;
   margin: 0;
   list-style: none;
@@ -19,9 +23,9 @@
 
 .health_result_summary_link {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 40px;
+  gap: 16px;
   color: inherit;
   text-decoration: none;
 }
@@ -34,21 +38,32 @@
 }
 
 .health_result_summary_label {
-  gap: 12px;
+  gap: 14px;
 }
 
-.health_result_summary_label span {
-  width: 18px;
-  height: 18px;
-  flex: 0 0 auto;
-  background: #a94a4c;
+.health_result_summary_label > svg {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  color: #b40000;
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 3.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.health_result_summary_label > svg path,
+.health_result_summary_label > svg circle,
+.health_result_summary_label > svg rect {
+  vector-effect: non-scaling-stroke;
 }
 
 .health_result_summary_label strong,
 .health_result_summary_value span {
   overflow: hidden;
   color: #000000;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   line-height: 1.3;
   text-overflow: ellipsis;
@@ -56,13 +71,38 @@
 }
 
 .health_result_summary_value {
-  justify-content: space-between;
-  gap: 12px;
+  justify-content: flex-end;
+  gap: 14px;
 }
 
-.health_result_summary_value i {
+.health_result_summary_value > i {
   flex: 0 0 auto;
   color: #000000;
-  font-size: 22px;
+  font-size: 30px;
   line-height: 1;
+}
+
+@media (max-width: 420px) {
+  .health_result_summary_box h2 {
+    font-size: 21px;
+  }
+
+  .health_result_summary_link {
+    gap: 12px;
+  }
+
+  .health_result_summary_label {
+    gap: 12px;
+  }
+
+  .health_result_summary_label > svg {
+    width: 30px;
+    height: 30px;
+    flex-basis: 30px;
+  }
+
+  .health_result_summary_label strong,
+  .health_result_summary_value span {
+    font-size: 15px;
+  }
 }

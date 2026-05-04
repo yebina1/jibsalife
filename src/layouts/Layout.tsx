@@ -10,6 +10,7 @@ import { HeaderContext, type HeaderConfig } from '../contexts/HeaderContext'
 function Layout() {
   const [header, setHeader] = useState<HeaderConfig>(null)
   const { pathname } = useLocation()
+  const isCameraPage = pathname === '/health/camera'
   const noPaddingPaths = ['/community']
   const hasContentPadding = !noPaddingPaths.includes(pathname)
   const contentClassName =
@@ -26,19 +27,23 @@ function Layout() {
 
   return (
     <HeaderContext.Provider value={setHeader}>
-      <div className="layout">
-        <header>
-          <StateBar />
-          {header && <Header {...header} />}
-        </header>
+      <div className={isCameraPage ? 'layout layout_camera' : 'layout'}>
+        {!isCameraPage ? (
+          <header>
+            <StateBar />
+            {header && <Header {...header} />}
+          </header>
+        ) : null}
         <div className={contentClassName}>
           <Outlet />
         </div>
         {!hideFloatingAiButton ? <FloatingAiButton /> : null}
-        <footer>
-          <Nav />
-          <HomeIndicator />
-        </footer>
+        {!isCameraPage ? (
+          <footer>
+            <Nav />
+            <HomeIndicator />
+          </footer>
+        ) : null}
       </div>
     </HeaderContext.Provider>
   )

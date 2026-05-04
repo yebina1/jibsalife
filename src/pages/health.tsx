@@ -20,19 +20,19 @@ function Health() {
     {
       id: 'photo',
       icon: cameraIcon,
-      label: '사진 촬영',
+      label: '사진',
       onClick: () => navigate('/health/camera?mode=photo'),
     },
     {
       id: 'audio',
       icon: voiceIcon,
-      label: '녹음 촬영',
+      label: '녹음',
       onClick: () => navigate('/health/check-loading'),
     },
     {
       id: 'video',
       icon: camcorderIcon,
-      label: '영상 촬영',
+      label: '영상',
       onClick: () => navigate('/health/camera?mode=video'),
     },
     {
