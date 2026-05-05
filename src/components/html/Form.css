@@ -9,6 +9,7 @@ form {
   border: 1px solid #e5e5ee;
   border-radius: 14px;
   transition: border-color 0.2s, box-shadow 0.2s;
+  scroll-margin-bottom: 24px;
 }
 
 form:focus-within {

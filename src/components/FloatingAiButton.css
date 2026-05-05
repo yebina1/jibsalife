@@ -13,6 +13,7 @@
   color: #ffffff;
   box-shadow: 0 16px 28px rgba(109, 89, 248, 0.32);
   cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .floating_ai_button img {

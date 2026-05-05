@@ -222,6 +222,7 @@
   font-weight: 600;
   line-height: 1.45;
   outline: 0;
+  scroll-margin-block: 24px;
 }
 
 .health_register_memo_slot textarea::placeholder {
