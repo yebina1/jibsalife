@@ -1,5 +1,5 @@
 .app {
-  min-height: var(--app-viewport-height, 100vh);
+  min-height: 100vh;
   background: #ffffff;
 }
 
@@ -12,7 +12,7 @@
   position: relative;
   width: 100%;
   max-width: var(--layout-max-width);
-  min-height: var(--app-viewport-height, 100vh);
+  min-height: 100vh;
   margin: 0 auto;
   padding-top: var(--layout-header-height);
   padding-bottom: var(--layout-footer-height);
@@ -41,7 +41,7 @@
 }
 
 .layout_content{
-  min-height: calc(var(--app-viewport-height, 100dvh) - var(--layout-header-height) - var(--layout-footer-height));
+  min-height: calc(100dvh - var(--layout-header-height) - var(--layout-footer-height));
   padding: 24px var(--layout-inline-padding);
   box-sizing: border-box;
 }
@@ -64,7 +64,7 @@
 }
 
 .layout_camera .layout_content {
-  min-height: var(--app-viewport-height, 100dvh);
+  min-height: 100dvh;
   padding: 0;
 }
 
@@ -72,7 +72,7 @@
   width: 100%;
   max-width: var(--layout-max-width);
   min-height: calc(
-    var(--app-viewport-height, 100dvh) - var(--layout-header-height) - var(--layout-footer-height) - var(--layout-content-padding-y)
+    100dvh - var(--layout-header-height) - var(--layout-footer-height) - var(--layout-content-padding-y)
   );
   margin: 0 auto;
   box-sizing: border-box;
@@ -147,18 +147,6 @@
 
 .layout_nav_link.active .layout_nav_icon {
   color: #6c59f7;
-}
-
-html[data-keyboard-open='true'] .layout > footer {
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(-50%, calc(100% + 16px));
-}
-
-html[data-keyboard-open='true'] .floating_ai_button {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(16px);
 }
 
 @media (min-width: 768px) {

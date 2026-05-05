@@ -1,9 +1,7 @@
 .chat_room {
   display: flex;
   flex-direction: column;
-  min-height: calc(
-    var(--app-viewport-height, 100dvh) - var(--layout-header-height) - var(--layout-footer-height) - var(--layout-content-padding-y)
-  );
+  height: calc(100dvh - var(--layout-header-height) - var(--layout-footer-height) - var(--layout-content-padding-y));
 }
 
 .chat_room_messages {
@@ -14,7 +12,6 @@
   flex-direction: column;
   gap: 20px;
   padding-bottom: 16px;
-  overscroll-behavior: contain;
 }
 
 .chat_room_messages {
