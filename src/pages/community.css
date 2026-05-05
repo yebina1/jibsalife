@@ -77,38 +77,47 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   order: 1;
   gap: 0;
-  padding-top: 8px;
+  min-height: 58px;
+  padding-top: 0;
   padding-bottom: 0;
   margin-bottom: 0;
   background: #ffffff;
-  border-bottom: 1px solid #e9e9ee;
+  border-bottom: 1px solid #ececf2;
 }
 
 .community_tab_bar button {
   position: relative;
+  display: inline-flex;
+  min-height: 58px;
+  align-items: center;
+  justify-content: center;
   justify-self: center;
-  padding-bottom: 14px;
-  color: #6f727b;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1.3;
+  width: 100%;
+  padding: 0 8px 1px;
+  color: #4f4f55;
+  font-family: 'Pretendard', 'SUIT', system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
   word-break: keep-all;
 }
 
 .community_tab_bar button.active {
   color: #111111;
+  font-weight: 600;
 }
 
 .community_tab_bar button.active::after {
   position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  width: auto;
-  height: 4px;
+  bottom: -1px;
+  left: 50%;
+  width: min(100%, 126px);
+  height: 3px;
   border-radius: 999px;
   background: #6D59F8;
   content: '';
+  transform: translateX(-50%);
 }
 
 .community_detail_top {
@@ -126,6 +135,36 @@
   overflow: visible;
 }
 
+.community_subtab_dropdown {
+  position: relative;
+}
+
+.community_subtab_toggle {
+  display: inline-flex !important;
+}
+
+.community_subtab_menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 8;
+  display: grid;
+  min-width: 128px;
+  padding: 6px 0;
+  box-sizing: border-box;
+  border: 1px solid #e5e5ec;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 6px 16px rgba(17, 24, 39, 0.08);
+}
+
+.community_subtab_menu button {
+  display: block;
+  width: 100%;
+  padding: 8px 14px;
+  text-align: left;
+}
+
 .community_subtab_bar button {
   display: none;
   min-width: 0;
@@ -135,10 +174,11 @@
   border-radius: 0;
   background: transparent;
   color: #111111;
-  font-size: 14px;
-  font-weight: 800;
-  line-height: 1.25;
-  letter-spacing: -0.025em;
+  font-family: 'Pretendard', 'SUIT', system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.022em;
   box-shadow: none;
   white-space: nowrap;
   word-break: keep-all;
@@ -156,8 +196,16 @@
 
 .community_subtab_bar button.active::after {
   color: #b6a7ff;
-  font-size: 10px;
+  font-size: 12px;
   content: '▼';
+}
+
+.community_subtab_menu button.active::after {
+  content: none;
+}
+
+.community_subtab_menu button.active {
+  color: #6D59F8;
 }
 
 .community_search_box {
@@ -269,60 +317,78 @@
 .community_sort_dropdown {
   position: relative;
   z-index: 5;
+  width: 70px;
 }
 
 .community_sort_toggle {
   display: inline-flex;
-  min-width: 62px;
-  height: 30px;
+  width: 100%;
+  min-width: 0;
+  height: 28px;
   align-items: center;
-  justify-content: center;
-  gap: 5px;
-  padding: 0 10px;
-  border: 1px solid #d8dbe7;
+  justify-content: flex-start;
+  gap: 2px;
+  padding: 0 8px 0 10px;
+  box-sizing: border-box;
+  border: 1px solid #e5e5ec;
   border-radius: 999px;
   background: #ffffff;
   color: #111111;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1;
+  font-family: 'Pretendard', 'SUIT', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.025em;
   white-space: nowrap;
   word-break: keep-all;
-  box-shadow: 0 2px 10px rgba(17, 24, 39, 0.04);
+  box-shadow: 0 2px 8px rgba(17, 24, 39, 0.04);
 }
 
-.community_sort_toggle::after {
-  display: inline-block;
-  margin-left: 0;
-  color: #6D59F8;
-  font-size: 10px;
-  content: '▼';
-  transform: scale(0.75);
+.community_sort_toggle_label {
+  white-space: nowrap;
+}
+
+.community_sort_toggle_icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  background: no-repeat center / 14px 12px
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='12' viewBox='0 0 14 12' fill='none'%3E%3Cpath d='M5.539 10.624c.78 1.084 2.392 1.084 3.172 0l4.798-6.673C14.439 2.657 13.515.875 11.924.875H2.076C.485.875-.439 2.657.491 3.951l5.048 6.673Z' fill='%23B9ABFF'/%3E%3C/svg%3E");
 }
 
 .community_sort_menu {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 6px);
   right: 0;
   display: grid;
   z-index: 10;
-  min-width: 108px;
-  padding: 8px 10px;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 4px 0;
+  border: 1px solid #e5e5ec;
+  border-radius: 14px;
   background: #ffffff;
-  box-shadow: 0 8px 20px rgba(17, 24, 39, 0.08);
+  box-shadow: 0 4px 12px rgba(17, 24, 39, 0.06);
 }
 
 .community_sort_option {
-  padding: 6px 0;
+  width: 100%;
+  min-height: 32px;
+  padding: 6px 14px;
+  color: #111111;
+  font-family: 'Pretendard', 'SUIT', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.025em;
   text-align: center;
   white-space: nowrap;
 }
 
 .community_sort_option.active {
   color: #6D59F8;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .community_feed {
@@ -629,6 +695,197 @@
   display: grid;
   gap: 12px;
   padding: 22px 6px 0;
+}
+
+.community_challenge_screen > .community_challenge_summary_card,
+.community_challenge_screen > .community_challenge_section_title,
+.community_challenge_screen > .community_challenge_join_detail,
+.community_challenge_screen > .community_challenge_simple_list {
+  display: none;
+}
+
+.community_challenge_redesign {
+  display: grid;
+  gap: 28px;
+}
+
+.community_challenge_feature_card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px 20px;
+  align-items: center;
+}
+
+.community_challenge_feature_copy h2,
+.community_challenge_heading h2 {
+  margin: 0;
+  color: #111111;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.community_challenge_feature_copy p,
+.community_challenge_heading p {
+  margin: 10px 0 0;
+  color: #636675;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.025em;
+}
+
+.community_challenge_feature_progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.community_challenge_feature_ring {
+  display: flex;
+  width: 88px;
+  height: 88px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: conic-gradient(#6d59f8 0 20%, #d8e6f2 20% 100%);
+}
+
+.community_challenge_feature_ring_inner {
+  display: flex;
+  width: 72px;
+  height: 72px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+.community_challenge_feature_ring_inner span {
+  color: #7d7f89;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.community_challenge_feature_ring_inner strong {
+  margin-top: 4px;
+  color: #26262d;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.community_challenge_reward_button {
+  grid-column: 1 / -1;
+  width: 100%;
+  height: 44px;
+  border: 0;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #8d74f1 0%, #8f6ff2 100%);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+}
+
+.community_challenge_heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.community_challenge_heading img {
+  width: 104px;
+  max-width: 34%;
+  object-fit: contain;
+}
+
+.community_challenge_cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px 14px;
+}
+
+.community_challenge_card {
+  display: grid;
+  gap: 10px;
+}
+
+.community_challenge_card_image {
+  width: 100%;
+  aspect-ratio: 1.15 / 0.78;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.community_challenge_card_body h3 {
+  margin: 0;
+  color: #111111;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.03em;
+}
+
+.community_challenge_card_meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+  color: #666a78;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.community_challenge_card_meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.community_challenge_card_meta svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.community_challenge_card_button {
+  width: 100%;
+  height: 40px;
+  margin-top: 10px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+}
+
+.community_challenge_card_button.filled {
+  border: 0;
+  background: #8d74f1;
+  color: #ffffff;
+}
+
+.community_challenge_card_button.outline {
+  border: 1px solid #c8b9ff;
+  background: #ffffff;
+  color: #8d74f1;
+}
+
+.community_challenge_card_button.complete {
+  border: 0;
+  background: #ededed;
+  color: #b9b9b9;
+  cursor: default;
 }
 
 .community_challenge_summary_card {
@@ -1728,12 +1985,14 @@
 
   .community_tab_bar {
     gap: 0;
-    padding-top: 8px;
+    min-height: 54px;
+    padding-top: 0;
     padding-bottom: 0;
   }
 
   .community_tab_bar button {
-    padding-bottom: 12px;
+    min-height: 54px;
+    padding: 0 6px 1px;
     font-size: 16px;
   }
 
@@ -1742,7 +2001,7 @@
     height: auto;
     padding: 0;
     border-radius: 0;
-    font-size: 13px;
+    font-size: 18px;
   }
 
   .community_subtab_bar button.active {
@@ -1750,7 +2009,7 @@
   }
 
   .community_subtab_bar button.active::after {
-    font-size: 9px;
+    font-size: 12px;
   }
 
   .community_subtab_bar + .community_list_header {
@@ -1776,11 +2035,58 @@
     font-size: 14px;
   }
 
-  .community_sort_toggle {
-    min-width: 60px;
-    height: 28px;
-    padding: 0 9px;
+  .community_challenge_redesign {
+    gap: 24px;
+  }
+
+  .community_challenge_feature_card {
+    gap: 14px 16px;
+  }
+
+  .community_challenge_feature_copy h2,
+  .community_challenge_heading h2 {
+    font-size: 18px;
+  }
+
+  .community_challenge_feature_copy p,
+  .community_challenge_heading p {
+    font-size: 14px;
+  }
+
+  .community_challenge_feature_ring {
+    width: 78px;
+    height: 78px;
+  }
+
+  .community_challenge_feature_ring_inner {
+    width: 64px;
+    height: 64px;
+  }
+
+  .community_challenge_cards {
+    gap: 20px 12px;
+  }
+
+  .community_challenge_card_body h3 {
+    font-size: 14px;
+  }
+
+  .community_challenge_card_meta {
+    gap: 8px;
     font-size: 11px;
+  }
+
+  .community_challenge_card_button {
+    height: 38px;
+    font-size: 13px;
+  }
+
+  .community_sort_toggle {
+    width: 70px;
+    min-width: 0;
+    height: 28px;
+    padding: 0 8px 0 10px;
+    font-size: 13px;
   }
 
   .community_post {
@@ -1986,10 +2292,11 @@
   }
 
   .community_sort_toggle {
-    min-width: 60px;
+    width: 70px;
+    min-width: 0;
     height: 28px;
-    padding: 0 9px;
-    font-size: 11px;
+    padding: 0 8px 0 10px;
+    font-size: 13px;
   }
 
   .community_post {

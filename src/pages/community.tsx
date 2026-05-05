@@ -8,6 +8,7 @@ import contents1 from '../img/contents1.png'
 import contents2 from '../img/contents2.png'
 import contents3 from '../img/contents3.png'
 import contents4 from '../img/contents4.png'
+import challengeHeadingImage from '../img/illust_login_pet.jpg'
 import calendarIcon from '../svg/calendar.svg'
 import notificationIcon from '../svg/notification.svg'
 
@@ -39,6 +40,49 @@ const challengeItems = [
     description: '우리아이 잠든 모습 자랑해보세요',
     date: '2026.04.30',
     participants: 8,
+  },
+] as const
+
+const challengeCardItems = [
+  {
+    id: 1,
+    title: '제일 귀엽게 밥 먹는 귀염둥이는?',
+    participants: 22,
+    deadline: '04.30 마감',
+    image: contents1,
+    status: 'active',
+  },
+  {
+    id: 2,
+    title: '간식 기다리기 챔피언은?',
+    participants: 22,
+    deadline: '04.30 마감',
+    image: contents2,
+    status: 'outline',
+  },
+  {
+    id: 3,
+    title: '집사 바라기 1등은?',
+    participants: 22,
+    deadline: '04.30 마감',
+    image: contents3,
+    status: 'outline',
+  },
+  {
+    id: 4,
+    title: '오늘의 베스트 포즈는?',
+    participants: 22,
+    deadline: '04.30 마감',
+    image: contents4,
+    status: 'outline',
+  },
+  {
+    id: 5,
+    title: '표정 부자는 누구?',
+    participants: 22,
+    deadline: '04.30 마감',
+    image: contents2,
+    status: 'complete',
   },
 ] as const
 
@@ -101,6 +145,8 @@ const sortOptions = ['인기순', '최신순', '댓글순', '공유순'] as cons
 const createdPostsStorageKey = 'jibsalife.community.createdPosts'
 
 type TopTab = (typeof topTabs)[number]
+const topTabLabels = ['전체', '커뮤니티', '챌린지', '투표'] as const
+const communitySubTabLabels = ['전체', '자랑하기', '일상', '반려상식'] as const
 type CommunitySubTab = (typeof communitySubTabs)[number]
 type VoteSubTab = (typeof voteSubTabs)[number]
 
@@ -247,6 +293,7 @@ function Community() {
   const [selectedVoteSubTab, setSelectedVoteSubTab] = useState<VoteSubTab>('투표결과')
   const [selectedSort, setSelectedSort] = useState<(typeof sortOptions)[number]>('인기순')
   const [isSortOpen, setIsSortOpen] = useState(false)
+  const [isCommunitySubTabOpen, setIsCommunitySubTabOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [likedPostIds, setLikedPostIds] = useState<number[]>([])
   const [selectedChallengeId, setSelectedChallengeId] = useState<number | null>(null)
@@ -281,7 +328,6 @@ function Community() {
     ? [...visibleCreatedPosts, ...braggingPostData]
     : [...visibleCreatedPosts, ...postData]
   const selectedChallenge = challengeItems.find((item) => item.id === selectedChallengeId) ?? null
-
   const posts = useMemo(() => {
     const keyword = searchTerm.trim().toLowerCase()
     const filtered = activePostData.filter((post) =>
@@ -421,7 +467,7 @@ function Community() {
         ) : null}
 
         <section className="community_tab_bar" aria-label="커뮤니티 상위 카테고리">
-          {topTabs.map((tab) => (
+          {topTabs.map((tab, index) => (
             <button
               key={tab}
               type="button"
@@ -429,6 +475,7 @@ function Community() {
               onClick={() => {
                 setSelectedTopTab(tab)
                 setIsSortOpen(false)
+                setIsCommunitySubTabOpen(false)
                 setSelectedCommunitySubTab('전체')
                 setSelectedVoteSubTab('전체')
                 setSelectedChallengeId(null)
@@ -436,23 +483,39 @@ function Community() {
                 setSelectedVoteResultId(null)
               }}
             >
-              {tab}
+              {topTabLabels[index]}
             </button>
           ))}
         </section>
 
         {showCommunitySubTabs ? (
           <section className="community_subtab_bar" aria-label="커뮤니티 하위 카테고리">
-            {communitySubTabs.map((tab) => (
+            <div className={`community_subtab_dropdown ${isCommunitySubTabOpen ? 'open' : ''}`}>
               <button
-                key={tab}
                 type="button"
-                className={selectedCommunitySubTab === tab ? 'active' : ''}
-                onClick={() => setSelectedCommunitySubTab(tab)}
+                className="community_subtab_toggle active"
+                onClick={() => setIsCommunitySubTabOpen((prev) => !prev)}
               >
-                {tab}
+                {communitySubTabLabels[communitySubTabs.indexOf(selectedCommunitySubTab)]}
               </button>
-            ))}
+              {isCommunitySubTabOpen ? (
+                <div className="community_subtab_menu">
+                  {communitySubTabs.map((tab, index) => (
+                    <button
+                      key={tab}
+                      type="button"
+                      className={selectedCommunitySubTab === tab ? 'active' : ''}
+                      onClick={() => {
+                        setSelectedCommunitySubTab(tab)
+                        setIsCommunitySubTabOpen(false)
+                      }}
+                    >
+                      {communitySubTabLabels[index]}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
           </section>
         ) : null}
 
@@ -483,7 +546,8 @@ function Community() {
                   className="community_sort_toggle"
                   onClick={() => setIsSortOpen((prev) => !prev)}
                 >
-                  {selectedSort}
+                  <span className="community_sort_toggle_label">{selectedSort}</span>
+                  <span className="community_sort_toggle_icon" aria-hidden="true" />
                 </button>
                 {isSortOpen ? (
                   <div className="community_sort_menu">
@@ -615,6 +679,83 @@ function Community() {
           </section>
         ) : isChallengeTab ? (
           <section className="community_challenge_screen">
+            <section className="community_challenge_redesign">
+              <article className="community_challenge_feature_card">
+                <div className="community_challenge_feature_copy">
+                  <h2>이번주 특별 챌린지</h2>
+                  <p>이번 주 미션 참여하고, 특별한 보상을 받아보세요.</p>
+                </div>
+                <div className="community_challenge_feature_progress">
+                  <div className="community_challenge_feature_ring">
+                    <div className="community_challenge_feature_ring_inner">
+                      <span>진행률</span>
+                      <strong>20%</strong>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" className="community_challenge_reward_button">
+                  60포인트 받기
+                </button>
+              </article>
+
+              <div className="community_challenge_heading">
+                <div>
+                  <h2>챌린지 목록</h2>
+                  <p>미션을 완료할수록 더 많은 포인트를 드려요.</p>
+                </div>
+              <img src={challengeHeadingImage} alt="" />
+              </div>
+
+              <div className="community_challenge_cards">
+                {challengeCardItems.map((item) => {
+                  const isJoined = selectedChallengeId === item.id
+                  const isComplete = item.status === 'complete'
+                  const buttonClassName = isComplete
+                    ? 'community_challenge_card_button complete'
+                    : item.status === 'active' || isJoined
+                      ? 'community_challenge_card_button filled'
+                      : 'community_challenge_card_button outline'
+
+                  return (
+                    <article key={item.id} className="community_challenge_card">
+                      <img src={item.image} alt={item.title} className="community_challenge_card_image" />
+                      <div className="community_challenge_card_body">
+                        <h3>{item.title}</h3>
+                        <div className="community_challenge_card_meta">
+                          <span>
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                              <path d="M16 19a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
+                              <path d="M8 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                              <path d="M3 20c0-2.2 2.3-4 5-4" />
+                              <path d="M12 20c.2-2.8 2.7-5 5.8-5 2 0 3.8.9 5.2 2.2" />
+                            </svg>
+                            {item.participants}명
+                          </span>
+                          <span>
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                              <rect x="3.5" y="5.5" width="17" height="15" rx="2" />
+                              <path d="M7 3.5v4" />
+                              <path d="M17 3.5v4" />
+                              <path d="M3.5 9.5h17" />
+                            </svg>
+                            {item.deadline}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          className={buttonClassName}
+                          onClick={() => {
+                            if (!isComplete) setSelectedChallengeId(item.id)
+                          }}
+                        >
+                          {isComplete ? '참여완료' : '참여하기'}
+                        </button>
+                      </div>
+                    </article>
+                  )
+                })}
+              </div>
+            </section>
             <article className="community_challenge_summary_card">
               <h3>이번주 특별 상금 챌린지</h3>
               <div className="community_challenge_summary_progress">
