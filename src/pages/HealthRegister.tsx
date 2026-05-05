@@ -288,29 +288,6 @@ const readRegisterDraft = () => {
   }
 }
 
-function fitRectToAspect(rect: CropRect, aspect: number | null): CropRect {
-  if (!aspect) return rect
-
-  const centerX = rect.x + rect.width / 2
-  const centerY = rect.y + rect.height / 2
-  let width = rect.width
-  let height = rect.height
-
-  if (width / height > aspect) {
-    width = height * aspect
-  } else {
-    height = width / aspect
-  }
-
-  width = Math.min(width, 1)
-  height = Math.min(height, 1)
-
-  const x = clamp(centerX - width / 2, 0, 1 - width)
-  const y = clamp(centerY - height / 2, 0, 1 - height)
-
-  return { x, y, width, height }
-}
-
 function updateCropRect(
   startRect: CropRect,
   handle: CropHandle,
