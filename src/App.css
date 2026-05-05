@@ -142,11 +142,11 @@
 }
 
 .layout_nav_link.active {
-  color: #6c59f7;
+  color: #111111;
 }
 
 .layout_nav_link.active .layout_nav_icon {
-  color: #6c59f7;
+  color: #111111;
 }
 
 html[data-keyboard-open='true'] .layout > footer {
