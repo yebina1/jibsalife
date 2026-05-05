@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import './DatePicker.css'
 
-const ITEM_HEIGHT = 56
+const ITEM_HEIGHT = 44
 
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, month, 0).getDate()
@@ -21,17 +21,22 @@ function Column({ items, value, onChange }: ColumnProps) {
   const wheelTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const wheelEndTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const targetIndexRef = useRef(0)
+  const isScrollingRef = useRef(false)
+  const [activeIndex, setActiveIndex] = useState(() =>
+    Math.max(0, items.findIndex((item) => item.value === value))
+  )
 
   useEffect(() => {
+    if (isScrollingRef.current) return
     const el = ref.current
     if (!el) return
     const index = items.findIndex((item) => item.value === value)
     const targetIndex = Math.max(0, index)
 
     targetIndexRef.current = targetIndex
+    setActiveIndex(targetIndex)
 
     if (wheelTimerRef.current) return
-
     el.scrollTop = targetIndex * ITEM_HEIGHT
   }, [items, value])
 
@@ -75,6 +80,7 @@ function Column({ items, value, onChange }: ColumnProps) {
         top: nextIndex * ITEM_HEIGHT,
         behavior: 'smooth',
       })
+      setActiveIndex(nextIndex)
       onChange(items[nextIndex].value)
     }
 
@@ -86,26 +92,48 @@ function Column({ items, value, onChange }: ColumnProps) {
   }, [items, onChange])
 
   const handleScroll = () => {
+    const el = ref.current
+    if (!el) return
+    const index = Math.round(el.scrollTop / ITEM_HEIGHT)
+    const clamped = Math.max(0, Math.min(index, items.length - 1))
+    setActiveIndex(clamped)
+    isScrollingRef.current = true
+
     if (timerRef.current) clearTimeout(timerRef.current)
     timerRef.current = setTimeout(() => {
-      const el = ref.current
-      if (!el) return
-      const index = Math.round(el.scrollTop / ITEM_HEIGHT)
-      const clamped = Math.max(0, Math.min(index, items.length - 1))
+      isScrollingRef.current = false
       onChange(items[clamped].value)
     }, 80)
+  }
+
+  const selectItem = (index: number) => {
+    const el = ref.current
+    const clamped = Math.max(0, Math.min(index, items.length - 1))
+
+    targetIndexRef.current = clamped
+    setActiveIndex(clamped)
+    onChange(items[clamped].value)
+
+    if (el) {
+      el.scrollTo({
+        top: clamped * ITEM_HEIGHT,
+        behavior: 'smooth',
+      })
+    }
   }
 
   return (
     <div className="date_picker_column" ref={ref} onScroll={handleScroll}>
       <div className="date_picker_spacer" />
-      {items.map((item) => (
-        <div
+      {items.map((item, i) => (
+        <button
+          type="button"
           key={item.value}
-          className={`date_picker_item${item.value === value ? ' active' : ''}`}
+          className={`date_picker_item${i === activeIndex ? ' active' : ''}`}
+          onClick={() => selectItem(i)}
         >
           {item.label}
-        </div>
+        </button>
       ))}
       <div className="date_picker_spacer" />
     </div>
@@ -116,11 +144,14 @@ type DatePickerProps = {
   year: number
   month: number
   day: number
+  dropdownTop?: number
+  inline?: boolean
+  flat?: boolean
   onConfirm: (year: number, month: number, day: number) => void
   onCancel: () => void
 }
 
-function DatePicker({ year, month, day, onConfirm, onCancel }: DatePickerProps) {
+function DatePicker({ year, month, day, dropdownTop, inline = false, flat = false, onConfirm, onCancel }: DatePickerProps) {
   const [tempYear, setTempYear] = useState(year)
   const [tempMonth, setTempMonth] = useState(month)
   const [tempDay, setTempDay] = useState(day)
@@ -140,8 +171,38 @@ function DatePicker({ year, month, day, onConfirm, onCancel }: DatePickerProps) 
   }))
   const clampedDay = Math.min(tempDay, daysInMonth)
 
+  const isDropdown = dropdownTop !== undefined
+  const picker = (
+    <div className={`date_picker${inline ? ' inline' : ''}${flat ? ' flat' : ''}`} onClick={(e) => e.stopPropagation()}>
+      <div className="date_picker_columns">
+        <Column items={years} value={tempYear} onChange={setTempYear} />
+        <Column items={months} value={tempMonth} onChange={setTempMonth} />
+        <Column
+          key={`${tempYear}-${tempMonth}`}
+          items={days}
+          value={clampedDay}
+          onChange={setTempDay}
+        />
+        <div className="date_picker_selector" />
+      </div>
+      <div className="date_picker_actions">
+        <button type="button" onClick={onCancel}>취소</button>
+        <span className="date_picker_divider" />
+        <button type="button" onClick={() => onConfirm(tempYear, tempMonth, clampedDay)}>완료</button>
+      </div>
+    </div>
+  )
+
+  if (inline) {
+    return picker
+  }
+
   return (
-    <div className="date_picker_overlay" onClick={onCancel}>
+    <div
+      className={`date_picker_overlay${isDropdown ? ' dropdown' : ''}`}
+      style={isDropdown ? { '--picker-top': `${dropdownTop}px` } as React.CSSProperties : undefined}
+      onClick={onCancel}
+    >
       <div className="date_picker" onClick={(e) => e.stopPropagation()}>
         <div className="date_picker_columns">
           <Column items={years} value={tempYear} onChange={setTempYear} />

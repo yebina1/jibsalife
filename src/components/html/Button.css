@@ -8,6 +8,12 @@
   font-weight: 600;
 }
 
+.purple_btn:disabled {
+  background: rgba(160, 141, 255, 0.45);
+  color: rgba(255, 255, 255, 0.72);
+  cursor: not-allowed;
+}
+
 .white_btn {
   width: 100%;
   min-width: 0;
