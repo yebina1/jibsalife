@@ -69,12 +69,14 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  color: #111111;
 }
 
 .health_register_section_header h2,
 .health_register_section_header span {
   margin: 0;
   white-space: nowrap;
+  color: inherit;
 }
 
 .health_register_section_header h2 {
@@ -110,11 +112,19 @@
   min-height: 0;
   place-items: center;
   padding: 0;
-  border: 1.5px dashed #b8b8b8;
+  border: 0;
   border-radius: 0;
   background: #ffffff;
   cursor: pointer;
   overflow: hidden;
+}
+
+.health_register_slot::before {
+  position: absolute;
+  inset: 0;
+  border: 1px dashed #b8b8b8;
+  pointer-events: none;
+  content: '';
 }
 
 .health_register_slot img {
@@ -133,9 +143,12 @@
 }
 
 .health_register_slot.is_filled {
+  background: #f8f7ff;
+}
+
+.health_register_slot.is_filled::before {
   border-style: solid;
   border-color: #d9dbe6;
-  background: #f8f7ff;
 }
 
 .health_register_slot strong {
