@@ -2,6 +2,7 @@
   position: fixed;
   right: 24px;
   bottom: 118px;
+  z-index: 120;
   display: flex;
   width: 68px;
   height: 68px;
