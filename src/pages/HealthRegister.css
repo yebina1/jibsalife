@@ -75,6 +75,16 @@
   letter-spacing: -0.025em;
 }
 
+.health_register_section_limit {
+  margin: 0;
+  color: #111111;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+}
+
 .health_register_slots {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -673,9 +683,8 @@
   white-space: nowrap;
 }
 
-.health_register_crop_header > button:first-child i {
-  font-size: 24px;
-  line-height: 1;
+.health_register_crop_header > button:first-child .chevron_icon {
+  color: currentColor;
 }
 
 .health_register_crop_viewport {

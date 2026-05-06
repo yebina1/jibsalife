@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router'
+import ChevronIcon from '../ChevronIcon'
 import Button from './Button'
 
 type BackButtonProps = {
@@ -19,7 +20,7 @@ export default function BackButton({ to = -1 }: BackButtonProps) {
 
   return (
     <Button type="button" className="back_btn" onClick={handleClick}>
-      <i className="bx bx-chevron-left"></i>
+      <ChevronIcon direction="left" size="lg" />
     </Button>
   )
 }

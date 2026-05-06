@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router'
 import './mypage.css'
 import PageHeader from '../components/PageHeader'
 import HeaderIcon from '../components/HeaderIcon'
+import ChevronIcon from '../components/ChevronIcon'
+import ContentSection from '../components/ContentSection'
 import BackButton from '../components/html/BackButton'
 import Button from '../components/html/Button'
 import contents1 from '../img/contents1.png'
@@ -336,7 +338,7 @@ function MyPage() {
                 <b>🎖</b>
               </div>
               <button type="button" aria-label="보유 뱃지 보기">
-                <i className="bx bx-chevron-right" aria-hidden="true" />
+                <ChevronIcon direction="right" size="md" />
               </button>
             </div>
           </div>
@@ -352,7 +354,7 @@ function MyPage() {
             </div>
             <button type="button" className="mypage_pet_more">
               자세히 보기
-              <i className="bx bx-chevron-right" aria-hidden="true" />
+              <ChevronIcon direction="right" size="md" />
             </button>
           </article>
 
@@ -362,8 +364,7 @@ function MyPage() {
           </button>
         </section>
 
-        <section className="mypage_menu_section">
-          <h2>내 활동</h2>
+        <ContentSection className="mypage_menu_section" title="내 활동">
           <ul>
             {activityItems.map((item) => (
               <li key={item.label}>
@@ -372,15 +373,14 @@ function MyPage() {
                     <MyPageIcon type={item.icon} />
                     {item.label}
                   </span>
-                  <i className="bx bx-chevron-right" aria-hidden="true" />
+                  <ChevronIcon direction="right" size="md" />
                 </button>
               </li>
             ))}
           </ul>
-        </section>
+        </ContentSection>
 
-        <section className="mypage_menu_section">
-          <h2>고객 지원</h2>
+        <ContentSection className="mypage_menu_section" title="고객 지원">
           <ul>
             {supportItems.map((item) => (
               <li key={item.label}>
@@ -389,12 +389,12 @@ function MyPage() {
                     <MyPageIcon type={item.icon} />
                     {item.label}
                   </span>
-                  <i className="bx bx-chevron-right" aria-hidden="true" />
+                  <ChevronIcon direction="right" size="md" />
                 </button>
               </li>
             ))}
           </ul>
-        </section>
+        </ContentSection>
       </main>
     </>
   )

@@ -1,6 +1,7 @@
 import './health.css'
 import './HealthCheckResult.css'
 import PageHeader from '../components/PageHeader'
+import ContentSection from '../components/ContentSection'
 import HealthResultCard from '../components/HealthResultCard'
 import HealthResultInsights from '../components/HealthResultInsights'
 import HealthResultSummary from '../components/HealthResultSummary'
@@ -24,12 +25,11 @@ function HealthCheckResult() {
         rightContent={<CloseButton />}
       />
       <main className="page health_page health_check_result_page">
-        <section className="health_check_result_complete">
-          <h1>확인이 완료되었어요!</h1>
+        <ContentSection className="health_check_result_complete" titleAs="h1" title="확인이 완료되었어요!">
           <span aria-hidden="true">
             <i className="bx bx-check"></i>
           </span>
-        </section>
+        </ContentSection>
 
         <HealthResultCard score={result.score} />
         <HealthResultInsights items={result.insights} />

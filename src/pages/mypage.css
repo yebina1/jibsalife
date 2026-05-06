@@ -292,8 +292,8 @@
   font-weight: 600;
 }
 
-.mypage_pet_more i {
-  font-size: 26px;
+.mypage_pet_more .chevron_icon {
+  color: currentColor;
 }
 
 .mypage_add_pet {
@@ -374,9 +374,8 @@
   stroke-linejoin: round;
 }
 
-.mypage_menu_button > i {
-  font-size: 28px;
-  color: #505050;
+.mypage_menu_button > .chevron_icon {
+  color: #444444;
 }
 
 @media (max-width: 420px) {

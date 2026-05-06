@@ -37,7 +37,6 @@
   line-height: 1.35;
 }
 
-.action_option i {
-  font-size: 24px;
-  line-height: 1;
+.action_option .chevron_icon {
+  color: currentColor;
 }

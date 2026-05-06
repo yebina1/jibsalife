@@ -2,12 +2,13 @@ import { useNavigate } from 'react-router'
 import './health.css'
 import './HealthConnect.css'
 import PageHeader from '../components/PageHeader'
+import ChevronIcon from '../components/ChevronIcon'
+import ContentSection from '../components/ContentSection'
 import CloseButton from '../components/html/CloseButton'
 import BackButton from '../components/html/BackButton'
 import NoticeText from '../components/NoticeText'
 import ConnectServiceList from '../components/ConnectServiceList'
 import type { ConnectServiceItem } from '../components/ConnectServiceList'
-import SectionHeader from '../components/SectionHeader'
 import HospitalList from '../components/HospitalList'
 import type { HospitalListItem } from '../components/HospitalList'
 
@@ -48,20 +49,26 @@ function HealthConnect() {
         rightContent={<CloseButton />}
       />
       <main className="page health_page health_connect_page">
-        <section className="health_connect_services">
-          <h2>어떤 서비스를 원하시나요?</h2>
+        <ContentSection className="health_connect_services" title="어떤 서비스를 원하시나요?">
           <ConnectServiceList items={serviceItems} />
-        </section>
+        </ContentSection>
 
-        <section className="health_connect_hospitals">
-          <SectionHeader
-            title="내 주변 추천 병원"
-            actionText="더보기"
-            actionIcon={<i className="bx bx-chevron-right" aria-hidden="true"></i>}
-            onActionClick={() => navigate('/health/hospitals/list')}
-          />
+        <ContentSection
+          className="health_connect_hospitals"
+          title="내 주변 추천 병원"
+          action={
+            <button
+              type="button"
+              className="content_section_text_action"
+              onClick={() => navigate('/health/hospitals/list')}
+            >
+              더보기
+              <ChevronIcon direction="right" size="md" />
+            </button>
+          }
+        >
           <HospitalList items={hospitalItems} />
-        </section>
+        </ContentSection>
 
         <NoticeText>
           <p>

@@ -1,6 +1,7 @@
 import './Mission.css'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import PageHeader from '../components/PageHeader'
+import ChevronIcon from '../components/ChevronIcon'
 import BackButton from '../components/html/BackButton'
 import DatePicker from '../components/html/DatePicker'
 import Button from '../components/html/Button'
@@ -802,7 +803,7 @@ function Mission() {
                       }}
                     >
                       {addDate.month}월 {addDate.day}일
-                      <i className="bx bx-chevron-right" />
+                      <ChevronIcon direction="right" size="md" />
                     </button>
                   </div>
                   <div className="mission_add_row">
@@ -822,14 +823,14 @@ function Mission() {
                         aria-hidden="true"
                       />
                       {selectedCategory.label}
-                      <i className="bx bx-chevron-right" />
+                      <ChevronIcon direction="right" size="md" />
                     </button>
                   </div>
                   <div className="mission_add_row">
                     <span className="mission_add_row_label">알림</span>
                     <button type="button" className="mission_add_row_value">
                       없음
-                      <i className="bx bx-chevron-right" />
+                      <ChevronIcon direction="right" size="md" />
                     </button>
                   </div>
                 </div>

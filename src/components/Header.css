@@ -107,6 +107,14 @@
   justify-content: flex-start;
 }
 
+.header_left .back_btn {
+  justify-content: flex-start;
+}
+
+.header_left .back_btn .chevron_icon {
+  transform: translateX(-4px);
+}
+
 .header_left img,
 .header_left svg {
   display: block;

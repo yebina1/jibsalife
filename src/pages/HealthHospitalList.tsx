@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './health.css'
 import './HealthHospitalList.css'
 import PageHeader from '../components/PageHeader'
+import ContentSection from '../components/ContentSection'
 import BackButton from '../components/html/BackButton'
 import Button from '../components/html/Button'
 import calendarIcon from '../svg/calendar.svg'
@@ -52,12 +53,11 @@ function HealthHospitalList() {
       />
 
       <main className="page health_page health_hospital_list_page">
-        <section className="health_hospital_list_section">
-          <div className="health_hospital_list_header">
-            <h2>병원 목록</h2>
-            <p>내 주변 추천 병원을 한눈에 확인해 보세요.</p>
-          </div>
-
+        <ContentSection
+          className="health_hospital_list_section"
+          title="병원 목록"
+          subtitle="내 주변 추천 병원을 한눈에 확인해 보세요."
+        >
           <ul className="health_hospital_list">
             {hospitalSearchItems.map((item) => {
               const operatingState = getOperatingState(item.open, item.close)
@@ -99,7 +99,7 @@ function HealthHospitalList() {
               )
             })}
           </ul>
-        </section>
+        </ContentSection>
       </main>
     </>
   )

@@ -1,9 +1,14 @@
 import './home.css'
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
+import ChevronIcon from '../components/ChevronIcon'
 import PageHeader from '../components/PageHeader'
 import HeaderIcon from '../components/HeaderIcon'
+import ContentSection from '../components/ContentSection'
+import SummaryProfileCard, { SummaryProfileAddCard } from '../components/SummaryProfileCard'
 import Button from '../components/html/Button'
+import pungpungiImage from '../img/pungpungi.png'
+import leeyoriImage from '../img/leeyori.png'
 import contents1 from '../img/contents1.png'
 import contents2 from '../img/contents2.png'
 import contents3 from '../img/contents3.png'
@@ -32,10 +37,24 @@ const contentItems = [
 const summarySlides = [
   {
     id: 1,
+    type: 'profile',
+    name: '이요리',
+    breed: '코리안 쇼트 헤어',
+    image: leeyoriImage,
+    details: '나이: 5살 · 몸무게: 3 kg · 성별: 남아',
+    stats: [
+      { label: '식사', value: '1회' },
+      { label: '배변', value: '2회' },
+      { label: '산책', value: '10분' },
+    ],
+  },
+  {
+    id: 2,
+    type: 'profile',
     name: '뿡뿡이',
-    breed: '푸들',
-    image: contents4,
-    details: '나이: 2살 · 몸무게: 5kg · 성별: 수컷',
+    breed: '포메라니안',
+    image: pungpungiImage,
+    details: '나이: 2살 · 몸무게: 5 kg · 성별: 남아',
     stats: [
       { label: '식사', value: '3회' },
       { label: '배변', value: '1회' },
@@ -43,16 +62,8 @@ const summarySlides = [
     ],
   },
   {
-    id: 2,
-    name: '코코',
-    breed: '말티즈',
-    image: contents1,
-    details: '나이: 4살 · 몸무게: 3.8kg · 성별: 여아',
-    stats: [
-      { label: '식사', value: '2회' },
-      { label: '배변', value: '2회' },
-      { label: '산책', value: '40분' },
-    ],
+    id: 3,
+    type: 'add',
   },
 ] as const
 
@@ -65,19 +76,10 @@ function formatTodaySummaryDate() {
   return `${year}년 ${month}월 ${day}일`
 }
 
-function SummaryEditIcon() {
-  return (
-    <svg viewBox="0 0 16 16" aria-hidden="true">
-      <path d="M11.8 2.2a1.6 1.6 0 0 1 2.3 2.3l-7 7-3 .7.7-3 7-7Z" />
-      <path d="M10.6 3.4 12.6 5.4" />
-    </svg>
-  )
-}
-
 function Home() {
   const navigate = useNavigate()
   const [rankingType, setRankingType] = useState<'subscribers' | 'points'>('subscribers')
-  const [summarySlideIndex, setSummarySlideIndex] = useState(0)
+  const [summarySlideIndex, setSummarySlideIndex] = useState(1)
   const [dragOffset, setDragOffset] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const dragStateRef = useRef({ startX: 0 })
@@ -128,12 +130,12 @@ function Home() {
       />
 
       <main className="page home_page">
-        <section className="home_section">
-          <div className="home_section_heading">
-            <h2>오늘의 요약</h2>
-            <p>{todaySummaryDate}</p>
-          </div>
-
+        <ContentSection
+          className="home_section home_summary_section"
+          headerClassName="home_summary_header"
+          title="오늘의 요약"
+          subtitle={todaySummaryDate}
+        >
           <div
             className="summary_slider"
             aria-label="오늘의 요약 슬라이드"
@@ -158,53 +160,23 @@ function Home() {
             <div
               className={`summary_slider_track ${isDragging ? 'dragging' : ''}`}
               style={{
-                transform: `translateX(calc(-${summarySlideIndex * 100}% + ${dragOffset}px))`,
+                transform: `translateX(calc(-${summarySlideIndex * 100}% - ${summarySlideIndex * 8}px + ${dragOffset}px))`,
               }}
             >
-              {summarySlides.map((slide) => (
-                <article key={slide.id} className="summary_card">
-                  <div className="summary_profile">
-                    <img
-                      src={slide.image}
-                      alt={`${slide.name} 프로필`}
-                      className="summary_profile_image"
-                    />
-                    <div className="summary_profile_body">
-                      <div className="summary_profile_header">
-                        <div>
-                          <div className="summary_profile_top">
-                            <strong>{slide.name}</strong>
-                            <span className="summary_badge">{slide.breed}</span>
-                          </div>
-                          <p>{slide.details}</p>
-                        </div>
-                        <button type="button" className="summary_icon_button" aria-label="프로필 편집">
-                          <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M14 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                            <path d="M4.5 18.5c1.2-2.4 3.7-3.7 6.5-3.7 1.3 0 2.5.3 3.6.8" />
-                            <path d="m14.8 18.2 4.8-4.8 1.9 1.9-4.8 4.8-2.5.6Z" />
-                          </svg>
-                        </button>
-                      </div>
-                      <button type="button" className="summary_link">
-                        케어 가이드
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="summary_stats" aria-label={`${slide.name} 활동 요약`}>
-                    {slide.stats.map((stat) => (
-                      <div key={stat.label}>
-                        <span className="summary_stat_label">
-                          {stat.label}
-                          <SummaryEditIcon />
-                        </span>
-                        <strong>{stat.value}</strong>
-                      </div>
-                    ))}
-                  </div>
-                </article>
-              ))}
+              {summarySlides.map((slide) =>
+                slide.type === 'add' ? (
+                  <SummaryProfileAddCard key={slide.id} onClick={() => navigate('/mypage')} />
+                ) : (
+                  <SummaryProfileCard
+                    key={slide.id}
+                    image={slide.image}
+                    name={slide.name}
+                    breed={slide.breed}
+                    details={slide.details}
+                    stats={slide.stats}
+                  />
+                ),
+              )}
             </div>
 
             <div className="summary_slider_dots" aria-label="요약 슬라이드 페이지">
@@ -220,14 +192,13 @@ function Home() {
               ))}
             </div>
           </div>
-        </section>
+        </ContentSection>
 
-        <section className="home_section">
-          <div className="home_section_heading home_section_heading_stack">
-            <div>
-              <h2>이달의 랭킹</h2>
-              <p>참여할수록 순위가 올라가요</p>
-            </div>
+        <ContentSection
+          className="home_section"
+          title="이달의 랭킹"
+          subtitle="참여할수록 순위가 올라가요"
+          action={
             <button
               type="button"
               className={`ranking_switch ${rankingType === 'points' ? 'points' : ''}`}
@@ -248,7 +219,8 @@ function Home() {
                 포인트
               </span>
             </button>
-          </div>
+          }
+        >
 
           <div className="ranking_grid" key={rankingType}>
             {rankingItems.map((item) => (
@@ -261,16 +233,13 @@ function Home() {
             ))}
           </div>
 
-          <button type="button" className="more_button">
+          <Button type="button" className="more_button">
             더보기
-          </button>
-        </section>
+            <ChevronIcon direction="right" size="md" />
+          </Button>
+        </ContentSection>
 
-        <section className="home_section home_content_section">
-          <div className="home_section_heading">
-            <h2>추천 콘텐츠</h2>
-          </div>
-
+        <ContentSection className="home_section home_content_section" title="추천 콘텐츠">
           <div className="content_grid">
             {contentItems.map((item) => (
               <article key={item.id} className="content_card">
@@ -282,14 +251,15 @@ function Home() {
             ))}
           </div>
 
-          <button
+          <Button
             type="button"
             className="more_button"
             onClick={() => navigate('/community?tab=knowledge')}
           >
             더보기
-          </button>
-        </section>
+            <ChevronIcon direction="right" size="md" />
+          </Button>
+        </ContentSection>
       </main>
     </>
   )

@@ -156,9 +156,8 @@
   color: #7e90ff;
 }
 
-.health_result_actions_arrow i {
-  font-size: 22px;
-  line-height: 1;
+.health_result_actions_arrow .chevron_icon {
+  color: currentColor;
 }
 
 .health_result_actions_card strong {

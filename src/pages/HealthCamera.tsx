@@ -4,6 +4,7 @@ import './health.css'
 import './HealthCamera.css'
 import PageHeader from '../components/PageHeader'
 import HeaderIcon from '../components/HeaderIcon'
+import ChevronIcon from '../components/ChevronIcon'
 import Button from '../components/html/Button'
 import BackButton from '../components/html/BackButton'
 import calendarGuideIcon from '../svg/calendar.svg?raw'
@@ -716,7 +717,7 @@ function HealthCamera() {
         aria-label="뒤로가기"
         onClick={() => navigate(-1)}
       >
-        <i className="bx bx-chevron-left" aria-hidden="true"></i>
+        <ChevronIcon direction="left" size="lg" />
       </button>
 
       <section className="health_camera_view" aria-label={actionLabel}>

@@ -3,6 +3,7 @@ import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import PageHeader from '../components/PageHeader'
 import HeaderIcon from '../components/HeaderIcon'
+import ContentSection from '../components/ContentSection'
 import Button from '../components/html/Button'
 import contents1 from '../img/contents1.png'
 import contents2 from '../img/contents2.png'
@@ -586,9 +587,10 @@ function Community() {
 
         {isOverviewTab ? (
           <section className="community_overview">
-            <section className="community_overview_section">
-              <div className="community_overview_heading">
-                <h2>커뮤니티</h2>
+            <ContentSection
+              className="community_overview_section"
+              title="커뮤니티"
+              action={
                 <button
                   type="button"
                   onClick={() => {
@@ -598,7 +600,8 @@ function Community() {
                 >
                   바로가기
                 </button>
-              </div>
+              }
+            >
               <div className="community_overview_post_list">
                 {[braggingPostData[0], postData[0]].map((post) => (
                   <article key={post.id} className="community_post">
@@ -619,11 +622,12 @@ function Community() {
                   </article>
                 ))}
               </div>
-            </section>
+            </ContentSection>
 
-            <section className="community_overview_section">
-              <div className="community_overview_heading">
-                <h2>챌린지 인증</h2>
+            <ContentSection
+              className="community_overview_section"
+              title="챌린지 인증"
+              action={
                 <button
                   type="button"
                   onClick={() => {
@@ -633,7 +637,8 @@ function Community() {
                 >
                   바로가기
                 </button>
-              </div>
+              }
+            >
               <div className="community_challenge_simple_list">
                 {challengeItems.slice(0, 2).map((item) => (
                   <article key={item.id} className="community_challenge_simple_item">
@@ -649,11 +654,12 @@ function Community() {
                   </article>
                 ))}
               </div>
-            </section>
+            </ContentSection>
 
-            <section className="community_overview_section">
-              <div className="community_overview_heading">
-                <h2>투표</h2>
+            <ContentSection
+              className="community_overview_section"
+              title="투표"
+              action={
                 <button
                   type="button"
                   onClick={() => {
@@ -665,7 +671,8 @@ function Community() {
                 >
                   바로가기
                 </button>
-              </div>
+              }
+            >
               <div className="community_vote_result_screen community_overview_vote_preview">
                 {voteResultItems.slice(0, 2).map((item) => (
                   <article key={item.id} className="community_vote_result_entry">
@@ -684,7 +691,7 @@ function Community() {
                   </article>
                 ))}
               </div>
-            </section>
+            </ContentSection>
           </section>
         ) : isChallengeTab ? (
           <section className="community_challenge_screen">

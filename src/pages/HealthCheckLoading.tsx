@@ -4,6 +4,7 @@ import './health.css'
 import './HealthCheckLoading.css'
 import PageHeader from '../components/PageHeader'
 import HeaderIcon from '../components/HeaderIcon'
+import ContentSection from '../components/ContentSection'
 import ProgressCircle from '../components/ProgressCircle'
 import BackButton from '../components/html/BackButton'
 import Button from '../components/html/Button'
@@ -68,10 +69,12 @@ function HealthCheckLoading() {
       />
       <main className="page health_page health_check_loading_page">
         <div className="health_check_loading">
-          <section className="health_check_loading_intro">
-            <h1>AI 가 정보를 확인 중이에요</h1>
-            <p>잠시만 기다려 주세요.</p>
-          </section>
+          <ContentSection
+            className="health_check_loading_intro"
+            titleAs="h1"
+            title="AI 가 정보를 확인 중이에요"
+            subtitle="잠시만 기다려 주세요."
+          />
 
           <ProgressCircle value={Math.round(progress)}>
             <img className="health_check_loading_logo" src={checkIcon} alt="" aria-hidden="true" />

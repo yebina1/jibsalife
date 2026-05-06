@@ -2,6 +2,8 @@ import { useState } from 'react'
 import './health.css'
 import './HealthHospitalSearch.css'
 import PageHeader from '../components/PageHeader'
+import ChevronIcon from '../components/ChevronIcon'
+import ContentSection from '../components/ContentSection'
 import BackButton from '../components/html/BackButton'
 import Button from '../components/html/Button'
 import { Link } from 'react-router'
@@ -77,8 +79,7 @@ function HealthHospitalSearch() {
       />
 
       <main className="page health_page health_hospital_search_page">
-        <section className="health_hospital_search_services">
-          <h2>어떤 서비스를 원하시나요?</h2>
+        <ContentSection className="health_hospital_search_services" title="어떤 서비스를 원하시나요?">
           <div className="health_hospital_search_service_grid">
             {serviceCards.map((item) => (
               <Link key={item.title} className="health_hospital_search_service_card" to={item.to}>
@@ -88,16 +89,18 @@ function HealthHospitalSearch() {
               </Link>
             ))}
           </div>
-        </section>
+        </ContentSection>
 
-        <section className="health_hospital_search_nearby">
-          <div className="health_hospital_search_nearby_header">
-            <h2>내 주변 추천 병원</h2>
-            <Link to="/health/hospitals/list">
+        <ContentSection
+          className="health_hospital_search_nearby"
+          title="내 주변 추천 병원"
+          action={
+            <Link className="content_section_text_action" to="/health/hospitals/list">
               더보기
-              <i className="bx bx-chevron-right" aria-hidden="true"></i>
+              <ChevronIcon direction="right" size="md" />
             </Link>
-          </div>
+          }
+        >
 
           <ul className="health_hospital_search_list">
             {hospitalSearchItems.map((item) => {
@@ -142,7 +145,7 @@ function HealthHospitalSearch() {
               )
             })}
           </ul>
-        </section>
+        </ContentSection>
       </main>
     </>
   )

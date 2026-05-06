@@ -1,4 +1,5 @@
 import './ActionOption.css'
+import ChevronIcon from './ChevronIcon'
 import Button from './html/Button'
 
 type ActionOptionProps = {
@@ -15,7 +16,7 @@ function ActionOption({ title, description, onClick }: ActionOptionProps) {
         <strong>{title}</strong>
         <p>{description}</p>
       </div>
-      <i className="bx bx-chevron-right" aria-hidden="true"></i>
+      <ChevronIcon direction="right" size="md" />
     </Button>
   )
 }
