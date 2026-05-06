@@ -56,9 +56,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const isCommunitySubAll = !communitySubParam || communitySubParam === 'all'
   const communitySubTabs = pathname.endsWith('/community/pet-story')
     ? petStorySubTabs
-    : pathname.endsWith('/community/vote')
-      ? voteSubTabs
-      : null
+    : null
   const showCommunitySort =
     (pathname.endsWith('/community/vote') && !isCommunitySubAll) ||
     (pathname.endsWith('/community/pet-story') && !isCommunitySubAll && communitySubParam !== 'knowledge')

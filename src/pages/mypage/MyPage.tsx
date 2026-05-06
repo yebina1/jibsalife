@@ -9,6 +9,10 @@ import ContentSection from '../../components/ContentSection'
 import SummaryProfileCard from '../../components/SummaryProfileCard'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
+import {
+  formatProfilePoints,
+  readProfilePoints,
+} from '../../utils/profilePoints'
 import contents2 from '../../img/contents2.png'
 import leeyoriImage from '../../img/leeyori.png'
 import pungpungiImage from '../../img/pungpungi.png'
@@ -216,6 +220,7 @@ function MyPage() {
   const [savedLocation, setSavedLocation] = useState<SavedLocation | null>(null)
   const [locationMessage, setLocationMessage] = useState(DEFAULT_LOCATION_MESSAGE)
   const [isLocating, setIsLocating] = useState(false)
+  const [profilePoints, setProfilePoints] = useState(() => readProfilePoints())
   const [petSlideIndex, setPetSlideIndex] = useState(0)
   const [petDragOffset, setPetDragOffset] = useState(0)
   const [isPetDragging, setIsPetDragging] = useState(false)
@@ -236,6 +241,20 @@ function MyPage() {
       )
     } catch {
       window.localStorage.removeItem(LOCATION_STORAGE_KEY)
+    }
+  }, [])
+
+  useEffect(() => {
+    const handleProfilePointsChange = () => {
+      setProfilePoints(readProfilePoints())
+    }
+
+    window.addEventListener('profile-points-change', handleProfilePointsChange)
+    window.addEventListener('storage', handleProfilePointsChange)
+
+    return () => {
+      window.removeEventListener('profile-points-change', handleProfilePointsChange)
+      window.removeEventListener('storage', handleProfilePointsChange)
     }
   }, [])
 
@@ -365,7 +384,7 @@ function MyPage() {
               imageAlt="프로필 이미지"
               name="뿌직뿌직"
               breed=""
-              details="포인트: 1,200"
+              details={`포인트: ${formatProfilePoints(profilePoints)}`}
               careGuideLabel="보유 뱃지  🏅  🐾  🐾"
               stats={myProfileStats}
               className="mypage_profile_card"
