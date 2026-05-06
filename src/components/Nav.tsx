@@ -4,6 +4,7 @@ import navCommunicateOffIcon from '../svg/nav communicate off.svg'
 import navHealthOffIcon from '../svg/nav health off.svg'
 import navHomeActiveIcon from '../svg/nav home active.svg'
 import navHomeOffIcon from '../svg/nav home off.svg'
+import navMypageIcon from '../svg/nav mypage.svg'
 import navMypageOffIcon from '../svg/nav mypage off.svg'
 
 const navItems = [
@@ -21,7 +22,10 @@ const navIconMap = {
   },
   health: navHealthOffIcon,
   community: navCommunicateOffIcon,
-  mypage: navMypageOffIcon,
+  mypage: {
+    active: navMypageIcon,
+    inactive: navMypageOffIcon,
+  },
 } as const
 
 function NavIcon({ type, active }: { type: (typeof navItems)[number]['icon']; active: boolean }) {
@@ -48,14 +52,25 @@ function NavIcon({ type, active }: { type: (typeof navItems)[number]['icon']; ac
 
   if (active && type === 'mypage') {
     return (
-      <svg viewBox="0 0 28 28" className={className} aria-hidden="true">
-        <circle cx="14" cy="14" r="11.5" fill="currentColor" />
-        <circle cx="14" cy="10.8" r="3.1" fill="#ffffff" />
+      <svg viewBox="0 0 28 28" className={`${className} layout_nav_icon_mypage_active`} aria-hidden="true">
+        <circle
+          className="layout_nav_icon_mypage_active_bg"
+          cx="14"
+          cy="14"
+          r="11"
+          strokeWidth="1.5"
+        />
+        <circle
+          className="layout_nav_icon_mypage_active_face"
+          cx="14"
+          cy="11.5"
+          r="3.5"
+          strokeWidth="1.5"
+        />
         <path
-          d="M5.6 21.4c1.8-3.3 4.8-5.2 8.4-5.2s6.6 1.9 8.4 5.2"
-          fill="none"
-          stroke="#ffffff"
-          strokeWidth="2.2"
+          className="layout_nav_icon_mypage_active_body"
+          d="M23.0283 21.4718C21.8427 20.2862 20.4352 19.3457 18.8861 18.7041C17.3371 18.0625 15.6768 17.7322 14.0001 17.7322C12.3234 17.7322 10.6631 18.0625 9.11409 18.7041C7.56503 19.3457 6.15752 20.2862 4.97192 21.4718"
+          strokeWidth="1.5"
           strokeLinecap="round"
         />
       </svg>
@@ -92,7 +107,12 @@ function NavIcon({ type, active }: { type: (typeof navItems)[number]['icon']; ac
     )
   }
 
-  const icon = type === 'home' ? (active ? navIconMap.home.active : navIconMap.home.inactive) : navIconMap[type]
+  const icon =
+    type === 'home' || type === 'mypage'
+      ? active
+        ? navIconMap[type].active
+        : navIconMap[type].inactive
+      : navIconMap[type]
 
   return (
     <span

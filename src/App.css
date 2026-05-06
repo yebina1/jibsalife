@@ -192,6 +192,17 @@ button.layout_nav_link {
   stroke: #ffffff;
 }
 
+.layout_nav_link.active .layout_nav_icon_mypage_active .layout_nav_icon_mypage_active_bg {
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+.layout_nav_link.active .layout_nav_icon_mypage_active .layout_nav_icon_mypage_active_face,
+.layout_nav_link.active .layout_nav_icon_mypage_active .layout_nav_icon_mypage_active_body {
+  fill: none !important;
+  stroke: #ffffff !important;
+}
+
 @media (min-width: 768px) {
   .layout {
     padding-bottom: var(--layout-footer-height);
