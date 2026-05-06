@@ -1,10 +1,10 @@
-import './Health.css'
+﻿import './Health.css'
 import './HealthQna.css'
-import PageHeader from '../components/PageHeader'
-import ChatRoom from '../components/ChatRoom'
-import type { ChatMessage } from '../components/ChatRoom'
-import CloseButton from '../components/html/CloseButton'
-import BackButton from '../components/html/BackButton'
+import PageHeader from '../../components/PageHeader'
+import ChatRoom from '../../components/ChatRoom'
+import type { ChatMessage } from '../../components/ChatRoom'
+import CloseButton from '../../components/html/CloseButton'
+import BackButton from '../../components/html/BackButton'
 
 const chatMessages: ChatMessage[] = [
   {

@@ -1,13 +1,13 @@
-import { useNavigate } from 'react-router'
+﻿import { useNavigate } from 'react-router'
 import './Health.css'
 import './HealthCheckSummary.css'
-import PageHeader from '../components/PageHeader'
-import ContentSection from '../components/ContentSection'
-import ActionOptionList from '../components/ActionOptionList'
-import type { ActionOptionItem } from '../components/ActionOptionList'
-import CloseButton from '../components/html/CloseButton'
-import BackButton from '../components/html/BackButton'
-import checkMarkIcon from '../svg/Check Mark.svg'
+import PageHeader from '../../components/PageHeader'
+import ContentSection from '../../components/ContentSection'
+import ActionOptionList from '../../components/ActionOptionList'
+import type { ActionOptionItem } from '../../components/ActionOptionList'
+import CloseButton from '../../components/html/CloseButton'
+import BackButton from '../../components/html/BackButton'
+import checkMarkIcon from '../../svg/Check Mark.svg'
 
 function HealthCheckSummary() {
   const navigate = useNavigate()

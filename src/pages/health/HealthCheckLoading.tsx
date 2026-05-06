@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import './Health.css'
 import './HealthCheckLoading.css'
-import PageHeader from '../components/PageHeader'
-import HeaderIcon from '../components/HeaderIcon'
-import ContentSection from '../components/ContentSection'
-import ProgressCircle from '../components/ProgressCircle'
-import BackButton from '../components/html/BackButton'
-import Button from '../components/html/Button'
-import NoticeText from '../components/NoticeText'
+import PageHeader from '../../components/PageHeader'
+import HeaderIcon from '../../components/HeaderIcon'
+import ContentSection from '../../components/ContentSection'
+import ProgressCircle from '../../components/ProgressCircle'
+import BackButton from '../../components/html/BackButton'
+import Button from '../../components/html/Button'
+import NoticeText from '../../components/NoticeText'
 
 const loadingSteps = [
   '건강 기록 확인 중...',
