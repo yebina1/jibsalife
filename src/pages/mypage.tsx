@@ -2,10 +2,9 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import './mypage.css'
 import PageHeader from '../components/PageHeader'
+import HeaderIcon from '../components/HeaderIcon'
 import BackButton from '../components/html/BackButton'
 import Button from '../components/html/Button'
-import calendarIcon from '../svg/calendar.svg'
-import notificationIcon from '../svg/notification.svg'
 import contents1 from '../img/contents1.png'
 import contents2 from '../img/contents2.png'
 
@@ -183,15 +182,6 @@ function MyPageIcon({ type }: { type: string }) {
   )
 }
 
-function HeaderGearIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z" />
-      <path d="m19.4 13 .1-1-.1-1 2-1.6-2-3.4-2.4 1a7.8 7.8 0 0 0-1.7-1l-.4-2.6h-4l-.4 2.6a7.8 7.8 0 0 0-1.7 1l-2.4-1-2 3.4 2 1.6-.1 1 .1 1-2 1.6 2 3.4 2.4-1a7.8 7.8 0 0 0 1.7 1l.4 2.6h4l.4-2.6a7.8 7.8 0 0 0 1.7-1l2.4 1 2-3.4Z" />
-    </svg>
-  )
-}
-
 function MyPage() {
   const navigate = useNavigate()
   const [savedLocation, setSavedLocation] = useState<SavedLocation | null>(null)
@@ -278,13 +268,13 @@ function MyPage() {
         rightContent={
           <>
             <Button type="button" aria-label="캘린더" onClick={() => navigate('/mission')}>
-              <img src={calendarIcon} alt="" />
+              <HeaderIcon type="calendar" />
             </Button>
             <Button type="button" aria-label="알림" className="mypage_notification">
-              <img src={notificationIcon} alt="" />
+              <HeaderIcon type="notification" />
             </Button>
             <Button type="button" aria-label="설정" className="mypage_header_gear">
-              <HeaderGearIcon />
+              <HeaderIcon type="settings" />
             </Button>
           </>
         }

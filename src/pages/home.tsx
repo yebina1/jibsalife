@@ -2,9 +2,8 @@ import './home.css'
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import PageHeader from '../components/PageHeader'
+import HeaderIcon from '../components/HeaderIcon'
 import Button from '../components/html/Button'
-import calendarIcon from '../svg/calendar.svg'
-import notificationIcon from '../svg/notification.svg'
 import contents1 from '../img/contents1.png'
 import contents2 from '../img/contents2.png'
 import contents3 from '../img/contents3.png'
@@ -119,10 +118,10 @@ function Home() {
         rightContent={
           <>
             <Button type="button" aria-label="캘린더" onClick={() => navigate('/mission')}>
-              <img src={calendarIcon} alt="" />
+              <HeaderIcon type="calendar" />
             </Button>
             <Button type="button" aria-label="알림" className="home_header_notification">
-              <img src={notificationIcon} alt="" />
+              <HeaderIcon type="notification" />
             </Button>
           </>
         }

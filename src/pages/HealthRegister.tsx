@@ -2,11 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router'
 import './HealthRegister.css'
 import PageHeader from '../components/PageHeader'
+import HeaderIcon from '../components/HeaderIcon'
 import BackButton from '../components/html/BackButton'
 import Button from '../components/html/Button'
 import samplePetImage from '../img/my pet image.jpg'
-import calendarIcon from '../svg/calendar.svg'
-import notificationIcon from '../svg/notification.svg'
 import { type ObservationStatus, writeStoredHealthResultInput } from '../utils/healthResultPolicy'
 
 const registerSections = [
@@ -1131,10 +1130,10 @@ function HealthRegister() {
         rightContent={
           <>
             <Button type="button" aria-label="캘린더" onClick={() => navigate('/mission')}>
-              <img src={calendarIcon} alt="" />
+              <HeaderIcon type="calendar" />
             </Button>
             <Button type="button" aria-label="알림" className="health_register_notification">
-              <img src={notificationIcon} alt="" />
+              <HeaderIcon type="notification" />
             </Button>
           </>
         }

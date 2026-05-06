@@ -1,16 +1,14 @@
 import './community.css'
-import { useEffect, useMemo, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router'
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router'
 import PageHeader from '../components/PageHeader'
+import HeaderIcon from '../components/HeaderIcon'
 import Button from '../components/html/Button'
-import Form from '../components/html/Form'
 import contents1 from '../img/contents1.png'
 import contents2 from '../img/contents2.png'
 import contents3 from '../img/contents3.png'
 import contents4 from '../img/contents4.png'
 import challengeHeadingImage from '../img/illust_login_pet.jpg'
-import calendarIcon from '../svg/calendar.svg'
-import notificationIcon from '../svg/notification.svg'
 
 const challengeItems = [
   {
@@ -283,18 +281,21 @@ const knowledgeFeedItems = [
 
 function Community() {
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const initialKnowledgeView = searchParams.get('tab') === 'knowledge'
+  const location = useLocation()
+  const currentTabParam = new URLSearchParams(location.search).get('tab')
+  const initialKnowledgeView = currentTabParam === 'knowledge'
 
-  const [selectedTopTab, setSelectedTopTab] = useState<TopTab>('커뮤니티')
+  const [selectedTopTab, setSelectedTopTab] = useState<TopTab>(
+    initialKnowledgeView ? '커뮤니티' : '전체'
+  )
   const [selectedCommunitySubTab, setSelectedCommunitySubTab] = useState<CommunitySubTab>(
-    initialKnowledgeView ? '반려상식' : '자랑하기'
+    initialKnowledgeView ? '반려상식' : '전체'
   )
   const [selectedVoteSubTab, setSelectedVoteSubTab] = useState<VoteSubTab>('투표결과')
   const [selectedSort, setSelectedSort] = useState<(typeof sortOptions)[number]>('인기순')
   const [isSortOpen, setIsSortOpen] = useState(false)
   const [isCommunitySubTabOpen, setIsCommunitySubTabOpen] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm] = useState('')
   const [likedPostIds, setLikedPostIds] = useState<number[]>([])
   const [selectedChallengeId, setSelectedChallengeId] = useState<number | null>(null)
   const [selectedVoteListId, setSelectedVoteListId] = useState<number | null>(null)
@@ -305,6 +306,32 @@ function Community() {
   const [draftTitle, setDraftTitle] = useState('')
   const [draftContent, setDraftContent] = useState('')
   const [draftImage, setDraftImage] = useState('')
+
+  const resetToOverview = () => {
+    setSelectedTopTab('전체')
+    setSelectedCommunitySubTab('전체')
+    setSelectedVoteSubTab('전체')
+    setSelectedChallengeId(null)
+    setSelectedVoteListId(null)
+    setSelectedVoteResultId(null)
+    setIsSortOpen(false)
+    setIsCommunitySubTabOpen(false)
+  }
+
+  useLayoutEffect(() => {
+    if (currentTabParam === 'overview' || currentTabParam === null) {
+      resetToOverview()
+      return
+    }
+
+    if (currentTabParam === 'knowledge') {
+      setSelectedTopTab('커뮤니티')
+      setSelectedCommunitySubTab('반려상식')
+      return
+    }
+
+    resetToOverview()
+  }, [currentTabParam, location.key, location.state])
 
   useEffect(() => {
     window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(createdPosts))
@@ -420,7 +447,6 @@ function Community() {
           ? '챌린지 인증'
           : '커뮤니티'
 
-  const showSearch = isOverviewTab || isCommunityTab
   const showCommunitySubTabs = isCommunityTab
   const showVoteSubTabs = isVoteTab
   const showSort = !isOverviewTab && !isKnowledgeView && !isChallengeTab
@@ -431,41 +457,24 @@ function Community() {
         title="집사인생"
         rightContent={
           <>
+            <Button type="button" aria-label="검색" className="community_header_search">
+              <HeaderIcon type="search" />
+            </Button>
             <Button type="button" aria-label="calendar" onClick={() => navigate('/mission')}>
-              <img src={calendarIcon} alt="" />
+              <HeaderIcon type="calendar" />
             </Button>
             <Button
               type="button"
               aria-label="notification"
               className="community_header_notification"
             >
-              <img src={notificationIcon} alt="" />
+              <HeaderIcon type="notification" />
             </Button>
           </>
         }
       />
 
       <main className="page community_page">
-        {showSearch ? (
-          <section className="community_search_box">
-            <Form
-              className="chat_room_form community_search_form"
-              value={searchTerm}
-              placeholder="검색어를 입력해주세요"
-              inputAriaLabel="커뮤니티 검색"
-              submitLabel="검색"
-              onChange={setSearchTerm}
-              onSubmit={() => undefined}
-              icon={
-                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <circle cx="10.5" cy="10.5" r="6.5" />
-                  <path d="m15.5 15.5 4.5 4.5" />
-                </svg>
-              }
-            />
-          </section>
-        ) : null}
-
         <section className="community_tab_bar" aria-label="커뮤니티 상위 카테고리">
           {topTabs.map((tab, index) => (
             <button
@@ -703,7 +712,7 @@ function Community() {
                   <h2>챌린지 목록</h2>
                   <p>미션을 완료할수록 더 많은 포인트를 드려요.</p>
                 </div>
-              <img src={challengeHeadingImage} alt="" />
+                <img src={challengeHeadingImage} alt="" />
               </div>
 
               <div className="community_challenge_cards">
@@ -756,6 +765,7 @@ function Community() {
                 })}
               </div>
             </section>
+
             <article className="community_challenge_summary_card">
               <h3>이번주 특별 상금 챌린지</h3>
               <div className="community_challenge_summary_progress">

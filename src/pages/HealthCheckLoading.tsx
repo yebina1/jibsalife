@@ -3,11 +3,10 @@ import { useNavigate } from 'react-router'
 import './health.css'
 import './HealthCheckLoading.css'
 import PageHeader from '../components/PageHeader'
+import HeaderIcon from '../components/HeaderIcon'
 import ProgressCircle from '../components/ProgressCircle'
 import BackButton from '../components/html/BackButton'
 import Button from '../components/html/Button'
-import calendarIcon from '../svg/calendar.svg'
-import notificationIcon from '../svg/notification.svg'
 
 const loadingSteps = [
   '건강 기록 확인 중...',
@@ -59,10 +58,10 @@ function HealthCheckLoading() {
         rightContent={
           <>
             <Button type="button" aria-label="calendar" onClick={() => navigate('/mission')}>
-              <img src={calendarIcon} alt="" />
+              <HeaderIcon type="calendar" />
             </Button>
             <Button type="button" aria-label="notification" className="health_check_loading_notification">
-              <img src={notificationIcon} alt="" />
+              <HeaderIcon type="notification" />
             </Button>
           </>
         }

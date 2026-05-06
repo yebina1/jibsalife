@@ -14,6 +14,15 @@
   position: relative;
 }
 
+.community_header_search svg {
+  width: 28px;
+  height: 28px;
+  stroke: #111111;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .community_header_notification::after {
   position: absolute;
   top: 3px;
@@ -274,8 +283,8 @@
 }
 
 .community_subtab_bar + .community_list_header {
-  min-height: 32px;
-  margin-top: -40px;
+  min-height: 36px;
+  margin-top: -46px;
   justify-content: flex-end;
 }
 
@@ -342,6 +351,10 @@
   white-space: nowrap;
   word-break: keep-all;
   box-shadow: 0 2px 8px rgba(17, 24, 39, 0.04);
+}
+
+.community_sort_toggle::after {
+  content: none;
 }
 
 .community_sort_toggle_label {
@@ -2266,6 +2279,52 @@
   .community_challenge_join {
     min-width: 88px;
     height: 52px;
+  }
+
+  .community_challenge_redesign {
+    gap: 24px;
+  }
+
+  .community_challenge_feature_card {
+    gap: 14px 16px;
+  }
+
+  .community_challenge_feature_copy h2,
+  .community_challenge_heading h2 {
+    font-size: 18px;
+  }
+
+  .community_challenge_feature_copy p,
+  .community_challenge_heading p {
+    font-size: 14px;
+  }
+
+  .community_challenge_feature_ring {
+    width: 78px;
+    height: 78px;
+  }
+
+  .community_challenge_feature_ring_inner {
+    width: 64px;
+    height: 64px;
+  }
+
+  .community_challenge_cards {
+    gap: 20px 12px;
+  }
+
+  .community_challenge_card_body h3 {
+    font-size: 14px;
+  }
+
+  .community_challenge_card_meta {
+    gap: 8px;
+    font-size: 11px;
+  }
+
+  .community_challenge_card_button {
+    height: 38px;
+    font-size: 13px;
   }
 
   .community_vote_header h2 {

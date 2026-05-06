@@ -3,9 +3,9 @@ import { useNavigate, useSearchParams } from 'react-router'
 import './health.css'
 import './HealthCamera.css'
 import PageHeader from '../components/PageHeader'
+import HeaderIcon from '../components/HeaderIcon'
 import Button from '../components/html/Button'
 import BackButton from '../components/html/BackButton'
-import calendarIcon from '../svg/calendar.svg'
 import calendarGuideIcon from '../svg/calendar.svg?raw'
 import cameraGuideIcon from '../svg/camera.svg?raw'
 import camcorderGuideIcon from '../svg/camcorder.svg?raw'
@@ -13,7 +13,6 @@ import guideExampleImage from '../img/ex.png'
 import guideVideoImage from '../img/guide_video.png'
 import communicateGuideIcon from '../svg/nav communicate off.svg?raw'
 import memoGuideIcon from '../svg/memo.svg?raw'
-import notificationIcon from '../svg/notification.svg'
 
 type GuideMode = 'photo' | 'audio' | 'video' | 'memo'
 type GuideIconType =
@@ -604,10 +603,10 @@ function HealthCamera() {
           rightContent={
             <>
               <Button type="button" aria-label="캘린더" onClick={() => navigate('/mission')}>
-                <img src={calendarIcon} alt="" />
+                <HeaderIcon type="calendar" />
               </Button>
               <Button type="button" aria-label="알림" className="health_camera_notification">
-                <img src={notificationIcon} alt="" />
+                <HeaderIcon type="notification" />
               </Button>
             </>
           }

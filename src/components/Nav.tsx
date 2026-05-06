@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react'
-import { NavLink } from 'react-router'
+import { NavLink, useNavigate } from 'react-router'
 import navCommunicateOffIcon from '../svg/nav communicate off.svg'
 import navHealthOffIcon from '../svg/nav health off.svg'
 import navHomeActiveIcon from '../svg/nav home active.svg'
@@ -10,7 +10,7 @@ const navItems = [
   { path: '/health', label: '건강', icon: 'health' },
   { path: '/community', label: '커뮤니티', icon: 'community' },
   { path: '/home', label: '홈', icon: 'home' },
-  { path: '/place', label: '장소', icon: 'place' },
+  { path: '/place', label: '장소', icon: 'place', disabled: true },
   { path: '/mypage', label: '마이페이지', icon: 'mypage' },
 ] as const
 
@@ -104,25 +104,54 @@ function NavIcon({ type, active }: { type: (typeof navItems)[number]['icon']; ac
 }
 
 function Nav() {
+  const navigate = useNavigate()
+
   return (
     <nav className="layout_nav" aria-label="주요 메뉴">
       <div className="layout_nav_inner">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            className={({ isActive }) =>
-              isActive ? 'layout_nav_link active' : 'layout_nav_link'
-            }
-          >
-            {({ isActive }) => (
-              <>
-                <NavIcon type={item.icon} active={isActive} />
+        {navItems.map((item) => {
+          if ('disabled' in item && item.disabled) {
+            return (
+              <button
+                key={item.path}
+                type="button"
+                className="layout_nav_link disabled"
+                aria-disabled="true"
+              >
+                <NavIcon type={item.icon} active={false} />
                 <span className="layout_nav_label">{item.label}</span>
-              </>
-            )}
-          </NavLink>
-        ))}
+              </button>
+            )
+          }
+
+          return (
+            <NavLink
+              key={item.path}
+              to={item.icon === 'community' ? '/community?tab=overview' : item.path}
+              onClick={(event) => {
+                if (item.icon !== 'community') return
+
+                event.preventDefault()
+                navigate('/community?tab=overview', {
+                  replace: true,
+                  state: {
+                    resetCommunityTabAt: Date.now(),
+                  },
+                })
+              }}
+              className={({ isActive }) =>
+                isActive ? 'layout_nav_link active' : 'layout_nav_link'
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <NavIcon type={item.icon} active={isActive} />
+                  <span className="layout_nav_label">{item.label}</span>
+                </>
+              )}
+            </NavLink>
+          )
+        })}
       </div>
     </nav>
   )

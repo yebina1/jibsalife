@@ -24,16 +24,6 @@
   content: '';
 }
 
-.mypage_header_gear svg {
-  width: 26px;
-  height: 26px;
-  fill: none;
-  stroke: #111111;
-  stroke-width: 1.65;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
 .mypage_profile_card {
   display: grid;
   grid-template-columns: 118px minmax(0, 1fr);
