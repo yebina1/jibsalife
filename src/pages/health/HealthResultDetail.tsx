@@ -1,16 +1,16 @@
-import './Health.css'
+﻿import './Health.css'
 import './HealthResultDetail.css'
 import { useNavigate } from 'react-router'
-import PageHeader from '../components/PageHeader'
-import HeaderIcon from '../components/HeaderIcon'
-import BackButton from '../components/html/BackButton'
-import Button from '../components/html/Button'
-import HealthResultDetailBox from '../components/HealthResultDetailBox'
+import PageHeader from '../../components/PageHeader'
+import HeaderIcon from '../../components/HeaderIcon'
+import BackButton from '../../components/html/BackButton'
+import Button from '../../components/html/Button'
+import HealthResultDetailBox from '../../components/HealthResultDetailBox'
 import {
   calculateHealthResult,
   createHealthResultDetailItems,
   readStoredHealthResultInput,
-} from '../utils/healthResultPolicy'
+} from '../../utils/healthResultPolicy'
 
 function HealthResultDetail() {
   const navigate = useNavigate()

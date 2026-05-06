@@ -1,17 +1,17 @@
-import './Health.css'
+﻿import './Health.css'
 import './HealthCheckResult.css'
-import PageHeader from '../components/PageHeader'
-import ContentSection from '../components/ContentSection'
-import HealthResultCard from '../components/HealthResultCard'
-import HealthResultInsights from '../components/HealthResultInsights'
-import HealthResultSummary from '../components/HealthResultSummary'
-import BackButton from '../components/html/BackButton'
-import CloseButton from '../components/html/CloseButton'
+import PageHeader from '../../components/PageHeader'
+import ContentSection from '../../components/ContentSection'
+import HealthResultCard from '../../components/HealthResultCard'
+import HealthResultInsights from '../../components/HealthResultInsights'
+import HealthResultSummary from '../../components/HealthResultSummary'
+import BackButton from '../../components/html/BackButton'
+import CloseButton from '../../components/html/CloseButton'
 import {
   calculateHealthResult,
   createHealthResultSummaryItems,
   readStoredHealthResultInput,
-} from '../utils/healthResultPolicy'
+} from '../../utils/healthResultPolicy'
 
 function HealthCheckResult() {
   const result = calculateHealthResult(readStoredHealthResultInput())

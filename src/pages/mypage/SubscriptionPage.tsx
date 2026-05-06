@@ -1,6 +1,6 @@
-import { useNavigate } from 'react-router'
+﻿import { useNavigate } from 'react-router'
 import './SubscriptionPage.css'
-import subscriptionPetImage from '../img/illust_login_pet.jpg'
+import subscriptionPetImage from '../../img/illust_login_pet.jpg'
 
 const benefits = [
   'AI 심화 분석으로 건강 변화를 더 정확하게 확인',

@@ -1,7 +1,7 @@
-import hospitalPhoto24h from '../img/24h_animal.png'
-import hospitalPhotoCompanion from '../img/companion_animal.png'
-import hospitalPhotoLove from '../img/love_animal.png'
-import hospitalPhotoWe from '../img/we_animal.png'
+﻿import hospitalPhoto24h from '../../img/24h_animal.png'
+import hospitalPhotoCompanion from '../../img/companion_animal.png'
+import hospitalPhotoLove from '../../img/love_animal.png'
+import hospitalPhotoWe from '../../img/we_animal.png'
 
 export type HospitalSearchItem = {
   name: string

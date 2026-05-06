@@ -1,4 +1,4 @@
-.mypage_page {
+﻿.mypage_page {
   display: grid;
   gap: 24px;
   background: #ffffff;
@@ -135,7 +135,7 @@
   width: fit-content;
   align-items: center;
   padding-left: 24px;
-  background: url('../svg/point.svg') left center / 20px 20px no-repeat;
+  background: url('../../svg/point.svg') left center / 20px 20px no-repeat;
 }
 
 .mypage_profile_card .summary_profile_card_details span,
