@@ -32,11 +32,25 @@ const voteSubTabs = [
   { label: '투표결과', to: '/community/vote?sub=result' },
 ] as const
 
+const communitySortOptions = [
+  { label: '인기순', value: 'popular' },
+  { label: '최신순', value: 'latest' },
+  { label: '댓글순', value: 'comments' },
+  { label: '공유순', value: 'shares' },
+] as const
+
+function getSubParam(to: string) {
+  return new URLSearchParams(to.split('?')[1]).get('sub')
+}
+
 function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const [header, setHeader] = useState<HeaderConfig>(null)
+  const [isCommunitySubtabOpen, setIsCommunitySubtabOpen] = useState(false)
+  const [isCommunitySortOpen, setIsCommunitySortOpen] = useState(false)
   const { pathname, search } = useLocation()
   const searchParams = new URLSearchParams(search)
   const communitySubParam = searchParams.get('sub')
+  const communitySortParam = searchParams.get('sort') ?? 'popular'
   const isCameraPage = pathname === '/health/camera' && searchParams.get('guide') === 'false'
   const isCommunityPath = pathname.startsWith('/community')
   const communitySubTabs = pathname.endsWith('/community/pet-story')
@@ -44,6 +58,17 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
     : pathname.endsWith('/community/vote')
       ? voteSubTabs
       : null
+  const showCommunitySort =
+    pathname.endsWith('/community/vote') ||
+    (pathname.endsWith('/community/pet-story') && communitySubParam !== 'knowledge')
+  const activeCommunitySubTab = communitySubTabs
+    ? communitySubTabs.find((tab) => {
+        const tabSubParam = getSubParam(tab.to)
+        return communitySubParam === tabSubParam || (!communitySubParam && tabSubParam === 'all')
+      }) ?? communitySubTabs[0]
+    : null
+  const activeCommunitySort =
+    communitySortOptions.find((option) => option.value === communitySortParam) ?? communitySortOptions[0]
   const hasContentPadding = true
   const contentClassName =
     hasContentPadding ? 'layout_content' : 'layout_content layout_content_no_padding'
@@ -59,6 +84,12 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
     '/mypage/subscription',
   ]
   const hideFloatingAiButton = hideFloatingAiButtonPaths.includes(pathname) || isCommunityPath
+
+  const buildCommunitySortTo = (sortValue: string) => {
+    const nextParams = new URLSearchParams(search)
+    nextParams.set('sort', sortValue)
+    return `${pathname}?${nextParams.toString()}`
+  }
 
   const isMinimal = !showHeader && !showNav
   const layoutClassName = isCameraPage
@@ -97,24 +128,66 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
                   ))}
                 </nav>
                 {communitySubTabs ? (
-                  <nav className="layout_community_subtabs" aria-label="커뮤니티 세부 카테고리">
-                    {communitySubTabs.map((tab) => {
-                      const tabSubParam = new URLSearchParams(tab.to.split('?')[1]).get('sub')
-                      const isDefaultActive = !communitySubParam && tabSubParam === 'all'
+                  <div className="layout_community_controls">
+                    <div className={`layout_community_subtab_dropdown ${isCommunitySubtabOpen ? 'open' : ''}`}>
+                      <button
+                        type="button"
+                        className="layout_community_subtab_toggle"
+                        onClick={() => setIsCommunitySubtabOpen((prev) => !prev)}
+                      >
+                        {activeCommunitySubTab?.label}
+                      </button>
+                      {isCommunitySubtabOpen ? (
+                        <div className="layout_community_subtab_menu">
+                          {communitySubTabs.map((tab) => {
+                            const tabSubParam = getSubParam(tab.to)
+                            const isActive =
+                              communitySubParam === tabSubParam || (!communitySubParam && tabSubParam === 'all')
 
-                      return (
-                        <NavLink
-                          key={tab.to}
-                          to={tab.to}
-                          className={`layout_community_subtab ${
-                            communitySubParam === tabSubParam || isDefaultActive ? 'active' : ''
-                          }`}
+                            return (
+                              <NavLink
+                                key={tab.to}
+                                to={tab.to}
+                                className={`layout_community_subtab_option ${isActive ? 'active' : ''}`}
+                                onClick={() => setIsCommunitySubtabOpen(false)}
+                              >
+                                {tab.label}
+                              </NavLink>
+                            )
+                          })}
+                        </div>
+                      ) : null}
+                    </div>
+
+                    {showCommunitySort ? (
+                      <div className={`layout_community_sort_dropdown ${isCommunitySortOpen ? 'open' : ''}`}>
+                        <button
+                          type="button"
+                          className="layout_community_sort_toggle"
+                          onClick={() => setIsCommunitySortOpen((prev) => !prev)}
                         >
-                          {tab.label}
-                        </NavLink>
-                      )
-                    })}
-                  </nav>
+                          <span>{activeCommunitySort.label}</span>
+                          <span className="layout_community_sort_icon" aria-hidden="true" />
+                        </button>
+                        {isCommunitySortOpen ? (
+                          <div className="layout_community_sort_menu">
+                            {communitySortOptions.map((option) => (
+                              <NavLink
+                                key={option.value}
+                                to={buildCommunitySortTo(option.value)}
+                                className={`layout_community_sort_option ${
+                                  option.value === communitySortParam ? 'active' : ''
+                                }`}
+                                onClick={() => setIsCommunitySortOpen(false)}
+                              >
+                                {option.label}
+                              </NavLink>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </div>
                 ) : null}
               </>
             ) : null}

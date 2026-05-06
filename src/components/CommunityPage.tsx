@@ -179,6 +179,13 @@ const voteSubTabByParam: Record<string, VoteSubTab> = {
   result: voteSubTabs[2],
 }
 
+const sortByParam: Record<string, (typeof sortOptions)[number]> = {
+  popular: sortOptions[0],
+  latest: sortOptions[1],
+  comments: sortOptions[2],
+  shares: sortOptions[3],
+}
+
 type CommunityPost = {
   id: number
   tag: string
@@ -338,6 +345,7 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
   const currentSearchParams = new URLSearchParams(location.search)
   const currentTabParam = currentSearchParams.get('tab')
   const currentSubParam = currentSearchParams.get('sub')
+  const currentSortParam = currentSearchParams.get('sort')
   const routeTopTab = getTopTabFromSection(section) ?? getTopTabFromRoute(location.pathname, currentTabParam)
   const initialKnowledgeView = currentTabParam === 'knowledge'
   const initialCommunitySubTab =
@@ -419,6 +427,10 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
       setSelectedVoteSubTab(voteSubTabByParam[currentSubParam ?? ''] ?? voteSubTabs[2])
     }
   }, [currentSubParam, currentTabParam, routeTopTab])
+
+  useLayoutEffect(() => {
+    setSelectedSort(sortByParam[currentSortParam ?? ''] ?? sortOptions[0])
+  }, [currentSortParam])
 
   useEffect(() => {
     window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(createdPosts))

@@ -286,7 +286,7 @@
 
 .community_list_header {
   order: 3;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
@@ -336,6 +336,7 @@
 }
 
 .community_sort_dropdown {
+  display: none;
   position: relative;
   z-index: 5;
   width: 70px;
