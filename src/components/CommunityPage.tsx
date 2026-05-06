@@ -1,10 +1,10 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
-import PageHeader from '../components/PageHeader'
-import HeaderIcon from '../components/HeaderIcon'
-import ContentSection from '../components/ContentSection'
-import FloatingWriteButton from '../components/FloatingWriteButton'
-import Button from '../components/html/Button'
+import PageHeader from './PageHeader'
+import HeaderIcon from './HeaderIcon'
+import ContentSection from './ContentSection'
+import FloatingWriteButton from './FloatingWriteButton'
+import Button from './html/Button'
 import contents1 from '../img/contents1.png'
 import contents2 from '../img/contents2.png'
 import contents3 from '../img/contents3.png'
@@ -49,7 +49,7 @@ const challengeCardItems = [
     id: 1,
     title: '제일 귀엽게 밥을 먹는 귀염둥이는?',
     participants: 22,
-    deadline: '04.30 마감',
+    deadline: '05.10 마감',
     image: pungpungiImage,
     status: 'active',
   },
@@ -57,7 +57,7 @@ const challengeCardItems = [
     id: 2,
     title: '제일 귀엽게 밥을 먹는 귀염둥이는?',
     participants: 22,
-    deadline: '04.30 마감',
+    deadline: '05.10 마감',
     image: leeyoriImage,
     status: 'active',
   },
@@ -65,7 +65,7 @@ const challengeCardItems = [
     id: 3,
     title: '제일 귀엽게 밥을 먹는 귀염둥이는?',
     participants: 22,
-    deadline: '04.30 마감',
+    deadline: '05.10 마감',
     image: contents2,
     status: 'active',
   },
@@ -73,7 +73,7 @@ const challengeCardItems = [
     id: 4,
     title: '제일 귀엽게 밥을 먹는 귀염둥이는?',
     participants: 22,
-    deadline: '04.30 마감',
+    deadline: '05.10 마감',
     image: contents3,
     status: 'active',
   },
@@ -81,7 +81,7 @@ const challengeCardItems = [
     id: 5,
     title: '제일 귀엽게 밥을 먹는 귀염둥이는?',
     participants: 22,
-    deadline: '04.30 마감',
+    deadline: '05.10 마감',
     image: contents4,
     status: 'active',
   },
@@ -89,7 +89,7 @@ const challengeCardItems = [
     id: 6,
     title: '제일 귀엽게 밥을 먹는 귀염둥이는?',
     participants: 22,
-    deadline: '04.30 마감',
+    deadline: '05.10 마감',
     image: contents1,
     status: 'complete',
   },
@@ -164,6 +164,7 @@ const communityRouteByTopTab: Record<TopTab, string> = {
 }
 type CommunitySubTab = (typeof communitySubTabs)[number]
 type VoteSubTab = (typeof voteSubTabs)[number]
+export type CommunitySection = 'overview' | 'pet-story' | 'challenge' | 'vote'
 
 type CommunityPost = {
   id: number
@@ -303,11 +304,26 @@ function getTopTabFromRoute(pathname: string, tabParam: string | null): TopTab {
   return '전체'
 }
 
-function Community() {
+function getTopTabFromSection(section?: CommunitySection): TopTab | null {
+  if (section === 'overview') return '전체'
+  if (section === 'pet-story') return '커뮤니티'
+  if (section === 'challenge') return '챌린지 인증'
+  if (section === 'vote') return '투표'
+  return null
+}
+
+type CommunityPageProps = {
+  section?: CommunitySection
+  dependencies?: unknown
+}
+
+function CommunityPage({ section, dependencies }: CommunityPageProps) {
+  void dependencies
+
   const navigate = useNavigate()
   const location = useLocation()
   const currentTabParam = new URLSearchParams(location.search).get('tab')
-  const routeTopTab = getTopTabFromRoute(location.pathname, currentTabParam)
+  const routeTopTab = getTopTabFromSection(section) ?? getTopTabFromRoute(location.pathname, currentTabParam)
   const initialKnowledgeView = currentTabParam === 'knowledge'
 
   const [selectedTopTab, setSelectedTopTab] = useState<TopTab>(
@@ -489,6 +505,7 @@ function Community() {
   const showCommunitySubTabs = isCommunityTab
   const showVoteSubTabs = isVoteTab
   const showSort = !isOverviewTab && !isKnowledgeView && !isChallengeTab
+  const pageSectionClassName = `community_page_${section ?? 'overview'}`
 
   return (
     <>
@@ -513,7 +530,7 @@ function Community() {
         }
       />
 
-      <main className="page community_page">
+      <main className={`page community_page ${pageSectionClassName}`}>
         <section className="community_tab_bar" aria-label="커뮤니티 상위 카테고리">
           {topTabs.map((tab, index) => (
             <button
@@ -1315,4 +1332,4 @@ function Community() {
   )
 }
 
-export default Community
+export default CommunityPage

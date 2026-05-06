@@ -17,7 +17,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const { pathname, search } = useLocation()
   const isCameraPage = pathname === '/health/camera' && new URLSearchParams(search).get('guide') === 'false'
   const isCommunityPath = pathname.startsWith('/community')
-  const hasContentPadding = !isCommunityPath
+  const hasContentPadding = true
   const contentClassName =
     hasContentPadding ? 'layout_content' : 'layout_content layout_content_no_padding'
   const hideFloatingAiButtonPaths = [

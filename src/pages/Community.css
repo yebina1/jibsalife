@@ -1,9 +1,14 @@
 ﻿.community_page {
   display: flex;
   flex-direction: column;
-  padding: 72px 6px 24px;
+  padding: 58px 0 0;
   background: #ffffff;
   color: #131313;
+}
+
+.community_page_overview {
+  padding-right: 0;
+  padding-left: 0;
 }
 
 .community_page > * {
@@ -51,9 +56,9 @@
 .community_subtab_bar {
   overflow-x: auto;
   scrollbar-width: none;
-  width: calc(100% + 12px);
-  margin-right: -6px;
-  margin-left: -6px;
+  width: 100%;
+  margin-right: 0;
+  margin-left: 0;
   box-sizing: border-box;
 }
 
@@ -141,8 +146,8 @@
   gap: 0;
   width: auto;
   min-height: 32px;
-  margin: 14px 0 8px;
-  padding: 0 12px;
+  margin: 0 0 8px;
+  padding: 0;
   background: #ffffff;
   overflow: visible;
 }
@@ -224,7 +229,7 @@
   order: 4;
   margin-top: 0;
   margin-bottom: 22px;
-  padding: 0 6px;
+  padding: 0;
 }
 
 .community_search_form {
@@ -282,7 +287,7 @@
   justify-content: space-between;
   gap: 14px;
   margin-bottom: 18px;
-  padding: 0 6px;
+  padding: 0;
 }
 
 .community_subtab_bar + .community_list_header {
@@ -410,13 +415,13 @@
 .community_feed {
   display: grid;
   gap: 14px;
-  padding: 0 6px;
+  padding: 0;
 }
 
 .community_overview {
   display: grid;
   gap: 0;
-  padding: 22px 6px 0;
+  padding: 0;
 }
 
 .community_overview_section {
@@ -488,20 +493,20 @@
 .community_vote_feed {
   display: grid;
   gap: 26px;
-  padding: 8px 6px 0;
+  padding: 0;
 }
 
 .community_vote_candidate_feed,
 .community_vote_result_feed {
   display: grid;
   gap: 22px;
-  padding: 8px 6px 0;
+  padding: 0;
 }
 
 .community_vote_result_detail {
   display: grid;
   gap: 24px;
-  padding: 8px 6px 0;
+  padding: 0;
 }
 
 .community_vote_result_detail h2 {
@@ -729,7 +734,7 @@
 .community_challenge_screen {
   display: grid;
   gap: 0;
-  padding: 46px 14px 0;
+  padding: 0;
 }
 
 .community_challenge_screen > .community_challenge_summary_card,
@@ -1943,7 +1948,7 @@
 
 @media (min-width: 768px) {
   .community_page {
-    padding: 24px 10px 34px;
+    padding: 58px 0 0;
   }
 
   .community_post {
@@ -1978,14 +1983,19 @@
 
 @media (max-width: 420px) {
   .community_page {
-    padding: 68px 4px 20px;
+    padding: 54px 0 0;
+  }
+
+  .community_page_overview {
+    padding-right: 0;
+    padding-left: 0;
   }
 
   .community_tab_bar,
   .community_subtab_bar {
-    width: calc(100% + 8px);
-    margin-right: -4px;
-    margin-left: -4px;
+    width: 100%;
+    margin-right: 0;
+    margin-left: 0;
   }
 
   .community_tab_bar,
@@ -1997,8 +2007,8 @@
     gap: 0;
     width: auto;
     min-height: 30px;
-    margin: 12px 0 8px;
-    padding: 0 12px;
+    margin: 0 0 8px;
+    padding: 0;
   }
 
   .community_tab_bar {
@@ -2039,7 +2049,7 @@
 
   .community_list_header {
     margin-bottom: 16px;
-    padding: 0 4px;
+    padding: 0;
   }
 
   .community_list_header h2 {
