@@ -1,4 +1,4 @@
-.layout_content {
+.layout_content:has(.subscription_page) {
   padding-top: 0;
 }
 
