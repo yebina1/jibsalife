@@ -78,6 +78,10 @@
   --layout-header-bar-height: 174px;
 }
 
+.layout_community_with_subtabs.layout_community_subtabs_hidden {
+  --layout-header-bar-height: 114px;
+}
+
 .layout_community_tabs {
   display: grid;
   width: 100%;
@@ -132,18 +136,31 @@
   box-sizing: border-box;
   padding: 20px var(--layout-inline-padding) 0;
   background: #ffffff;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease,
+    padding 180ms ease;
+}
+
+.layout_community_subtabs_hidden .layout_community_controls {
+  opacity: 0;
+  transform: translateY(-12px);
+  pointer-events: none;
+  padding-top: 0;
 }
 
 .layout_community_subtab_dropdown {
   position: relative;
-  flex: 1 1 auto;
-  min-width: 0;
+  display: inline-flex;
+  flex: 0 0 auto;
+  min-width: max-content;
   z-index: 5;
 }
 
 .layout_community_subtab_toggle {
   display: inline-flex;
-  max-width: 100%;
+  width: 100%;
+  max-width: none;
   align-items: center;
   justify-content: flex-start;
   gap: 5px;
@@ -173,7 +190,7 @@
   top: calc(100% + 8px);
   left: 0;
   display: grid;
-  min-width: 128px;
+  min-width: 100%;
   overflow: hidden;
   padding: 6px 0;
   box-sizing: border-box;
@@ -244,6 +261,15 @@
   flex: 0 0 20px;
   background: no-repeat center / 14px 12px
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='12' viewBox='0 0 14 12' fill='none'%3E%3Cpath d='M5.539 10.624c.78 1.084 2.392 1.084 3.172 0l4.798-6.673C14.439 2.657 13.515.875 11.924.875H2.076C.485.875-.439 2.657.491 3.951l5.048 6.673Z' fill='%23B9ABFF'/%3E%3C/svg%3E");
+}
+
+.layout_community_subtab_toggle::after {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  background: no-repeat center / 14px 12px
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='12' viewBox='0 0 14 12' fill='none'%3E%3Cpath d='M5.539 10.624c.78 1.084 2.392 1.084 3.172 0l4.798-6.673C14.439 2.657 13.515.875 11.924.875H2.076C.485.875-.439 2.657.491 3.951l5.048 6.673Z' fill='%23B9ABFF'/%3E%3C/svg%3E");
+  content: '';
 }
 
 .layout_community_sort_menu {

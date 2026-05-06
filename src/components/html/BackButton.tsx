@@ -19,8 +19,11 @@ export default function BackButton({ to = -1 }: BackButtonProps) {
   }
 
   return (
-    <Button type="button" className="back_btn" onClick={handleClick}>
-      <ChevronIcon direction="left" size="lg" />
-    </Button>
+    <Button
+      type="button"
+      className="back_btn"
+      onClick={handleClick}
+      icon={<ChevronIcon direction="left" size="lg" />}
+    />
   )
 }

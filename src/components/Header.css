@@ -123,10 +123,21 @@
 }
 
 .header_left .back_btn {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
   justify-content: flex-start;
 }
 
+.header_left .back_btn .button_label {
+  display: none;
+}
+
 .header_left .back_btn .chevron_icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transform: translateX(-4px);
 }
 

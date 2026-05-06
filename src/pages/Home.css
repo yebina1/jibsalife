@@ -1,5 +1,7 @@
 .home_page {
   position: relative;
+  display: grid;
+  gap: 48px;
   background: #ffffff;
   color: #111111;
 }
@@ -392,12 +394,12 @@
 }
 
 .more_button {
-  display: flex;
+  display: inline-flex;
   width: 130px;
   height: 46px;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 0;
   margin: 32px auto 0;
   padding: 0 12px;
   box-sizing: border-box;
@@ -408,6 +410,15 @@
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
+}
+
+.more_button .button_label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .home_section:has(> .more_button) {
@@ -423,11 +434,370 @@
 }
 
 .more_button .chevron_icon {
+  width: 20px;
+  height: 20px;
   color: #111111;
+}
+
+.more_button .chevron_icon_svg {
+  width: 20px;
+  height: 20px;
 }
 
 .home_content_section {
   margin-bottom: 0;
+}
+
+.pet_id_modal {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+}
+
+.pet_id_modal_backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgb(15 23 42 / 40%);
+}
+
+.pet_id_modal_sheet {
+  position: relative;
+  width: min(100%, 1040px);
+  max-height: calc(100dvh - 40px);
+  overflow: auto;
+  border-radius: 28px;
+  background: #ffffff;
+  box-shadow: 0 28px 80px rgb(15 23 42 / 18%);
+}
+
+.pet_id_modal_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 24px 0;
+}
+
+.pet_id_modal_header h2 {
+  margin: 0;
+  color: #111111;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.pet_id_modal_header button {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: #f3f4f8;
+  color: #111111;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pet_id_modal_body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.95fr);
+  gap: 24px;
+  padding: 24px;
+}
+
+.pet_id_card_preview {
+  position: relative;
+  min-height: 540px;
+  padding: 40px 48px;
+  border-radius: 30px;
+  background-color: #f7f7fb;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: hidden;
+}
+
+.pet_id_card_title {
+  margin-bottom: 34px;
+  color: #111111;
+  font-size: clamp(34px, 4vw, 56px);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  text-align: center;
+}
+
+.pet_id_card_photo_input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.pet_id_card_photo_upload {
+  position: absolute;
+  top: 142px;
+  left: 52px;
+  display: flex;
+  width: 36%;
+  max-width: 258px;
+  aspect-ratio: 1 / 1.08;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px dashed rgba(109, 89, 248, 0.35);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.72);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.pet_id_card_photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  aspect-ratio: 1 / 1.08;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+.pet_id_card_photo_placeholder {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  padding: 20px;
+  color: #6d59f8;
+  text-align: center;
+}
+
+.pet_id_card_photo_placeholder strong {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.pet_id_card_photo_placeholder span {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: -0.02em;
+}
+
+.pet_id_card_copy {
+  display: grid;
+  gap: 10px;
+  min-height: 300px;
+  margin-left: 49%;
+  padding-top: 38px;
+}
+
+.pet_id_card_field {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.pet_id_card_field span {
+  color: #111111;
+  font-size: clamp(18px, 1.9vw, 28px);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+.pet_id_card_copy input {
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #111111;
+  font-size: clamp(18px, 1.9vw, 28px);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.04em;
+  outline: none;
+}
+
+.pet_id_card_copy input::placeholder {
+  color: rgba(17, 17, 17, 0.38);
+}
+
+.pet_id_card_footer {
+  position: absolute;
+  right: 0;
+  bottom: 40px;
+  left: 0;
+  color: #8a8fa3;
+  font-size: clamp(14px, 1.5vw, 20px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.pet_id_form {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  padding: 8px 0 0;
+}
+
+.pet_id_form label {
+  display: grid;
+  gap: 8px;
+}
+
+.pet_id_form label span {
+  color: #303545;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.pet_id_form input {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid #d8dce7;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #111111;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.pet_id_form input::placeholder {
+  color: #9aa1b2;
+}
+
+.pet_id_form_actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.pet_id_form_cancel,
+.pet_id_form_submit {
+  flex: 1 1 0;
+  height: 54px;
+  border: 1px solid #e5e5ec;
+  border-radius: 14px;
+  background: #ffffff;
+  font-family: 'Pretendard', 'SUIT', system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+  cursor: pointer;
+}
+
+.pet_id_form_cancel {
+  color: #999999;
+}
+
+.pet_id_form_submit {
+  color: #505050;
+}
+
+@media (max-width: 900px) {
+  .pet_id_modal_body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pet_id_card_preview {
+    min-height: 420px;
+    padding: 28px 24px 32px;
+  }
+
+  .pet_id_card_title {
+    margin-bottom: 24px;
+    font-size: 34px;
+  }
+
+  .pet_id_card_photo_upload {
+    position: static;
+    display: block;
+    width: min(220px, 48%);
+    max-width: none;
+    margin-bottom: 20px;
+  }
+
+  .pet_id_card_photo {
+    position: absolute;
+  }
+
+  .pet_id_card_copy {
+    min-height: 0;
+    margin-left: 0;
+    padding-top: 0;
+  }
+
+  .pet_id_card_field span,
+  .pet_id_card_copy input {
+    font-size: 20px;
+  }
+
+  .pet_id_card_footer {
+    position: static;
+    margin-top: 24px;
+  }
+}
+
+@media (max-width: 520px) {
+  .pet_id_modal {
+    padding: 12px;
+  }
+
+  .pet_id_modal_sheet {
+    border-radius: 22px;
+  }
+
+  .pet_id_modal_header {
+    padding: 18px 18px 0;
+  }
+
+  .pet_id_modal_header h2 {
+    font-size: 22px;
+  }
+
+  .pet_id_modal_body {
+    gap: 18px;
+    padding: 18px;
+  }
+
+  .pet_id_card_preview {
+    min-height: 0;
+    padding: 22px 18px 24px;
+    border-radius: 22px;
+  }
+
+  .pet_id_card_title {
+    font-size: 28px;
+  }
+
+  .pet_id_card_field span,
+  .pet_id_card_copy input {
+    font-size: 17px;
+  }
+
+  .pet_id_card_photo_placeholder strong {
+    font-size: 18px;
+  }
+
+  .pet_id_form_actions {
+    flex-direction: column;
+  }
 }
 
 .content_grid {

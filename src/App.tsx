@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router'
 import Layout from './layouts/Layout'
 import ScrollToTop from './components/ScrollToTop'
 import CommunityChallenge from './pages/CommunityChallenge'
+import CommunityKnowledgeDetail from './pages/CommunityKnowledgeDetail'
 import CommunityOverview from './pages/CommunityOverview'
 import CommunityPetStory from './pages/CommunityPetStory'
 import CommunityReward from './pages/CommunityReward'
@@ -57,6 +58,7 @@ function App() {
           <Route path="/community" element={<CommunityOverview />} />
           <Route path="/community/overview" element={<CommunityOverview />} />
           <Route path="/community/pet-story" element={<CommunityPetStory />} />
+          <Route path="/community/pet-story/knowledge/walk-problems" element={<CommunityKnowledgeDetail />} />
           <Route path="/community/challenge" element={<CommunityChallenge />} />
           <Route path="/community/challenge/reward" element={<CommunityReward />} />
           <Route path="/community/vote" element={<CommunityVote />} />

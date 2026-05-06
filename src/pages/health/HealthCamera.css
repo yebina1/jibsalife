@@ -944,15 +944,15 @@
   background: transparent;
 }
 
-.health_camera_shutter span {
+.health_camera_shutter_paw {
   display: block;
   width: 56px;
   height: 56px;
-  border-radius: 50%;
-  background: #ffffff;
+  object-fit: contain;
 }
 
-.health_camera_shutter span.health_camera_shutter_recording {
+.health_camera_shutter_recording {
+  display: block;
   width: 34px;
   height: 34px;
   border-radius: 10px;
@@ -1471,12 +1471,12 @@
     height: 70px;
   }
 
-  .health_camera_shutter span {
+  .health_camera_shutter_paw {
     width: 52px;
     height: 52px;
   }
 
-  .health_camera_shutter span.health_camera_shutter_recording {
+  .health_camera_shutter_recording {
     width: 30px;
     height: 30px;
     border-radius: 8px;

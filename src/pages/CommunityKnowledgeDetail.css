@@ -1,0 +1,206 @@
+.community_knowledge_detail_page {
+  padding: 0 0 calc(var(--layout-footer-height, 90px) + 84px);
+  background: #ffffff;
+}
+
+.community_knowledge_detail_hero {
+  display: block;
+  width: 100%;
+  aspect-ratio: 390 / 290;
+  object-fit: cover;
+}
+
+.community_knowledge_detail_content {
+  display: grid;
+  gap: 16px;
+  padding: 20px 16px 0;
+}
+
+.community_knowledge_detail_content h1 {
+  margin: 0;
+  color: #111111;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+}
+
+.community_knowledge_detail_meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  color: #505050;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.025em;
+}
+
+.community_knowledge_detail_meta span,
+.community_knowledge_detail_meta button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+
+.community_knowledge_detail_meta svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.community_knowledge_detail_intro {
+  margin: 0;
+  padding-top: 16px;
+  border-top: 1px solid #ececf2;
+  color: #333333;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: -0.025em;
+}
+
+.community_knowledge_detail_cards {
+  display: grid;
+  gap: 12px;
+}
+
+.community_knowledge_detail_card {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 16px;
+  border-radius: 14px;
+  background: #f3f0fe;
+}
+
+.community_knowledge_detail_card_badge {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #8a68f8;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.025em;
+}
+
+.community_knowledge_detail_card_icon {
+  position: relative;
+  display: flex;
+  width: 56px;
+  height: 56px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background: #ffffff;
+  color: #8a68f8;
+  font-size: 28px;
+}
+
+.community_knowledge_detail_card_copy {
+  display: grid;
+  gap: 6px;
+}
+
+.community_knowledge_detail_card_copy h2 {
+  margin: 0;
+  color: #333333;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+}
+
+.community_knowledge_detail_card_copy p {
+  margin: 0;
+  color: #333333;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -0.025em;
+}
+
+.community_knowledge_detail_actions {
+  position: fixed;
+  right: 50%;
+  bottom: var(--layout-footer-height, 90px);
+  display: flex;
+  width: min(100%, var(--layout-max-width, 1440px));
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px calc(env(safe-area-inset-bottom, 0px) + 8px);
+  box-sizing: border-box;
+  background: #ffffff;
+  transform: translateX(50%);
+}
+
+.community_knowledge_detail_reactions {
+  display: flex;
+  gap: 16px;
+}
+
+.community_knowledge_detail_reactions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #111111;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+}
+
+.community_knowledge_detail_reactions svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.community_knowledge_detail_cta {
+  min-width: 0;
+  flex: 1 1 auto;
+  height: 48px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 12px;
+  background: #6d59f8;
+  color: #ffffff;
+  font-family: 'Pretendard', 'SUIT', system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+}
+
+.community_knowledge_detail_bookmark svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: #111111;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

@@ -14,6 +14,7 @@ import guideExampleImage from '../../img/ex.png'
 import guideVideoImage from '../../img/guide_video.png'
 import communicateGuideIcon from '../../svg/nav communicate off.svg?raw'
 import memoGuideIcon from '../../svg/memo.svg?raw'
+import navHomeActiveIcon from '../../svg/nav home active.svg'
 
 type GuideMode = 'photo' | 'audio' | 'video' | 'memo'
 type GuideIconType =
@@ -751,7 +752,11 @@ function HealthCamera() {
           aria-label={actionLabel}
           onClick={handleCapture}
         >
-          <span className={isRecording ? 'health_camera_shutter_recording' : ''} />
+          {isRecording ? (
+            <span className="health_camera_shutter_recording" />
+          ) : (
+            <img src={navHomeActiveIcon} alt="" className="health_camera_shutter_paw" />
+          )}
         </Button>
       </div>
     </main>

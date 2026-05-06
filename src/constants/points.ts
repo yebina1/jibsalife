@@ -1,4 +1,4 @@
-export const TOTAL_REWARD_POINTS = 1260
+﻿export const TOTAL_REWARD_POINTS = 1260
 export const CHALLENGE_REWARD_CLAIMED_STORAGE_KEY = 'jibsalife.community.challengeRewardClaimed'
 export const CURRENT_POINTS_STORAGE_KEY = 'jibsalife.points.current'
 export const APPLIED_REWARD_EVENTS_STORAGE_KEY = 'jibsalife.points.appliedRewardEvents'

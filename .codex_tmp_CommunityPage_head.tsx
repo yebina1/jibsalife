@@ -9,12 +9,6 @@ import contents1 from '../img/contents1.png'
 import contents2 from '../img/contents2.png'
 import contents3 from '../img/contents3.png'
 import contents4 from '../img/contents4.png'
-import life1Image from '../img/life1.jpg'
-import life2Image from '../img/life2.png'
-import life3Image from '../img/life3.png'
-import life4Image from '../img/life4.png'
-import life5Image from '../img/life5.jpg'
-import life6Image from '../img/life6.jpg'
 import challenge1Image from '../img/challenge1.jpg'
 import challenge2Image from '../img/challenge2.png'
 import challenge3Image from '../img/challenge3.png'
@@ -239,7 +233,7 @@ const postData: CommunityPost[] = [
     comments: 4,
     shares: 4,
     createdAt: '2026-04-30T09:00:00',
-    image: life1Image,
+    image: contents4,
   },
   {
     id: 2,
@@ -252,7 +246,7 @@ const postData: CommunityPost[] = [
     comments: 4,
     shares: 2,
     createdAt: '2026-04-30T18:20:00',
-    image: life2Image,
+    image: contents2,
   },
   {
     id: 3,
@@ -265,7 +259,7 @@ const postData: CommunityPost[] = [
     comments: 4,
     shares: 6,
     createdAt: '2026-04-30T14:10:00',
-    image: life3Image,
+    image: contents1,
   },
   {
     id: 4,
@@ -278,33 +272,7 @@ const postData: CommunityPost[] = [
     comments: 4,
     shares: 1,
     createdAt: '2026-04-30T11:00:00',
-    image: life4Image,
-  },
-  {
-    id: 5,
-    tag: '일상',
-    title: '말숙이랑 벚꽃 구경 다녀왔어요',
-    author: '말숙이맘',
-    date: '2026.04.30',
-    timeText: '3시간 전',
-    likes: 4,
-    comments: 4,
-    shares: 4,
-    createdAt: '2026-04-30T10:20:00',
-    image: life5Image,
-  },
-  {
-    id: 6,
-    tag: '일상',
-    title: '귀여우면 다야?',
-    author: '크림빵',
-    date: '2026.04.30',
-    timeText: '3시간 전',
-    likes: 4,
-    comments: 4,
-    shares: 4,
-    createdAt: '2026-04-30T08:40:00',
-    image: life6Image,
+    image: contents3,
   },
 ]
 
@@ -351,46 +319,10 @@ const braggingPostData: CommunityPost[] = [
 ]
 
 const knowledgeFeedItems = [
-  {
-    id: 1,
-    tag: '산책',
-    title: '초보 집사를 위한 산책법 TOP3',
-    image: contents2,
-    likes: 8,
-    comments: 3,
-    viewsText: '1.2k',
-    path: '/community/pet-story/knowledge/walk-problems',
-  },
-  {
-    id: 2,
-    tag: '건강',
-    title: '자세하게 케어해봐요',
-    image: contents3,
-    likes: 8,
-    comments: 3,
-    viewsText: '982',
-    path: '/community/pet-story/knowledge/walk-problems',
-  },
-  {
-    id: 3,
-    tag: '일상',
-    title: '고양이의 낮잠 비밀',
-    image: contents1,
-    likes: 8,
-    comments: 3,
-    viewsText: '864',
-    path: '/community/pet-story/knowledge/walk-problems',
-  },
-  {
-    id: 4,
-    tag: '일상',
-    title: '수면 패턴 꼭 체크해봐야 할까요?',
-    image: contents4,
-    likes: 8,
-    comments: 3,
-    viewsText: '744',
-    path: '/community/pet-story/knowledge/walk-problems',
-  },
+  { id: 1, tag: '산책', title: '초보 집사를 위한 산책법 TOP3', image: contents2, likes: 8, comments: 3 },
+  { id: 2, tag: '건강', title: '자세하게 케어해봐요', image: contents3, likes: 8, comments: 3 },
+  { id: 3, tag: '일상', title: '고양이의 낮잠 비밀', image: contents1, likes: 8, comments: 3 },
+  { id: 4, tag: '일상', title: '수면 패턴 꼭 체크해봐야 할까요?', image: contents4, likes: 8, comments: 3 },
 ] as const
 
 function getTopTabFromRoute(pathname: string, tabParam: string | null): TopTab {
@@ -448,7 +380,6 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
   const [selectedVoteResultId, setSelectedVoteResultId] = useState<number | null>(null)
   const [createdPosts, setCreatedPosts] = useState<CommunityPost[]>(loadCreatedPosts)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [isCreateCategoryOpen, setIsCreateCategoryOpen] = useState(false)
   const [draftTag, setDraftTag] = useState<CommunitySubTab>(communitySubTabs[1])
   const [draftTitle, setDraftTitle] = useState('')
   const [draftContent, setDraftContent] = useState('')
@@ -601,12 +532,10 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
     setDraftTitle('')
     setDraftContent('')
     setDraftImage('')
-    setIsCreateCategoryOpen(false)
     setIsCreateOpen(true)
   }
 
   const closeCreatePost = () => {
-    setIsCreateCategoryOpen(false)
     setIsCreateOpen(false)
   }
 
@@ -827,7 +756,26 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
                 </button>
               }
             >
-              <div className="community_overview_post_list" />
+              <div className="community_overview_post_list">
+                {[braggingPostData[0], postData[0]].map((post) => (
+                  <article key={post.id} className="community_post">
+                    <img className="community_post_image" src={post.image} alt={post.title} />
+                    <div className="community_post_body">
+                      <div className="community_post_header">
+                        <span className="community_post_tag">{post.tag}</span>
+                        <h2>{post.title}</h2>
+                      </div>
+                      <div className="community_post_meta">
+                        <span className="community_post_author">{post.author}</span>
+                      </div>
+                      <p className="community_post_date">
+                        {post.timeText ? <span>{post.timeText}</span> : null}
+                        <span>{post.date}</span>
+                      </p>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </ContentSection>
 
             <ContentSection
@@ -846,7 +794,21 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
                 </button>
               }
             >
-              <div className="community_challenge_simple_list" />
+              <div className="community_challenge_simple_list">
+                {challengeItems.slice(0, 2).map((item) => (
+                  <article key={item.id} className="community_challenge_simple_item">
+                    <div className="community_challenge_simple_copy">
+                      <h3>{item.title}</h3>
+                      <p>{item.description}</p>
+                      <span>{item.date}</span>
+                      <strong>참여자 수 {item.participants}</strong>
+                    </div>
+                    <button type="button" className="community_challenge_simple_join">
+                      참여하기
+                    </button>
+                  </article>
+                ))}
+              </div>
             </ContentSection>
 
             <ContentSection
@@ -867,7 +829,24 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
                 </button>
               }
             >
-              <div className="community_vote_result_screen community_overview_vote_preview" />
+              <div className="community_vote_result_screen community_overview_vote_preview">
+                {voteResultItems.slice(0, 2).map((item) => (
+                  <article key={item.id} className="community_vote_result_entry">
+                    <div className="community_vote_result_placeholder">
+                      투표가
+                      <br />
+                      종료되었습니다.
+                    </div>
+                    <div className="community_vote_result_panel">
+                      <span className="community_vote_result_label">{item.badge}</span>
+                      <h3>{item.title}</h3>
+                      <button type="button" className="community_vote_result_action">
+                        결과보기
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </ContentSection>
           </section>
         ) : isChallengeTab ? (
@@ -1177,27 +1156,47 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
           <section className="community_knowledge_feed">
             <div className="community_knowledge_list">
               {knowledgeFeedItems.map((item) => (
-                <article
-                  key={item.id}
-                  className="community_knowledge_feed_card community_knowledge_feed_card_clickable"
-                  onClick={() => navigate(item.path)}
-                >
+                <article key={item.id} className="community_knowledge_feed_card">
                   <img
                     className="community_knowledge_feed_image"
                     src={item.image}
                     alt={item.title}
                   />
-                  <div className="community_knowledge_feed_overlay">
-                    <h3>{item.title}</h3>
-                    <span className="community_knowledge_feed_views">
-                      <span className="community_knowledge_feed_view_icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24">
-                          <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
-                          <circle cx="12" cy="12" r="3" />
-                        </svg>
-                      </span>
-                      <span>{item.viewsText}</span>
-                    </span>
+                  <div className="community_knowledge_feed_body">
+                    <div className="community_knowledge_feed_title_row">
+                      <span className="community_knowledge_feed_tag">{item.tag}</span>
+                      <h3>{item.title}</h3>
+                    </div>
+                    <div className="community_knowledge_feed_actions">
+                      <button type="button" aria-label="좋아요">
+                        <span className="community_like_icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24">
+                            <path d="M12 20.2 4.9 13.6a4.8 4.8 0 0 1 6.8-6.8L12 7.9l.3-.3a4.8 4.8 0 1 1 6.8 6.8Z" />
+                          </svg>
+                        </span>
+                        <span>좋아요 {item.likes}</span>
+                      </button>
+                      <button type="button" aria-label="댓글">
+                        <span className="community_comment_icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24">
+                            <path d="M12 4.8c-4.4 0-8 2.9-8 6.6 0 2.1 1.2 4 3.1 5.2l-.8 3 3.3-1.8c.8.2 1.6.3 2.4.3 4.4 0 8-2.9 8-6.7s-3.6-6.6-8-6.6Z" />
+                            <circle cx="9" cy="11.4" r="0.8" />
+                            <circle cx="12" cy="11.4" r="0.8" />
+                            <circle cx="15" cy="11.4" r="0.8" />
+                          </svg>
+                        </span>
+                        <span>댓글 {item.comments}</span>
+                      </button>
+                      <button type="button" aria-label="공유하기">
+                        <span className="community_share_icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24">
+                            <path d="M20 4 9.4 14.6" />
+                            <path d="m20 4-6.7 15-3.3-6.7L3.3 9 20 4Z" />
+                          </svg>
+                        </span>
+                        <span>공유하기</span>
+                      </button>
+                    </div>
                   </div>
                 </article>
               ))}
@@ -1242,7 +1241,7 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
                 </button>
               </div>
               <div className="community_overview_post_list">
-                {postData.slice(0, 4).map((post) => (
+                {postData.slice(0, 2).map((post) => (
                   <article key={post.id} className="community_post">
                     <img className="community_post_image" src={post.image} alt={post.title} />
                     <div className="community_post_body">
@@ -1257,42 +1256,6 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
                         {post.timeText ? <span>{post.timeText}</span> : null}
                         <span>{post.date}</span>
                       </p>
-                      <div className="community_post_actions">
-                        <button
-                          type="button"
-                          className={likedPostIds.includes(post.id) ? 'active' : ''}
-                          onClick={() => toggleLike(post.id)}
-                        >
-                          <span className="community_like_icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                              <path d="M12 20.2 4.9 13.6a4.8 4.8 0 0 1 6.8-6.8L12 7.9l.3-.3a4.8 4.8 0 1 1 6.8 6.8Z" />
-                            </svg>
-                          </span>
-                          <span className="community_action_count">
-                            {post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}
-                          </span>
-                        </button>
-                        <button type="button" aria-label="댓글">
-                          <span className="community_comment_icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                              <path d="M12 4.8c-4.4 0-8 2.9-8 6.6 0 2.1 1.2 4 3.1 5.2l-.8 3 3.3-1.8c.8.2 1.6.3 2.4.3 4.4 0 8-2.9 8-6.7s-3.6-6.6-8-6.6Z" />
-                              <circle cx="9" cy="11.4" r="0.8" />
-                              <circle cx="12" cy="11.4" r="0.8" />
-                              <circle cx="15" cy="11.4" r="0.8" />
-                            </svg>
-                          </span>
-                          <span className="community_action_count">{post.comments}</span>
-                        </button>
-                        <button type="button" aria-label="공유">
-                          <span className="community_share_icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                              <path d="M20 4 9.4 14.6" />
-                              <path d="m20 4-6.7 15-3.3-6.7L3.3 9 20 4Z" />
-                            </svg>
-                          </span>
-                          <span className="community_action_count">{post.shares}</span>
-                        </button>
-                      </div>
                     </div>
                   </article>
                 ))}
@@ -1426,39 +1389,18 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
                 </button>
               </div>
 
-              <label className="community_create_field community_create_field_category">
+              <label className="community_create_field">
                 <span>카테고리</span>
-                <div className="community_create_select">
-                  <button
-                    type="button"
-                    className="community_create_select_toggle"
-                    onClick={() => setIsCreateCategoryOpen((current) => !current)}
-                    aria-haspopup="listbox"
-                    aria-expanded={isCreateCategoryOpen}
-                  >
-                    <span>{draftTag}</span>
-                    <span className="community_create_select_icon" aria-hidden="true" />
-                  </button>
-                  {isCreateCategoryOpen ? (
-                    <div className="community_create_select_menu" role="listbox" aria-label="카테고리 선택">
-                      {communitySubTabs.slice(1, 3).map((tab) => (
-                        <button
-                          key={tab}
-                          type="button"
-                          className={`community_create_select_option ${draftTag === tab ? 'active' : ''}`}
-                          onClick={() => {
-                            setDraftTag(tab)
-                            setIsCreateCategoryOpen(false)
-                          }}
-                          role="option"
-                          aria-selected={draftTag === tab}
-                        >
-                          {tab}
-                        </button>
-                      ))}
-                    </div>
-                  ) : null}
-                </div>
+                <select
+                  value={draftTag}
+                  onChange={(event) => setDraftTag(event.target.value as CommunitySubTab)}
+                >
+                  {communitySubTabs.slice(1, 3).map((tab) => (
+                    <option key={tab} value={tab}>
+                      {tab}
+                    </option>
+                  ))}
+                </select>
               </label>
 
               <label className="community_create_field">

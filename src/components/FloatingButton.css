@@ -16,6 +16,65 @@
   cursor: pointer;
 }
 
+.floating_write_button {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 50%;
+  gap: 0;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 12px 24px rgba(109, 89, 248, 0.24);
+  transition:
+    width 220ms ease,
+    gap 220ms ease,
+    padding 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+.floating_write_button:hover,
+.floating_write_button:focus-visible,
+.floating_write_button.is_expanded {
+  width: 104px;
+  border-radius: 999px;
+  gap: 4px;
+  padding: 0 16px;
+  justify-content: flex-start;
+  box-shadow: 0 16px 28px rgba(109, 89, 248, 0.28);
+  transform: translateY(-2px);
+}
+
+.floating_write_button .floating_button_icon_frame {
+  flex: 0 0 24px;
+}
+
+.floating_write_button_label {
+  max-width: 0;
+  overflow: hidden;
+  color: #ffffff;
+  font-family: 'Pretendard', 'SUIT', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(0);
+  transition:
+    max-width 220ms ease,
+    opacity 180ms ease,
+    transform 220ms ease;
+}
+
+.floating_write_button:hover .floating_write_button_label,
+.floating_write_button:focus-visible .floating_write_button_label,
+.floating_write_button.is_expanded .floating_write_button_label {
+  max-width: 48px;
+  opacity: 1;
+  transform: translateX(0);
+}
+
 .floating_button_ai {
   right: 24px;
   bottom: 118px;
@@ -85,5 +144,11 @@
 
   .floating_button_community {
     right: 16px;
+  }
+
+  .floating_write_button:hover,
+  .floating_write_button:focus-visible,
+  .floating_write_button.is_expanded {
+    width: 104px;
   }
 }

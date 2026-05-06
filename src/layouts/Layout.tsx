@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router'
 import Header from '../components/Header'
 import FloatingAiButton from '../components/FloatingAiButton'
@@ -13,24 +13,30 @@ type LayoutProps = {
 }
 
 const communityTabs = [
-  { label: '?�체', to: '/community/overview' },
-  { label: '?�스?�리', to: '/community/pet-story' },
+  { label: '전체', to: '/community/overview' },
+  { label: '펫스토리', to: '/community/pet-story' },
   { label: '챌린지', to: '/community/challenge' },
-  { label: '?�표', to: '/community/vote' },
+  { label: '투표', to: '/community/vote' },
 ] as const
 
 const petStorySubTabs = [
-  { label: '?�체', to: '/community/pet-story?sub=all' },
-  { label: '?�랑?�기', to: '/community/pet-story?sub=brag' },
-  { label: '?�상', to: '/community/pet-story?sub=daily' },
-  { label: '반려?�식', to: '/community/pet-story?sub=knowledge' },
+  { label: '전체', to: '/community/pet-story?sub=all' },
+  { label: '자랑하기', to: '/community/pet-story?sub=brag' },
+  { label: '일상', to: '/community/pet-story?sub=daily' },
+  { label: '반려상식', to: '/community/pet-story?sub=knowledge' },
+] as const
+
+const voteSubTabs = [
+  { label: '전체', to: '/community/vote?sub=all' },
+  { label: '목록', to: '/community/vote?sub=list' },
+  { label: '투표결과', to: '/community/vote?sub=result' },
 ] as const
 
 const communitySortOptions = [
-  { label: '�α��', value: 'popular' },
-  { label: '�ֽż�', value: 'latest' },
-  { label: '��ۼ�', value: 'comments' },
-  { label: '������', value: 'shares' },
+  { label: '인기순', value: 'popular' },
+  { label: '최신순', value: 'latest' },
+  { label: '댓글순', value: 'comments' },
+  { label: '공유순', value: 'shares' },
 ] as const
 
 function getSubParam(to: string) {
@@ -41,6 +47,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const [header, setHeader] = useState<HeaderConfig>(null)
   const [isCommunitySubtabOpen, setIsCommunitySubtabOpen] = useState(false)
   const [isCommunitySortOpen, setIsCommunitySortOpen] = useState(false)
+  const [isCommunityControlsVisible, setIsCommunityControlsVisible] = useState(true)
   const { pathname, search } = useLocation()
   const searchParams = new URLSearchParams(search)
   const communitySubParam = searchParams.get('sub')
@@ -48,12 +55,14 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const isCameraPage = pathname === '/health/camera' && searchParams.get('guide') === 'false'
   const isCommunityPath = pathname.startsWith('/community')
   const isCommunitySubAll = !communitySubParam || communitySubParam === 'all'
-  const communitySubTabs = pathname.endsWith('/community/pet-story')
+  const communitySubTabs = pathname.startsWith('/community/pet-story')
     ? petStorySubTabs
-    : null
+    : pathname.startsWith('/community/vote')
+      ? voteSubTabs
+      : null
   const showCommunitySort =
-    (pathname.endsWith('/community/vote') && !isCommunitySubAll) ||
-    (pathname.endsWith('/community/pet-story') && !isCommunitySubAll && communitySubParam !== 'knowledge')
+    (pathname.startsWith('/community/vote') && !isCommunitySubAll) ||
+    (pathname.startsWith('/community/pet-story') && !isCommunitySubAll)
   const activeCommunitySubTab = communitySubTabs
     ? communitySubTabs.find((tab) => {
         const tabSubParam = getSubParam(tab.to)
@@ -90,8 +99,41 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
     : isMinimal
       ? 'layout layout_minimal'
       : isCommunityPath
-        ? `layout layout_community ${communitySubTabs ? 'layout_community_with_subtabs' : ''}`
+        ? `layout layout_community ${communitySubTabs ? 'layout_community_with_subtabs' : ''} ${
+            communitySubTabs && !isCommunityControlsVisible ? 'layout_community_subtabs_hidden' : ''
+          }`
         : 'layout'
+
+  useEffect(() => {
+    if (!communitySubTabs || typeof window === 'undefined') {
+      setIsCommunityControlsVisible(true)
+      return
+    }
+
+    let lastScrollY = window.scrollY
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+
+      if (currentScrollY <= 8) {
+        setIsCommunityControlsVisible(true)
+      } else if (currentScrollY > lastScrollY) {
+        setIsCommunityControlsVisible(false)
+        setIsCommunitySubtabOpen(false)
+        setIsCommunitySortOpen(false)
+      } else if (currentScrollY < lastScrollY) {
+        setIsCommunityControlsVisible(true)
+      }
+
+      lastScrollY = currentScrollY
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [communitySubTabs])
 
   return (
     <HeaderContext.Provider value={setHeader}>
@@ -102,7 +144,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
             {showHeader && header && <Header {...header} />}
             {isCommunityPath ? (
               <>
-                <nav className="layout_community_tabs" aria-label="커�??�티 카테고리">
+                <nav className="layout_community_tabs" aria-label="커뮤니티 카테고리">
                   {communityTabs.map((tab) => (
                     <NavLink
                       key={tab.to}
@@ -126,7 +168,10 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
                       <button
                         type="button"
                         className="layout_community_subtab_toggle"
-                        onClick={() => setIsCommunitySubtabOpen((prev) => !prev)}
+                        onClick={() => {
+                          setIsCommunitySubtabOpen((prev) => !prev)
+                          setIsCommunitySortOpen(false)
+                        }}
                       >
                         {activeCommunitySubTab?.label}
                       </button>
@@ -142,10 +187,22 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
                                 key={tab.to}
                                 to={tab.to}
                                 className={`layout_community_subtab_option ${isActive ? 'active' : ''}`}
-                                style={{ color: isActive ? '#6D59F8' : '#111111', fontWeight: 400 }}
+                                style={{
+                                  color: isActive ? '#6D59F8' : '#111111',
+                                  WebkitTextFillColor: isActive ? '#6D59F8' : '#111111',
+                                  fontWeight: isActive ? 600 : 400,
+                                }}
                                 onClick={() => setIsCommunitySubtabOpen(false)}
                               >
-                                {tab.label}
+                                <span
+                                  style={{
+                                    color: isActive ? '#6D59F8' : '#111111',
+                                    WebkitTextFillColor: isActive ? '#6D59F8' : '#111111',
+                                    fontWeight: isActive ? 600 : 400,
+                                  }}
+                                >
+                                  {tab.label}
+                                </span>
                               </NavLink>
                             )
                           })}
@@ -158,7 +215,10 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
                         <button
                           type="button"
                           className="layout_community_sort_toggle"
-                          onClick={() => setIsCommunitySortOpen((prev) => !prev)}
+                          onClick={() => {
+                            setIsCommunitySortOpen((prev) => !prev)
+                            setIsCommunitySubtabOpen(false)
+                          }}
                         >
                           <span>{activeCommunitySort.label}</span>
                           <span className="layout_community_sort_icon" aria-hidden="true" />
@@ -174,11 +234,22 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
                                 }`}
                                 style={{
                                   color: option.value === communitySortParam ? '#6D59F8' : '#111111',
-                                  fontWeight: 400,
+                                  WebkitTextFillColor:
+                                    option.value === communitySortParam ? '#6D59F8' : '#111111',
+                                  fontWeight: option.value === communitySortParam ? 600 : 400,
                                 }}
                                 onClick={() => setIsCommunitySortOpen(false)}
                               >
-                                {option.label}
+                                <span
+                                  style={{
+                                    color: option.value === communitySortParam ? '#6D59F8' : '#111111',
+                                    WebkitTextFillColor:
+                                      option.value === communitySortParam ? '#6D59F8' : '#111111',
+                                    fontWeight: option.value === communitySortParam ? 600 : 400,
+                                  }}
+                                >
+                                  {option.label}
+                                </span>
                               </NavLink>
                             ))}
                           </div>
@@ -207,4 +278,3 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
 }
 
 export default Layout
-
