@@ -52,7 +52,7 @@ const summarySlides = [
     id: 2,
     type: 'profile',
     name: '뿡뿡이',
-    breed: '푸들',
+    breed: '포메라니안',
     image: pungpungiImage,
     details: '나이: 2살 · 몸무게: 5 kg · 성별: 남아',
     stats: [
@@ -79,7 +79,7 @@ function formatTodaySummaryDate() {
 function Home() {
   const navigate = useNavigate()
   const [rankingType, setRankingType] = useState<'subscribers' | 'points'>('subscribers')
-  const [summarySlideIndex, setSummarySlideIndex] = useState(0)
+  const [summarySlideIndex, setSummarySlideIndex] = useState(1)
   const [dragOffset, setDragOffset] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const dragStateRef = useRef({ startX: 0 })
