@@ -9,7 +9,7 @@ import { Link } from 'react-router'
 import calendarIcon from '../svg/calendar.svg'
 import notificationIcon from '../svg/notification.svg'
 import petImage from '../img/pungpungi.png'
-import aiChatImage from '../img/aichat_3d.png'
+import aiChatImage from '../img/aichat.svg'
 import consultImage from '../img/clipboard_3d.png'
 import { calculateHealthResult, readStoredHealthResultInput } from '../utils/healthResultPolicy'
 

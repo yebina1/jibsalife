@@ -1,18 +1,19 @@
 import { useNavigate } from 'react-router'
-import './FloatingAiButton.css'
+import FloatingButton from './FloatingButton'
 
 export default function FloatingAiButton() {
   const navigate = useNavigate()
   const aiIcon = `${import.meta.env.BASE_URL}ai.svg`
 
   return (
-    <button
-      type="button"
-      className="floating_ai_button"
+    <FloatingButton
+      placement="ai"
       aria-label="AI assistant"
       onClick={() => navigate('/health/qna')}
     >
-      <img src={aiIcon} alt="" aria-hidden="true" />
-    </button>
+      <span className="floating_button_icon_frame" aria-hidden="true">
+        <img src={aiIcon} alt="" />
+      </span>
+    </FloatingButton>
   )
 }

@@ -108,7 +108,7 @@
   display: flex;
   justify-content: center;
   gap: 8px;
-  margin-top: 12px;
+  margin-top: 16px;
 }
 
 .summary_slider_dots button {
@@ -297,8 +297,8 @@
   height: 40px;
   padding: 4px;
   border: 0;
-  border-radius: 999px;
-  background: #f2f3f7;
+  border-radius: 100px;
+  background: #F1F1F5;
   cursor: pointer;
 }
 
@@ -315,7 +315,7 @@
   display: block;
   width: 100%;
   height: 100%;
-  border-radius: 999px;
+  border-radius: 100px;
   background: #ffffff;
   box-shadow: 0 2px 6px rgba(17, 24, 39, 0.1);
 }
@@ -330,7 +330,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #8c8c95;
+  color: #767676;
   font-size: 14px;
   font-weight: 600;
   transition: color 220ms ease;
@@ -344,26 +344,51 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
-  animation: ranking-fade 220ms ease;
 }
 
-.ranking_card img {
+.ranking_grid.slide_left {
+  animation: ranking-slide-left 220ms ease;
+}
+
+.ranking_grid.slide_right {
+  animation: ranking-slide-right 220ms ease;
+}
+
+.ranking_card_image {
   display: block;
   width: 100%;
   aspect-ratio: 1 / 1;
-  border-radius: 16px;
+  border-radius: 8px;
   object-fit: cover;
 }
 
 .ranking_card p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   margin: 10px 0 0;
   text-align: center;
-  font-size: clamp(13px, 1.9vw, 15px);
+  font-size: 14px;
   font-weight: 600;
+  line-height: normal;
+  letter-spacing: normal;
 }
 
-.ranking_card span {
-  margin-right: 2px;
+.ranking_card_icon {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+.ranking_card_icon img {
+  display: block;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
 }
 
 .more_button {
@@ -414,8 +439,17 @@
 .content_card {
   position: relative;
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: 8px;
   background: #f2f3f7;
+}
+
+.content_card::before {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.3) 100%);
+  content: '';
+  pointer-events: none;
 }
 
 .content_card img {
@@ -430,28 +464,42 @@
   right: 0;
   bottom: 0;
   left: 0;
+  z-index: 2;
   padding: 40px 14px 14px;
-  background: linear-gradient(180deg, rgba(17, 17, 17, 0) 0%, rgba(17, 17, 17, 0.76) 100%);
 }
 
 .content_overlay p {
   margin: 0;
   color: #ffffff;
-  font-size: 14px;
+  font-family: Pretendard, sans-serif;
+  font-size: 16px;
   font-weight: 600;
-  line-height: 1.35;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
   word-break: keep-all;
 }
 
-@keyframes ranking-fade {
+@keyframes ranking-slide-left {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateX(16px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
+  }
+}
+
+@keyframes ranking-slide-right {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
@@ -477,20 +525,8 @@
     gap: 18px;
   }
 
-  .ranking_card img {
-    border-radius: 18px;
-  }
-
-  .content_grid {
-    gap: 14px;
-  }
-
   .content_overlay {
     padding: 52px 16px 16px;
-  }
-
-  .content_overlay p {
-    font-size: 15px;
   }
 
 }
@@ -527,7 +563,7 @@
   }
 
   .summary_slider_dots {
-    margin-top: 10px;
+    margin-top: 16px;
   }
 
   .summary_stats {
@@ -550,10 +586,6 @@
     gap: 10px;
   }
 
-  .ranking_card img {
-    border-radius: 12px;
-  }
-
   .ranking_card p {
     margin-top: 8px;
   }
@@ -564,16 +596,8 @@
     font-size: 16px;
   }
 
-  .content_grid {
-    gap: 8px;
-  }
-
   .content_overlay {
     padding: 34px 12px 12px;
-  }
-
-  .content_overlay p {
-    font-size: 13px;
   }
 
 }
@@ -648,13 +672,6 @@
     gap: 8px;
   }
 
-  .ranking_card p {
-    font-size: 12px;
-  }
-
-  .content_overlay p {
-    font-size: 12px;
-  }
 }
 
 @media (max-width: 320px) {

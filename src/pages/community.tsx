@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router'
 import PageHeader from '../components/PageHeader'
 import HeaderIcon from '../components/HeaderIcon'
 import ContentSection from '../components/ContentSection'
+import FloatingWriteButton from '../components/FloatingWriteButton'
 import Button from '../components/html/Button'
 import contents1 from '../img/contents1.png'
 import contents2 from '../img/contents2.png'
@@ -1267,11 +1268,7 @@ function Community() {
             </form>
           </section>
         ) : null}
-        <button type="button" className="community_fab" onClick={openCreatePost} aria-label="글쓰기">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 5v14M5 12h14" />
-          </svg>
-        </button>
+        <FloatingWriteButton onClick={openCreatePost} />
       </main>
     </>
   )

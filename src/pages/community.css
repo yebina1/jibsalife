@@ -1795,33 +1795,6 @@
   stroke-linejoin: round;
 }
 
-.community_fab {
-  position: fixed;
-  right: 18px;
-  bottom: 118px;
-  z-index: 20;
-  display: flex;
-  width: 64px;
-  height: 64px;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-  border-radius: 50%;
-  background: #6D59F8;
-  color: #ffffff;
-  box-shadow: 0 12px 24px rgba(109, 89, 248, 0.28);
-  cursor: pointer;
-}
-
-.community_fab svg {
-  width: 30px;
-  height: 30px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.4;
-  stroke-linecap: round;
-}
-
 .community_create_sheet {
   position: fixed;
   inset: 0;
@@ -1952,10 +1925,6 @@
 }
 
 @media (min-width: 768px) {
-  .community_fab {
-    right: max(18px, calc((100vw - var(--layout-max-width, 1440px)) / 2 + 18px));
-  }
-
   .community_page {
     padding: 24px 10px 34px;
   }
@@ -2412,18 +2381,6 @@
   .community_share_icon svg {
     width: 18px;
     height: 18px;
-  }
-
-  .community_fab {
-    right: 16px;
-    bottom: 112px;
-    width: 58px;
-    height: 58px;
-  }
-
-  .community_fab svg {
-    width: 28px;
-    height: 28px;
   }
 
   .community_create_form {

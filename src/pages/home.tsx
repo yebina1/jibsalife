@@ -13,25 +13,31 @@ import contents1 from '../img/contents1.png'
 import contents2 from '../img/contents2.png'
 import contents3 from '../img/contents3.png'
 import contents4 from '../img/contents4.png'
+import kongyiImage from '../img/kongyi.png'
+import gongnangyiImage from '../img/gongnangyi.png'
+import mocaImage from '../img/moca.png'
+import goldIcon from '../img/gold.png'
+import silverIcon from '../img/silver.png'
+import bronzeIcon from '../img/bronze.png'
 
 const rankingData = {
   subscribers: [
-    { id: 1, name: '코코', image: contents1, crown: '👑', rank: '1위' },
-    { id: 2, name: '보리', image: contents2, crown: '🥈', rank: '2위' },
-    { id: 3, name: '몽실', image: contents4, crown: '🥉', rank: '3위' },
+    { id: 1, name: '콩이', image: kongyiImage, icon: goldIcon, rank: '1위' },
+    { id: 2, name: '공냥이', image: gongnangyiImage, icon: silverIcon, rank: '2위' },
+    { id: 3, name: '모카', image: mocaImage, icon: bronzeIcon, rank: '3위' },
   ],
   points: [
-    { id: 1, name: '몽실', image: contents4, crown: '👑', rank: '1위' },
-    { id: 2, name: '코코', image: contents1, crown: '🥈', rank: '2위' },
-    { id: 3, name: '보리', image: contents2, crown: '🥉', rank: '3위' },
+    { id: 1, name: '콩이', image: kongyiImage, icon: goldIcon, rank: '1위' },
+    { id: 2, name: '공냥이', image: gongnangyiImage, icon: silverIcon, rank: '2위' },
+    { id: 3, name: '모카', image: mocaImage, icon: bronzeIcon, rank: '3위' },
   ],
 } as const
 
 const contentItems = [
-  { id: 1, title: '반려견이 좋아하는 산책 루트 추천 가이드', image: contents3 },
-  { id: 2, title: '우리 아이 상태별 맞춤 건강 체크 사인', image: contents1 },
-  { id: 3, title: '산책 후 꼭 확인해야 할 케어 루틴', image: contents2 },
-  { id: 4, title: '반려생활을 위한 필수 체크리스트 3종', image: contents4 },
+  { id: 1, title: '활동량이 줄어든 아이를 위한 추천 장난감', image: contents1 },
+  { id: 2, title: '우리 아이 상태별 추천 혜택', image: contents2 },
+  { id: 3, title: '우리 아이 상태별 추천 혜택', image: contents3 },
+  { id: 4, title: '반려견을 위한 케어 아이템 3종', image: contents4 },
 ]
 
 const summarySlides = [
@@ -79,6 +85,7 @@ function formatTodaySummaryDate() {
 function Home() {
   const navigate = useNavigate()
   const [rankingType, setRankingType] = useState<'subscribers' | 'points'>('subscribers')
+  const [rankingSlideDirection, setRankingSlideDirection] = useState<'left' | 'right' | null>(null)
   const [summarySlideIndex, setSummarySlideIndex] = useState(1)
   const [dragOffset, setDragOffset] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
@@ -86,6 +93,14 @@ function Home() {
 
   const rankingItems = rankingData[rankingType]
   const todaySummaryDate = formatTodaySummaryDate()
+
+  const toggleRankingType = () => {
+    setRankingType((current) => {
+      const next = current === 'subscribers' ? 'points' : 'subscribers'
+      setRankingSlideDirection(next === 'points' ? 'left' : 'right')
+      return next
+    })
+  }
 
   const handleDragStart = (clientX: number) => {
     dragStateRef.current.startX = clientX
@@ -203,9 +218,7 @@ function Home() {
               type="button"
               className={`ranking_switch ${rankingType === 'points' ? 'points' : ''}`}
               aria-label="랭킹 기준 전환"
-              onClick={() =>
-                setRankingType((current) => (current === 'subscribers' ? 'points' : 'subscribers'))
-              }
+              onClick={toggleRankingType}
             >
               <span className="ranking_switch_track" aria-hidden="true">
                 <span className="ranking_switch_thumb" />
@@ -222,12 +235,21 @@ function Home() {
           }
         >
 
-          <div className="ranking_grid" key={rankingType}>
+          <div
+            className={`ranking_grid ${
+              rankingSlideDirection ? `slide_${rankingSlideDirection}` : ''
+            }`}
+            key={rankingType}
+            onAnimationEnd={() => setRankingSlideDirection(null)}
+          >
             {rankingItems.map((item) => (
               <article key={item.id} className="ranking_card">
-                <img src={item.image} alt={`${item.name} 프로필`} />
+                <img className="ranking_card_image" src={item.image} alt={`${item.name} 프로필`} />
                 <p>
-                  <span>{item.crown}</span> {item.rank}: {item.name}
+                  <span className="ranking_card_icon" aria-hidden="true">
+                    <img src={item.icon} alt="" />
+                  </span>
+                  {item.rank}: {item.name}
                 </p>
               </article>
             ))}
@@ -251,11 +273,7 @@ function Home() {
             ))}
           </div>
 
-          <Button
-            type="button"
-            className="more_button"
-            onClick={() => navigate('/community?tab=knowledge')}
-          >
+          <Button type="button" className="more_button">
             더보기
             <ChevronIcon direction="right" size="md" />
           </Button>

@@ -1,0 +1,89 @@
+.floating_button {
+  position: fixed;
+  z-index: 120;
+  display: inline-flex;
+  width: 48px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 50%;
+  background: #6D59F8;
+  color: #ffffff;
+  box-shadow: 0 1px 2px rgba(196, 181, 253, 1);
+  cursor: pointer;
+}
+
+.floating_button_ai {
+  right: 24px;
+  bottom: 118px;
+}
+
+.floating_button_community {
+  right: 18px;
+  bottom: 118px;
+}
+
+.floating_button_icon_frame img {
+  display: block;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.floating_button_icon_frame {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+.floating_button_icon_frame i {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.floating_button_icon_frame i::before {
+  display: block;
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 24px;
+  color: #ffffff;
+}
+
+@media (min-width: 768px) {
+  .floating_button_ai {
+    right: max(24px, calc((100vw - var(--layout-max-width, 1440px)) / 2 + 24px));
+    bottom: 118px;
+  }
+
+  .floating_button_community {
+    right: max(18px, calc((100vw - var(--layout-max-width, 1440px)) / 2 + 18px));
+  }
+}
+
+@media (max-width: 420px) {
+  .floating_button_ai,
+  .floating_button_community {
+    bottom: 112px;
+  }
+
+  .floating_button_ai {
+    right: 16px;
+  }
+
+  .floating_button_community {
+    right: 16px;
+  }
+}
