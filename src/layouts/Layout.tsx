@@ -29,6 +29,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
     '/health/register',
     '/health/qna',
     '/health/vet-chat',
+    '/mypage/subscription',
   ]
   const hideFloatingAiButton = hideFloatingAiButtonPaths.includes(pathname) || isCommunityPath
 

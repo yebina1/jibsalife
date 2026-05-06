@@ -5,6 +5,7 @@ import PageHeader from '../components/PageHeader'
 import HeaderIcon from '../components/HeaderIcon'
 import ChevronIcon from '../components/ChevronIcon'
 import ContentSection from '../components/ContentSection'
+import SummaryProfileCard from '../components/SummaryProfileCard'
 import BackButton from '../components/html/BackButton'
 import Button from '../components/html/Button'
 import contents1 from '../img/contents1.png'
@@ -24,6 +25,13 @@ const supportItems = [
   { label: '고객센터', icon: 'headset' },
   { label: '자주 묻는 질문(FAQ)', icon: 'help' },
   { label: '앱 설정', icon: 'gear' },
+] as const
+
+const myProfileStats = [
+  { label: '게시글', value: '12' },
+  { label: '댓글', value: '23' },
+  { label: '뱃지', value: '8' },
+  { label: '쿠폰', value: '1장' },
 ] as const
 
 const LOCATION_STORAGE_KEY = 'mypage-location'
@@ -296,51 +304,23 @@ function MyPage() {
           </button>
         </section>
 
-        <section className="mypage_profile_card">
-          <img className="mypage_profile_avatar" src={contents2} alt="프로필 이미지" />
+        <section className="mypage_profile_section">
+          <div className="mypage_profile_heading">
+            <h3>내 프로필</h3>
+            <span>구독중</span>
+          </div>
 
-          <div className="mypage_profile_content">
-            <div className="mypage_profile_title_row">
-              <h1>몽실몽실</h1>
-              <span aria-hidden="true">🐾</span>
-              <button type="button">정보 수정</button>
-            </div>
-
-            <div className="mypage_point">
-              <span aria-hidden="true">P</span>
-              <strong>1,200p</strong>
-            </div>
-
-            <div className="mypage_profile_stats">
-              <div>
-                <strong>12</strong>
-                <span>게시글</span>
-              </div>
-              <div>
-                <strong>23</strong>
-                <span>팔로워</span>
-              </div>
-              <div>
-                <strong>8</strong>
-                <span>뱃지</span>
-              </div>
-              <div>
-                <strong>1장</strong>
-                <span>쿠폰</span>
-              </div>
-            </div>
-
-            <div className="mypage_badges">
-              <span>보유 뱃지</span>
-              <div className="mypage_badge_icons" aria-hidden="true">
-                <b>🏅</b>
-                <b>⭐</b>
-                <b>🎖</b>
-              </div>
-              <button type="button" aria-label="보유 뱃지 보기">
-                <ChevronIcon direction="right" size="md" />
-              </button>
-            </div>
+          <div className="mypage_profile_card_wrap">
+            <SummaryProfileCard
+              image={contents2}
+              imageAlt="프로필 이미지"
+              name="뿌직뿌직"
+              breed=""
+              details="포인트: 1,200"
+              careGuideLabel="보유 뱃지  🏅  🐾  🐾"
+              stats={myProfileStats}
+              className="mypage_profile_card"
+            />
           </div>
         </section>
 
@@ -368,9 +348,13 @@ function MyPage() {
           <ul>
             {activityItems.map((item) => (
               <li key={item.label}>
-                <button type="button" className="mypage_menu_button">
+                <button
+                  type="button"
+                  className="mypage_menu_button"
+                  disabled={item.label !== '구독 관리'}
+                  onClick={item.label === '구독 관리' ? () => navigate('/mypage/subscription') : undefined}
+                >
                   <span className="mypage_menu_left">
-                    <MyPageIcon type={item.icon} />
                     {item.label}
                   </span>
                   <ChevronIcon direction="right" size="md" />
@@ -384,9 +368,8 @@ function MyPage() {
           <ul>
             {supportItems.map((item) => (
               <li key={item.label}>
-                <button type="button" className="mypage_menu_button">
+                <button type="button" className="mypage_menu_button" disabled>
                   <span className="mypage_menu_left">
-                    <MyPageIcon type={item.icon} />
                     {item.label}
                   </span>
                   <ChevronIcon direction="right" size="md" />

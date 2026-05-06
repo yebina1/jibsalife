@@ -8,6 +8,7 @@ import ContentSection from '../components/ContentSection'
 import ProgressCircle from '../components/ProgressCircle'
 import BackButton from '../components/html/BackButton'
 import Button from '../components/html/Button'
+import NoticeText from '../components/NoticeText'
 
 const loadingSteps = [
   '건강 기록 확인 중...',
@@ -88,13 +89,13 @@ function HealthCheckLoading() {
             ))}
           </ul>
 
-          <div className="health_check_loading_notice">
-            <p>
-              ※ 이 결과는 참고용이며,
-              <br />
-              정확한 진단은 수의사 상담을 통해 확인해주세요.
-            </p>
-          </div>
+        <NoticeText>
+          <p>
+            ※ 이 결과는 참고용이며,
+            <br />
+            정확한 진단은 수의사 상담을 통해 확인해주세요.
+          </p>
+        </NoticeText>
         </div>
       </main>
     </>

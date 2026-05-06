@@ -1,6 +1,6 @@
 .health_register_page {
   display: grid;
-  gap: 0;
+  gap: 48px;
   width: 100%;
   background: #ffffff;
   color: #111111;

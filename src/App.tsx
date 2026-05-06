@@ -24,6 +24,7 @@ import Login from './pages/Login'
 import Mission from './pages/Mission'
 import MyPage from './pages/MyPage'
 import Place from './pages/Place'
+import SubscriptionPage from './pages/SubscriptionPage'
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
       <Routes>
         <Route element={<Layout showHeader={false} showNav={false} />}>
           <Route path="/login" element={<Login />} />
+          <Route path="/mypage/subscription" element={<SubscriptionPage />} />
         </Route>
         <Route element={<Layout />}>
           <Route path="/" element={<Navigate to="/login" replace />} />
