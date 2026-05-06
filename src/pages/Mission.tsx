@@ -207,7 +207,7 @@ function Mission() {
 
     const closePickerOnPageMove = (event: Event) => {
       const target = event.target
-      if (target instanceof HTMLElement && target.closest('.date_picker_column')) return
+      if (target instanceof HTMLElement && target.closest('.date_picker')) return
 
       setIsDatePickerOpen(false)
       setIsPeriodDatePickerOpen(false)
@@ -354,7 +354,7 @@ function Mission() {
               <i className="bx bx-menu" />
             </button>
             <button type="button" className="mission_month_bar_date" onClick={openDatePicker}>
-              {calendarYear}.{String(calendarMonth).padStart(2, '0')}
+              {calendarYear}.{String(calendarMonth).padStart(2, '0')}.{String(Number(selectedDay.label)).padStart(2, '0')}
               <i className={`bx bx-chevron-${isDatePickerOpen ? 'up' : 'down'}`} />
             </button>
           </div>
@@ -505,7 +505,7 @@ function Mission() {
                     className="mission_month_bar_date mission_period_month_title"
                     onClick={togglePeriodDatePicker}
                   >
-                    {draftAddDate.year}.{String(draftAddDate.month).padStart(2, '0')}
+                    {draftAddDate.year}.{String(draftAddDate.month).padStart(2, '0')}.{String(draftAddDate.day).padStart(2, '0')}
                     <i className={`bx bx-chevron-${isPeriodDatePickerOpen ? 'up' : 'down'}`} />
                   </button>
                   {isPeriodDatePickerOpen && (

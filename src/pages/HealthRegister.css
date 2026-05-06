@@ -2,8 +2,6 @@
   display: grid;
   gap: 32px;
   width: 100%;
-  padding-top: 28px;
-  padding-bottom: 40px;
   background: #ffffff;
   color: #111111;
   box-sizing: border-box;
@@ -11,27 +9,11 @@
 
 .health_register_submit {
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  padding-top: 4px;
+  gap: 8px;
 }
 
-.health_register_submit_button {
-  width: 335px;
-  min-height: 54px;
-  padding: 10px 16px;
-  border: 0;
-  border-radius: 14px;
-  background: linear-gradient(90deg, #8f72f4, #836bea);
-  color: #ffffff;
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: -0.025em;
-}
-
-.health_register_submit_button.is_disabled {
-  background: #999999;
-}
 
 .health_register_notification {
   position: relative;
@@ -300,10 +282,6 @@
 
 .health_register_sheet_close {
   background: #f1f1f5;
-}
-
-.health_register_sheet_group button + button {
-  border-top: 1px solid #cfcfcf;
 }
 
 .health_gallery_layer {
@@ -961,6 +939,10 @@
   color: #ffffff;
 }
 
+.alert{
+  gap: 16px;
+}
+
 .health_register_alert_layer {
   position: fixed;
   inset: 0;
@@ -1002,7 +984,6 @@
   display: grid;
   justify-items: center;
   gap: 18px;
-  padding: 52px 36px 34px;
   text-align: center;
 }
 
@@ -1045,6 +1026,10 @@
 }
 
 .health_register_alert_browse {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
   padding: 0;
   border: 0;
   background: transparent;
@@ -1059,39 +1044,10 @@
   cursor: pointer;
 }
 
-.health_register_alert_action {
-  display: grid;
-  justify-items: center;
-  width: 100%;
-  padding: 0 0 34px;
-  box-sizing: border-box;
-}
-
-.health_register_alert_action > button {
-  display: flex;
-  width: min(100%, calc(100% - 72px));
-  min-height: 54px;
-  margin: 0 auto;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 16px;
-  border: 0;
-  border-radius: 14px;
-  background: linear-gradient(90deg, #8f72f4, #6d59f8);
-  color: #ffffff;
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: -0.025em;
-  white-space: nowrap;
-  cursor: pointer;
-}
 
 @media (max-width: 420px) {
   .health_register_page {
     gap: 28px;
-    padding-top: 26px;
-    padding-bottom: 34px;
   }
 
   .health_register_submit_button {
@@ -1175,7 +1131,6 @@
 
   .health_register_alert_copy {
     gap: 16px;
-    padding: 42px 26px 28px;
   }
 
   .health_register_alert_icon {
@@ -1200,16 +1155,4 @@
     font-size: 13px;
   }
 
-  .health_register_alert_action {
-    width: 100%;
-    padding: 0 0 28px;
-  }
-
-  .health_register_alert_action > button {
-    width: min(100%, calc(100% - 52px));
-    min-height: 54px;
-    margin: 0 auto;
-    border-radius: 14px;
-    font-size: 18px;
-  }
 }

@@ -4,23 +4,29 @@ import Button from '../components/html/Button'
 import Input from '../components/html/Input'
 import loginPetImg from '../img/illust_login_pet.jpg'
 import eyeIcon from '../svg/eye.svg'
+import helloIcon from '../svg/hello icon.svg'
 import eyeOffIcon from '../svg/eye_off.svg'
 import './Login.css'
 
 function Login() {
   const [id, setId] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState(false)
+  const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [passwordFocused, setPasswordFocused] = useState(false)
 
   const navigate = useNavigate()
 
   const handleSubmit = () => {
-    if (id === 'test.gmail.com' && password === '123456') {
-      setError(false)
+    if (!id.trim() && !password.trim()) {
+      setError('아이디와 비밀번호를 입력해 주세요.')
+      return
+    }
+    if (id === 'hello@jipsa.app' && password === '123456') {
+      setError('')
       navigate('/home')
     } else {
-      setError(true)
+      setError('아이디 또는 비밀번호가 잘못 입력되었습니다.')
     }
   }
 
@@ -28,7 +34,7 @@ function Login() {
     <div className="login_page">
       <div className="login_hero">
         <div className="login_hero_text">
-          <h2>집사인생에 오신 것을<br />환영해요 👋</h2>
+          <h2>집사인생에 오신 것을<br />환영해요 <img src={helloIcon} alt="" aria-hidden="true" width={28} height={28} style={{ verticalAlign: '-4px' }} /></h2>
           <p>반려동물과 함께하는 소중한 순간을<br />기록하고 관리해 보세요.</p>
         </div>
         <img src={loginPetImg} alt="반려동물 일러스트" className="login_hero_img" />
@@ -41,34 +47,36 @@ function Login() {
         >
           <div className="login_inputs">
             <div className="login_input_wrap">
-              <Input value={id} placeholder="아이디 입력" onChange={(v) => { setId(v); setError(false) }} />
+              <Input value={id} placeholder="아이디 입력" onChange={(v) => { setId(v); setError('') }} />
               {id && (
                 <div className="login_input_actions">
-                  <button type="button" className="login_input_clear" onClick={() => { setId(''); setError(false) }}>
+                  <button type="button" className="login_input_clear" onClick={() => { setId(''); setError('') }}>
                     <i className="bx bx-x" />
                   </button>
                 </div>
               )}
             </div>
             <div className="login_input_wrap">
-              <Input value={password} placeholder="비밀번호 입력" type={showPassword ? 'text' : 'password'} onChange={(v) => { setPassword(v); setError(false) }} />
-              {password && (
+              <Input value={password} placeholder="비밀번호 입력" type={showPassword ? 'text' : 'password'} onChange={(v) => { setPassword(v); setError('') }} onFocus={() => setPasswordFocused(true)} onBlur={() => setPasswordFocused(false)} />
+              {(password || passwordFocused) && (
                 <div className="login_input_actions">
                   <button type="button" className="login_input_eye" onClick={() => setShowPassword((p) => !p)}>
                     <img src={showPassword ? eyeIcon : eyeOffIcon} alt="" />
                   </button>
-                  <button type="button" className="login_input_clear" onClick={() => { setPassword(''); setError(false) }}>
-                    <i className="bx bx-x" />
-                  </button>
+                  {password && (
+                    <button type="button" className="login_input_clear" onClick={() => { setPassword(''); setError('') }}>
+                      <i className="bx bx-x" />
+                    </button>
+                  )}
                 </div>
               )}
             </div>
           </div>
-          <p className="login_error" style={{ visibility: error ? 'visible' : 'hidden' }}>아이디 또는 비밀번호가 잘못 입력되었습니다.</p>
-          <Button type="submit" className="purple_btn" disabled={!id.trim() && !password.trim()}>로그인</Button>
+          {error && <p className="login_error">{error}</p>}
+          <Button type="submit" className="purple_btn" style={!id.trim() && !password.trim() ? { background: '#A5ADB8' } : undefined}>로그인</Button>
         </form>
 
-        <Link to="#" className="login_guest_link" onClick={() => { setId('test.gmail.com'); setPassword('123456') }}>체험용 계정으로 둘러보기</Link>
+        <Link to="#" className="login_guest_link" onClick={() => { setId('hello@jipsa.app'); setPassword('123456') }}>체험용 계정으로 둘러보기</Link>
 
         <div className="login_social">
           <div className="login_social_divider">

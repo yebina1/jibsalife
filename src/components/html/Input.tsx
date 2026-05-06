@@ -4,9 +4,11 @@ type InputProps = {
   ariaLabel?: string
   type?: 'text' | 'password' | 'email' | 'number'
   onChange: (value: string) => void
+  onFocus?: () => void
+  onBlur?: () => void
 }
 
-function Input({ value, placeholder, ariaLabel, type = 'text', onChange }: InputProps) {
+function Input({ value, placeholder, ariaLabel, type = 'text', onChange, onFocus, onBlur }: InputProps) {
   return (
     <input
       aria-label={ariaLabel}
@@ -14,6 +16,8 @@ function Input({ value, placeholder, ariaLabel, type = 'text', onChange }: Input
       type={type}
       value={value}
       onChange={(event) => onChange(event.target.value)}
+      onFocus={onFocus}
+      onBlur={onBlur}
     />
   )
 }

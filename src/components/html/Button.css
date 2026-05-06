@@ -1,19 +1,37 @@
 .purple_btn {
-  width: min(100%, 472px);
+  width: 100%;
   height: 54px;
   border-radius: 8px;
   background: #9174FF;
   color: #ffffff;
   font-size: 16px;
   font-weight: 600;
-  margin-top: 20px;
-  margin-bottom: 20px;
 }
 
 .purple_btn:disabled {
   background: rgba(160, 141, 255, 0.45);
   color: rgba(255, 255, 255, 0.72);
   cursor: not-allowed;
+}
+
+.purple_btn.is_disabled {
+  background: #A5ADB8;
+}
+
+.deactivation_btn {
+  width: 100%;
+  height: 54px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #8f72f4, #836bea);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.deactivation_btn.is_disabled {
+  background: #A5ADB8;
 }
 
 .white_btn {
@@ -26,6 +44,4 @@
   font-size: 16px;
   font-weight: 600;
   border: 1px solid #E5E5EC;
-  margin-top: 20px;
-  margin-bottom: 20px;
 }

@@ -1,7 +1,7 @@
 .health_page {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 48px;
 }
 
 .health_page.health_page :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, a, button, li, label, input, textarea, select),
@@ -21,7 +21,7 @@
 .health_intro {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
 }
 
 .health_intro_content{
@@ -33,7 +33,8 @@
 .health_intro_text {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
+  align-items: center;
+  gap: 4px;
   min-width: 0;
 }
 
@@ -42,13 +43,11 @@
 }
 
 .health_intro_text .title h3 {
-  font-size: 17px;
-  line-height: 1.25;
+  line-height: 1.4;
 }
 
 .health_intro_text .title p {
-  font-size: 12px;
-  line-height: 1.35;
+  font-size: 14px;
 }
 
 .health_intro_image {
@@ -77,6 +76,7 @@
 
 .health_guide span{
   color: var(--point-dark-red);
+  font-size: 14px;
 }
 
 .health_check {
@@ -126,12 +126,6 @@
   height: 42px;
 }
 
-.health_page > .notice_text {
-  margin-top: 0;
-  font-size: 12px;
-  line-height: 1.3;
-}
-
 @media (max-width: 420px) {
   .health_guide {
     gap: 8px;
@@ -144,7 +138,7 @@
 
   .health_intro {
     grid-template-columns: minmax(0, 1fr) 96px;
-    gap: 8px;
+    gap: 20px;
   }
 
   .health_intro_image {
@@ -180,10 +174,6 @@
   .health_page > .white_btn {
     height: 40px;
   }
-
-  .health_page > .notice_text {
-    font-size: 12px;
-  }
 }
 
 @media (max-width: 360px) {
@@ -193,7 +183,7 @@
 
   .health_intro {
     grid-template-columns: minmax(0, 1fr) 82px;
-    gap: 10px;
+    gap: 20px;
   }
 
   .health_intro_image {

@@ -5,6 +5,8 @@ import PageHeader from '../components/PageHeader'
 import HeaderIcon from '../components/HeaderIcon'
 import BackButton from '../components/html/BackButton'
 import Button from '../components/html/Button'
+import Alert from '../components/Alert'
+import AddSheet from '../components/AddSheet'
 import samplePetImage from '../img/my pet image.jpg'
 import { type ObservationStatus, writeStoredHealthResultInput } from '../utils/healthResultPolicy'
 
@@ -920,14 +922,17 @@ function HealthRegister() {
   }
 
   const handleBrowseDemo = () => {
-    appendEntries('photo', [
-      {
-        id: `photo-demo-${Date.now()}`,
-        preview: samplePetImage,
-        label: '테스트용 이미지',
-        mediaType: 'image',
-      },
-    ])
+    const alreadyAdded = registeredEntries.photo.some((entry) => entry.id.startsWith('photo-demo-'))
+    if (!alreadyAdded) {
+      appendEntries('photo', [
+        {
+          id: `photo-demo-${Date.now()}`,
+          preview: samplePetImage,
+          label: '테스트용 이미지',
+          mediaType: 'image',
+        },
+      ])
+    }
     setIsEmptyAlertOpen(false)
   }
 
@@ -989,7 +994,7 @@ function HealthRegister() {
           <div className="health_register_editor_preview">
             <video src={editorAsset.src} controls playsInline />
           </div>
-          <Button type="button" className="health_register_submit_button" onClick={saveEditedAsset}>
+          <Button type="button" className="deactivation_btn" onClick={saveEditedAsset}>
             추가하기
           </Button>
         </section>
@@ -1115,7 +1120,7 @@ function HealthRegister() {
           </button>
         </div>
 
-        <Button type="button" className="health_register_submit_button" onClick={saveEditedAsset}>
+        <Button type="button" className="deactivation_btn" onClick={saveEditedAsset}>
           추가하기
         </Button>
       </section>
@@ -1266,10 +1271,15 @@ function HealthRegister() {
           </section>
         ))}
 
+        
+
         <div className="health_register_submit">
+          <button type="button" className="health_register_alert_browse" onClick={handleBrowseDemo}>
+          테스트용 이미지로 둘러보기
+          </button>
           <Button
             type="button"
-            className={`health_register_submit_button ${!hasRegisteredContent ? 'is_disabled' : ''}`}
+            className={`deactivation_btn ${!hasRegisteredContent ? 'is_disabled' : ''}`}
             aria-disabled={!hasRegisteredContent}
             onClick={handleSubmit}
           >
@@ -1279,13 +1289,7 @@ function HealthRegister() {
       </main>
 
       {isActionSheetOpen ? (
-        <div className="health_register_sheet_layer" role="presentation">
-          <button
-            type="button"
-            className="health_register_sheet_dim"
-            aria-label="등록 메뉴 닫기"
-            onClick={() => setIsActionSheetOpen(false)}
-          />
+        <AddSheet onClose={() => setIsActionSheetOpen(false)}>
           <section className="health_register_sheet" aria-label="등록 방법">
             <div className="health_register_sheet_group">
               {actionSheetOptions[currentActionSection].map((action) => (
@@ -1296,13 +1300,14 @@ function HealthRegister() {
             </div>
             <button
               type="button"
-              className="health_register_sheet_close"
+              className="purple_btn"
+              style={{ marginTop: '20px', marginBottom: '20px' }}
               onClick={() => setIsActionSheetOpen(false)}
             >
               닫기
             </button>
           </section>
-        </div>
+        </AddSheet>
       ) : null}
 
       {isGalleryOpen ? (
@@ -1348,28 +1353,9 @@ function HealthRegister() {
         </section>
       ) : null}
 
-      {editorAsset ? (
-        <div className="health_register_editor_layer" role="presentation">
-          <button
-            type="button"
-            className="health_register_editor_dim"
-            aria-label="편집 닫기"
-            onClick={closeEditor}
-          />
-          {renderEditorContent()}
-        </div>
-      ) : null}
-
       {isEmptyAlertOpen ? (
-        <div className="health_register_alert_layer" role="presentation">
-          <button
-            type="button"
-            className="health_register_alert_dim"
-            aria-label="알림 닫기"
-            onClick={() => setIsEmptyAlertOpen(false)}
-          />
-          <section className="health_register_alert" role="alertdialog" aria-modal="true" aria-label="등록 안내">
-            <div className="health_register_alert_copy">
+        <Alert onClose={() => setIsEmptyAlertOpen(false)}>
+          <div className="health_register_alert_copy">
               <span className="health_register_alert_icon" aria-hidden="true">
                 <svg viewBox="0 0 48 48">
                   <path d="M24 9 38 33.5a2.8 2.8 0 0 1-2.4 4.2H12.4A2.8 2.8 0 0 1 10 33.5L24 9Z" />
@@ -1379,16 +1365,22 @@ function HealthRegister() {
               </span>
               <strong>등록된 기록이 없어요</strong>
               <p>사진, 동영상, 음성, 메모 중 하나를 추가해주세요.</p>
-              <button type="button" className="health_register_alert_browse" onClick={handleBrowseDemo}>
-                테스트용 이미지로 둘러보기
-              </button>
             </div>
-            <div className="health_register_alert_action">
-              <button type="button" onClick={() => setIsEmptyAlertOpen(false)}>
-                확인
-              </button>
-            </div>
-          </section>
+            <Button type="button" className="purple_btn" onClick={() => setIsEmptyAlertOpen(false)}>
+              확인
+            </Button>
+        </Alert>
+      ) : null}
+
+      {editorAsset ? (
+        <div className="health_register_editor_layer" role="presentation">
+          <button
+            type="button"
+            className="health_register_editor_dim"
+            aria-label="편집 닫기"
+            onClick={closeEditor}
+          />
+          {renderEditorContent()}
         </div>
       ) : null}
     </>

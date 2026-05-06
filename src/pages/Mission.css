@@ -303,7 +303,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 16px 20px;
+  padding-block: 16px;
   border-bottom: 1px solid #f0f0f5;
 }
 
@@ -345,11 +345,11 @@
 }
 
 .mission_add_save_wrap {
-  padding: 16px 20px;
+  padding-block: 16px;
 }
 
 .mission_category_picker {
-  padding: 0 20px 28px;
+  padding-block: 0 28px;
 }
 
 .mission_category_picker_top {
@@ -421,7 +421,7 @@
 }
 
 .mission_category_add {
-  padding: 0 26px 28px;
+  padding-block: 0 28px;
 }
 
 .mission_category_add h2 {
@@ -517,7 +517,7 @@
 .mission_period_picker {
   position: relative;
   min-height: min(640px, calc(100dvh - 60px));
-  padding: 28px 26px 28px;
+  padding-block: 28px;
   overflow: hidden;
 }
 
