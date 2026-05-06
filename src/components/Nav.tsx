@@ -112,15 +112,16 @@ function Nav() {
         {navItems.map((item) => {
           if ('disabled' in item && item.disabled) {
             return (
-              <button
+              <NavLink
                 key={item.path}
-                type="button"
+                to={item.path}
                 className="layout_nav_link disabled"
                 aria-disabled="true"
+                onClick={(e) => e.preventDefault()}
               >
                 <NavIcon type={item.icon} active={false} />
                 <span className="layout_nav_label">{item.label}</span>
-              </button>
+              </NavLink>
             )
           }
 

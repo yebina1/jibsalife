@@ -4,8 +4,10 @@
   border-radius: 8px;
   background: #9174FF;
   color: #ffffff;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .purple_btn:disabled {
@@ -24,4 +26,6 @@
   font-size: 16px;
   font-weight: 600;
   border: 1px solid #E5E5EC;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
