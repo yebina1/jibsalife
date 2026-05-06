@@ -10,6 +10,17 @@
   position: relative;
 }
 
+.mypage_header_gear {
+  color: #999999;
+  cursor: default;
+  pointer-events: none;
+}
+
+.mypage_header_gear .header_icon {
+  color: #999999;
+  stroke: #999999;
+}
+
 .mypage_notification::after {
   position: absolute;
   top: 3px;
@@ -18,12 +29,13 @@
   height: 7px;
   border: 2px solid #ffffff;
   border-radius: 50%;
-  background: #ff3b30;
+  background: #999999;
   content: '';
 }
 
 .mypage_location_card {
   display: flex;
+  height: 64px;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
@@ -60,165 +72,123 @@
   stroke-width: 2;
 }
 
-.mypage_profile_card {
+.mypage_profile_section {
   display: grid;
-  grid-template-columns: 118px minmax(0, 1fr);
-  gap: 22px;
-  align-items: center;
-  padding: 18px 22px;
-  border-radius: 18px;
-  background: #faf8ff;
+  gap: 28px;
 }
 
-.mypage_profile_avatar {
-  width: 112px;
-  height: 112px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.mypage_profile_content {
-  display: grid;
-  min-width: 0;
-  gap: 12px;
-}
-
-.mypage_profile_title_row {
+.mypage_profile_heading {
   display: flex;
-  min-width: 0;
   align-items: center;
-  gap: 8px;
-}
-
-.mypage_profile_title_row h1 {
-  margin: 0;
-  overflow: hidden;
-  color: #111111;
-  font-size: 20px;
-  font-weight: 800;
-  line-height: 1.2;
-  letter-spacing: -0.035em;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.mypage_profile_title_row > span {
-  font-size: 20px;
-}
-
-.mypage_profile_title_row button {
-  width: auto;
-  height: 30px;
-  margin-left: auto;
-  padding: 0 12px;
-  border: 0;
-  border-radius: 7px;
-  background: #f0eaff;
-  color: #6c59f7;
-  font-size: 12px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.mypage_point {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #7d6cf6;
-}
-
-.mypage_point span {
-  display: inline-grid;
-  width: 18px;
-  height: 18px;
-  place-items: center;
-  border-radius: 50%;
-  background: #ffe870;
-  color: #6c59f7;
-  font-size: 13px;
-  font-weight: 900;
-  line-height: 1;
-}
-
-.mypage_point strong {
-  font-size: 18px;
-  font-weight: 800;
-  line-height: 1;
-}
-
-.mypage_profile_stats {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
+  padding-left: 2px;
 }
 
-.mypage_profile_stats div {
-  display: grid;
-  gap: 4px;
+.mypage_profile_heading h3 {
+  margin: 0;
+  color: #000000;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.mypage_profile_heading span {
+  display: inline-flex;
+  width: 44px;
+  height: 29px;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border-radius: 8px;
+  background: #98B7FF;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.summary_profile_card.mypage_profile_card {
+  border-radius: 24px;
+}
+
+.mypage_profile_card_wrap {
+  position: relative;
+}
+
+.mypage_profile_card .summary_profile_card_name_row span {
+  display: none;
+}
+
+.mypage_profile_card .summary_profile_card_header svg {
+  width: 24px;
+  height: 24px;
+}
+
+.mypage_profile_card .summary_profile_card_edit {
+  color: #999999;
+  cursor: default;
+  pointer-events: none;
+}
+
+.mypage_profile_card .summary_profile_card_details {
+  position: relative;
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  padding-left: 24px;
+  background: url('../svg/point.svg') left center / 20px 20px no-repeat;
+}
+
+.mypage_profile_card .summary_profile_card_details span,
+.mypage_profile_card .summary_profile_card_details strong {
+  color: #6E5DF8;
+}
+
+.mypage_profile_card .summary_profile_card_detail_label {
+  display: none;
+}
+
+.mypage_profile_card .summary_profile_card_guide {
+  width: 100%;
+  justify-content: flex-end;
+  color: #555555;
+  white-space: nowrap;
+}
+
+.mypage_profile_card .summary_profile_card_guide .chevron_icon {
+  color: #111111;
+}
+
+.mypage_profile_card .summary_profile_card_stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.mypage_profile_card .summary_profile_card_stats li {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+}
+
+.mypage_profile_card .summary_profile_card_stats li:not(:last-child)::after {
+  bottom: 24px;
+}
+
+.mypage_profile_card .summary_profile_card_stats span i {
+  display: none;
+}
+
+.mypage_profile_card .summary_profile_card_stats li span,
+.mypage_profile_card .summary_profile_card_stats li strong {
   text-align: center;
 }
 
-.mypage_profile_stats strong {
-  color: #8976f2;
-  font-size: 20px;
-  font-weight: 800;
-  line-height: 1;
-}
-
-.mypage_profile_stats span {
-  color: #333333;
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-.mypage_badges {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  gap: 10px;
-}
-
-.mypage_badges > span {
-  color: #666666;
-  font-size: 15px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.mypage_badge_icons {
-  display: inline-flex;
-  min-width: 0;
-  align-items: center;
-  gap: 6px;
-}
-
-.mypage_badge_icons b {
-  display: inline-grid;
-  width: 34px;
-  height: 34px;
-  place-items: center;
-  border-radius: 50%;
-  background: #fff2df;
-  box-shadow: inset 0 0 0 2px rgb(140 99 231 / 20%);
-  font-size: 21px;
-}
-
-.mypage_badges button {
-  width: 26px;
-  height: 26px;
-  margin-left: auto;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: #333333;
-  font-size: 28px;
+.mypage_profile_card .summary_profile_card_stats li span {
+  width: 100%;
+  justify-content: center;
 }
 
 .mypage_pet_area {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 122px;
+  grid-template-columns: minmax(0, 1fr) minmax(96px, 122px);
   gap: 12px;
 }
 
@@ -256,13 +226,11 @@
 
 .mypage_pet_body p {
   margin: 0;
-  overflow: hidden;
   color: #777777;
   font-size: 12px;
   font-weight: 600;
-  line-height: 1.2;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.35;
+  word-break: keep-all;
 }
 
 .mypage_pet_body span {
@@ -301,6 +269,7 @@
   width: 100%;
   height: 100%;
   min-height: 174px;
+  max-width: 122px;
   place-items: center;
   align-content: center;
   gap: 16px;
@@ -335,6 +304,9 @@
   gap: 10px;
   margin: 0;
   padding: 0;
+  border: 1px solid #E5E5EC;
+  border-radius: 12px;
+  overflow: hidden;
   list-style: none;
 }
 
@@ -378,52 +350,26 @@
   color: #444444;
 }
 
+.mypage_menu_button:disabled {
+  cursor: default;
+}
+
+.mypage_menu_button:disabled .mypage_menu_left,
+.mypage_menu_button:disabled > .chevron_icon {
+  color: #999999;
+}
+
 @media (max-width: 420px) {
   .mypage_page {
     gap: 22px;
   }
 
-  .mypage_profile_card {
-    grid-template-columns: 112px minmax(0, 1fr);
-    gap: 14px;
-    padding: 18px 12px;
+  .mypage_profile_section {
+    gap: 24px;
   }
 
-  .mypage_profile_avatar {
-    width: 104px;
-    height: 104px;
-  }
-
-  .mypage_profile_title_row h1 {
-    font-size: 18px;
-  }
-
-  .mypage_profile_title_row button {
-    height: 28px;
-    padding: 0 9px;
-    font-size: 11px;
-  }
-
-  .mypage_profile_stats {
-    gap: 4px;
-  }
-
-  .mypage_profile_stats strong {
-    font-size: 18px;
-  }
-
-  .mypage_profile_stats span {
-    font-size: 12px;
-  }
-
-  .mypage_badges > span {
-    font-size: 14px;
-  }
-
-  .mypage_badge_icons b {
-    width: 30px;
-    height: 30px;
-    font-size: 18px;
+  .mypage_profile_heading h1 {
+    font-size: 32px;
   }
 
   .mypage_location_card {
@@ -431,7 +377,7 @@
   }
 
   .mypage_pet_area {
-    grid-template-columns: minmax(0, 1fr) 122px;
+    grid-template-columns: minmax(0, 1fr) minmax(96px, 122px);
   }
 
   .mypage_pet_card {
@@ -446,21 +392,16 @@
 }
 
 @media (max-width: 360px) {
-  .mypage_profile_card {
-    grid-template-columns: 92px minmax(0, 1fr);
+  .mypage_profile_heading {
+    gap: 14px;
   }
 
-  .mypage_profile_avatar {
-    width: 88px;
-    height: 88px;
+  .mypage_profile_heading h1 {
+    font-size: 29px;
   }
 
-  .mypage_profile_title_row {
-    gap: 5px;
-  }
-
-  .mypage_profile_stats span {
-    font-size: 10px;
+  .mypage_profile_card .summary_profile_card_stats {
+    column-gap: 10px;
   }
 
   .mypage_location_card {

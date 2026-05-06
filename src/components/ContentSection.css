@@ -1,11 +1,6 @@
 .content_section {
   display: grid;
   gap: 16px;
-  margin: 0 0 48px;
-}
-
-.content_section:last-child {
-  margin-bottom: 0;
 }
 
 .content_section_header {

@@ -122,8 +122,10 @@
   font-weight: 500;
 }
 
-.health_page > .white_btn {
-  height: 42px;
+.health_intro .white_btn {
+  color: #999999;
+  cursor: default;
+  pointer-events: none;
 }
 
 @media (max-width: 420px) {
@@ -169,10 +171,6 @@
 
   .health_check_item span {
     font-size: 12px;
-  }
-
-  .health_page > .white_btn {
-    height: 40px;
   }
 }
 
