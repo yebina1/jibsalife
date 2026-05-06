@@ -1,302 +1,172 @@
 .health_result_detail_boxes {
-  display: flex;
-  width: min(100%, 736px);
-  flex-direction: column;
-  gap: 16px;
-}
-
-.health_result_detail_box {
-  position: relative;
   display: grid;
-  min-height: 236px;
+  width: min(100%, 736px);
+  gap: 18px;
+}
+
+.health_result_detail_consult_banner {
+  display: grid;
+  min-height: 112px;
+  grid-template-columns: minmax(0, 1fr) 110px;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 18px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #1778ff 0%, #8f48ff 100%);
+  color: #ffffff;
   overflow: hidden;
-  box-sizing: border-box;
-  grid-template-columns: minmax(0, 1fr) 178px;
-  gap: 16px;
-  padding: 28px 34px;
-  border-radius: 12px;
-  color: #ffffff;
-  text-align: left;
-}
-
-.health_result_detail_box.is_link {
   text-decoration: none;
+  box-sizing: border-box;
 }
 
-.health_result_detail_box.warning {
-  background: linear-gradient(135deg, #ff4f60 0%, #ff7656 100%);
-}
-
-.health_result_detail_box.cause {
-  background: linear-gradient(135deg, #8f4dff 0%, #7a46f6 100%);
-}
-
-.health_result_detail_box.symptom {
-  background: linear-gradient(135deg, #123f81 0%, #2459bd 100%);
-}
-
-.health_result_detail_box.action {
-  background: linear-gradient(135deg, #ff9b54 0%, #ffbd6b 100%);
-}
-
-.health_result_detail_box.consult {
-  min-height: 142px;
-  background: linear-gradient(135deg, #1786ff 0%, #8b45ff 100%);
-}
-
-.health_result_detail_box.consult .health_result_detail_content {
-  align-self: center;
-}
-
-.health_result_detail_box.consult .health_result_detail_box_message {
-  margin: 8px 0 10px;
-  font-size: 18px;
-  line-height: 1.45;
-}
-
-.health_result_detail_box.consult .health_result_detail_box_description {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.45;
-}
-
-.health_result_detail_content {
-  position: relative;
-  z-index: 1;
-  min-width: 0;
-}
-
-.health_result_detail_box_header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.health_result_detail_box_header h2 {
-  margin: 0;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.3;
-}
-
-.health_result_detail_box_header span {
-  display: inline-flex;
-  min-height: 36px;
-  flex: 0 0 auto;
-  align-items: center;
-  justify-content: center;
-  padding: 0 18px;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 78%);
-  color: inherit;
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.health_result_detail_box_header span:empty {
-  min-height: 0;
-  padding: 0;
-  background: transparent;
-}
-
-.health_result_detail_box.warning .health_result_detail_box_header span {
-  color: #f5242e;
-}
-
-.health_result_detail_box.cause .health_result_detail_box_header span {
-  color: #7a46f6;
-}
-
-.health_result_detail_box.symptom .health_result_detail_box_header span {
-  color: #163f83;
-}
-
-.health_result_detail_box.action .health_result_detail_box_header span {
-  color: #ff7a38;
-}
-
-.health_result_detail_box_message {
-  margin: 26px 0 16px;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.4;
-  letter-spacing: -0.025em;
-  text-shadow: 0 2px 8px rgb(0 0 0 / 18%);
-  white-space: pre-line;
-}
-
-.health_result_detail_box_description {
-  margin: 0 0 14px;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.4;
-  letter-spacing: -0.025em;
-}
-
-.health_result_detail_box ul {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-left: 18px;
-  margin: 0;
-  list-style: disc;
-}
-
-.health_result_detail_box li {
-  padding-left: 2px;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.4;
-  letter-spacing: -0.025em;
-}
-
-.health_result_detail_box li::marker {
+.health_result_detail_consult_banner strong {
+  display: block;
   color: #ffffff;
-  font-size: 0.75em;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: -0.025em;
 }
 
-.health_result_detail_visual {
-  align-self: center;
-  justify-self: center;
-  width: 166px;
-  max-width: 100%;
-  height: auto;
+.health_result_detail_consult_banner p {
+  margin: 8px 0 0;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.025em;
+}
+
+.health_result_detail_consult_banner img {
+  display: block;
+  width: 104px;
+  height: 86px;
   object-fit: contain;
 }
 
-.health_result_detail_box.warning .health_result_detail_visual {
-  width: 156px;
+.health_result_detail_card_grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 18px;
 }
 
-.health_result_detail_box.action .health_result_detail_visual {
-  width: 168px;
+.health_result_detail_box {
+  display: flex;
+  min-height: 231px;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16px 16px 18px;
+  border: 1px solid #111111;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #111111;
+  box-sizing: border-box;
 }
 
-.health_result_detail_box.consult .health_result_detail_visual {
-  width: 174px;
+.health_result_detail_badge {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+}
+
+.health_result_detail_box.warning .health_result_detail_badge {
+  color: #ff1f2d;
+}
+
+.health_result_detail_box.cause .health_result_detail_badge {
+  color: #6d59f8;
+}
+
+.health_result_detail_box.symptom .health_result_detail_badge {
+  color: #17458f;
+}
+
+.health_result_detail_box.action .health_result_detail_badge {
+  color: #ff7658;
+}
+
+.health_result_detail_box h2 {
+  margin: 24px 0 14px;
+  color: #111111;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: -0.025em;
+  word-break: keep-all;
+}
+
+.health_result_detail_description_group {
+  display: grid;
+  gap: 4px;
+  margin-top: auto;
+}
+
+.health_result_detail_description_group p {
+  margin: 0;
+  color: #111111;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.025em;
+  word-break: keep-all;
 }
 
 @media (max-width: 420px) {
   .health_result_detail_boxes {
-    width: min(100%, 351px);
-    gap: 16px;
+    width: 100%;
+    gap: 18px;
+  }
+
+  .health_result_detail_consult_banner {
+    min-height: 112px;
+    grid-template-columns: minmax(0, 1fr) 96px;
+    padding: 18px 18px;
+  }
+
+  .health_result_detail_consult_banner strong {
+    font-size: 16px;
+  }
+
+  .health_result_detail_consult_banner p {
+    font-size: 12px;
+  }
+
+  .health_result_detail_consult_banner img {
+    width: 96px;
+    height: 78px;
+  }
+
+  .health_result_detail_card_grid {
+    gap: 16px 18px;
   }
 
   .health_result_detail_box {
-    min-height: 189px;
-    display: block;
-    padding: 24px 18px 20px;
-    border-radius: 8px;
+    min-height: 231px;
+    padding: 15px 15px 17px;
   }
 
-  .health_result_detail_box.consult {
-    min-height: 116px;
+  .health_result_detail_badge {
+    min-height: 24px;
+    padding: 0 10px;
+    font-size: 11px;
   }
 
-  .health_result_detail_content {
-    max-width: calc(100% - 104px);
-  }
-
-  .health_result_detail_box.action .health_result_detail_content {
-    max-width: calc(100% - 96px);
-  }
-
-  .health_result_detail_box.consult .health_result_detail_content {
-    max-width: calc(100% - 124px);
-  }
-
-  .health_result_detail_box.consult .health_result_detail_box_message {
-    margin: 4px 0 8px;
+  .health_result_detail_box h2 {
+    margin: 22px 0 12px;
     font-size: 16px;
-    line-height: 1.45;
   }
 
-  .health_result_detail_box.consult .health_result_detail_box_description {
+  .health_result_detail_description_group p {
     font-size: 12px;
-    line-height: 1.4;
-  }
-
-  .health_result_detail_box_header {
-    align-items: center;
-    gap: 10px;
-  }
-
-  .health_result_detail_box_header h2 {
-    font-size: 12px;
-    font-weight: 500;
-  }
-
-  .health_result_detail_box_header span {
-    min-height: 28px;
-    padding: 0 12px;
-    font-size: 12px;
-    font-weight: 600;
-  }
-
-  .health_result_detail_box_message {
-    margin: 24px 0 14px;
-    font-size: 20px;
-    line-height: 1.4;
-  }
-
-  .health_result_detail_box_description {
-    margin-bottom: 12px;
-    font-size: 12px;
-    line-height: 1.4;
-  }
-
-  .health_result_detail_box ul {
-    gap: 6px;
-    padding-left: 15px;
-  }
-
-  .health_result_detail_box li {
-    font-size: 12px;
-    line-height: 1.4;
-  }
-
-  .health_result_detail_visual,
-  .health_result_detail_box.warning .health_result_detail_visual,
-  .health_result_detail_box.action .health_result_detail_visual,
-  .health_result_detail_box.consult .health_result_detail_visual {
-    position: absolute;
-    right: 18px;
-    bottom: 28px;
-    width: 102px;
-    transform: none;
-  }
-
-  .health_result_detail_box.warning .health_result_detail_visual {
-    width: 100px;
-    right: 20px;
-    bottom: 34px;
-  }
-
-  .health_result_detail_box.cause .health_result_detail_visual {
-    width: 112px;
-    right: 14px;
-    bottom: 28px;
-    transform: none;
-  }
-
-  .health_result_detail_box.symptom .health_result_detail_visual {
-    width: 112px;
-    right: 14px;
-    bottom: 28px;
-    transform: none;
-  }
-
-  .health_result_detail_box.action .health_result_detail_visual {
-    width: 108px;
-    right: 14px;
-    bottom: 28px;
-  }
-
-  .health_result_detail_box.consult .health_result_detail_visual {
-    width: 114px;
-    right: 10px;
-    bottom: 10px;
   }
 }

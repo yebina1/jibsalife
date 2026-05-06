@@ -1,7 +1,7 @@
 ﻿.community_page {
   display: flex;
   flex-direction: column;
-  padding: 14px 6px 24px;
+  padding: 72px 6px 24px;
   background: #ffffff;
   color: #131313;
 }
@@ -79,19 +79,22 @@
 }
 
 .community_tab_bar {
-  position: sticky;
-  top: 0;
-  z-index: 90;
+  position: fixed;
+  top: var(--layout-header-height, 97px);
+  left: 50%;
+  z-index: 105;
   display: grid;
+  width: min(100%, var(--layout-max-width, 1440px));
   grid-template-columns: repeat(4, minmax(0, 1fr));
   order: 1;
   gap: 0;
   min-height: 58px;
   padding-top: 0;
   padding-bottom: 0;
-  margin-bottom: 0;
+  margin: 0;
   background: #ffffff;
   border-bottom: 1px solid #ececf2;
+  transform: translateX(-50%);
 }
 
 .community_tab_bar button {
@@ -1961,7 +1964,7 @@
 
 @media (max-width: 420px) {
   .community_page {
-    padding: 14px 4px 20px;
+    padding: 68px 4px 20px;
   }
 
   .community_tab_bar,
@@ -1986,9 +1989,11 @@
 
   .community_tab_bar {
     gap: 0;
+    width: min(100%, var(--layout-max-width, 1440px));
     min-height: 54px;
     padding-top: 0;
     padding-bottom: 0;
+    margin: 0;
   }
 
   .community_tab_bar button {
