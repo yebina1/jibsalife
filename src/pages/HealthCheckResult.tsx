@@ -1,4 +1,4 @@
-import './health.css'
+import './Health.css'
 import './HealthCheckResult.css'
 import PageHeader from '../components/PageHeader'
 import ContentSection from '../components/ContentSection'

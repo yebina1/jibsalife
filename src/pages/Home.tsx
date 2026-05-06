@@ -1,4 +1,4 @@
-import './home.css'
+import './Home.css'
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import ChevronIcon from '../components/ChevronIcon'

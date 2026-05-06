@@ -2,8 +2,11 @@ import './App.css'
 import { Navigate, Route, Routes } from 'react-router'
 import Layout from './layouts/Layout'
 import ScrollToTop from './components/ScrollToTop'
-import Community from './pages/community'
-import Health from './pages/health'
+import CommunityChallenge from './pages/CommunityChallenge'
+import CommunityOverview from './pages/CommunityOverview'
+import CommunityPetStory from './pages/CommunityPetStory'
+import CommunityVote from './pages/CommunityVote'
+import Health from './pages/Health'
 import HealthCamera from './pages/HealthCamera'
 import HealthCheckLoading from './pages/HealthCheckLoading'
 import HealthCheckResult from './pages/HealthCheckResult'
@@ -16,10 +19,10 @@ import HealthResultActions from './pages/HealthResultActions'
 import HealthQna from './pages/HealthQna'
 import HealthRegister from './pages/HealthRegister'
 import HealthVetChat from './pages/HealthVetChat'
-import Home from './pages/home'
+import Home from './pages/Home'
 import Login from './pages/Login'
 import Mission from './pages/Mission'
-import MyPage from './pages/mypage'
+import MyPage from './pages/MyPage'
 import Place from './pages/Place'
 
 function App() {
@@ -48,7 +51,11 @@ function App() {
           <Route path="/health/hospitals/list" element={<HealthHospitalList />} />
           <Route path="/health/qna" element={<HealthQna />} />
           <Route path="/health/vet-chat" element={<HealthVetChat />} />
-          <Route path="/community" element={<Community />} />
+          <Route path="/community" element={<CommunityOverview />} />
+          <Route path="/community/overview" element={<CommunityOverview />} />
+          <Route path="/community/pet-story" element={<CommunityPetStory />} />
+          <Route path="/community/challenge" element={<CommunityChallenge />} />
+          <Route path="/community/vote" element={<CommunityVote />} />
           <Route path="/mypage" element={<MyPage />} />
         </Route>
       </Routes>

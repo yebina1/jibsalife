@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router'
-import './health.css'
+import './Health.css'
 import PageHeader from '../components/PageHeader'
 import ContentSection from '../components/ContentSection'
 import HealthCheck from '../components/HealthCheck'

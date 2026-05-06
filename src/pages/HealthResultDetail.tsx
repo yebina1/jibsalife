@@ -1,4 +1,4 @@
-import './health.css'
+import './Health.css'
 import './HealthResultDetail.css'
 import { useNavigate } from 'react-router'
 import PageHeader from '../components/PageHeader'

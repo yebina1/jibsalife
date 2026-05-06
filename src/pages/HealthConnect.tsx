@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router'
-import './health.css'
+import './Health.css'
 import './HealthConnect.css'
 import PageHeader from '../components/PageHeader'
 import ChevronIcon from '../components/ChevronIcon'

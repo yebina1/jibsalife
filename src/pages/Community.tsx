@@ -1,4 +1,3 @@
-import './community.css'
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import PageHeader from '../components/PageHeader'
@@ -11,6 +10,8 @@ import contents2 from '../img/contents2.png'
 import contents3 from '../img/contents3.png'
 import contents4 from '../img/contents4.png'
 import challengeHeadingImage from '../img/illust_login_pet.jpg'
+import leeyoriImage from '../img/leeyori.png'
+import pungpungiImage from '../img/pungpungi.png'
 
 const challengeItems = [
   {
@@ -46,42 +47,50 @@ const challengeItems = [
 const challengeCardItems = [
   {
     id: 1,
-    title: '제일 귀엽게 밥 먹는 귀염둥이는?',
+    title: '제일 귀엽게 밥을 먹는 귀염둥이는?',
     participants: 22,
     deadline: '04.30 마감',
-    image: contents1,
+    image: pungpungiImage,
     status: 'active',
   },
   {
     id: 2,
-    title: '간식 기다리기 챔피언은?',
+    title: '제일 귀엽게 밥을 먹는 귀염둥이는?',
     participants: 22,
     deadline: '04.30 마감',
-    image: contents2,
-    status: 'outline',
+    image: leeyoriImage,
+    status: 'active',
   },
   {
     id: 3,
-    title: '집사 바라기 1등은?',
-    participants: 22,
-    deadline: '04.30 마감',
-    image: contents3,
-    status: 'outline',
-  },
-  {
-    id: 4,
-    title: '오늘의 베스트 포즈는?',
-    participants: 22,
-    deadline: '04.30 마감',
-    image: contents4,
-    status: 'outline',
-  },
-  {
-    id: 5,
-    title: '표정 부자는 누구?',
+    title: '제일 귀엽게 밥을 먹는 귀염둥이는?',
     participants: 22,
     deadline: '04.30 마감',
     image: contents2,
+    status: 'active',
+  },
+  {
+    id: 4,
+    title: '제일 귀엽게 밥을 먹는 귀염둥이는?',
+    participants: 22,
+    deadline: '04.30 마감',
+    image: contents3,
+    status: 'active',
+  },
+  {
+    id: 5,
+    title: '제일 귀엽게 밥을 먹는 귀염둥이는?',
+    participants: 22,
+    deadline: '04.30 마감',
+    image: contents4,
+    status: 'active',
+  },
+  {
+    id: 6,
+    title: '제일 귀엽게 밥을 먹는 귀염둥이는?',
+    participants: 22,
+    deadline: '04.30 마감',
+    image: contents1,
     status: 'complete',
   },
 ] as const
@@ -145,8 +154,14 @@ const sortOptions = ['인기순', '최신순', '댓글순', '공유순'] as cons
 const createdPostsStorageKey = 'jibsalife.community.createdPosts'
 
 type TopTab = (typeof topTabs)[number]
-const topTabLabels = ['전체', '커뮤니티', '챌린지', '투표'] as const
+const topTabLabels = ['전체', '펫스토리', '챌린지', '투표'] as const
 const communitySubTabLabels = ['전체', '자랑하기', '일상', '반려상식'] as const
+const communityRouteByTopTab: Record<TopTab, string> = {
+  전체: '/community/overview',
+  커뮤니티: '/community/pet-story',
+  '챌린지 인증': '/community/challenge',
+  투표: '/community/vote',
+}
 type CommunitySubTab = (typeof communitySubTabs)[number]
 type VoteSubTab = (typeof voteSubTabs)[number]
 
@@ -281,14 +296,22 @@ const knowledgeFeedItems = [
   { id: 4, tag: '일상', title: '수술 전 피, 검사 꼭 필요할까?', image: contents4, likes: 8, comments: 3 },
 ] as const
 
+function getTopTabFromRoute(pathname: string, tabParam: string | null): TopTab {
+  if (pathname.endsWith('/pet-story') || tabParam === 'knowledge') return '커뮤니티'
+  if (pathname.endsWith('/challenge')) return '챌린지 인증'
+  if (pathname.endsWith('/vote')) return '투표'
+  return '전체'
+}
+
 function Community() {
   const navigate = useNavigate()
   const location = useLocation()
   const currentTabParam = new URLSearchParams(location.search).get('tab')
+  const routeTopTab = getTopTabFromRoute(location.pathname, currentTabParam)
   const initialKnowledgeView = currentTabParam === 'knowledge'
 
   const [selectedTopTab, setSelectedTopTab] = useState<TopTab>(
-    initialKnowledgeView ? '커뮤니티' : '전체'
+    routeTopTab
   )
   const [selectedCommunitySubTab, setSelectedCommunitySubTab] = useState<CommunitySubTab>(
     initialKnowledgeView ? '반려상식' : '전체'
@@ -321,19 +344,32 @@ function Community() {
   }
 
   useLayoutEffect(() => {
-    if (currentTabParam === 'overview' || currentTabParam === null) {
+    if (routeTopTab === '전체') {
       resetToOverview()
       return
     }
 
-    if (currentTabParam === 'knowledge') {
+    setSelectedTopTab(routeTopTab)
+    setIsSortOpen(false)
+    setIsCommunitySubTabOpen(false)
+    setSelectedChallengeId(null)
+    setSelectedVoteListId(null)
+    setSelectedVoteResultId(null)
+
+    if (routeTopTab === '커뮤니티') {
       setSelectedTopTab('커뮤니티')
-      setSelectedCommunitySubTab('반려상식')
+      setSelectedCommunitySubTab(currentTabParam === 'knowledge' ? '반려상식' : '전체')
       return
     }
 
-    resetToOverview()
-  }, [currentTabParam, location.key, location.state])
+    if (routeTopTab === '투표') {
+      setSelectedVoteSubTab('투표결과')
+      return
+    }
+
+    setSelectedCommunitySubTab('전체')
+    setSelectedVoteSubTab('전체')
+  }, [currentTabParam, location.key, location.state, routeTopTab])
 
   useEffect(() => {
     window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(createdPosts))
@@ -433,6 +469,7 @@ function Community() {
       },
       ...prev,
     ])
+    navigate('/community/pet-story')
     setSelectedTopTab(topTabs[1])
     setSelectedCommunitySubTab(draftTag)
     setSelectedSort(sortOptions[1])
@@ -484,6 +521,7 @@ function Community() {
               type="button"
               className={selectedTopTab === tab ? 'active' : ''}
               onClick={() => {
+                navigate(communityRouteByTopTab[tab])
                 setSelectedTopTab(tab)
                 setIsSortOpen(false)
                 setIsCommunitySubTabOpen(false)
@@ -595,6 +633,7 @@ function Community() {
                 <button
                   type="button"
                   onClick={() => {
+                    navigate('/community/pet-story')
                     setSelectedTopTab('커뮤니티')
                     setSelectedCommunitySubTab('전체')
                   }}
@@ -632,6 +671,7 @@ function Community() {
                 <button
                   type="button"
                   onClick={() => {
+                    navigate('/community/challenge')
                     setSelectedTopTab('챌린지 인증')
                     setSelectedChallengeId(null)
                   }}
@@ -664,6 +704,7 @@ function Community() {
                 <button
                   type="button"
                   onClick={() => {
+                    navigate('/community/vote')
                     setSelectedTopTab('투표')
                     setSelectedVoteSubTab('전체')
                     setSelectedVoteListId(null)

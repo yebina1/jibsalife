@@ -16,8 +16,8 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const [header, setHeader] = useState<HeaderConfig>(null)
   const { pathname, search } = useLocation()
   const isCameraPage = pathname === '/health/camera' && new URLSearchParams(search).get('guide') === 'false'
-  const noPaddingPaths = ['/community']
-  const hasContentPadding = !noPaddingPaths.includes(pathname)
+  const isCommunityPath = pathname.startsWith('/community')
+  const hasContentPadding = !isCommunityPath
   const contentClassName =
     hasContentPadding ? 'layout_content' : 'layout_content layout_content_no_padding'
   const hideFloatingAiButtonPaths = [
@@ -30,7 +30,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
     '/health/qna',
     '/health/vet-chat',
   ]
-  const hideFloatingAiButton = hideFloatingAiButtonPaths.includes(pathname)
+  const hideFloatingAiButton = hideFloatingAiButtonPaths.includes(pathname) || isCommunityPath
 
   const isMinimal = !showHeader && !showNav
 

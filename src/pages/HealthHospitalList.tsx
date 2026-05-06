@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import './health.css'
+import './Health.css'
 import './HealthHospitalList.css'
 import PageHeader from '../components/PageHeader'
 import ContentSection from '../components/ContentSection'
@@ -7,7 +7,7 @@ import BackButton from '../components/html/BackButton'
 import Button from '../components/html/Button'
 import calendarIcon from '../svg/calendar.svg'
 import notificationIcon from '../svg/notification.svg'
-import { getOperatingState, hospitalSearchItems } from './healthHospitalData'
+import { getOperatingState, hospitalSearchItems } from './HealthHospitalData'
 
 function HeartIcon({ filled }: { filled: boolean }) {
   return (

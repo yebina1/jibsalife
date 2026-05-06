@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import './health.css'
+import './Health.css'
 import './HealthHospitalSearch.css'
 import PageHeader from '../components/PageHeader'
 import ChevronIcon from '../components/ChevronIcon'
@@ -11,7 +11,7 @@ import calendarIcon from '../svg/calendar.svg'
 import notificationIcon from '../svg/notification.svg'
 import hospital3d from '../img/hospital_3d.png'
 import message3d from '../img/message_3d.png'
-import { getOperatingState, hospitalSearchItems } from './healthHospitalData'
+import { getOperatingState, hospitalSearchItems } from './HealthHospitalData'
 
 type ServiceCard = {
   title: string

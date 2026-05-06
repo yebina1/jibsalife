@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react'
-import { NavLink, useNavigate } from 'react-router'
+import { NavLink, useLocation, useNavigate } from 'react-router'
 import navCommunicateOffIcon from '../svg/nav communicate off.svg'
 import navHealthOffIcon from '../svg/nav health off.svg'
 import navHomeActiveIcon from '../svg/nav home active.svg'
@@ -125,6 +125,7 @@ function NavIcon({ type, active }: { type: (typeof navItems)[number]['icon']; ac
 
 function Nav() {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
 
   return (
     <nav className="layout_nav" aria-label="주요 메뉴">
@@ -148,12 +149,12 @@ function Nav() {
           return (
             <NavLink
               key={item.path}
-              to={item.icon === 'community' ? '/community?tab=overview' : item.path}
+              to={item.icon === 'community' ? '/community/overview' : item.path}
               onClick={(event) => {
                 if (item.icon !== 'community') return
 
                 event.preventDefault()
-                navigate('/community?tab=overview', {
+                navigate('/community/overview', {
                   replace: true,
                   state: {
                     resetCommunityTabAt: Date.now(),
@@ -161,12 +162,17 @@ function Nav() {
                 })
               }}
               className={({ isActive }) =>
-                isActive ? 'layout_nav_link active' : 'layout_nav_link'
+                isActive || (item.icon === 'community' && pathname.startsWith('/community'))
+                  ? 'layout_nav_link active'
+                  : 'layout_nav_link'
               }
             >
               {({ isActive }) => (
                 <>
-                  <NavIcon type={item.icon} active={isActive} />
+                  <NavIcon
+                    type={item.icon}
+                    active={isActive || (item.icon === 'community' && pathname.startsWith('/community'))}
+                  />
                   <span className="layout_nav_label">{item.label}</span>
                 </>
               )}

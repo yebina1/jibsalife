@@ -1,4 +1,4 @@
-import './health.css'
+import './Health.css'
 import './HealthResultActions.css'
 import PageHeader from '../components/PageHeader'
 import ChevronIcon from '../components/ChevronIcon'
