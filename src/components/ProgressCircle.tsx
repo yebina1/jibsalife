@@ -4,9 +4,10 @@ import './ProgressCircle.css'
 type ProgressCircleProps = {
   value: number
   children?: ReactNode
+  showValue?: boolean
 }
 
-function ProgressCircle({ value, children }: ProgressCircleProps) {
+function ProgressCircle({ value, children, showValue = true }: ProgressCircleProps) {
   const safeValue = Math.min(100, Math.max(0, value))
 
   return (
@@ -15,7 +16,7 @@ function ProgressCircle({ value, children }: ProgressCircleProps) {
       style={{ '--progress': `${safeValue}%` } as CSSProperties}
       aria-label={`진행률 ${safeValue}%`}
     >
-      <span className="progress_circle_value">{safeValue}</span>
+      {showValue ? <span className="progress_circle_value">{safeValue}</span> : null}
       <div className="progress_circle_inner">{children}</div>
     </div>
   )

@@ -245,34 +245,6 @@
   text-align: center;
 }
 
-.mission_fab {
-  position: fixed;
-  right: 18px;
-  bottom: 118px;
-  z-index: 20;
-  display: flex;
-  width: 64px;
-  height: 64px;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-  border-radius: 50%;
-  background: #6D59F8;
-  color: #ffffff;
-  box-shadow: 0 12px 24px rgba(109, 89, 248, 0.28);
-  cursor: pointer;
-}
-
-.mission_fab svg {
-  width: 30px;
-  height: 30px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.4;
-  stroke-linecap: round;
-}
-
-
 .mission_add_title {
   display: block;
   width: 100%;
@@ -666,12 +638,6 @@
   }
 }
 
-@media (min-width: 768px) {
-  .mission_fab {
-    right: max(18px, calc((100vw - var(--layout-max-width, 1440px)) / 2 + 18px));
-  }
-}
-
 @media (max-width: 420px) {
   .mission_calendar_section {
     padding-right: 0;
@@ -686,18 +652,6 @@
   .mission_day {
     width: 36px;
     height: 36px;
-  }
-
-  .mission_fab {
-    right: 16px;
-    bottom: 112px;
-    width: 58px;
-    height: 58px;
-  }
-
-  .mission_fab svg {
-    width: 28px;
-    height: 28px;
   }
 
 }

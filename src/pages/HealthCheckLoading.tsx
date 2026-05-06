@@ -76,7 +76,7 @@ function HealthCheckLoading() {
             subtitle="잠시만 기다려 주세요."
           />
 
-          <ProgressCircle value={Math.round(progress)}>
+          <ProgressCircle value={Math.round(progress)} showValue={false}>
             <img className="health_check_loading_logo" src={checkIcon} alt="" aria-hidden="true" />
           </ProgressCircle>
 

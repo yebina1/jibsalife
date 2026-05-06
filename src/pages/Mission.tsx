@@ -2,6 +2,7 @@ import './Mission.css'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import PageHeader from '../components/PageHeader'
 import ChevronIcon from '../components/ChevronIcon'
+import FloatingWriteButton from '../components/FloatingWriteButton'
 import BackButton from '../components/html/BackButton'
 import DatePicker from '../components/html/DatePicker'
 import Button from '../components/html/Button'
@@ -437,11 +438,7 @@ function Mission() {
         </div>
       </section>
 
-        <button type="button" className="mission_fab" aria-label="글쓰기" onClick={() => setIsFabOpen(true)}>
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 5v14M5 12h14" />
-          </svg>
-        </button>
+        <FloatingWriteButton onClick={() => setIsFabOpen(true)} />
       </main>
 
       {isDatePickerOpen && (

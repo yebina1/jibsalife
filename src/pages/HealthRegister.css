@@ -1055,10 +1055,6 @@
 
 
 @media (max-width: 420px) {
-  .health_register_page {
-    gap: 28px;
-  }
-
   .health_register_submit_button {
     width: min(335px, 100%);
     min-height: 54px;

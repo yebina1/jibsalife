@@ -1,6 +1,7 @@
 import './App.css'
 import { Navigate, Route, Routes } from 'react-router'
 import Layout from './layouts/Layout'
+import ScrollToTop from './components/ScrollToTop'
 import Community from './pages/community'
 import Health from './pages/health'
 import HealthCamera from './pages/HealthCamera'
@@ -24,6 +25,7 @@ import Place from './pages/Place'
 function App() {
   return (
     <div className="app">
+      <ScrollToTop />
       <Routes>
         <Route element={<Layout showHeader={false} showNav={false} />}>
           <Route path="/login" element={<Login />} />
