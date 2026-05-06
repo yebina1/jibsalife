@@ -5,6 +5,7 @@ import BackButton from '../components/html/BackButton'
 import NoticeText from '../components/NoticeText'
 import DatePicker from '../components/html/DatePicker'
 import Button from '../components/html/Button'
+import AddSheet from '../components/AddSheet'
 
 const weekLabels = ['일', '월', '화', '수', '목', '금', '토']
 const CALENDAR_YEAR = 2026
@@ -468,9 +469,8 @@ function Mission() {
       )}
 
       {isFabOpen && (
-        <div
-          className="mission_add_overlay"
-          onClick={() => { setIsFabOpen(false); setIsCategoryPickerOpen(false); setIsCategoryAddOpen(false); setIsCategoryEditOpen(false); setIsPeriodPickerOpen(false); setIsPeriodDatePickerOpen(false); setAddTitle('') }}
+        <AddSheet
+          onClose={() => { setIsFabOpen(false); setIsCategoryPickerOpen(false); setIsCategoryAddOpen(false); setIsCategoryEditOpen(false); setIsPeriodPickerOpen(false); setIsPeriodDatePickerOpen(false); setAddTitle('') }}
           onScrollCapture={(event) => {
             if (!isPeriodDatePickerOpen) return
             if ((event.target as HTMLElement).closest('.date_picker_column')) return
@@ -492,8 +492,6 @@ function Mission() {
             setIsPeriodDatePickerOpen(false)
           }}
         >
-          <div className="mission_add_sheet" onClick={(e) => e.stopPropagation()}>
-            <div className="mission_add_handle" />
             {isPeriodPickerOpen ? (
               <div className="mission_period_picker">
                 <div className="mission_period_tabs" role="tablist" aria-label="기간 선택 방식">
@@ -856,8 +854,7 @@ function Mission() {
                 </div>
               </>
             )}
-          </div>
-        </div>
+        </AddSheet>
       )}
 
     </>
