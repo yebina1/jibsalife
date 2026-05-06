@@ -348,7 +348,12 @@ function MyPage() {
           <ul>
             {activityItems.map((item) => (
               <li key={item.label}>
-                <button type="button" className="mypage_menu_button" disabled={item.label !== '구독 관리'}>
+                <button
+                  type="button"
+                  className="mypage_menu_button"
+                  disabled={item.label !== '구독 관리'}
+                  onClick={item.label === '구독 관리' ? () => navigate('/mypage/subscription') : undefined}
+                >
                   <span className="mypage_menu_left">
                     {item.label}
                   </span>
