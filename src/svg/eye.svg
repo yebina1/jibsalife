@@ -1,1 +1,11 @@
-<svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24" transform="" id="injected-svg" xmlns="http://www.w3.org/2000/svg"><!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free--><path d="M12 9a3 3 0 1 0 0 6 3 3 0 1 0 0-6"></path><path d="M12 19c7.63 0 9.93-6.62 9.95-6.68.07-.21.07-.43 0-.63-.02-.07-2.32-6.68-9.95-6.68s-9.93 6.61-9.95 6.67c-.07.21-.07.43 0 .63.02.07 2.32 6.68 9.95 6.68Zm0-12c5.35 0 7.42 3.85 7.93 5-.5 1.16-2.58 5-7.93 5s-7.42-3.84-7.93-5c.5-1.16 2.58-5 7.93-5"></path></svg>
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_1526_4031)">
+<path d="M0.833984 10.0007C0.833984 10.0007 4.16732 3.33398 10.0007 3.33398C15.834 3.33398 19.1673 10.0007 19.1673 10.0007C19.1673 10.0007 15.834 16.6673 10.0007 16.6673C4.16732 16.6673 0.833984 10.0007 0.833984 10.0007Z" stroke="#767676" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M10.0005 12.5C11.3812 12.5 12.5005 11.3807 12.5005 10C12.5005 8.61929 11.3812 7.5 10.0005 7.5C8.61978 7.5 7.50049 8.61929 7.50049 10C7.50049 11.3807 8.61978 12.5 10.0005 12.5Z" stroke="#767676" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<defs>
+<clipPath id="clip0_1526_4031">
+<rect width="20" height="20" fill="white"/>
+</clipPath>
+</defs>
+</svg>

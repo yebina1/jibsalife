@@ -14,6 +14,7 @@ function Login() {
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [passwordFocused, setPasswordFocused] = useState(false)
+  const [passwordActionsFocused, setPasswordActionsFocused] = useState(false)
 
   const navigate = useNavigate()
 
@@ -58,8 +59,16 @@ function Login() {
             </div>
             <div className="login_input_wrap">
               <Input value={password} placeholder="비밀번호 입력" type={showPassword ? 'text' : 'password'} onChange={(v) => { setPassword(v); setError('') }} onFocus={() => setPasswordFocused(true)} onBlur={() => setPasswordFocused(false)} />
-              {(password || passwordFocused) && (
-                <div className="login_input_actions">
+              {(password || passwordFocused || passwordActionsFocused) && (
+                <div
+                  className="login_input_actions"
+                  onMouseDown={() => setPasswordActionsFocused(true)}
+                  onBlur={(event) => {
+                    if (!event.currentTarget.contains(event.relatedTarget)) {
+                      setPasswordActionsFocused(false)
+                    }
+                  }}
+                >
                   <button type="button" className="login_input_eye" onClick={() => setShowPassword((p) => !p)}>
                     <img src={showPassword ? eyeIcon : eyeOffIcon} alt="" />
                   </button>
