@@ -132,8 +132,8 @@ function MyPageIcon({ type }: { type: string }) {
   if (type === 'badge') {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M7 4h10l2 4-7 12L5 8Z" />
-        <path d="M7 4l5 16M17 4l-5 16M5 8h14" />
+        <circle cx="12" cy="9" r="5.5" />
+        <path d="M8.5 14 7 21l5-2.5L17 21l-1.5-7" />
       </svg>
     )
   }
@@ -141,8 +141,8 @@ function MyPageIcon({ type }: { type: string }) {
   if (type === 'diamond') {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 3 3 9l9 12 9-12Z" />
-        <path d="M3 9h18M8 9l4 12 4-12M8 9l4-6 4 6" />
+        <path d="M6 3h12l4 6-10 12L2 9Z" />
+        <path d="M2 9h20M6 3l6 15M18 3l-6 15M9 3l3 6 3-6" />
       </svg>
     )
   }
@@ -281,6 +281,19 @@ function MyPage() {
       />
 
       <main className="page mypage_page">
+        <section className="mypage_location_card">
+          <p>
+            {locationMessage.split('\n').map((line) => (
+              <span key={line}>{line}</span>
+            ))}
+            {savedLocation ? <small>위치 저장 완료</small> : null}
+          </p>
+          <button className='white_radius_btn' type="button" onClick={handleLocationSetting} disabled={isLocating}>
+            {isLocating ? '확인 중...' : '위치설정'}
+            <MyPageIcon type="pin" />
+          </button>
+        </section>
+
         <section className="mypage_profile_card">
           <img className="mypage_profile_avatar" src={contents2} alt="프로필 이미지" />
 
@@ -327,19 +340,6 @@ function MyPage() {
               </button>
             </div>
           </div>
-        </section>
-
-        <section className="mypage_location_card">
-          <p>
-            {locationMessage.split('\n').map((line) => (
-              <span key={line}>{line}</span>
-            ))}
-            {savedLocation ? <small>위치 저장 완료</small> : null}
-          </p>
-          <button type="button" onClick={handleLocationSetting} disabled={isLocating}>
-            <MyPageIcon type="pin" />
-            {isLocating ? '확인 중...' : '위치설정'}
-          </button>
         </section>
 
         <section className="mypage_pet_area">

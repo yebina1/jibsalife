@@ -1,3 +1,5 @@
+import './Input.css'
+
 type InputProps = {
   value: string
   placeholder?: string
@@ -11,6 +13,7 @@ type InputProps = {
 function Input({ value, placeholder, ariaLabel, type = 'text', onChange, onFocus, onBlur }: InputProps) {
   return (
     <input
+      className="input_field"
       aria-label={ariaLabel}
       placeholder={placeholder}
       type={type}

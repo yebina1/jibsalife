@@ -2,7 +2,6 @@ import './Mission.css'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import PageHeader from '../components/PageHeader'
 import BackButton from '../components/html/BackButton'
-import NoticeText from '../components/NoticeText'
 import DatePicker from '../components/html/DatePicker'
 import Button from '../components/html/Button'
 import AddSheet from '../components/AddSheet'
@@ -436,14 +435,6 @@ function Mission() {
           ))}
         </div>
       </section>
-
-        <NoticeText>
-          <p>
-            ※ 이 결과는 참고용이며, 정확한 진단은
-            <br />
-            수의사 상담을 통해 확인해 주세요.
-          </p>
-        </NoticeText>
 
         <button type="button" className="mission_fab" aria-label="글쓰기" onClick={() => setIsFabOpen(true)}>
           <svg viewBox="0 0 24 24" aria-hidden="true">

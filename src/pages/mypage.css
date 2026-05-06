@@ -1,8 +1,6 @@
 .mypage_page {
   display: grid;
   gap: 24px;
-  padding-top: 20px;
-  padding-bottom: 34px;
   background: #ffffff;
   color: #111111;
 }
@@ -22,6 +20,44 @@
   border-radius: 50%;
   background: #ff3b30;
   content: '';
+}
+
+.mypage_location_card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  background: #8B6EFF;
+}
+
+.mypage_location_card p {
+  display: grid;
+  margin: 0;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.mypage_location_card small {
+  color: #8d7cf2;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+
+.mypage_location_card button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.mypage_location_card svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
 }
 
 .mypage_profile_card {
@@ -180,61 +216,6 @@
   font-size: 28px;
 }
 
-.mypage_location_card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 14px 36px;
-  border-radius: 10px;
-  background: #eee8ff;
-}
-
-.mypage_location_card p {
-  display: grid;
-  gap: 2px;
-  margin: 0;
-  color: #777777;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.55;
-}
-
-.mypage_location_card small {
-  color: #8d7cf2;
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.mypage_location_card button {
-  display: inline-flex;
-  width: auto;
-  height: 48px;
-  align-items: center;
-  gap: 8px;
-  padding: 0 16px;
-  border: 1px solid #b9aaff;
-  border-radius: 10px;
-  background: transparent;
-  color: #6c59f7;
-  font-size: 14px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.mypage_location_card button:disabled {
-  cursor: wait;
-  opacity: 0.72;
-}
-
-.mypage_location_card svg {
-  width: 18px;
-  height: 18px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-}
-
 .mypage_pet_area {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 122px;
@@ -338,22 +319,20 @@
 }
 
 .mypage_menu_section {
-  padding: 36px 30px 28px;
   background: #ffffff;
-  box-shadow: 0 16px 24px rgb(17 24 39 / 3%);
 }
 
 .mypage_menu_section h2 {
-  margin: 0 0 22px;
+  margin: 12px 0 16px;
   color: #111111;
-  font-size: 15px;
-  font-weight: 800;
-  line-height: 1.2;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
 .mypage_menu_section ul {
   display: grid;
-  gap: 22px;
+  gap: 10px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -367,36 +346,37 @@
   justify-content: space-between;
   padding: 0;
   border: 0;
-  background: transparent;
-  color: #444444;
+  background: #fff;
+  padding: 8px 18px;
 }
 
 .mypage_menu_left {
   display: inline-flex;
   min-width: 0;
   align-items: center;
-  gap: 18px;
-  color: #444444;
-  font-size: 17px;
-  font-weight: 500;
-  line-height: 1.2;
+  gap: 12px;
+  color: #111;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
   white-space: nowrap;
 }
 
 .mypage_menu_left svg {
   flex: 0 0 auto;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   fill: none;
-  stroke: #555555;
+  color: #505050;
+  stroke: #505050;
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .mypage_menu_button > i {
-  color: #444444;
   font-size: 28px;
+  color: #505050;
 }
 
 @media (max-width: 420px) {
@@ -448,7 +428,7 @@
   }
 
   .mypage_location_card {
-    padding: 12px 36px;
+    padding: 12px 20px;
   }
 
   .mypage_pet_area {
@@ -463,10 +443,6 @@
   .mypage_pet_card img {
     width: 74px;
     height: 74px;
-  }
-
-  .mypage_menu_section {
-    padding: 34px 30px 26px;
   }
 }
 
@@ -489,7 +465,7 @@
   }
 
   .mypage_location_card {
-    padding: 12px 18px;
+    padding: 12px 20px;
   }
 
   .mypage_pet_area {

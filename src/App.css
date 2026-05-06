@@ -13,7 +13,6 @@
   --layout-header-height: calc(var(--layout-status-bar-height) + var(--layout-header-bar-height));
   --layout-footer-height: 90px;
   --layout-content-padding-y: 48px;
-  --layout-inline-padding: clamp(12px, 2.5vw, 32px);
   position: relative;
   width: 100%;
   max-width: var(--layout-max-width);
@@ -47,7 +46,7 @@
 
 .layout_content{
   min-height: calc(100dvh - var(--layout-header-height) - var(--layout-footer-height));
-  padding: 24px var(--layout-inline-padding);
+  padding: 24px 16px;
   box-sizing: border-box;
 }
 
@@ -90,8 +89,6 @@
   height: 56px;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   margin: 0 auto;
-  padding-right: var(--layout-inline-padding);
-  padding-left: var(--layout-inline-padding);
   box-sizing: border-box;
   background: #ffffff;
   border-top: 1px solid #ececf1;
