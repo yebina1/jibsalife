@@ -3,11 +3,13 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router'
 import './HealthRegister.css'
 import PageHeader from '../components/PageHeader'
 import HeaderIcon from '../components/HeaderIcon'
+import ChevronIcon from '../components/ChevronIcon'
+import ContentSection from '../components/ContentSection'
 import BackButton from '../components/html/BackButton'
 import Button from '../components/html/Button'
 import Alert from '../components/Alert'
 import AddSheet from '../components/AddSheet'
-import samplePetImage from '../img/my pet image.jpg'
+import samplePetImage from '../img/pungpungi.png'
 import { type ObservationStatus, writeStoredHealthResultInput } from '../utils/healthResultPolicy'
 
 const registerSections = [
@@ -1006,7 +1008,7 @@ function HealthRegister() {
         <section className="health_register_editor health_register_crop_editor" aria-label="사진 자르기">
           <header className="health_register_crop_header">
             <button type="button" onClick={() => setIsCropMode(false)}>
-              <i className="bx bx-chevron-left" aria-hidden="true" />
+              <ChevronIcon direction="left" size="md" />
               자르기
             </button>
           </header>
@@ -1200,11 +1202,12 @@ function HealthRegister() {
         />
 
         {orderedSections.map((section) => (
-          <section className="health_register_section" key={section.id}>
-            <div className="health_register_section_header">
-              <h2>{section.title}</h2>
-              <span>{section.limit}</span>
-            </div>
+          <ContentSection
+            className="health_register_section"
+            key={section.id}
+            title={section.title}
+            action={<span className="health_register_section_limit">{section.limit}</span>}
+          >
 
             {section.id === 'memo' ? (
               <div className="health_register_memo_slot">
@@ -1268,7 +1271,7 @@ function HealthRegister() {
                 })}
               </div>
             )}
-          </section>
+          </ContentSection>
         ))}
 
         

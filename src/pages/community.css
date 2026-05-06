@@ -81,7 +81,7 @@
 .community_tab_bar {
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: 90;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   order: 1;
@@ -412,13 +412,18 @@
 
 .community_overview {
   display: grid;
-  gap: 26px;
+  gap: 0;
   padding: 22px 6px 0;
 }
 
 .community_overview_section {
   display: grid;
-  gap: 14px;
+  gap: 16px;
+  margin: 0 0 48px;
+}
+
+.community_overview_section:last-child {
+  margin-bottom: 0;
 }
 
 .community_overview_heading {
@@ -444,6 +449,20 @@
 }
 
 .community_overview_heading button {
+  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  word-break: keep-all;
+  cursor: pointer;
+}
+
+.community_overview_section .content_section_action button {
   flex: 0 0 auto;
   padding: 0;
   border: 0;

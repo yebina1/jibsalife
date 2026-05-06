@@ -1,5 +1,6 @@
 import './HealthResultSummary.css'
 import { Link } from 'react-router'
+import ChevronIcon from './ChevronIcon'
 
 export type HealthResultSummaryItem = {
   icon: 'warning' | 'search' | 'chat' | 'hospital' | 'report'
@@ -84,7 +85,7 @@ function HealthResultSummary({ title, items }: HealthResultSummaryProps) {
                 </div>
                 <div className="health_result_summary_value">
                   <span>{item.value}</span>
-                  <i className="bx bx-chevron-right" aria-hidden="true"></i>
+                  <ChevronIcon direction="right" size="md" />
                 </div>
               </Link>
             ) : (

@@ -338,9 +338,8 @@
   border-radius: 50%;
 }
 
-.mission_add_row_value i {
+.mission_add_row_value .chevron_icon {
   flex: 0 0 auto;
-  font-size: 18px;
   color: #b0b0c3;
 }
 

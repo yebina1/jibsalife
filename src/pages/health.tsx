@@ -1,14 +1,14 @@
 import { useNavigate } from 'react-router'
 import './health.css'
 import PageHeader from '../components/PageHeader'
+import ContentSection from '../components/ContentSection'
 import HealthCheck from '../components/HealthCheck'
 import type { HealthCheckOption } from '../components/HealthCheck'
 import NoticeText from '../components/NoticeText'
-import Title from '../components/Title'
 import BackButton from '../components/html/BackButton'
 import aboutIcon from '../svg/About.svg'
 import Button from '../components/html/Button'
-import mypetimg from '../img/my pet image.jpg'
+import mypetimg from '../img/pungpungi.png'
 import cameraIcon from '../svg/camera.svg'
 import camcorderIcon from '../svg/camcorder.svg'
 import memoIcon from '../svg/memo.svg'
@@ -54,13 +54,18 @@ function Health() {
               <span>이용 가이드</span>
             </div>
             <div className="health_intro_text">
-              <Title as="h3" title="상태를 확인해 볼까요?">
-                <p>
+              <ContentSection
+                as="div"
+                titleAs="h3"
+                title="상태를 확인해 볼까요?"
+                subtitle={
+                  <>
                   편한 방식으로 기록해 주세요.
                   <br />
                   AI가 펫의 상태를 한눈에 정리해 드려요.
-                </p>
-              </Title>
+                  </>
+                }
+              />
               <img className="health_intro_image" src={mypetimg} alt="반려동물 프로필" />
             </div>
           </div>

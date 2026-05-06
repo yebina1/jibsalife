@@ -897,9 +897,8 @@
   color: #ffffff;
 }
 
-.health_camera_back i {
-  font-size: 32px;
-  line-height: 1;
+.health_camera_back .chevron_icon {
+  color: currentColor;
 }
 
 .health_camera_view {

@@ -104,9 +104,8 @@
   text-decoration: none;
 }
 
-.health_hospital_search_nearby_header a i {
-  font-size: 18px;
-  line-height: 1;
+.health_hospital_search_nearby_header a .chevron_icon {
+  color: currentColor;
 }
 
 .health_hospital_search_list {

@@ -1,12 +1,14 @@
 import './health.css'
 import './HealthResultActions.css'
 import PageHeader from '../components/PageHeader'
+import ChevronIcon from '../components/ChevronIcon'
+import ContentSection from '../components/ContentSection'
 import BackButton from '../components/html/BackButton'
 import Button from '../components/html/Button'
 import { Link } from 'react-router'
 import calendarIcon from '../svg/calendar.svg'
 import notificationIcon from '../svg/notification.svg'
-import petImage from '../img/my pet image.jpg'
+import petImage from '../img/pungpungi.png'
 import aiChatImage from '../img/aichat_3d.png'
 import consultImage from '../img/clipboard_3d.png'
 import { calculateHealthResult, readStoredHealthResultInput } from '../utils/healthResultPolicy'
@@ -79,14 +81,13 @@ function HealthResultActions() {
           <p>{getGuideMessage(result.score)}</p>
         </section>
 
-        <section className="health_result_actions_choices">
-          <h2>다음 행동을 선택해 주세요.</h2>
+        <ContentSection className="health_result_actions_choices" title="다음 행동을 선택해 주세요.">
           <div className="health_result_actions_cards">
             <Link className="health_result_actions_card is_qna" to="/health/qna">
               <div className="health_result_actions_chip_row">
                 <span className="health_result_actions_chip">AI 상담</span>
                 <span className="health_result_actions_arrow" aria-hidden="true">
-                  <i className="bx bx-chevron-right"></i>
+                  <ChevronIcon direction="right" size="md" />
                 </span>
               </div>
               <strong>Q&amp;A</strong>
@@ -98,7 +99,7 @@ function HealthResultActions() {
               <div className="health_result_actions_chip_row">
                 <span className="health_result_actions_chip">전문가 연결</span>
                 <span className="health_result_actions_arrow" aria-hidden="true">
-                  <i className="bx bx-chevron-right"></i>
+                  <ChevronIcon direction="right" size="md" />
                 </span>
               </div>
               <strong>수의사 상담<br />병원 연결</strong>
@@ -106,7 +107,7 @@ function HealthResultActions() {
               <img src={consultImage} alt="" aria-hidden="true" />
             </Link>
           </div>
-        </section>
+        </ContentSection>
       </main>
     </>
   )
