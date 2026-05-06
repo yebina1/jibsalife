@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import PageHeader from './PageHeader'
 import HeaderIcon from './HeaderIcon'
@@ -9,15 +9,23 @@ import contents1 from '../img/contents1.png'
 import contents2 from '../img/contents2.png'
 import contents3 from '../img/contents3.png'
 import contents4 from '../img/contents4.png'
+import challenge1Image from '../img/challenge1.jpg'
+import challenge2Image from '../img/challenge2.png'
+import challenge3Image from '../img/challenge3.png'
+import challenge4Image from '../img/challenge4.png'
+import challenge5Image from '../img/challenge5.png'
+import challenge6Image from '../img/challenge6.png'
 import challengeHeadingImage from '../img/illust_login_pet.jpg'
-import leeyoriImage from '../img/leeyori.png'
-import pungpungiImage from '../img/pungpungi.png'
+import {
+  CHALLENGE_REWARD_CLAIMED_STORAGE_KEY,
+  getCompletedChallengeCardIds,
+} from '../constants/points'
 
 const challengeItems = [
   {
     id: 1,
     title: '오늘의 미션',
-    description: '반 먹는 사진 중 BEST를 골라주세요!',
+    description: '밥 먹는 사진 중 BEST를 골라주세요!',
     date: '2026.04.30',
     participants: 8,
   },
@@ -37,7 +45,7 @@ const challengeItems = [
   },
   {
     id: 4,
-    title: '코오잠 챌린지',
+    title: '코앞샷 챌린지',
     description: '우리아이 잠든 모습 자랑해보세요',
     date: '2026.04.30',
     participants: 8,
@@ -50,47 +58,47 @@ const challengeCardItems = [
     title: '제일 귀엽게 밥을 먹는 귀염둥이는?',
     participants: 22,
     deadline: '05.10 마감',
-    image: pungpungiImage,
+    image: challenge1Image,
     status: 'active',
   },
   {
     id: 2,
-    title: '제일 귀엽게 밥을 먹는 귀염둥이는?',
-    participants: 22,
+    title: '가장 말썽꾸러기 같은 아이는?',
+    participants: 17,
     deadline: '05.10 마감',
-    image: leeyoriImage,
+    image: challenge2Image,
     status: 'active',
   },
   {
     id: 3,
-    title: '제일 귀엽게 밥을 먹는 귀염둥이는?',
-    participants: 22,
+    title: '제일 웃는 얼굴이 예쁜 아이는?',
+    participants: 31,
     deadline: '05.10 마감',
-    image: contents2,
+    image: challenge3Image,
     status: 'active',
   },
   {
     id: 4,
-    title: '제일 귀엽게 밥을 먹는 귀염둥이는?',
-    participants: 22,
+    title: '제일 호기심 많아 보이는 아이는?',
+    participants: 14,
     deadline: '05.10 마감',
-    image: contents3,
+    image: challenge4Image,
     status: 'active',
   },
   {
     id: 5,
-    title: '제일 귀엽게 밥을 먹는 귀염둥이는?',
-    participants: 22,
+    title: '제일 반갑게 맞아주는 아이는?',
+    participants: 26,
     deadline: '05.10 마감',
-    image: contents4,
+    image: challenge5Image,
     status: 'active',
   },
   {
     id: 6,
-    title: '제일 귀엽게 밥을 먹는 귀염둥이는?',
-    participants: 22,
+    title: '하루 종일 뛰어놀 것 같은 아이는?',
+    participants: 19,
     deadline: '05.10 마감',
-    image: contents1,
+    image: challenge6Image,
     status: 'complete',
   },
 ] as const
@@ -311,10 +319,10 @@ const braggingPostData: CommunityPost[] = [
 ]
 
 const knowledgeFeedItems = [
-  { id: 1, tag: '산책', title: '댕꿀잠자는 산책법 TOP3', image: contents2, likes: 8, comments: 3 },
-  { id: 2, tag: '케어', title: '섬세하게 케어해달라냥', image: contents3, likes: 8, comments: 3 },
-  { id: 3, tag: '일상', title: '고양이 점프의 비밀', image: contents1, likes: 8, comments: 3 },
-  { id: 4, tag: '일상', title: '수술 전 피, 검사 꼭 필요할까?', image: contents4, likes: 8, comments: 3 },
+  { id: 1, tag: '산책', title: '초보 집사를 위한 산책법 TOP3', image: contents2, likes: 8, comments: 3 },
+  { id: 2, tag: '건강', title: '자세하게 케어해봐요', image: contents3, likes: 8, comments: 3 },
+  { id: 3, tag: '일상', title: '고양이의 낮잠 비밀', image: contents1, likes: 8, comments: 3 },
+  { id: 4, tag: '일상', title: '수면 패턴 꼭 체크해봐야 할까요?', image: contents4, likes: 8, comments: 3 },
 ] as const
 
 function getTopTabFromRoute(pathname: string, tabParam: string | null): TopTab {
@@ -366,6 +374,8 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
   const [searchTerm] = useState('')
   const [likedPostIds, setLikedPostIds] = useState<number[]>([])
   const [selectedChallengeId, setSelectedChallengeId] = useState<number | null>(null)
+  const [isChallengeRewardClaimed, setIsChallengeRewardClaimed] = useState(false)
+  const [completedChallengeCardIds, setCompletedChallengeCardIds] = useState<number[]>([])
   const [selectedVoteListId, setSelectedVoteListId] = useState<number | null>(null)
   const [selectedVoteResultId, setSelectedVoteResultId] = useState<number | null>(null)
   const [createdPosts, setCreatedPosts] = useState<CommunityPost[]>(loadCreatedPosts)
@@ -436,6 +446,12 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
     window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(createdPosts))
   }, [createdPosts])
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    setIsChallengeRewardClaimed(window.localStorage.getItem(CHALLENGE_REWARD_CLAIMED_STORAGE_KEY) === 'true')
+    setCompletedChallengeCardIds(getCompletedChallengeCardIds())
+  }, [location.key])
+
   const isOverviewTab = selectedTopTab === '전체'
   const isCommunityTab = selectedTopTab === '커뮤니티'
   const isChallengeTab = selectedTopTab === '챌린지 인증'
@@ -454,6 +470,26 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
     ? [...visibleCreatedPosts, ...braggingPostData]
     : [...visibleCreatedPosts, ...postData]
   const selectedChallenge = challengeItems.find((item) => item.id === selectedChallengeId) ?? null
+  const sortedChallengeCardItems = useMemo(() => {
+    const activeItems = challengeCardItems.filter(
+      (item) => item.status !== 'complete' && !completedChallengeCardIds.includes(item.id),
+    )
+    const completeItems = challengeCardItems.filter(
+      (item) => item.status === 'complete' || completedChallengeCardIds.includes(item.id),
+    )
+
+    return [...activeItems, ...completeItems]
+  }, [completedChallengeCardIds])
+  const challengeCompletedCount = useMemo(
+    () =>
+      challengeCardItems.filter(
+        (item) => item.status === 'complete' || completedChallengeCardIds.includes(item.id),
+      ).length,
+    [completedChallengeCardIds],
+  )
+  const challengeProgressPercent = Math.round((challengeCompletedCount / challengeCardItems.length) * 100)
+  const isChallengeRewardAvailable = challengeProgressPercent === 100
+  const isChallengeRewardButtonDisabled = isChallengeRewardClaimed || !isChallengeRewardAvailable
   const posts = useMemo(() => {
     const keyword = searchTerm.trim().toLowerCase()
     const filtered = activePostData.filter((post) =>
@@ -616,12 +652,20 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
                       key={tab}
                       type="button"
                       className={selectedCommunitySubTab === tab ? 'active' : ''}
+                      style={{ fontWeight: 400 }}
                       onClick={() => {
                         setSelectedCommunitySubTab(tab)
                         setIsCommunitySubTabOpen(false)
                       }}
                     >
-                      {communitySubTabLabels[index]}
+                      <span
+                        style={{
+                          color: selectedCommunitySubTab === tab ? '#6D59F8' : '#111111',
+                          WebkitTextFillColor: selectedCommunitySubTab === tab ? '#6D59F8' : '#111111',
+                        }}
+                      >
+                        {communitySubTabLabels[index]}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -663,24 +707,32 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
                 {isSortOpen ? (
                   <div className="community_sort_menu">
                     {sortOptions.map((option) => (
-                      <button
-                        key={option}
-                        type="button"
-                        className={
-                          option === selectedSort
-                            ? 'community_sort_option active'
-                            : 'community_sort_option'
-                        }
-                        onClick={() => {
-                          setSelectedSort(option)
-                          setIsSortOpen(false)
+                    <button
+                      key={option}
+                      type="button"
+                      className={
+                        option === selectedSort
+                          ? 'community_sort_option active'
+                          : 'community_sort_option'
+                      }
+                      style={{ fontWeight: 400 }}
+                      onClick={() => {
+                        setSelectedSort(option)
+                        setIsSortOpen(false)
+                      }}
+                    >
+                      <span
+                        style={{
+                          color: option === selectedSort ? '#6D59F8' : '#111111',
+                          WebkitTextFillColor: option === selectedSort ? '#6D59F8' : '#111111',
                         }}
                       >
                         {option}
-                      </button>
-                    ))}
-                  </div>
-                ) : null}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              ) : null}
               </div>
             ) : null}
           </section>
@@ -749,7 +801,7 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
                       <h3>{item.title}</h3>
                       <p>{item.description}</p>
                       <span>{item.date}</span>
-                      <strong>참여자수 {item.participants}</strong>
+                      <strong>참여자 수 {item.participants}</strong>
                     </div>
                     <button type="button" className="community_challenge_simple_join">
                       참여하기
@@ -801,80 +853,111 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
           <section className="community_challenge_screen">
             <section className="community_challenge_redesign">
               <article className="community_challenge_feature_card">
-                <div className="community_challenge_feature_copy">
+                <div className="community_challenge_feature_copy content_section_copy">
                   <h2>이번주 특별 챌린지</h2>
                   <p>이번 주 미션 참여하고, 특별한 보상을 받아보세요.</p>
                 </div>
                 <div className="community_challenge_feature_progress">
-                  <div className="community_challenge_feature_ring">
+                  <div
+                    className="community_challenge_feature_ring"
+                    style={{
+                      background: `conic-gradient(#6d59f8 0 ${challengeProgressPercent}%, #d8e6f2 ${challengeProgressPercent}% 100%)`,
+                    }}
+                  >
                     <div className="community_challenge_feature_ring_inner">
                       <span>진행률</span>
-                      <strong>20%</strong>
+                      <strong>{challengeProgressPercent}%</strong>
                     </div>
                   </div>
                 </div>
-                <button type="button" className="community_challenge_reward_button">
-                  60포인트 받기
-                </button>
+                <Button
+                  type="button"
+                  className={[
+                    'community_challenge_reward_button',
+                    isChallengeRewardButtonDisabled ? 'button_disabled_outline' : null,
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  buttonVariant="icon"
+                  disabled={isChallengeRewardButtonDisabled}
+                  onClick={() => {
+                    if (isChallengeRewardButtonDisabled) return
+                    navigate('/community/challenge/reward?amount=60', {
+                      state: { rewardEventId: `community-challenge-main-${Date.now()}` },
+                    })
+                  }}
+                >
+                  {isChallengeRewardClaimed ? '포인트 받기 완료' : '60포인트 받기'}
+                </Button>
               </article>
 
-              <div className="community_challenge_heading">
-                <div>
-                  <h2>챌린지 목록</h2>
-                  <p>미션을 완료할수록 더 많은 포인트를 드려요.</p>
+              <section className="content_section community_challenge_list_section">
+                <div className="content_section_header community_challenge_heading">
+                  <div className="content_section_copy">
+                    <h2>챌린지 목록</h2>
+                    <p>미션을 완료할수록 더 많은 포인트를 드려요.</p>
+                  </div>
+                  <img src={challengeHeadingImage} alt="" />
                 </div>
-                <img src={challengeHeadingImage} alt="" />
-              </div>
 
-              <div className="community_challenge_cards">
-                {challengeCardItems.map((item) => {
-                  const isJoined = selectedChallengeId === item.id
-                  const isComplete = item.status === 'complete'
-                  const buttonClassName = isComplete
-                    ? 'community_challenge_card_button complete'
-                    : item.status === 'active' || isJoined
-                      ? 'community_challenge_card_button filled'
-                      : 'community_challenge_card_button outline'
+                <div className="community_challenge_cards">
+                  {sortedChallengeCardItems.map((item) => {
+                    const isJoined = selectedChallengeId === item.id
+                    const isComplete = item.status === 'complete' || completedChallengeCardIds.includes(item.id)
 
-                  return (
-                    <article key={item.id} className="community_challenge_card">
-                      <img src={item.image} alt={item.title} className="community_challenge_card_image" />
-                      <div className="community_challenge_card_body">
-                        <h3>{item.title}</h3>
-                        <div className="community_challenge_card_meta">
-                          <span>
-                            <svg viewBox="0 0 24 24" aria-hidden="true">
-                              <path d="M16 19a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
-                              <path d="M8 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
-                              <path d="M3 20c0-2.2 2.3-4 5-4" />
-                              <path d="M12 20c.2-2.8 2.7-5 5.8-5 2 0 3.8.9 5.2 2.2" />
-                            </svg>
-                            {item.participants}명
-                          </span>
-                          <span>
-                            <svg viewBox="0 0 24 24" aria-hidden="true">
-                              <rect x="3.5" y="5.5" width="17" height="15" rx="2" />
-                              <path d="M7 3.5v4" />
-                              <path d="M17 3.5v4" />
-                              <path d="M3.5 9.5h17" />
-                            </svg>
-                            {item.deadline}
-                          </span>
+                    return (
+                      <article key={item.id} className="community_challenge_card">
+                        <img src={item.image} alt={item.title} className="community_challenge_card_image" />
+                        <div className="community_challenge_card_body">
+                          <h3>{item.title}</h3>
+                          <div className="community_challenge_card_meta">
+                            <span>
+                              <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="8.5" cy="9" r="2.5" />
+                                <circle cx="15.5" cy="9.5" r="3" />
+                                <path d="M3.5 18.5c0-2.4 2.2-4.3 5-4.3 1.3 0 2.4.4 3.3 1.1" />
+                                <path d="M10.5 18.5c0-2.7 2.3-4.8 5.1-4.8s4.9 2.1 4.9 4.8" />
+                              </svg>
+                              {item.participants}명
+                            </span>
+                            <span>
+                              <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="3.5" y="4.5" width="17" height="16" rx="2.5" />
+                                <path d="M8 2.8v3.8" />
+                                <path d="M16 2.8v3.8" />
+                                <path d="M3.5 8.5h17" />
+                              </svg>
+                              {item.deadline}
+                            </span>
+                          </div>
+                          <Button
+                            type="button"
+                            buttonVariant="challenge"
+                            className={[
+                              'community_challenge_card_button',
+                              isComplete ? 'is_complete' : item.status === 'active' || isJoined ? 'is_filled' : null,
+                            ]
+                              .filter(Boolean)
+                              .join(' ')}
+                            onClick={() => {
+                              if (!isComplete) {
+                                navigate('/community/challenge/reward?amount=10', {
+                                  state: {
+                                    rewardEventId: `community-challenge-card-${item.id}-${Date.now()}`,
+                                    rewardSourceItemId: item.id,
+                                  },
+                                })
+                              }
+                            }}
+                          >
+                            {isComplete ? '참여완료' : '참여하기'}
+                          </Button>
                         </div>
-                        <button
-                          type="button"
-                          className={buttonClassName}
-                          onClick={() => {
-                            if (!isComplete) setSelectedChallengeId(item.id)
-                          }}
-                        >
-                          {isComplete ? '참여완료' : '참여하기'}
-                        </button>
-                      </div>
-                    </article>
-                  )
-                })}
-              </div>
+                      </article>
+                    )
+                  })}
+                </div>
+              </section>
             </section>
 
             <article className="community_challenge_summary_card">
@@ -904,7 +987,7 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
                   <h3>{selectedChallenge.title}</h3>
                   <p>{selectedChallenge.description}</p>
                   <span>{selectedChallenge.date}</span>
-                  <strong>참여자수 {selectedChallenge.participants}</strong>
+                  <strong>참여자 수 {selectedChallenge.participants}</strong>
                 </div>
                 <button type="button" className="community_challenge_upload_cta">
                   사진 업로드하기
@@ -918,7 +1001,7 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
                       <h3>{item.title}</h3>
                       <p>{item.description}</p>
                       <span>{item.date}</span>
-                      <strong>참여자수 {item.participants}</strong>
+                      <strong>참여자 수 {item.participants}</strong>
                     </div>
                     <button
                       type="button"

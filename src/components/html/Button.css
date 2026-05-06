@@ -60,3 +60,79 @@
   background: #fff;
   border-radius: 999px;
 }
+
+.button_icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 12px;
+  background: #6d59f8;
+  color: #ffffff;
+}
+
+.button_label {
+  color: inherit;
+  font-family: 'Pretendard', 'SUIT', system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+}
+
+.button_icon_asset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  flex: 0 0 auto;
+}
+
+.button_icon_asset svg,
+.button_icon_asset img {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+.button_disabled_outline {
+  border: 1px solid #E5E5EC;
+  color: #999999;
+}
+
+.button_challenge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 40px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid #E5E5EC;
+  background: #ffffff;
+  color: #505050;
+}
+
+.button_challenge .button_label {
+  color: inherit;
+  font-family: 'Pretendard', 'SUIT', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: -0.025em;
+}
+
+.button_challenge.is_filled {
+  border-color: #605dd1;
+  background: #605dd1;
+  color: #ffffff;
+}
+
+.button_challenge.is_complete {
+  border-color: #E5E5EC;
+  background: #ffffff;
+  color: #999999;
+  cursor: default;
+}

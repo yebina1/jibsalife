@@ -5,6 +5,7 @@ import ScrollToTop from './components/ScrollToTop'
 import CommunityChallenge from './pages/CommunityChallenge'
 import CommunityOverview from './pages/CommunityOverview'
 import CommunityPetStory from './pages/CommunityPetStory'
+import CommunityReward from './pages/CommunityReward'
 import CommunityVote from './pages/CommunityVote'
 import Health from './pages/health/Health'
 import HealthCamera from './pages/health/HealthCamera'
@@ -57,6 +58,7 @@ function App() {
           <Route path="/community/overview" element={<CommunityOverview />} />
           <Route path="/community/pet-story" element={<CommunityPetStory />} />
           <Route path="/community/challenge" element={<CommunityChallenge />} />
+          <Route path="/community/challenge/reward" element={<CommunityReward />} />
           <Route path="/community/vote" element={<CommunityVote />} />
           <Route path="/mypage" element={<MyPage />} />
         </Route>

@@ -788,24 +788,32 @@
   align-items: center;
 }
 
+.community_challenge_feature_copy {
+  gap: 4px;
+}
+
 .community_challenge_feature_copy h2,
-.community_challenge_heading h2 {
+.community_challenge_heading .content_section_copy h2 {
   margin: 0;
   color: #111111;
-  font-size: 20px;
+  font-family: var(--app-font-family);
+  font-size: 18px;
   font-weight: 600;
   line-height: 1.4;
   letter-spacing: -0.025em;
+  word-break: keep-all;
 }
 
 .community_challenge_feature_copy p,
-.community_challenge_heading p {
-  margin: 12px 0 0;
+.community_challenge_heading .content_section_copy p {
+  margin: 0;
   color: #505050;
+  font-family: var(--app-font-family);
   font-size: 14px;
   font-weight: 400;
   line-height: 1.45;
   letter-spacing: -0.025em;
+  word-break: keep-all;
 }
 
 .community_challenge_feature_progress {
@@ -853,16 +861,12 @@
 .community_challenge_reward_button {
   grid-column: 1 / -1;
   width: 100%;
-  height: 56px;
-  border: 0;
-  border-radius: 8px;
-  background: #8d74f1;
-  color: #ffffff;
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: -0.025em;
-  cursor: pointer;
+  min-height: 56px;
+}
+
+.community_challenge_reward_button:disabled {
+  background: #ffffff;
+  cursor: default;
 }
 
 .community_challenge_heading {
@@ -896,23 +900,28 @@
 .community_challenge_card_image {
   width: 100%;
   aspect-ratio: 1.46 / 1;
-  border-radius: 0;
+  border-radius: 8px 8px 0 0;
   object-fit: cover;
 }
 
 .community_challenge_card_body {
   display: grid;
-  padding: 12px 10px 10px;
+  padding: 12px 8px 8px;
+  border-radius: 0 0 8px 8px;
 }
 
 .community_challenge_card_body h3 {
   margin: 0;
+  display: block;
+  white-space: pre-line;
   color: #111111;
-  font-size: 16px;
+  font-family: 'Pretendard', 'SUIT', system-ui, sans-serif;
+  font-size: 14px;
   font-weight: 600;
-  line-height: 1.4;
+  line-height: 1.45;
   letter-spacing: -0.025em;
   word-break: keep-all;
+  white-space: pre-line;
 }
 
 .community_challenge_card_meta {
@@ -921,7 +930,8 @@
   gap: 6px;
   margin-top: 10px;
   color: #505050;
-  font-size: 14px;
+  font-family: 'Pretendard', 'SUIT', system-ui, sans-serif;
+  font-size: 13px;
   font-weight: 400;
   line-height: 1.45;
   letter-spacing: -0.025em;
@@ -944,34 +954,7 @@
 }
 
 .community_challenge_card_button {
-  width: 100%;
-  height: 40px;
   margin-top: 14px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: -0.025em;
-  cursor: pointer;
-}
-
-.community_challenge_card_button.filled {
-  border: 0;
-  background: #8d74f1;
-  color: #ffffff;
-}
-
-.community_challenge_card_button.outline {
-  border: 1px solid #111111;
-  background: #ffffff;
-  color: #505050;
-}
-
-.community_challenge_card_button.complete {
-  border: 1px solid #111111;
-  background: #ffffff;
-  color: #505050;
-  cursor: default;
 }
 
 .community_challenge_summary_card {
@@ -2043,6 +2026,14 @@
     padding: 0;
   }
 
+  .community_challenge_feature_copy p {
+    max-width: 18ch;
+  }
+
+  .community_challenge_heading .content_section_copy p {
+    max-width: 17ch;
+  }
+
   .community_tab_bar {
     gap: 0;
     width: min(100%, var(--layout-max-width, 1440px));
@@ -2105,13 +2096,8 @@
     gap: 28px 20px;
   }
 
-  .community_challenge_feature_copy h2,
-  .community_challenge_heading h2 {
-    font-size: 20px;
-  }
-
   .community_challenge_feature_copy p,
-  .community_challenge_heading p {
+  .community_challenge_heading .content_section_copy p {
     font-size: 14px;
   }
 
@@ -2130,7 +2116,7 @@
   }
 
   .community_challenge_card_body h3 {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .community_challenge_card_meta {
@@ -2338,13 +2324,8 @@
     gap: 28px 20px;
   }
 
-  .community_challenge_feature_copy h2,
-  .community_challenge_heading h2 {
-    font-size: 20px;
-  }
-
   .community_challenge_feature_copy p,
-  .community_challenge_heading p {
+  .community_challenge_heading .content_section_copy p {
     font-size: 14px;
   }
 
@@ -2363,7 +2344,7 @@
   }
 
   .community_challenge_card_body h3 {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .community_challenge_card_meta {
