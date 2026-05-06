@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Outlet, useLocation } from 'react-router'
+import { NavLink, Outlet, useLocation } from 'react-router'
 import Header from '../components/Header'
 import FloatingAiButton from '../components/FloatingAiButton'
 import HomeIndicator from '../components/HomeIndicator'
@@ -12,11 +12,38 @@ type LayoutProps = {
   showNav?: boolean
 }
 
+const communityTabs = [
+  { label: '전체', to: '/community/overview' },
+  { label: '펫스토리', to: '/community/pet-story' },
+  { label: '챌린지', to: '/community/challenge' },
+  { label: '투표', to: '/community/vote' },
+] as const
+
+const petStorySubTabs = [
+  { label: '전체', to: '/community/pet-story?sub=all' },
+  { label: '자랑하기', to: '/community/pet-story?sub=brag' },
+  { label: '일상', to: '/community/pet-story?sub=daily' },
+  { label: '반려상식', to: '/community/pet-story?sub=knowledge' },
+] as const
+
+const voteSubTabs = [
+  { label: '전체', to: '/community/vote?sub=all' },
+  { label: '목록', to: '/community/vote?sub=list' },
+  { label: '투표결과', to: '/community/vote?sub=result' },
+] as const
+
 function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const [header, setHeader] = useState<HeaderConfig>(null)
   const { pathname, search } = useLocation()
-  const isCameraPage = pathname === '/health/camera' && new URLSearchParams(search).get('guide') === 'false'
+  const searchParams = new URLSearchParams(search)
+  const communitySubParam = searchParams.get('sub')
+  const isCameraPage = pathname === '/health/camera' && searchParams.get('guide') === 'false'
   const isCommunityPath = pathname.startsWith('/community')
+  const communitySubTabs = pathname.endsWith('/community/pet-story')
+    ? petStorySubTabs
+    : pathname.endsWith('/community/vote')
+      ? voteSubTabs
+      : null
   const hasContentPadding = true
   const contentClassName =
     hasContentPadding ? 'layout_content' : 'layout_content layout_content_no_padding'
@@ -34,14 +61,63 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const hideFloatingAiButton = hideFloatingAiButtonPaths.includes(pathname) || isCommunityPath
 
   const isMinimal = !showHeader && !showNav
+  const layoutClassName = isCameraPage
+    ? 'layout layout_camera'
+    : isMinimal
+      ? 'layout layout_minimal'
+      : isCommunityPath
+        ? `layout layout_community ${communitySubTabs ? 'layout_community_with_subtabs' : ''}`
+        : 'layout'
 
   return (
     <HeaderContext.Provider value={setHeader}>
-      <div className={isCameraPage ? 'layout layout_camera' : isMinimal ? 'layout layout_minimal' : 'layout'}>
+      <div className={layoutClassName}>
         {!isCameraPage ? (
           <header>
             <StateBar />
             {showHeader && header && <Header {...header} />}
+            {isCommunityPath ? (
+              <>
+                <nav className="layout_community_tabs" aria-label="커뮤니티 카테고리">
+                  {communityTabs.map((tab) => (
+                    <NavLink
+                      key={tab.to}
+                      to={tab.to}
+                      className={({ isActive }) =>
+                        `layout_community_tab ${
+                          isActive || (pathname === '/community' && tab.to === '/community/overview')
+                            ? 'active'
+                            : ''
+                        }`
+                      }
+                      end
+                    >
+                      {tab.label}
+                    </NavLink>
+                  ))}
+                </nav>
+                {communitySubTabs ? (
+                  <nav className="layout_community_subtabs" aria-label="커뮤니티 세부 카테고리">
+                    {communitySubTabs.map((tab) => {
+                      const tabSubParam = new URLSearchParams(tab.to.split('?')[1]).get('sub')
+                      const isDefaultActive = !communitySubParam && tabSubParam === 'all'
+
+                      return (
+                        <NavLink
+                          key={tab.to}
+                          to={tab.to}
+                          className={`layout_community_subtab ${
+                            communitySubParam === tabSubParam || isDefaultActive ? 'active' : ''
+                          }`}
+                        >
+                          {tab.label}
+                        </NavLink>
+                      )
+                    })}
+                  </nav>
+                ) : null}
+              </>
+            ) : null}
           </header>
         ) : null}
         <div className={contentClassName}>

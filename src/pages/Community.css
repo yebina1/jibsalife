@@ -1,9 +1,12 @@
 ﻿.community_page {
   display: flex;
   flex-direction: column;
-  padding: 58px 0 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
   background: #ffffff;
   color: #131313;
+  box-sizing: border-box;
 }
 
 .community_page_overview {
@@ -84,11 +87,11 @@
 }
 
 .community_tab_bar {
+  display: none;
   position: fixed;
   top: var(--layout-header-height, 97px);
   left: 50%;
   z-index: 105;
-  display: grid;
   width: min(100%, var(--layout-max-width, 1440px));
   grid-template-columns: repeat(4, minmax(0, 1fr));
   order: 1;
@@ -138,10 +141,11 @@
 }
 
 .community_detail_top {
-  padding: 0 6px 12px;
+  padding: 0 0 12px;
 }
 
 .community_subtab_bar {
+  display: none;
   order: 2;
   gap: 0;
   width: auto;
@@ -292,7 +296,7 @@
 
 .community_subtab_bar + .community_list_header {
   min-height: 36px;
-  margin-top: -46px;
+  margin-top: 0;
   justify-content: flex-end;
 }
 
@@ -418,6 +422,28 @@
   padding: 0;
 }
 
+.community_page_pet-story .community_feed,
+.community_page_challenge .community_challenge_screen,
+.community_page_vote .community_vote_list_screen,
+.community_page_vote .community_vote_candidate_screen,
+.community_page_vote .community_vote_result_screen,
+.community_page_vote .community_vote_result_detail_screen,
+.community_page_vote .community_feed {
+  width: 100%;
+  max-width: 100%;
+  margin-right: 0;
+  margin-left: 0;
+  padding-right: 0;
+  padding-left: 0;
+  box-sizing: border-box;
+}
+
+.community_page_pet-story .community_list_header,
+.community_page_vote .community_list_header {
+  padding-right: 0;
+  padding-left: 0;
+}
+
 .community_overview {
   display: grid;
   gap: 0;
@@ -439,6 +465,11 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 12px;
+}
+
+.community_overview_heading button,
+.community_overview_section .content_section_action {
+  display: none;
 }
 
 .community_overview_heading h2 {
@@ -728,7 +759,7 @@
 .community_challenge_view {
   display: grid;
   gap: 28px;
-  padding: 8px 6px 0;
+  padding: 8px 0 0;
 }
 
 .community_challenge_screen {
@@ -1129,7 +1160,7 @@
   display: grid;
   justify-items: center;
   gap: 28px;
-  padding: 8px 6px 0;
+  padding: 8px 0 0;
 }
 
 .community_challenge_detail_top {
@@ -1325,7 +1356,7 @@
 .community_vote_list_item {
   display: grid;
   gap: 8px;
-  padding: 0 6px;
+  padding: 0;
 }
 
 .community_vote_list_header {
@@ -1410,7 +1441,7 @@
 .community_vote_candidate_screen {
   display: grid;
   gap: 28px;
-  padding: 6px 6px 0;
+  padding: 6px 0 0;
 }
 
 .community_vote_candidate_entry {
@@ -1481,7 +1512,7 @@
 .community_vote_result_screen {
   display: grid;
   gap: 28px;
-  padding: 6px 6px 0;
+  padding: 6px 0 0;
 }
 
 .community_overview_vote_preview {
@@ -1546,7 +1577,7 @@
 .community_vote_result_detail_screen {
   display: grid;
   gap: 22px;
-  padding: 6px 20px 0;
+  padding: 6px 0 0;
 }
 
 .community_vote_result_detail_screen h3 {
@@ -1948,7 +1979,7 @@
 
 @media (min-width: 768px) {
   .community_page {
-    padding: 58px 0 0;
+    padding: 0;
   }
 
   .community_post {
@@ -1983,7 +2014,7 @@
 
 @media (max-width: 420px) {
   .community_page {
-    padding: 54px 0 0;
+    padding: 0;
   }
 
   .community_page_overview {
@@ -2044,7 +2075,7 @@
 
   .community_subtab_bar + .community_list_header {
     min-height: 30px;
-    margin-top: -38px;
+    margin-top: 0;
   }
 
   .community_list_header {
@@ -2360,7 +2391,7 @@
 
   .community_list_header {
     margin-bottom: 16px;
-    padding: 0 4px;
+    padding: 0;
   }
 
   .community_list_header h2 {

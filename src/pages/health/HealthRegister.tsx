@@ -695,16 +695,20 @@ function HealthRegister() {
   const handleGalleryFiles = (files: FileList | null) => {
     if (!files?.length) return
 
-    galleryImages.forEach((image) => revokeObjectUrl(image))
-
-    const nextImages = Array.from(files)
+    const nextPhotos = Array.from(files)
       .filter((file) => file.type.startsWith('image/'))
-      .slice(0, 12)
-      .map((file) => URL.createObjectURL(file))
+      .slice(0, getRemainingSlots('photo'))
+      .map((file, index) => ({
+        id: `photo-upload-${Date.now()}-${index}`,
+        preview: URL.createObjectURL(file),
+        label: file.name || `사진 ${index + 1}`,
+        mediaType: 'image' as const,
+      }))
 
-    setGalleryImages(nextImages)
+    appendEntries('photo', nextPhotos)
+    setGalleryImages([])
     setSelectedGalleryItems([])
-    setIsGalleryOpen(Boolean(nextImages.length))
+    setIsGalleryOpen(false)
   }
 
   const toggleGalleryItem = (index: number) => {

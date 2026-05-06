@@ -166,6 +166,19 @@ type CommunitySubTab = (typeof communitySubTabs)[number]
 type VoteSubTab = (typeof voteSubTabs)[number]
 export type CommunitySection = 'overview' | 'pet-story' | 'challenge' | 'vote'
 
+const communitySubTabByParam: Record<string, CommunitySubTab> = {
+  all: communitySubTabs[0],
+  brag: communitySubTabs[1],
+  daily: communitySubTabs[2],
+  knowledge: communitySubTabs[3],
+}
+
+const voteSubTabByParam: Record<string, VoteSubTab> = {
+  all: voteSubTabs[0],
+  list: voteSubTabs[1],
+  result: voteSubTabs[2],
+}
+
 type CommunityPost = {
   id: number
   tag: string
@@ -322,9 +335,15 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
 
   const navigate = useNavigate()
   const location = useLocation()
-  const currentTabParam = new URLSearchParams(location.search).get('tab')
+  const currentSearchParams = new URLSearchParams(location.search)
+  const currentTabParam = currentSearchParams.get('tab')
+  const currentSubParam = currentSearchParams.get('sub')
   const routeTopTab = getTopTabFromSection(section) ?? getTopTabFromRoute(location.pathname, currentTabParam)
   const initialKnowledgeView = currentTabParam === 'knowledge'
+  const initialCommunitySubTab =
+    communitySubTabByParam[currentSubParam ?? ''] ??
+    (initialKnowledgeView ? communitySubTabs[3] : communitySubTabs[0])
+  void initialCommunitySubTab
 
   const [selectedTopTab, setSelectedTopTab] = useState<TopTab>(
     routeTopTab
@@ -386,6 +405,20 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
     setSelectedCommunitySubTab('전체')
     setSelectedVoteSubTab('전체')
   }, [currentTabParam, location.key, location.state, routeTopTab])
+
+  useLayoutEffect(() => {
+    if (routeTopTab === topTabs[1]) {
+      setSelectedCommunitySubTab(
+        communitySubTabByParam[currentSubParam ?? ''] ??
+          (currentTabParam === 'knowledge' ? communitySubTabs[3] : communitySubTabs[0]),
+      )
+      return
+    }
+
+    if (routeTopTab === topTabs[3]) {
+      setSelectedVoteSubTab(voteSubTabByParam[currentSubParam ?? ''] ?? voteSubTabs[2])
+    }
+  }, [currentSubParam, currentTabParam, routeTopTab])
 
   useEffect(() => {
     window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(createdPosts))
