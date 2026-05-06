@@ -53,14 +53,15 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const communitySortParam = searchParams.get('sort') ?? 'popular'
   const isCameraPage = pathname === '/health/camera' && searchParams.get('guide') === 'false'
   const isCommunityPath = pathname.startsWith('/community')
+  const isCommunitySubAll = !communitySubParam || communitySubParam === 'all'
   const communitySubTabs = pathname.endsWith('/community/pet-story')
     ? petStorySubTabs
     : pathname.endsWith('/community/vote')
       ? voteSubTabs
       : null
   const showCommunitySort =
-    pathname.endsWith('/community/vote') ||
-    (pathname.endsWith('/community/pet-story') && communitySubParam !== 'knowledge')
+    (pathname.endsWith('/community/vote') && !isCommunitySubAll) ||
+    (pathname.endsWith('/community/pet-story') && !isCommunitySubAll && communitySubParam !== 'knowledge')
   const activeCommunitySubTab = communitySubTabs
     ? communitySubTabs.find((tab) => {
         const tabSubParam = getSubParam(tab.to)
