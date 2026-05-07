@@ -11,6 +11,12 @@ import {
   MISSION_ACTIVITY_RECORDS_CHANGE_EVENT,
   readMissionActivityRecords,
 } from '../utils/missionActivityRecords'
+import {
+  readMissionHistoryRecordsWithDefaults,
+  toMissionHistoryRecord,
+  writeStoredMissionHistoryRecords,
+  type MissionHistoryRecord,
+} from '../utils/missionHistoryRecords'
 
 const weekLabels = ['일', '월', '화', '수', '목', '금', '토']
 const today = new Date()
@@ -71,19 +77,6 @@ function getDateKey(year: number, month: number, day: number) {
   return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 }
 
-const initialHistoryItems = [
-  { id: 101, title: '식사 기록', detail: '간식 2개', time: '10:30', color: '#ffd1a8', date: '2026-05-01' },
-  { id: 102, title: '활동 기록', detail: '산책 20분', time: '18:40', color: '#428fe6', date: '2026-05-02' },
-  { id: 106, title: '식사 기록', detail: '사료 55g', time: '08:20', color: '#ffd1a8', date: '2026-05-02' },
-  { id: 103, title: '배변 기록', detail: '배변 실수', time: '09:15', color: '#527ca3', date: '2026-05-03' },
-  { id: 107, title: '증상 기록', detail: '재채기', time: '14:10', color: '#b9dfe3', date: '2026-05-03' },
-  { id: 104, title: '증상 기록', detail: '가려움', time: '21:05', color: '#b9dfe3', date: '2026-05-04' },
-  { id: 105, title: '식사 기록', detail: '밥 80g', time: '07:50', color: '#ffd1a8', date: '2026-05-05' },
-  { id: 1, title: '식사 기록', detail: '사료 60g', time: '08:00', color: '#ffd1a8', date: '2026-05-06' },
-  { id: 2, title: '활동 기록', detail: '산책 30분', time: '19:20', color: '#428fe6', date: '2026-05-06' },
-  { id: 3, title: '증상 기록', detail: '헐떡', time: '18:10', color: '#b9dfe3', date: '2026-05-06' },
-]
-
 type CategoryOption = {
   id: string
   label: string
@@ -125,9 +118,9 @@ function Mission() {
   const [isPeriodDatePickerOpen, setIsPeriodDatePickerOpen] = useState(false)
   const [addTitle, setAddTitle] = useState('')
   const [editingHistoryId, setEditingHistoryId] = useState<number | null>(null)
-  const [historyItems, setHistoryItems] = useState(() => [
-    ...readMissionActivityRecords(),
-    ...initialHistoryItems,
+  const [historyItems, setHistoryItems] = useState<MissionHistoryRecord[]>(() => [
+    ...readMissionActivityRecords().map(toMissionHistoryRecord),
+    ...readMissionHistoryRecordsWithDefaults(),
   ])
   const [categories, setCategories] = useState<CategoryOption[]>(initialCategoryOptions)
   const [selectedCategoryId, setSelectedCategoryId] = useState(initialCategoryOptions[0].id)
@@ -143,7 +136,7 @@ function Mission() {
   })
   const [draftAddDate, setDraftAddDate] = useState(addDate)
   const calendarRef = useRef<HTMLElement>(null)
-  const dockRef = useRef<HTMLDivElement>(null)
+  const dockRef = useRef<HTMLButtonElement>(null)
   const monthBarRef = useRef<HTMLDivElement>(null)
   const weekdaysRef = useRef<HTMLDivElement>(null)
   const calendarViewRef = useRef(calendarView)
@@ -186,8 +179,8 @@ function Mission() {
   useEffect(() => {
     const syncMissionActivityRecords = () => {
       setHistoryItems([
-        ...readMissionActivityRecords(),
-        ...initialHistoryItems,
+        ...readMissionActivityRecords().map(toMissionHistoryRecord),
+        ...readMissionHistoryRecordsWithDefaults(),
       ])
     }
 
@@ -199,6 +192,10 @@ function Mission() {
       window.removeEventListener('storage', syncMissionActivityRecords)
     }
   }, [])
+
+  useEffect(() => {
+    writeStoredMissionHistoryRecords(historyItems)
+  }, [historyItems])
 
   const selectedDay = useMemo(
     () => calendarDays.find((day) => day.id === selectedDayId) ?? calendarDays[24],
@@ -267,6 +264,10 @@ function Mission() {
 
   const togglePeriodDatePicker = () => {
     setIsPeriodDatePickerOpen((prev) => !prev)
+  }
+
+  const toggleCalendarView = () => {
+    setCalendarView((prev) => (prev === '월간' ? '주간' : '월간'))
   }
 
   const closeMissionSheet = () => {
@@ -345,7 +346,7 @@ function Mission() {
     closeMissionSheet()
   }
 
-  const openHistoryEdit = (item: typeof initialHistoryItems[number]) => {
+  const openHistoryEdit = (item: MissionHistoryRecord) => {
     const [year, month, day] = item.date.split('-').map(Number)
     const nextDate = {
       year: Number.isFinite(year) ? year : selectedDay.year,
@@ -547,9 +548,15 @@ function Mission() {
         </div>
         </div>
 
-        <div className="mission_calendar_dock" ref={dockRef}>
+        <button
+          type="button"
+          className="mission_calendar_dock"
+          ref={dockRef}
+          aria-label={calendarView === '월간' ? '주간 보기로 전환' : '월간 보기로 전환'}
+          onClick={toggleCalendarView}
+        >
           <span />
-        </div>
+        </button>
 
       </section>
 

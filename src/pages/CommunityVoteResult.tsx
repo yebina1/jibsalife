@@ -49,12 +49,21 @@ function CommunityVoteResult() {
   const handleRewardClick = () => {
     if (isRewardClaimed) return
 
+    setIsCompleteAlertOpen(true)
+  }
+
+  const confirmReward = () => {
+    if (isRewardClaimed) {
+      setIsCompleteAlertOpen(false)
+      return
+    }
+
     const nextPoints = profilePoints + COMMUNITY_VOTE_REWARD_POINTS
     writeProfilePoints(nextPoints)
     writeCommunityVoteRewardClaimed()
     setProfilePoints(nextPoints)
     setIsRewardClaimed(true)
-    setIsCompleteAlertOpen(true)
+    setIsCompleteAlertOpen(false)
   }
 
   return (
@@ -184,11 +193,6 @@ function CommunityVoteResult() {
         <Alert onClose={() => setIsCompleteAlertOpen(false)}>
           <div className="cv_complete_alert">
             <div className="cv_complete_visual" aria-hidden="true">
-              <span className="cv_complete_confetti cv_complete_confetti_1" />
-              <span className="cv_complete_confetti cv_complete_confetti_2" />
-              <span className="cv_complete_confetti cv_complete_confetti_3" />
-              <span className="cv_complete_confetti cv_complete_confetti_4" />
-              <span className="cv_complete_confetti cv_complete_confetti_5" />
               <span className="cv_complete_circle">
                 <svg viewBox="0 0 48 48" focusable="false">
                   <path d="M15 25.2 21.2 31.4 34 18.6" />
@@ -209,12 +213,12 @@ function CommunityVoteResult() {
               <span className="cv_complete_point_icon" aria-hidden="true">P</span>
               <span className="cv_complete_point_text">
                 <span>지금까지 모은 포인트</span>
-                <strong>{formatProfilePoints(profilePoints)}</strong>
+                <strong>{formatProfilePoints(profilePoints + COMMUNITY_VOTE_REWARD_POINTS)}</strong>
               </span>
               <ChevronIcon direction="right" size="sm" />
             </button>
 
-            <Button type="button" className="purple_btn" onClick={() => setIsCompleteAlertOpen(false)}>
+            <Button type="button" className="purple_btn" onClick={confirmReward}>
               확인
             </Button>
           </div>

@@ -7,6 +7,7 @@ import BackButton from '../components/html/BackButton'
 import Button from '../components/html/Button'
 import {
   addCompletedChallengeCardId,
+  APPLIED_REWARD_EVENTS_STORAGE_KEY,
   CHALLENGE_REWARD_CLAIMED_STORAGE_KEY,
 } from '../constants/points'
 import { formatProfilePoints, readProfilePoints, writeProfilePoints } from '../utils/profilePoints'
@@ -95,35 +96,50 @@ function CommunityReward() {
     }
   }, [])
 
-  useEffect(() => {
-    if (!rewardEventId) {
-      setCurrentPoints(readProfilePoints())
-      return
-    }
+  const readAppliedRewardEvents = () => {
+    try {
+      const savedAppliedRewardEvents = window.localStorage.getItem(APPLIED_REWARD_EVENTS_STORAGE_KEY)
+      const appliedRewardEvents = savedAppliedRewardEvents
+        ? (JSON.parse(savedAppliedRewardEvents) as string[])
+        : []
 
-    const savedAppliedRewardEvents = window.localStorage.getItem('jibsalife.points.appliedRewardEvents')
-    const appliedRewardEvents = savedAppliedRewardEvents ? (JSON.parse(savedAppliedRewardEvents) as string[]) : []
-
-    if (appliedRewardEvents.includes(rewardEventId)) {
-      setCurrentPoints(readProfilePoints())
-      return
+      return Array.isArray(appliedRewardEvents)
+        ? appliedRewardEvents.filter((eventId) => typeof eventId === 'string')
+        : []
+    } catch {
+      return []
     }
+  }
+
+  const applyReward = () => {
+    if (!rewardEventId) return readProfilePoints()
+
+    const appliedRewardEvents = readAppliedRewardEvents()
+    if (appliedRewardEvents.includes(rewardEventId)) return readProfilePoints()
 
     const nextPoints = readProfilePoints() + Math.max(0, rewardAmount)
     writeProfilePoints(nextPoints)
     window.localStorage.setItem(
-      'jibsalife.points.appliedRewardEvents',
+      APPLIED_REWARD_EVENTS_STORAGE_KEY,
       JSON.stringify([...appliedRewardEvents, rewardEventId].slice(-30)),
     )
-    setCurrentPoints(nextPoints)
-  }, [rewardAmount, rewardEventId])
 
-  const goToChallenge = () => {
+    return nextPoints
+  }
+
+  const confirmReward = () => {
+    const nextPoints = applyReward()
+    setCurrentPoints(nextPoints)
+
     if (isChallengeRewardClaim) {
       window.localStorage.setItem(CHALLENGE_REWARD_CLAIMED_STORAGE_KEY, 'true')
     } else if (Number.isFinite(rewardSourceItemId)) {
       addCompletedChallengeCardId(Number(rewardSourceItemId))
     }
+    navigate('/community/challenge')
+  }
+
+  const goToChallenge = () => {
     navigate('/community/challenge')
   }
 
@@ -162,7 +178,7 @@ function CommunityReward() {
           </div>
           <div className="community_reward_point_copy">
             <span>지금까지 모은 포인트</span>
-            <strong>{formatProfilePoints(currentPoints)}</strong>
+            <strong>{formatProfilePoints(currentPoints + Math.max(0, rewardAmount))}</strong>
           </div>
           <span className="community_reward_point_arrow" aria-hidden="true">
             <ChevronIcon direction="right" size="sm" />
@@ -199,7 +215,7 @@ function CommunityReward() {
           <Button
             type="button"
             className="purple_btn square_btn community_reward_confirm"
-            onClick={goToChallenge}
+            onClick={confirmReward}
           >
             확인
           </Button>

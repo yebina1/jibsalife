@@ -1,5 +1,8 @@
 import type { HealthResultSummaryItem } from '../components/HealthResultSummary'
 import type { HealthResultDetailItem } from '../components/HealthResultDetailBox'
+import { readMissionActivityRecords } from './missionActivityRecords'
+import { readMissionHistoryRecordsWithDefaults } from './missionHistoryRecords'
+import type { MissionHistoryRecord } from './missionHistoryRecords'
 
 export type HealthStatusTone = 'excellent' | 'good' | 'normal' | 'caution' | 'danger'
 export type ObservationStatus = 'stable' | 'minor' | 'warning' | 'missing'
@@ -74,6 +77,64 @@ const photoScores: Record<ObservationStatus, number> = {
   missing: 0,
 }
 
+const statusPriority: Record<ObservationStatus, number> = {
+  missing: 0,
+  stable: 1,
+  minor: 2,
+  warning: 3,
+}
+
+const calendarSevereKeywords = [
+  '구토',
+  '설사',
+  '혈변',
+  '밥 거부',
+  '식욕 감소',
+  '물을 평소보다 많이 마심',
+  '활동량 감소',
+  '무기력',
+  '보호자 반응 감소',
+  '숨 가쁨',
+  '헐떡임 증가',
+  '헐떡임',
+  '헐떡',
+  '이상 호흡음',
+  '절뚝거림',
+  '산책 거부',
+  '통증 반응',
+]
+
+const calendarMinorKeywords = [
+  '변비',
+  '배변 횟수 증가',
+  '배변 실수',
+  '소변 색 변화',
+  '소변 냄새 변화',
+  '급하게 먹음',
+  '물 많이 마심',
+  '체중 감소',
+  '체중 증가',
+  '잠만 잠',
+  '숨기 행동 증가',
+  '공격성 증가',
+  '불안 행동',
+  '평소보다 예민함',
+  '기침',
+  '재채기',
+  '코 분비물',
+  '털 빠짐 증가',
+  '피부 발진',
+  '가려움',
+  '귀 긁기',
+  '눈물 증가',
+  '눈 충혈',
+  '입 냄새 심화',
+  '피부 붉어짐',
+  '계단 거부',
+  '관절 뻣뻣함',
+  '점프 안 함',
+]
+
 export function getHealthStatus(score: number): HealthStatus {
   if (score >= 90) {
     return {
@@ -116,6 +177,65 @@ export function getHealthStatus(score: number): HealthStatus {
 
 function getWeightedScore(status: ObservationStatus, weight: number) {
   return weight * defaultScoreRatio[status]
+}
+
+function getHigherRiskStatus(current: ObservationStatus, next: ObservationStatus) {
+  return statusPriority[next] > statusPriority[current] ? next : current
+}
+
+function inferCalendarStatus(record: MissionHistoryRecord) {
+  const detail = `${record.title} ${record.detail}`
+
+  if (calendarSevereKeywords.some((keyword) => detail.includes(keyword))) return 'warning'
+  if (calendarMinorKeywords.some((keyword) => detail.includes(keyword))) return 'minor'
+
+  return 'stable'
+}
+
+function createCalendarHealthInput(): Partial<HealthEvaluationInput> {
+  const records = [
+    ...readMissionHistoryRecordsWithDefaults(),
+    ...readMissionActivityRecords(),
+  ]
+
+  return records.reduce<Partial<HealthEvaluationInput>>((input, record) => {
+    const status = inferCalendarStatus(record)
+
+    if (record.title.includes('배변')) {
+      input.stoolStatus = getHigherRiskStatus(input.stoolStatus ?? 'missing', status)
+    }
+
+    if (record.title.includes('활동')) {
+      input.activityStatus = getHigherRiskStatus(input.activityStatus ?? 'missing', status)
+    }
+
+    if (record.title.includes('식사')) {
+      input.mealStatus = getHigherRiskStatus(input.mealStatus ?? 'missing', status)
+    }
+
+    if (record.title.includes('증상')) {
+      input.symptomStatus = getHigherRiskStatus(input.symptomStatus ?? 'missing', status)
+    }
+
+    if (record.detail.includes('체중')) {
+      input.weightStatus = getHigherRiskStatus(input.weightStatus ?? 'missing', status)
+    }
+
+    return input
+  }, {})
+}
+
+function mergeHealthInputWithCalendar(input: HealthEvaluationInput): HealthEvaluationInput {
+  const calendarInput = createCalendarHealthInput()
+
+  return {
+    stoolStatus: getHigherRiskStatus(input.stoolStatus, calendarInput.stoolStatus ?? 'missing'),
+    activityStatus: getHigherRiskStatus(input.activityStatus, calendarInput.activityStatus ?? 'missing'),
+    mealStatus: getHigherRiskStatus(input.mealStatus, calendarInput.mealStatus ?? 'missing'),
+    weightStatus: getHigherRiskStatus(input.weightStatus, calendarInput.weightStatus ?? 'missing'),
+    symptomStatus: getHigherRiskStatus(input.symptomStatus, calendarInput.symptomStatus ?? 'missing'),
+    photoStatus: input.photoStatus,
+  }
 }
 
 function getSignalText(input: HealthEvaluationInput) {
@@ -365,23 +485,24 @@ export function calculateHealthResult(input: Partial<HealthEvaluationInput>): He
     ...DEFAULT_INPUT,
     ...input,
   }
+  const evaluatedInput = mergeHealthInputWithCalendar(normalizedInput)
 
   const score = Math.round(
-    getWeightedScore(normalizedInput.stoolStatus, scoreWeights.stoolStatus) +
-      getWeightedScore(normalizedInput.activityStatus, scoreWeights.activityStatus) +
-      getWeightedScore(normalizedInput.mealStatus, scoreWeights.mealStatus) +
-      getWeightedScore(normalizedInput.weightStatus, scoreWeights.weightStatus) +
-      symptomScores[normalizedInput.symptomStatus] +
-      photoScores[normalizedInput.photoStatus],
+    getWeightedScore(evaluatedInput.stoolStatus, scoreWeights.stoolStatus) +
+      getWeightedScore(evaluatedInput.activityStatus, scoreWeights.activityStatus) +
+      getWeightedScore(evaluatedInput.mealStatus, scoreWeights.mealStatus) +
+      getWeightedScore(evaluatedInput.weightStatus, scoreWeights.weightStatus) +
+      symptomScores[evaluatedInput.symptomStatus] +
+      photoScores[evaluatedInput.photoStatus],
   )
 
   const status = getHealthStatus(score)
   const summary: HealthResultSummaryData = {
-    signal: getSignalText(normalizedInput),
-    cause: getCauseText(normalizedInput),
+    signal: getSignalText(evaluatedInput),
+    cause: getCauseText(evaluatedInput),
     consultation: getConsultationText(status.tone),
     hospitalGuide: getHospitalGuideText(score),
-    report: getReportText(status.tone, normalizedInput),
+    report: getReportText(status.tone, evaluatedInput),
   }
 
   return {
@@ -389,7 +510,7 @@ export function calculateHealthResult(input: Partial<HealthEvaluationInput>): He
     status,
     summary,
     insights: [createInsightMessage(summary)],
-    input: normalizedInput,
+    input: evaluatedInput,
   }
 }
 

@@ -33,8 +33,6 @@
     transform 220ms ease;
 }
 
-.floating_write_button:hover,
-.floating_write_button:focus-visible,
 .floating_write_button.is_expanded {
   width: 104px;
   border-radius: 999px;
@@ -67,8 +65,6 @@
     transform 220ms ease;
 }
 
-.floating_write_button:hover .floating_write_button_label,
-.floating_write_button:focus-visible .floating_write_button_label,
 .floating_write_button.is_expanded .floating_write_button_label {
   max-width: 48px;
   opacity: 1;
@@ -146,8 +142,6 @@
     right: 16px;
   }
 
-  .floating_write_button:hover,
-  .floating_write_button:focus-visible,
   .floating_write_button.is_expanded {
     width: 104px;
   }

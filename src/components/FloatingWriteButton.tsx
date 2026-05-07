@@ -8,21 +8,18 @@ function FloatingWriteButton({
   className,
   ...props
 }: FloatingWriteButtonProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(true)
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
-
     let lastScrollY = window.scrollY
+    const collapseTimer = window.setTimeout(() => {
+      setIsExpanded(false)
+    }, 3000)
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY
 
-      if (currentScrollY <= 8) {
-        setIsExpanded(false)
-      } else if (currentScrollY > lastScrollY) {
-        setIsExpanded(true)
-      } else if (currentScrollY < lastScrollY) {
+      if (currentScrollY > lastScrollY) {
         setIsExpanded(false)
       }
 
@@ -32,6 +29,7 @@ function FloatingWriteButton({
     window.addEventListener('scroll', handleScroll, { passive: true })
 
     return () => {
+      window.clearTimeout(collapseTimer)
       window.removeEventListener('scroll', handleScroll)
     }
   }, [])

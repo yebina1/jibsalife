@@ -391,56 +391,6 @@
   stroke-linejoin: round;
 }
 
-.cv_complete_confetti {
-  position: absolute;
-  display: block;
-  width: 12px;
-  height: 12px;
-  border-radius: 2px;
-}
-
-.cv_complete_confetti_1 {
-  top: 24px;
-  left: 28px;
-  background: #F4C320;
-  transform: rotate(45deg);
-}
-
-.cv_complete_confetti_2 {
-  top: 46px;
-  left: -4px;
-  width: 15px;
-  height: 15px;
-  background: #A566F4;
-  transform: rotate(10deg);
-}
-
-.cv_complete_confetti_3 {
-  top: 46px;
-  right: 24px;
-  width: 15px;
-  height: 15px;
-  background: #A566F4;
-  transform: rotate(10deg);
-}
-
-.cv_complete_confetti_4 {
-  right: 12px;
-  bottom: 42px;
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  background: #22C6DC;
-}
-
-.cv_complete_confetti_5 {
-  left: 40px;
-  bottom: 30px;
-  width: 11px;
-  height: 11px;
-  background: #F35EA7;
-}
-
 .cv_complete_copy {
   display: grid;
   justify-items: center;

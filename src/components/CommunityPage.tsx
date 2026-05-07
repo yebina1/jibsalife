@@ -168,8 +168,8 @@ const sortOptions = ['인기순', '최신순', '댓글순', '공유순'] as cons
 const createdPostsStorageKey = 'jibsalife.community.createdPosts'
 
 type TopTab = (typeof topTabs)[number]
-const topTabLabels = ['전체', '펫스토리', '챌린지', '투표'] as const
-const communitySubTabLabels = ['전체', '자랑하기', '일상', '반려상식'] as const
+const topTabLabels = ['전체', '커뮤니티', '챌린지', '투표'] as const
+const communitySubTabLabels = ['전체', '자랑하기', '일상', '반려 상식'] as const
 const communityRouteByTopTab: Record<TopTab, string> = {
   전체: '/community/overview',
   커뮤니티: '/community/pet-story',
@@ -354,7 +354,7 @@ const knowledgeFeedItems = [
   {
     id: 1,
     tag: '산책',
-    title: '초보 집사를 위한 산책법 TOP3',
+    title: '강아지 산책 안 하면 생기는 문제점',
     image: contents2,
     likes: 8,
     comments: 3,
@@ -364,31 +364,31 @@ const knowledgeFeedItems = [
   {
     id: 2,
     tag: '건강',
-    title: '자세하게 케어해봐요',
+    title: '고양이 점프의 숨겨진 비밀',
     image: contents3,
     likes: 8,
     comments: 3,
-    viewsText: '982',
+    viewsText: '968',
     path: '/community/pet-story/knowledge/walk-problems',
   },
   {
     id: 3,
     tag: '일상',
-    title: '고양이의 낮잠 비밀',
+    title: '강아지에게 절대 주면 안 되는 음식 7가지',
     image: contents1,
     likes: 8,
     comments: 3,
-    viewsText: '864',
+    viewsText: '860',
     path: '/community/pet-story/knowledge/walk-problems',
   },
   {
     id: 4,
     tag: '일상',
-    title: '수면 패턴 꼭 체크해봐야 할까요?',
+    title: '봄철 강아지 알레르기 증상과 관리법',
     image: contents4,
     likes: 8,
     comments: 3,
-    viewsText: '744',
+    viewsText: '482',
     path: '/community/pet-story/knowledge/walk-problems',
   },
 ] as const
@@ -647,7 +647,7 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
   const sectionTitle = isOverviewTab
     ? '전체'
     : isKnowledgeView
-      ? '반려상식'
+      ? '반려 상식'
       : isVoteTab
         ? '투표'
         : isChallengeTab
@@ -1302,7 +1302,7 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
 
             <section className="community_overview_section">
               <div className="community_overview_heading">
-                <h2>반려상식</h2>
+                <h2>반려 상식</h2>
                 <button type="button" onClick={() => setSelectedCommunitySubTab('반려상식')}>
                   바로가기
                 </button>
