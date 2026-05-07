@@ -8,23 +8,23 @@ import contents2 from '../img/contents2.png'
 const detailItems = [
   {
     id: 1,
-    title: '스트레스 증가',
+    title: 'Stress can increase',
     description:
-      '산책이 부족하면 에너지를 쓰지 못해 짖음, 물건 훼손, 예민한 반응처럼 일상 행동 문제로 이어질 수 있어요.',
+      'When walks are not enough, unused energy can turn into barking, chewing, or sensitive reactions at home.',
     emoji: '!',
   },
   {
     id: 2,
-    title: '체중과 건강 관리',
+    title: 'Weight and health can suffer',
     description:
-      '규칙적으로 움직이지 않으면 체중이 쉽게 늘고 관절이나 심폐 건강에도 부담이 될 수 있어요.',
+      'Without regular movement, weight can rise more easily and joints or heart health can take on extra strain.',
     emoji: '+',
   },
   {
     id: 3,
-    title: '사회성 저하',
+    title: 'Social confidence can drop',
     description:
-      '바깥 자극을 충분히 경험하지 못하면 낯선 사람, 소리, 환경에 대한 적응력이 떨어질 수 있어요.',
+      'A dog that rarely meets outdoor sounds and people may become less comfortable in new places.',
     emoji: '*',
   },
 ] as const
@@ -46,7 +46,7 @@ function CommunityKnowledgeDetail() {
         title=""
         leftContent={<BackButton />}
         rightContent={
-          <Button type="button" aria-label="북마크" className="community_knowledge_detail_bookmark">
+          <Button type="button" aria-label="Bookmark" className="community_knowledge_detail_bookmark">
             <BookmarkIcon />
           </Button>
         }
@@ -56,14 +56,14 @@ function CommunityKnowledgeDetail() {
         <img
           className="community_knowledge_detail_hero"
           src={contents2}
-          alt="강아지 산책 부족으로 생길 수 있는 문제"
+          alt="Dog walking guide"
         />
 
         <section className="community_knowledge_detail_content">
           <h1>
-            강아지 산책이 부족하면
+            What can happen
             <br />
-            생길 수 있는 문제
+            when walks are not enough?
           </h1>
 
           <div className="community_knowledge_detail_meta">
@@ -74,7 +74,7 @@ function CommunityKnowledgeDetail() {
               </svg>
               1.2k
             </span>
-            <span>2026.05.02 게시</span>
+            <span>2026.05.02 posted</span>
             <button type="button">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="18" cy="5.5" r="2" />
@@ -83,14 +83,14 @@ function CommunityKnowledgeDetail() {
                 <path d="M7.8 11.1 16 6.4" />
                 <path d="m7.8 12.9 8.2 4.7" />
               </svg>
-              공유하기
+              Share
             </button>
           </div>
 
           <p className="community_knowledge_detail_intro">
-            산책은 강아지의 체력 관리뿐 아니라 정서 안정에도 중요한 일상 루틴이에요.
+            Walks are not only exercise. They also help a dog feel settled and confident.
             <br />
-            충분히 움직이지 못하면 작은 불편이 행동 문제로 이어질 수 있어요.
+            When a dog cannot move enough, small discomfort can grow into behavior problems.
           </p>
 
           <div className="community_knowledge_detail_cards">
@@ -111,13 +111,13 @@ function CommunityKnowledgeDetail() {
 
         <div className="community_knowledge_detail_actions">
           <div className="community_knowledge_detail_reactions">
-            <button type="button" aria-label="좋아요">
+            <button type="button" aria-label="Like">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 20.2 4.9 13.6a4.8 4.8 0 0 1 6.8-6.8L12 7.9l.3-.3a4.8 4.8 0 1 1 6.8 6.8Z" />
               </svg>
               128
             </button>
-            <button type="button" aria-label="댓글">
+            <button type="button" aria-label="Comment">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 4.8c-4.4 0-8 2.9-8 6.6 0 2.1 1.2 4 3.1 5.2l-.8 3 3.3-1.8c.8.2 1.6.3 2.4.3 4.4 0 8-2.9 8-6.7s-3.6-6.6-8-6.6Z" />
               </svg>
@@ -129,7 +129,7 @@ function CommunityKnowledgeDetail() {
             className="community_knowledge_detail_cta"
             onClick={() => navigate('/mission')}
           >
-            관련 미션 보기
+            View related mission
           </button>
         </div>
       </main>
