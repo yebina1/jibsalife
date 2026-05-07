@@ -351,9 +351,6 @@ function Mission() {
         <section className="mission_calendar_section" ref={calendarRef}>
         <div className="mission_month_bar" ref={monthBarRef}>
           <div className="mission_month_bar_left">
-            <button type="button" className="mission_menu_btn" aria-label="메뉴">
-              <i className="bx bx-menu" />
-            </button>
             <button type="button" className="mission_month_bar_date" onClick={openDatePicker}>
               {calendarYear}.{String(calendarMonth).padStart(2, '0')}.{String(Number(selectedDay.label)).padStart(2, '0')}
               <i className={`bx bx-chevron-${isDatePickerOpen ? 'up' : 'down'}`} />

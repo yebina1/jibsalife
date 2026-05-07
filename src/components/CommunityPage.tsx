@@ -1512,7 +1512,7 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
             </form>
           </section>
         ) : null}
-        <FloatingWriteButton onClick={openCreatePost} />
+        {section !== 'challenge' ? <FloatingWriteButton onClick={openCreatePost} /> : null}
       </main>
     </>
   )
