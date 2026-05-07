@@ -10,22 +10,22 @@ const detailItems = [
     id: 1,
     title: '스트레스 증가',
     description:
-      '산책이 부족하면 에너지를 풀지 못해 짖음, 물건 훼손, 예민한 반응처럼 일상 행동 문제로 이어질 수 있어요.',
-    emoji: '🐾',
+      '산책이 부족하면 에너지를 쓰지 못해 짖음, 물건 훼손, 예민한 반응처럼 일상 행동 문제로 이어질 수 있어요.',
+    emoji: '!',
   },
   {
     id: 2,
     title: '체중과 건강 관리',
     description:
-      '규칙적으로 움직이지 않으면 체중이 쉽게 늘고 관절이나 심폐 건강에도 부담이 쌓일 수 있어요.',
-    emoji: '🏥',
+      '규칙적으로 움직이지 않으면 체중이 쉽게 늘고 관절이나 심폐 건강에도 부담이 될 수 있어요.',
+    emoji: '+',
   },
   {
     id: 3,
     title: '사회성 저하',
     description:
       '바깥 자극을 충분히 경험하지 못하면 낯선 사람, 소리, 환경에 대한 적응력이 떨어질 수 있어요.',
-    emoji: '🌿',
+    emoji: '*',
   },
 ] as const
 
@@ -56,14 +56,14 @@ function CommunityKnowledgeDetail() {
         <img
           className="community_knowledge_detail_hero"
           src={contents2}
-          alt="강아지 산책이 부족할 때 생길 수 있는 문제"
+          alt="강아지 산책 부족으로 생길 수 있는 문제"
         />
 
         <section className="community_knowledge_detail_content">
           <h1>
             강아지 산책이 부족하면
             <br />
-            생길 수 있는 문제들
+            생길 수 있는 문제
           </h1>
 
           <div className="community_knowledge_detail_meta">

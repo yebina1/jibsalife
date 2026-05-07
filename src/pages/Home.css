@@ -513,11 +513,12 @@
   position: relative;
   min-height: 540px;
   padding: 40px 48px;
+  box-sizing: border-box;
   border-radius: 30px;
   background-color: #f7f7fb;
   background-position: center;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: contain;
   overflow: hidden;
 }
 
@@ -779,7 +780,7 @@
   }
 
   .pet_id_card_preview {
-    min-height: 0;
+    min-height: 560px;
     padding: 22px 18px 24px;
     border-radius: 22px;
   }
