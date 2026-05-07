@@ -4,6 +4,11 @@
   padding-bottom: 32px;
 }
 
+.cvd_page .community_tab_bar,
+.cvd_page .community_subtab_bar {
+  display: none !important;
+}
+
 /* 배너 */
 .cvd_banner {
   position: relative;
@@ -11,7 +16,7 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 12px;
-  margin-top: 12px;
+  margin-top: 0;
   padding: 20px 20px 20px 20px;
   border-radius: 16px;
   background: linear-gradient(135deg, #7B5CF5 0%, #5B4FE8 100%);

@@ -9,6 +9,10 @@ import contents1 from '../img/contents1.png'
 import contents2 from '../img/contents2.png'
 import contents3 from '../img/contents3.png'
 import contents4 from '../img/contents4.png'
+import knowledge1 from '../img/knowledge1.png'
+import knowledge2 from '../img/knowledge2.png'
+import knowledge3 from '../img/knowledge3.png'
+import knowledge4 from '../img/knowledge4.png'
 import life1Image from '../img/life1.jpg'
 import life2Image from '../img/life2.png'
 import life3Image from '../img/life3.png'
@@ -355,40 +359,44 @@ const knowledgeFeedItems = [
     id: 1,
     tag: '산책',
     title: '강아지 산책 안 하면 생기는 문제점',
-    image: contents2,
+    image: knowledge1,
     likes: 8,
     comments: 3,
     viewsText: '1.2k',
+    objectPosition: '61% center',
     path: '/community/pet-story/knowledge/walk-problems',
   },
   {
     id: 2,
     tag: '건강',
     title: '고양이 점프의 숨겨진 비밀',
-    image: contents3,
+    image: knowledge2,
     likes: 8,
     comments: 3,
     viewsText: '968',
+    objectPosition: '64% center',
     path: '/community/pet-story/knowledge/walk-problems',
   },
   {
     id: 3,
     tag: '일상',
     title: '강아지에게 절대 주면 안 되는 음식 7가지',
-    image: contents1,
+    image: knowledge3,
     likes: 8,
     comments: 3,
     viewsText: '860',
+    objectPosition: '43% center',
     path: '/community/pet-story/knowledge/walk-problems',
   },
   {
     id: 4,
     tag: '일상',
     title: '봄철 강아지 알레르기 증상과 관리법',
-    image: contents4,
+    image: knowledge4,
     likes: 8,
     comments: 3,
     viewsText: '482',
+    objectPosition: '48% center',
     path: '/community/pet-story/knowledge/walk-problems',
   },
 ] as const
@@ -525,6 +533,7 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
   const isCommunityTab = selectedTopTab === '커뮤니티'
   const isChallengeTab = selectedTopTab === '챌린지 인증'
   const isVoteTab = selectedTopTab === '투표'
+  const isVoteRoute = location.pathname.includes('/community/vote')
 
   const isBraggingView = isCommunityTab && selectedCommunitySubTab === '자랑하기'
   const isKnowledgeView = isCommunityTab && selectedCommunitySubTab === '반려상식'
@@ -654,8 +663,8 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
           ? '챌린지 인증'
           : '커뮤니티'
 
-  const showCommunitySubTabs = isCommunityTab
-  const showVoteSubTabs = isVoteTab
+  const showCommunitySubTabs = isCommunityTab && !isVoteRoute
+  const showVoteSubTabs = false
   const showSort = !isOverviewTab && !isKnowledgeView && !isChallengeTab
   const pageSectionClassName = `community_page_${section ?? 'overview'}`
 
@@ -706,7 +715,7 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
           ))}
         </section>
 
-        {showCommunitySubTabs ? (
+        {showCommunitySubTabs && !isVoteTab && !isVoteRoute ? (
           <section className="community_subtab_bar" aria-label="커뮤니티 하위 카테고리">
             <div className={`community_subtab_dropdown ${isCommunitySubTabOpen ? 'open' : ''}`}>
               <button
@@ -745,7 +754,7 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
           </section>
         ) : null}
 
-        {showVoteSubTabs ? (
+        {showVoteSubTabs && !isVoteTab && !isVoteRoute ? (
           <section className="community_subtab_bar" aria-label="투표 하위 카테고리">
             {voteSubTabs.map((tab) => (
               <button
@@ -827,7 +836,26 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
                 </button>
               }
             >
-              <div className="community_overview_post_list" />
+              <div className="community_overview_post_list">
+                {postData.slice(0, 2).map((post) => (
+                  <article key={post.id} className="community_post">
+                    <img className="community_post_image" src={post.image} alt={post.title} />
+                    <div className="community_post_body">
+                      <div className="community_post_header">
+                        <span className="community_post_tag">{post.tag}</span>
+                        <h2>{post.title}</h2>
+                      </div>
+                      <div className="community_post_meta">
+                        <span className="community_post_author">{post.author}</span>
+                      </div>
+                      <p className="community_post_date">
+                        {post.timeText ? <span>{post.timeText}</span> : null}
+                        <span>{post.date}</span>
+                      </p>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </ContentSection>
 
             <ContentSection
@@ -846,7 +874,20 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
                 </button>
               }
             >
-              <div className="community_challenge_simple_list" />
+              <div className="community_overview_challenge_grid">
+                {challengeCardItems.slice(0, 2).map((item) => (
+                  <article key={item.id} className="community_challenge_card">
+                    <img src={item.image} alt={item.title} className="community_challenge_card_image" />
+                    <div className="community_challenge_card_body">
+                      <h3>{item.title}</h3>
+                      <div className="community_challenge_card_meta">
+                        <span>{item.participants}명</span>
+                        <span>{item.deadline}</span>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </ContentSection>
 
             <ContentSection
@@ -867,7 +908,28 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
                 </button>
               }
             >
-              <div className="community_vote_result_screen community_overview_vote_preview" />
+              <div className="community_overview_vote_list_preview">
+                {voteResultItems.slice(0, 1).map((item) => (
+                  <article key={item.id} className="community_vote_result_entry">
+                    <div className="community_vote_result_placeholder">
+                      투표가
+                      <br />
+                      종료되었습니다.
+                    </div>
+                    <div className="community_vote_result_panel">
+                      <span className="community_vote_result_label">{item.badge}</span>
+                      <h3>{item.title}</h3>
+                      <button
+                        type="button"
+                        className="community_vote_result_action"
+                        onClick={() => navigate('/community/vote/result')}
+                      >
+                        결과보기
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </ContentSection>
           </section>
         ) : isChallengeTab ? (
@@ -1187,6 +1249,7 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
                     className="community_knowledge_feed_image"
                     src={item.image}
                     alt={item.title}
+                    style={{ objectPosition: item.objectPosition }}
                   />
                   <div className="community_knowledge_feed_overlay">
                     <h3>{item.title}</h3>

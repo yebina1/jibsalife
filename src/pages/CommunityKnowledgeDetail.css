@@ -1,39 +1,82 @@
 .community_knowledge_detail_page {
   padding: 0 0 calc(var(--layout-footer-height, 90px) + 84px);
   background: #ffffff;
+  color: #111111;
+}
+
+.community_knowledge_detail_hero_wrap {
+  position: relative;
+  margin: 0 calc(var(--layout-page-padding, 16px) * -1);
 }
 
 .community_knowledge_detail_hero {
   display: block;
   width: 100%;
-  aspect-ratio: 390 / 290;
+  height: 360px;
   object-fit: cover;
+  object-position: 61% center;
+}
+
+.community_knowledge_detail_back,
+.community_knowledge_detail_bookmark {
+  position: absolute;
+  top: 66px;
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+}
+
+.community_knowledge_detail_back {
+  left: 16px;
+}
+
+.community_knowledge_detail_bookmark {
+  right: 16px;
+  color: #111111;
+}
+
+.community_knowledge_detail_back svg,
+.community_knowledge_detail_bookmark svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .community_knowledge_detail_content {
   display: grid;
-  gap: 16px;
-  padding: 20px 16px 0;
+  gap: 24px;
+  padding: 28px 16px 0;
 }
 
 .community_knowledge_detail_content h1 {
   margin: 0;
   color: #111111;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.4;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.32;
   letter-spacing: -0.025em;
+  word-break: keep-all;
 }
 
 .community_knowledge_detail_meta {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
-  color: #505050;
-  font-size: 13px;
+  gap: 8px;
+  padding-bottom: 4px;
+  color: #555555;
+  font-size: 14px;
   font-weight: 400;
-  line-height: 1.45;
+  line-height: 1.4;
   letter-spacing: -0.025em;
 }
 
@@ -46,132 +89,147 @@
   border: 0;
   background: transparent;
   color: inherit;
+  font: inherit;
+}
+
+.community_knowledge_detail_meta button {
+  margin-left: auto;
 }
 
 .community_knowledge_detail_meta svg {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.8;
+  stroke-width: 1.9;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
+.community_knowledge_detail_dot {
+  color: #999999;
+}
+
 .community_knowledge_detail_intro {
   margin: 0;
-  padding-top: 16px;
+  padding-top: 26px;
   border-top: 1px solid #ececf2;
-  color: #333333;
+  color: #111111;
   font-size: 15px;
   font-weight: 400;
-  line-height: 1.55;
+  line-height: 1.65;
   letter-spacing: -0.025em;
 }
 
 .community_knowledge_detail_cards {
   display: grid;
-  gap: 12px;
+  gap: 10px;
 }
 
 .community_knowledge_detail_card {
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr);
+  grid-template-columns: 84px minmax(0, 1fr);
   gap: 12px;
   align-items: center;
-  padding: 16px;
-  border-radius: 14px;
-  background: #f3f0fe;
-}
-
-.community_knowledge_detail_card_badge {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  background: #8a68f8;
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.025em;
+  min-height: 152px;
+  padding: 18px 18px 18px 20px;
+  border-radius: 12px;
+  background: #f0efff;
 }
 
 .community_knowledge_detail_card_icon {
-  position: relative;
   display: flex;
-  width: 56px;
-  height: 56px;
+  width: 72px;
+  height: 72px;
   align-items: center;
   justify-content: center;
-  border-radius: 16px;
-  background: #ffffff;
-  color: #8a68f8;
-  font-size: 28px;
+  color: #111111;
+  font-size: 38px;
+  line-height: 1;
 }
 
 .community_knowledge_detail_card_copy {
   display: grid;
-  gap: 6px;
+  gap: 10px;
+  min-width: 0;
 }
 
 .community_knowledge_detail_card_copy h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 0;
-  color: #333333;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.4;
+  color: #111111;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.35;
   letter-spacing: -0.025em;
+}
+
+.community_knowledge_detail_card_badge {
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #8a7cf6;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
 }
 
 .community_knowledge_detail_card_copy p {
   margin: 0;
-  color: #333333;
-  font-size: 13px;
+  color: #111111;
+  font-size: 14px;
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.55;
   letter-spacing: -0.025em;
+  word-break: keep-all;
 }
 
 .community_knowledge_detail_actions {
   position: fixed;
   right: 50%;
   bottom: var(--layout-footer-height, 90px);
-  display: flex;
+  z-index: 120;
+  display: grid;
   width: min(100%, var(--layout-max-width, 1440px));
+  grid-template-columns: 156px minmax(0, 1fr);
   align-items: center;
-  gap: 14px;
-  padding: 12px 16px calc(env(safe-area-inset-bottom, 0px) + 8px);
+  gap: 16px;
+  padding: 12px 16px calc(env(safe-area-inset-bottom, 0px) + 12px);
   box-sizing: border-box;
+  border-top: 1px solid #e8e8ee;
   background: #ffffff;
   transform: translateX(50%);
 }
 
 .community_knowledge_detail_reactions {
   display: flex;
-  gap: 16px;
+  gap: 24px;
 }
 
 .community_knowledge_detail_reactions button {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   padding: 0;
   border: 0;
   background: transparent;
   color: #111111;
-  font-size: 14px;
-  font-weight: 400;
+  font-size: 15px;
+  font-weight: 500;
   line-height: 1.4;
   letter-spacing: -0.025em;
 }
 
 .community_knowledge_detail_reactions svg {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.8;
@@ -180,27 +238,36 @@
 }
 
 .community_knowledge_detail_cta {
-  min-width: 0;
-  flex: 1 1 auto;
-  height: 48px;
-  padding: 10px 16px;
+  width: 100%;
+  height: 50px;
+  padding: 0 18px;
   border: 0;
-  border-radius: 12px;
+  border-radius: 8px;
   background: #6d59f8;
   color: #ffffff;
   font-family: 'Pretendard', 'SUIT', system-ui, sans-serif;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.4;
   letter-spacing: -0.025em;
 }
 
-.community_knowledge_detail_bookmark svg {
-  width: 24px;
-  height: 24px;
-  fill: none;
-  stroke: #111111;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+@media (max-width: 420px) {
+  .community_knowledge_detail_hero {
+    height: 334px;
+  }
+
+  .community_knowledge_detail_content {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .community_knowledge_detail_card {
+    grid-template-columns: 76px minmax(0, 1fr);
+    padding: 18px 14px 18px 18px;
+  }
+
+  .community_knowledge_detail_actions {
+    grid-template-columns: 156px minmax(0, 1fr);
+  }
 }

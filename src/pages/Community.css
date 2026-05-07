@@ -445,6 +445,10 @@
   padding-left: 0;
 }
 
+.community_page_vote .community_subtab_bar {
+  display: none !important;
+}
+
 .community_overview {
   display: grid;
   gap: 0;
@@ -517,7 +521,9 @@
 }
 
 .community_overview_post_list,
-.community_overview_knowledge {
+.community_overview_knowledge,
+.community_overview_challenge_grid,
+.community_overview_vote_list_preview {
   display: grid;
   gap: 14px;
 }
@@ -615,12 +621,28 @@
 .community_knowledge_feed_overlay {
   position: absolute;
   inset: 0;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   gap: 8px;
   padding: 0 18px 16px;
-  background: linear-gradient(180deg, rgba(17, 17, 17, 0) 38%, rgba(17, 17, 17, 0.56) 100%);
+}
+
+.community_knowledge_feed_overlay h3,
+.community_knowledge_feed_views {
+  position: relative;
+  z-index: 1;
+}
+
+.community_knowledge_feed_card::after {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(180deg, #000000 0%, #666666 100%);
+  opacity: 0.58;
+  content: '';
+  pointer-events: none;
 }
 
 .community_knowledge_feed_overlay h3 {

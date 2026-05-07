@@ -1,31 +1,28 @@
 import './CommunityKnowledgeDetail.css'
 import { useNavigate } from 'react-router'
-import PageHeader from '../components/PageHeader'
-import Button from '../components/html/Button'
-import BackButton from '../components/html/BackButton'
-import contents2 from '../img/contents2.png'
+import knowledge1 from '../img/knowledge1.png'
 
 const detailItems = [
   {
     id: 1,
-    title: 'Stress can increase',
+    title: '스트레스 증가',
     description:
-      'When walks are not enough, unused energy can turn into barking, chewing, or sensitive reactions at home.',
-    emoji: '!',
+      '산책은 강아지의 에너지를 해소하고 외부 자극을 통해 심리적 안정감을 주는 중요한 활동이에요. 산책이 부족하면 에너지가 쌓이면서 짖음, 물건 파손, 과도한 흥분 같은 문제 행동으로 이어질 수 있어요.',
+    emoji: '🐶',
   },
   {
     id: 2,
-    title: 'Weight and health can suffer',
+    title: '비만 및 건강 문제',
     description:
-      'Without regular movement, weight can rise more easily and joints or heart health can take on extra strain.',
-    emoji: '+',
+      '운동량이 부족한 강아지는 체중이 쉽게 증가하고 비만으로 이어질 가능성이 높아요. 비만은 관절 질환, 심장 질환 등 다양한 건강 문제의 원인이 될 수 있어요.',
+    emoji: '⚖',
   },
   {
     id: 3,
-    title: 'Social confidence can drop',
+    title: '사회성 부족',
     description:
-      'A dog that rarely meets outdoor sounds and people may become less comfortable in new places.',
-    emoji: '*',
+      '운동량이 부족한 강아지는 체중이 쉽게 증가하고 비만으로 이어질 가능성이 높아요. 비만은 관절 질환, 심장 질환 등 다양한 건강 문제의 원인이 될 수 있어요.',
+    emoji: '🐕',
   },
 ] as const
 
@@ -37,103 +34,145 @@ function BookmarkIcon() {
   )
 }
 
+function BackIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="m15 5-7 7 7 7" />
+    </svg>
+  )
+}
+
+function HeartIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 20.2 4.9 13.6a4.8 4.8 0 0 1 6.8-6.8L12 7.9l.3-.3a4.8 4.8 0 1 1 6.8 6.8Z" />
+    </svg>
+  )
+}
+
+function CommentIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 4.8c-4.4 0-8 2.9-8 6.6 0 2.1 1.2 4 3.1 5.2l-.8 3 3.3-1.8c.8.2 1.6.3 2.4.3 4.4 0 8-2.9 8-6.7s-3.6-6.6-8-6.6Z" />
+    </svg>
+  )
+}
+
+function EyeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  )
+}
+
+function ShareIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="18" cy="5.5" r="2" />
+      <circle cx="6" cy="12" r="2" />
+      <circle cx="18" cy="18.5" r="2" />
+      <path d="M7.8 11.1 16 6.4" />
+      <path d="m7.8 12.9 8.2 4.7" />
+    </svg>
+  )
+}
+
 function CommunityKnowledgeDetail() {
   const navigate = useNavigate()
 
   return (
-    <>
-      <PageHeader
-        title=""
-        leftContent={<BackButton />}
-        rightContent={
-          <Button type="button" aria-label="Bookmark" className="community_knowledge_detail_bookmark">
-            <BookmarkIcon />
-          </Button>
-        }
-      />
-
-      <main className="page community_knowledge_detail_page">
+    <main className="page community_knowledge_detail_page">
+      <section className="community_knowledge_detail_hero_wrap">
         <img
           className="community_knowledge_detail_hero"
-          src={contents2}
-          alt="Dog walking guide"
+          src={knowledge1}
+          alt="벚꽃길을 산책하는 강아지"
         />
+        <button
+          type="button"
+          className="community_knowledge_detail_back"
+          aria-label="이전"
+          onClick={() => navigate(-1)}
+        >
+          <BackIcon />
+        </button>
+        <button
+          type="button"
+          className="community_knowledge_detail_bookmark"
+          aria-label="북마크"
+        >
+          <BookmarkIcon />
+        </button>
+      </section>
 
-        <section className="community_knowledge_detail_content">
-          <h1>
-            What can happen
-            <br />
-            when walks are not enough?
-          </h1>
+      <section className="community_knowledge_detail_content">
+        <h1>
+          강아지 산책
+          <br />
+          안 하면 생기는 문제점
+        </h1>
 
-          <div className="community_knowledge_detail_meta">
-            <span>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-              1.2k
-            </span>
-            <span>2026.05.02 posted</span>
-            <button type="button">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="18" cy="5.5" r="2" />
-                <circle cx="6" cy="12" r="2" />
-                <circle cx="18" cy="18.5" r="2" />
-                <path d="M7.8 11.1 16 6.4" />
-                <path d="m7.8 12.9 8.2 4.7" />
-              </svg>
-              Share
-            </button>
-          </div>
-
-          <p className="community_knowledge_detail_intro">
-            Walks are not only exercise. They also help a dog feel settled and confident.
-            <br />
-            When a dog cannot move enough, small discomfort can grow into behavior problems.
-          </p>
-
-          <div className="community_knowledge_detail_cards">
-            {detailItems.map((item, index) => (
-              <article key={item.id} className="community_knowledge_detail_card">
-                <div className="community_knowledge_detail_card_badge">{index + 1}</div>
-                <div className="community_knowledge_detail_card_icon" aria-hidden="true">
-                  <span>{item.emoji}</span>
-                </div>
-                <div className="community_knowledge_detail_card_copy">
-                  <h2>{item.title}</h2>
-                  <p>{item.description}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <div className="community_knowledge_detail_actions">
-          <div className="community_knowledge_detail_reactions">
-            <button type="button" aria-label="Like">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 20.2 4.9 13.6a4.8 4.8 0 0 1 6.8-6.8L12 7.9l.3-.3a4.8 4.8 0 1 1 6.8 6.8Z" />
-              </svg>
-              128
-            </button>
-            <button type="button" aria-label="Comment">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 4.8c-4.4 0-8 2.9-8 6.6 0 2.1 1.2 4 3.1 5.2l-.8 3 3.3-1.8c.8.2 1.6.3 2.4.3 4.4 0 8-2.9 8-6.7s-3.6-6.6-8-6.6Z" />
-              </svg>
-              36
-            </button>
-          </div>
-          <button
-            type="button"
-            className="community_knowledge_detail_cta"
-            onClick={() => navigate('/mission')}
-          >
-            View related mission
+        <div className="community_knowledge_detail_meta">
+          <span>
+            <EyeIcon />
+            1.2k
+          </span>
+          <span className="community_knowledge_detail_dot" aria-hidden="true">·</span>
+          <span>05.02 게시됨</span>
+          <button type="button">
+            <ShareIcon />
+            공유하기
           </button>
         </div>
-      </main>
-    </>
+
+        <p className="community_knowledge_detail_intro">
+          산책은 강아지의 신체 건강뿐만 아니라
+          <br />
+          정서 건강에도 매우 중요한 영향을 줍니다.
+          <br />
+          산책이 부족하면 다양한 문제가 생길 수 있어요.
+        </p>
+
+        <div className="community_knowledge_detail_cards">
+          {detailItems.map((item) => (
+            <article key={item.id} className="community_knowledge_detail_card">
+              <div className="community_knowledge_detail_card_icon" aria-hidden="true">
+                <span>{item.emoji}</span>
+              </div>
+              <div className="community_knowledge_detail_card_copy">
+                <h2>
+                  <span className="community_knowledge_detail_card_badge">{item.id}</span>
+                  {item.title}
+                </h2>
+                <p>{item.description}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <div className="community_knowledge_detail_actions">
+        <div className="community_knowledge_detail_reactions">
+          <button type="button" aria-label="좋아요">
+            <HeartIcon />
+            128
+          </button>
+          <button type="button" aria-label="댓글">
+            <CommentIcon />
+            36
+          </button>
+        </div>
+        <button
+          type="button"
+          className="community_knowledge_detail_cta"
+          onClick={() => navigate('/community/pet-story')}
+        >
+          관련 제품 보기
+        </button>
+      </div>
+    </main>
   )
 }
 

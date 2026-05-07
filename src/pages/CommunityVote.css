@@ -1,12 +1,22 @@
 .cv2_page {
   display: flex;
   flex-direction: column;
+  padding-top: 0;
   padding-bottom: 32px;
+}
+
+.cv2_page .community_tab_bar,
+.cv2_page .community_subtab_bar {
+  display: none !important;
 }
 
 /* 섹션 */
 .cv2_section {
-  padding: 24px 0 0;
+  padding: 16px 0 0;
+}
+
+.cv2_section:first-of-type {
+  padding-top: 4px;
 }
 
 .cv2_section_title {

@@ -201,7 +201,7 @@ function CommunityVoteResult() {
               gravity={0.18}
               opacity={0.72}
               colors={['#F1C93A', '#9C78F0', '#6FCDF0', '#E57DC3']}
-              style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0 }}
+              style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 2 }}
             />
             <div className="cv_complete_visual" aria-hidden="true">
               <span className="cv_complete_circle">

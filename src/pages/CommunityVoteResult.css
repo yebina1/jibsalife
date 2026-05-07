@@ -362,7 +362,7 @@
 
 .cv_complete_alert > :not(canvas) {
   position: relative;
-  z-index: 1;
+  z-index: 3;
 }
 
 .cv_complete_visual {
