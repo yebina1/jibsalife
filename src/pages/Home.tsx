@@ -173,7 +173,7 @@ function Home() {
     if (!file) return
 
     setPetIdPhoto((prev) => {
-      if (prev.startsWith('blob:')) {
+      if (prev?.startsWith('blob:')) {
         URL.revokeObjectURL(prev)
       }
       return URL.createObjectURL(file)
