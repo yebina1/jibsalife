@@ -1597,6 +1597,32 @@
   cursor: pointer;
 }
 
+@media (max-width: 420px) {
+  .community_overview_vote_list_preview .community_overview_vote_mission_card {
+    gap: 16px;
+    padding: 24px 20px;
+  }
+
+  .community_overview_vote_timer {
+    font-size: 16px;
+  }
+
+  .community_overview_vote_mission_body h3 {
+    font-size: 18px;
+  }
+
+  .community_overview_vote_mission_body p {
+    font-size: 14px;
+  }
+
+  .community_overview_vote_mission_button {
+    min-width: 92px;
+    height: 48px;
+    padding: 0 14px;
+    font-size: 16px;
+  }
+}
+
 .community_vote_result_entry {
   display: grid;
   grid-template-columns: 132px minmax(0, 1fr);
