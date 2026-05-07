@@ -21,10 +21,10 @@ const candidates = [
   { id: 4, name: '도라바라', image: voting4 },
   { id: 5, name: '봉봉이', image: voting5 },
   { id: 6, name: '훈민정음', image: voting6 },
-  { id: 7, name: '콩이', image: voting1 },
-  { id: 8, name: '콩이', image: voting2 },
-  { id: 9, name: '콩이', image: voting3 },
-  { id: 10, name: '콩이', image: voting4 },
+  { id: 7, name: '몽이', image: voting1 },
+  { id: 8, name: '로이', image: voting2 },
+  { id: 9, name: '설기', image: voting3 },
+  { id: 10, name: '슈슈', image: voting4 },
 ] as const
 
 function CommunityVoteDetail() {
