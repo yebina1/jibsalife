@@ -8,6 +8,8 @@ import CommunityOverview from './pages/CommunityOverview'
 import CommunityPetStory from './pages/CommunityPetStory'
 import CommunityReward from './pages/CommunityReward'
 import CommunityVote from './pages/CommunityVote'
+import CommunityVoteDetail from './pages/CommunityVoteDetail'
+import CommunityVoteResult from './pages/CommunityVoteResult'
 import Health from './pages/health/Health'
 import HealthCamera from './pages/health/HealthCamera'
 import HealthCheckLoading from './pages/health/HealthCheckLoading'
@@ -62,6 +64,8 @@ function App() {
           <Route path="/community/challenge" element={<CommunityChallenge />} />
           <Route path="/community/challenge/reward" element={<CommunityReward />} />
           <Route path="/community/vote" element={<CommunityVote />} />
+          <Route path="/community/vote/detail" element={<CommunityVoteDetail />} />
+          <Route path="/community/vote/result" element={<CommunityVoteResult />} />
           <Route path="/mypage" element={<MyPage />} />
         </Route>
       </Routes>

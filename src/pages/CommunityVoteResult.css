@@ -1,0 +1,516 @@
+.cv_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 헤더 */
+.cv_header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cv_title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #111;
+  line-height: 1.4;
+}
+
+.cv_title_highlight {
+  color: #4F46E5;
+  font-weight: 700;
+}
+
+.cv_subtitle {
+  font-size: 14px;
+  color: #505050;
+}
+
+/* 1위 카드 박스 */
+.cv_first_card {
+  position: relative;
+  background: #fff;
+  border: 1px solid #e8e4ff;
+  border-radius: 16px;
+  padding: 24px 20px 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* 반짝이 장식 */
+.cv_sparkle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 1px;
+  transform: rotate(45deg);
+}
+
+.cv_sparkle_tl {
+  top: 14px;
+  left: 14px;
+  background: #7c9cff;
+}
+
+.cv_sparkle_tr {
+  top: 14px;
+  right: 14px;
+  background: #ffc842;
+  width: 12px;
+  height: 12px;
+}
+
+.cv_sparkle_bl {
+  bottom: 20px;
+  left: 20px;
+  background: #9174ff;
+  width: 7px;
+  height: 7px;
+}
+
+.cv_sparkle_br {
+  bottom: 20px;
+  right: 20px;
+  background: #ffc842;
+  width: 8px;
+  height: 8px;
+}
+
+.cv_first_crown_row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.cv_crown_icon {
+  width: 48px;
+  height: auto;
+}
+
+.cv_best_badge {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111111;
+  background: #FEF9C3;
+  border-radius: 20px;
+  padding: 8px 16px;
+}
+
+.cv_first_name {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 16px;
+}
+
+.cv_first_stats_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.cv_first_votes {
+  color: #6B7280;
+}
+
+.cv_first_votes strong {
+  color: #4F46E5;
+  font-weight: 700;
+}
+
+.cv_first_percent {
+  color: #818CF8;
+}
+
+/* 진행 바 */
+.cv_progress_bar {
+  height: 10px;
+  background: #F3F4F6;
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 0;
+}
+
+.cv_progress_fill {
+  height: 100%;
+  background: #6366F1;
+  border-radius: 99px;
+}
+
+/* 1위 원형 이미지 */
+.cv_first_image_wrap {
+  width: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.cv_first_image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+/* 인스타 버튼 */
+.cv_insta_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.cv_insta_icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.cv_chevron {
+  width: 8px;
+  height: 14px;
+}
+
+/* 2위, 3위 */
+.cv_rankings {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cv_rank_item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.cv_rank_image_wrap {
+  position: relative;
+  flex-shrink: 0;
+  width: 112px;
+  height: 112px;
+}
+
+.cv_rank_image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 8px;
+}
+
+.cv_rank_num {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.cv_rank_body {
+  flex: 1;
+  min-width: 0;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+
+.cv_rank_name_row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cv_rank_name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #111;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cv_rank_insta_icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.cv_rank_stats_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.cv_rank_votes {
+  color: #9CA3AF;
+}
+
+.cv_rank_votes strong {
+  color: #6366F1;
+  font-weight: 500;
+}
+
+.cv_rank_percent {
+  font-size: 12px;
+  color: #818CF8;
+  flex-shrink: 0;
+}
+
+/* 기타 순위 */
+
+.cv_others_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.cv_others_title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #111;
+  min-width: 0;
+}
+
+.cv_others_more {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: auto;
+  height: auto;
+  font-size: 14px;
+  color: #999;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: not-allowed;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.cv_others_more .chevron_icon {
+  color: currentColor;
+}
+
+.cv_others_list {
+  display: flex;
+  gap: 10px;
+}
+
+.cv_others_item {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border: 1px solid #E5E5EC;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.cv_others_image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.cv_others_label {
+  font-size: 12px;
+  color: #6B7280;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+}
+
+/* 하단 버튼 */
+.cv_btn_wrap {
+  padding-bottom: 8px;
+}
+
+.cv_complete_alert {
+  display: grid;
+  justify-items: center;
+  width: min(100%, 306px);
+  gap: 28px;
+}
+
+.cv_complete_visual {
+  position: relative;
+  display: grid;
+  width: 198px;
+  height: 198px;
+  place-items: center;
+  border-radius: 50%;
+  background: #F0EAFE;
+}
+
+.cv_complete_circle {
+  display: grid;
+  width: 90px;
+  height: 90px;
+  place-items: center;
+  border-radius: 50%;
+  background: #8556F4;
+  box-shadow: 0 10px 18px rgba(133, 86, 244, 0.32);
+}
+
+.cv_complete_circle svg {
+  width: 48px;
+  height: 48px;
+}
+
+.cv_complete_circle path {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cv_complete_confetti {
+  position: absolute;
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.cv_complete_confetti_1 {
+  top: 24px;
+  left: 28px;
+  background: #F4C320;
+  transform: rotate(45deg);
+}
+
+.cv_complete_confetti_2 {
+  top: 46px;
+  left: -4px;
+  width: 15px;
+  height: 15px;
+  background: #A566F4;
+  transform: rotate(10deg);
+}
+
+.cv_complete_confetti_3 {
+  top: 46px;
+  right: 24px;
+  width: 15px;
+  height: 15px;
+  background: #A566F4;
+  transform: rotate(10deg);
+}
+
+.cv_complete_confetti_4 {
+  right: 12px;
+  bottom: 42px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #22C6DC;
+}
+
+.cv_complete_confetti_5 {
+  left: 40px;
+  bottom: 30px;
+  width: 11px;
+  height: 11px;
+  background: #F35EA7;
+}
+
+.cv_complete_copy {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  text-align: center;
+}
+
+.cv_complete_copy strong,
+.cv_complete_copy p {
+  color: #111827;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.cv_complete_copy p {
+  margin: 0;
+}
+
+.cv_complete_copy span {
+  color: #8556F4;
+}
+
+.cv_complete_point_card {
+  display: flex;
+  width: 100%;
+  min-height: 84px;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border: 0;
+  border-radius: 14px;
+  background: #F3F0FE;
+  box-sizing: border-box;
+  cursor: pointer;
+  text-align: left;
+}
+
+.cv_complete_point_icon {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: #8556F4;
+  color: #FFD83D;
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.32);
+}
+
+.cv_complete_point_text {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 2px;
+}
+
+.cv_complete_point_text span {
+  color: #6B7280;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.cv_complete_point_text strong {
+  color: #8556F4;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.2;
+}
