@@ -352,10 +352,17 @@
 }
 
 .cv_complete_alert {
+  position: relative;
   display: grid;
   justify-items: center;
   width: min(100%, 306px);
   gap: 28px;
+  overflow: hidden;
+}
+
+.cv_complete_alert > :not(canvas) {
+  position: relative;
+  z-index: 1;
 }
 
 .cv_complete_visual {

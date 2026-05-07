@@ -1,6 +1,7 @@
 import './Community.css'
 import './CommunityVoteResult.css'
 import { useEffect, useState } from 'react'
+import Confetti from 'react-confetti'
 import { useNavigate } from 'react-router'
 import PageHeader from '../components/PageHeader'
 import HeaderIcon from '../components/HeaderIcon'
@@ -192,6 +193,16 @@ function CommunityVoteResult() {
       {isCompleteAlertOpen ? (
         <Alert onClose={() => setIsCompleteAlertOpen(false)}>
           <div className="cv_complete_alert">
+            <Confetti
+              width={306}
+              height={520}
+              numberOfPieces={60}
+              recycle={false}
+              gravity={0.18}
+              opacity={0.72}
+              colors={['#F1C93A', '#9C78F0', '#6FCDF0', '#E57DC3']}
+              style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0 }}
+            />
             <div className="cv_complete_visual" aria-hidden="true">
               <span className="cv_complete_circle">
                 <svg viewBox="0 0 48 48" focusable="false">
