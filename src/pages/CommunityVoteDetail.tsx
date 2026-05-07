@@ -105,7 +105,9 @@ function CommunityVoteDetail() {
                   className={`cvd_candidate${isSelected ? ' selected' : ''}`}
                   onClick={() => setSelectedId(item.id)}
                 >
-                  <img src={item.image} alt={item.name} className="cvd_candidate_img" />
+                  <div className="cvd_candidate_img_wrap">
+                    <img src={item.image} alt={item.name} className="cvd_candidate_img" />
+                  </div>
                   <div className="cvd_candidate_footer">
                     <span className="cvd_candidate_name">{item.name}</span>
                     <span className={`cvd_candidate_check${isSelected ? ' checked' : ''}`} aria-hidden="true">
