@@ -1518,6 +1518,85 @@
   padding: 0;
 }
 
+.community_overview_vote_list_preview .community_overview_vote_mission_card {
+  display: flex;
+  min-height: 156px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 28px;
+  box-sizing: border-box;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.community_overview_vote_crown {
+  display: inline-flex;
+  width: 26px;
+  height: 26px;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  font-size: 22px;
+  line-height: 1;
+  vertical-align: -2px;
+}
+
+.community_overview_vote_mission_body {
+  display: grid;
+  min-width: 0;
+  gap: 12px;
+}
+
+.community_overview_vote_timer {
+  color: #6d59f8;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.community_overview_vote_mission_body h3 {
+  margin: 0;
+  color: #111111;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -0.025em;
+  word-break: keep-all;
+}
+
+.community_overview_vote_mission_body p {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.community_overview_vote_mission_body p span {
+  margin: 0 8px;
+  color: #d1d5db;
+}
+
+.community_overview_vote_mission_button {
+  display: inline-flex;
+  min-width: 104px;
+  height: 56px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  border: 1px solid #6d59f8;
+  border-radius: 999px;
+  background: transparent;
+  color: #6d59f8;
+  font-size: 18px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
 .community_vote_result_entry {
   display: grid;
   grid-template-columns: 132px minmax(0, 1fr);

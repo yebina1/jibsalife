@@ -892,7 +892,12 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
 
             <ContentSection
               className="community_overview_section"
-              title="투표"
+              title={
+                <>
+                  <span className="community_overview_vote_crown" aria-hidden="true">👑</span>
+                  멍스타 미션 투표
+                </>
+              }
               action={
                 <button
                   type="button"
@@ -909,26 +914,22 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
               }
             >
               <div className="community_overview_vote_list_preview">
-                {voteResultItems.slice(0, 1).map((item) => (
-                  <article key={item.id} className="community_vote_result_entry">
-                    <div className="community_vote_result_placeholder">
-                      투표가
-                      <br />
-                      종료되었습니다.
-                    </div>
-                    <div className="community_vote_result_panel">
-                      <span className="community_vote_result_label">{item.badge}</span>
-                      <h3>{item.title}</h3>
-                      <button
-                        type="button"
-                        className="community_vote_result_action"
-                        onClick={() => navigate('/community/vote/result')}
-                      >
-                        결과보기
-                      </button>
-                    </div>
-                  </article>
-                ))}
+                <article className="community_overview_vote_mission_card">
+                  <div className="community_overview_vote_mission_body">
+                    <span className="community_overview_vote_timer">7시간 남음</span>
+                    <h3>밥 먹는 사진 중 BEST를 골라주세요!</h3>
+                    <p>
+                      운영자 <span>|</span> 참여자 수 22명
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className="community_overview_vote_mission_button"
+                    onClick={() => navigate('/community/vote/detail')}
+                  >
+                    투표하기
+                  </button>
+                </article>
               </div>
             </ContentSection>
           </section>

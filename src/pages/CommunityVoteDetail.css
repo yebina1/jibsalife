@@ -162,3 +162,56 @@
 .cvd_btn_wrap {
   padding-top: 24px;
 }
+
+.cvd_complete_alert {
+  display: grid;
+  justify-items: center;
+  width: min(100%, 306px);
+  gap: 22px;
+}
+
+.cvd_complete_icon {
+  display: grid;
+  width: 96px;
+  height: 96px;
+  place-items: center;
+  border-radius: 50%;
+  background: #8556F4;
+  color: #ffffff;
+  box-shadow: 0 10px 18px rgba(133, 86, 244, 0.28);
+}
+
+.cvd_complete_icon svg {
+  width: 48px;
+  height: 48px;
+}
+
+.cvd_complete_icon path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cvd_complete_copy {
+  display: grid;
+  gap: 8px;
+  text-align: center;
+}
+
+.cvd_complete_copy strong {
+  color: #111827;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.cvd_complete_copy p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.45;
+  word-break: keep-all;
+}

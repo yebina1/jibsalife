@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import PageHeader from '../components/PageHeader'
 import HeaderIcon from '../components/HeaderIcon'
+import Alert from '../components/Alert'
 import BackButton from '../components/html/BackButton'
 import Button from '../components/html/Button'
 import voting1 from '../img/voting/voting1.jpg'
@@ -29,9 +30,15 @@ const candidates = [
 function CommunityVoteDetail() {
   const navigate = useNavigate()
   const [selectedId, setSelectedId] = useState<number | null>(null)
+  const [isVoteCompleteOpen, setIsVoteCompleteOpen] = useState(false)
 
   const handleVote = () => {
     if (selectedId === null) return
+    setIsVoteCompleteOpen(true)
+  }
+
+  const goToResult = () => {
+    setIsVoteCompleteOpen(false)
     navigate('/community/vote/result')
   }
 
@@ -135,6 +142,25 @@ function CommunityVoteDetail() {
           </Button>
         </div>
       </main>
+
+      {isVoteCompleteOpen ? (
+        <Alert onClose={() => setIsVoteCompleteOpen(false)}>
+          <div className="cvd_complete_alert">
+            <div className="cvd_complete_icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" focusable="false">
+                <path d="M15 25.2 21.2 31.4 34 18.6" />
+              </svg>
+            </div>
+            <div className="cvd_complete_copy">
+              <strong>투표 완료!</strong>
+              <p>결과 발표 페이지에서 순위를 확인해보세요.</p>
+            </div>
+            <Button type="button" className="purple_btn" onClick={goToResult}>
+              확인
+            </Button>
+          </div>
+        </Alert>
+      ) : null}
     </>
   )
 }
