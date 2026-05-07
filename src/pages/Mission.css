@@ -170,6 +170,7 @@
 
 .mission_day {
   display: inline-flex;
+  position: relative;
   width: 40px;
   height: 40px;
   align-items: center;
@@ -190,6 +191,29 @@
   color: #2d3655;
 }
 
+.mission_day.has_record::after {
+  content: none;
+}
+
+.mission_day_record_dots {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  display: flex;
+  max-width: 22px;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transform: translateX(-50%);
+}
+
+.mission_day_record_dot {
+  width: 5px;
+  height: 5px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+
 .mission_history_section {
   padding: 26px 8px 0;
 }
@@ -207,9 +231,17 @@
 
 .mission_history_item {
   display: grid;
+  width: 100%;
   grid-template-columns: 34px minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
 .mission_history_thumb {

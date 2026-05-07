@@ -1,6 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import './ChatRoom.css'
 import Form from './html/Form'
+import {
+  parseMealRecordDetail,
+  parsePoopRecordDetail,
+  parseSymptomRecordDetail,
+  parseWalkActivityDetail,
+  writeMissionActivityRecord,
+  writeMissionMealRecord,
+  writeMissionPoopRecord,
+  writeMissionSymptomRecord,
+} from '../utils/missionActivityRecords'
 
 export type ChatMessage = {
   id: number
@@ -36,6 +46,10 @@ function ChatRoom({
   const handleSubmit = () => {
     const trimmedMessage = message.trim()
     if (!trimmedMessage) return
+    const walkActivityDetail = parseWalkActivityDetail(trimmedMessage)
+    const mealRecordDetail = parseMealRecordDetail(trimmedMessage)
+    const symptomRecordDetail = parseSymptomRecordDetail(trimmedMessage)
+    const poopRecordDetail = parsePoopRecordDetail(trimmedMessage)
 
     setMessages((currentMessages) => [
       ...currentMessages,
@@ -45,6 +59,18 @@ function ChatRoom({
         text: trimmedMessage,
       },
     ])
+    if (walkActivityDetail) {
+      writeMissionActivityRecord(walkActivityDetail)
+    }
+    if (mealRecordDetail) {
+      writeMissionMealRecord(mealRecordDetail)
+    }
+    if (symptomRecordDetail) {
+      writeMissionSymptomRecord(symptomRecordDetail)
+    }
+    if (poopRecordDetail) {
+      writeMissionPoopRecord(poopRecordDetail)
+    }
     setMessage('')
   }
 

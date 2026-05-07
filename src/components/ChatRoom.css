@@ -29,7 +29,7 @@
   border-radius: 0;
   box-shadow: none;
   background: transparent;
-  font-size: 14px;
+  font-size: 16px;
   flex: 1;
 }
 
@@ -136,5 +136,9 @@
 @media (max-width: 360px) {
   .chat_message_content {
     max-width: 82%;
+  }
+
+  .chat_room_form .input_field {
+    font-size: 16px;
   }
 }
