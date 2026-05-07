@@ -854,13 +854,6 @@
 
 .community_challenge_reward_button {
   grid-column: 1 / -1;
-  width: 100%;
-  min-height: 56px;
-}
-
-.community_challenge_reward_button:disabled {
-  background: #ffffff;
-  cursor: default;
 }
 
 .community_challenge_heading {
@@ -2078,28 +2071,12 @@
 }
 
 .community_create_submit {
-  display: inline-flex;
-  width: 100%;
-  min-height: 56px;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 16px;
-  box-sizing: border-box;
-  border: 0;
-  border-radius: 12px;
   background: #6D59F8;
-  color: #ffffff;
   font-family: 'Pretendard', 'SUIT', system-ui, sans-serif;
   font-size: 16px;
   font-weight: 600;
   line-height: 1.4;
   letter-spacing: -0.025em;
-}
-
-.community_create_submit:disabled {
-  background: #d9dbe6;
-  color: #8f94a3;
-  cursor: not-allowed;
 }
 
 @media (min-width: 768px) {

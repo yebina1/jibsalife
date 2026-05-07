@@ -7,10 +7,16 @@ import BackButton from '../components/html/BackButton'
 import DatePicker from '../components/html/DatePicker'
 import Button from '../components/html/Button'
 import AddSheet from '../components/AddSheet'
+import {
+  MISSION_ACTIVITY_RECORDS_CHANGE_EVENT,
+  readMissionActivityRecords,
+} from '../utils/missionActivityRecords'
 
 const weekLabels = ['일', '월', '화', '수', '목', '금', '토']
-const CALENDAR_YEAR = 2026
-const CALENDAR_MONTH = 5
+const today = new Date()
+const CALENDAR_YEAR = today.getFullYear()
+const CALENDAR_MONTH = today.getMonth() + 1
+const CALENDAR_DAY = today.getDate()
 
 type CalendarDay = {
   id: string
@@ -61,10 +67,21 @@ function createCalendarDays(year: number, month: number): CalendarDay[] {
   return calendar
 }
 
+function getDateKey(year: number, month: number, day: number) {
+  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+}
+
 const initialHistoryItems = [
-  { id: 1, title: '식사 기록', detail: '사료 60g', time: '08:00', color: '#ffd1a8' },
-  { id: 2, title: '활동 기록', detail: '산책 30분', time: '19:20', color: '#428fe6' },
-  { id: 3, title: '증상 기록', detail: '헐떡', time: '18:10', color: '#b9dfe3' },
+  { id: 101, title: '식사 기록', detail: '간식 2개', time: '10:30', color: '#ffd1a8', date: '2026-05-01' },
+  { id: 102, title: '활동 기록', detail: '산책 20분', time: '18:40', color: '#428fe6', date: '2026-05-02' },
+  { id: 106, title: '식사 기록', detail: '사료 55g', time: '08:20', color: '#ffd1a8', date: '2026-05-02' },
+  { id: 103, title: '배변 기록', detail: '배변 실수', time: '09:15', color: '#527ca3', date: '2026-05-03' },
+  { id: 107, title: '증상 기록', detail: '재채기', time: '14:10', color: '#b9dfe3', date: '2026-05-03' },
+  { id: 104, title: '증상 기록', detail: '가려움', time: '21:05', color: '#b9dfe3', date: '2026-05-04' },
+  { id: 105, title: '식사 기록', detail: '밥 80g', time: '07:50', color: '#ffd1a8', date: '2026-05-05' },
+  { id: 1, title: '식사 기록', detail: '사료 60g', time: '08:00', color: '#ffd1a8', date: '2026-05-06' },
+  { id: 2, title: '활동 기록', detail: '산책 30분', time: '19:20', color: '#428fe6', date: '2026-05-06' },
+  { id: 3, title: '증상 기록', detail: '헐떡', time: '18:10', color: '#b9dfe3', date: '2026-05-06' },
 ]
 
 type CategoryOption = {
@@ -94,7 +111,7 @@ const categoryColorOptions = [
 function Mission() {
   const [calendarYear, setCalendarYear] = useState(CALENDAR_YEAR)
   const [calendarMonth, setCalendarMonth] = useState(CALENDAR_MONTH)
-  const [selectedDayId, setSelectedDayId] = useState('c-20')
+  const [selectedDayId, setSelectedDayId] = useState(`c-${CALENDAR_DAY}`)
   const [monthSlideDirection, setMonthSlideDirection] = useState<'prev' | 'next'>('next')
   const [calendarView, setCalendarView] = useState<'월간' | '주간'>('월간')
   const [isViewSortOpen, setIsViewSortOpen] = useState(false)
@@ -107,7 +124,11 @@ function Mission() {
   const [isPeriodPickerOpen, setIsPeriodPickerOpen] = useState(false)
   const [isPeriodDatePickerOpen, setIsPeriodDatePickerOpen] = useState(false)
   const [addTitle, setAddTitle] = useState('')
-  const [historyItems, setHistoryItems] = useState(initialHistoryItems)
+  const [editingHistoryId, setEditingHistoryId] = useState<number | null>(null)
+  const [historyItems, setHistoryItems] = useState(() => [
+    ...readMissionActivityRecords(),
+    ...initialHistoryItems,
+  ])
   const [categories, setCategories] = useState<CategoryOption[]>(initialCategoryOptions)
   const [selectedCategoryId, setSelectedCategoryId] = useState(initialCategoryOptions[0].id)
   const [draftCategoryId, setDraftCategoryId] = useState(initialCategoryOptions[0].id)
@@ -115,7 +136,11 @@ function Mission() {
   const [newCategoryColor, setNewCategoryColor] = useState('')
   const [editCategoryName, setEditCategoryName] = useState('')
   const [editCategoryColor, setEditCategoryColor] = useState('')
-  const [addDate, setAddDate] = useState({ year: CALENDAR_YEAR, month: CALENDAR_MONTH, day: 20 })
+  const [addDate, setAddDate] = useState({
+    year: CALENDAR_YEAR,
+    month: CALENDAR_MONTH,
+    day: CALENDAR_DAY,
+  })
   const [draftAddDate, setDraftAddDate] = useState(addDate)
   const calendarRef = useRef<HTMLElement>(null)
   const dockRef = useRef<HTMLDivElement>(null)
@@ -127,6 +152,24 @@ function Mission() {
     () => createCalendarDays(calendarYear, calendarMonth),
     [calendarMonth, calendarYear]
   )
+  const recordedDateKeys = useMemo(
+    () => new Set(historyItems.map((item) => item.date).filter(Boolean)),
+    [historyItems]
+  )
+  const recordedDateColors = useMemo(() => {
+    const colorsByDate = new Map<string, string[]>()
+
+    historyItems.forEach((item) => {
+      if (!item.date) return
+
+      const colors = colorsByDate.get(item.date) ?? []
+      if (!colors.includes(item.color)) {
+        colorsByDate.set(item.date, [...colors, item.color])
+      }
+    })
+
+    return colorsByDate
+  }, [historyItems])
 
   useEffect(() => {
     const currentSelected = calendarDays.find((day) => day.id === selectedDayId)
@@ -140,13 +183,35 @@ function Mission() {
     }
   }, [calendarDays, selectedDayId])
 
+  useEffect(() => {
+    const syncMissionActivityRecords = () => {
+      setHistoryItems([
+        ...readMissionActivityRecords(),
+        ...initialHistoryItems,
+      ])
+    }
+
+    window.addEventListener(MISSION_ACTIVITY_RECORDS_CHANGE_EVENT, syncMissionActivityRecords)
+    window.addEventListener('storage', syncMissionActivityRecords)
+
+    return () => {
+      window.removeEventListener(MISSION_ACTIVITY_RECORDS_CHANGE_EVENT, syncMissionActivityRecords)
+      window.removeEventListener('storage', syncMissionActivityRecords)
+    }
+  }, [])
+
   const selectedDay = useMemo(
     () => calendarDays.find((day) => day.id === selectedDayId) ?? calendarDays[24],
     [calendarDays, selectedDayId]
   )
 
   const selectedDate = new Date(selectedDay.year, selectedDay.month - 1, Number(selectedDay.label))
+  const selectedDateKey = getDateKey(selectedDay.year, selectedDay.month, Number(selectedDay.label))
   const selectedDateLabel = `${selectedDay.year}년 ${selectedDay.month}월 ${selectedDay.label}일(${weekLabels[selectedDate.getDay()]})`
+  const selectedHistoryItems = useMemo(
+    () => historyItems.filter((item) => item.date === selectedDateKey),
+    [historyItems, selectedDateKey]
+  )
   const usedCategoryColors = useMemo(
     () => new Set(categories.map((category) => category.color.toLowerCase())),
     [categories]
@@ -167,6 +232,7 @@ function Mission() {
     )
   }
   const canSaveMission = addTitle.trim().length > 0
+  const isEditingHistory = editingHistoryId !== null
   const canAddCategory =
     newCategoryName.trim().length > 0 &&
     newCategoryColor !== '' &&
@@ -203,6 +269,17 @@ function Mission() {
     setIsPeriodDatePickerOpen((prev) => !prev)
   }
 
+  const closeMissionSheet = () => {
+    setIsFabOpen(false)
+    setIsCategoryPickerOpen(false)
+    setIsCategoryAddOpen(false)
+    setIsCategoryEditOpen(false)
+    setIsPeriodPickerOpen(false)
+    setIsPeriodDatePickerOpen(false)
+    setAddTitle('')
+    setEditingHistoryId(null)
+  }
+
   useEffect(() => {
     if (!isDatePickerOpen && !isPeriodDatePickerOpen) return
 
@@ -233,24 +310,67 @@ function Mission() {
 
     const now = new Date()
     const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+    const recordTitle = selectedCategory.label === '증상' ? '증상 기록' : selectedCategory.label
+    const recordDate = getDateKey(addDate.year, addDate.month, addDate.day)
+
+    if (editingHistoryId !== null) {
+      setHistoryItems((prev) =>
+        prev.map((item) =>
+          item.id === editingHistoryId
+            ? {
+                ...item,
+                title: recordTitle,
+                detail: title,
+                color: selectedCategory.color,
+                date: recordDate,
+              }
+            : item
+        )
+      )
+      closeMissionSheet()
+      return
+    }
 
     setHistoryItems((prev) => [
       {
         id: Date.now(),
-        title: selectedCategory.label,
+        title: recordTitle,
         detail: title,
         time,
         color: selectedCategory.color,
+        date: recordDate,
       },
       ...prev,
     ])
-    setAddTitle('')
-    setIsFabOpen(false)
+    closeMissionSheet()
+  }
+
+  const openHistoryEdit = (item: typeof initialHistoryItems[number]) => {
+    const [year, month, day] = item.date.split('-').map(Number)
+    const nextDate = {
+      year: Number.isFinite(year) ? year : selectedDay.year,
+      month: Number.isFinite(month) ? month : selectedDay.month,
+      day: Number.isFinite(day) ? day : Number(selectedDay.label),
+    }
+    const nextCategory =
+      categories.find((category) => (
+        item.title.includes(category.label) ||
+        category.label.includes(item.title.replace(/\s*기록$/, '')) ||
+        category.color.toLowerCase() === item.color.toLowerCase()
+      )) ?? selectedCategory
+
+    setEditingHistoryId(item.id)
+    setAddTitle(item.detail)
+    setSelectedCategoryId(nextCategory.id)
+    setDraftCategoryId(nextCategory.id)
+    setAddDate(nextDate)
+    setDraftAddDate(nextDate)
     setIsCategoryPickerOpen(false)
     setIsCategoryAddOpen(false)
     setIsCategoryEditOpen(false)
     setIsPeriodPickerOpen(false)
     setIsPeriodDatePickerOpen(false)
+    setIsFabOpen(true)
   }
 
   const openCategoryEdit = () => {
@@ -394,17 +514,35 @@ function Mission() {
           aria-label={`${calendarYear}년 ${calendarMonth}월 달력`}
         >
           {visibleCalendarDays.map((day) => (
-            <button
-              key={day.id}
-              type="button"
-              className={`mission_day ${day.muted ? 'muted' : ''} ${
-                day.id === selectedDayId ? 'selected' : ''
-              }`}
-              aria-pressed={day.id === selectedDayId}
-              onClick={() => setSelectedDayId(day.id)}
-            >
-              {day.label}
-            </button>
+            (() => {
+              const dayDateKey = getDateKey(day.year, day.month, Number(day.label))
+              const dayRecordColors = recordedDateColors.get(dayDateKey) ?? []
+
+              return (
+                <button
+                  key={day.id}
+                  type="button"
+                  className={`mission_day ${day.muted ? 'muted' : ''} ${
+                    day.id === selectedDayId ? 'selected' : ''
+                  } ${recordedDateKeys.has(dayDateKey) ? 'has_record' : ''}`}
+                  aria-pressed={day.id === selectedDayId}
+                  onClick={() => setSelectedDayId(day.id)}
+                >
+                  <span>{day.label}</span>
+                  {dayRecordColors.length > 0 && (
+                    <span className="mission_day_record_dots" aria-hidden="true">
+                      {dayRecordColors.slice(0, 3).map((color) => (
+                        <span
+                          key={color}
+                          className="mission_day_record_dot"
+                          style={{ backgroundColor: color }}
+                        />
+                      ))}
+                    </span>
+                  )}
+                </button>
+              )
+            })()
           ))}
         </div>
         </div>
@@ -418,8 +556,13 @@ function Mission() {
       <section className="mission_history_section">
         <h2>{selectedDateLabel}</h2>
         <div className="mission_history_list">
-          {historyItems.map((item) => (
-            <article key={item.id} className="mission_history_item">
+          {selectedHistoryItems.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              className="mission_history_item"
+              onClick={() => openHistoryEdit(item)}
+            >
               <span
                 className="mission_history_thumb"
                 style={{ backgroundColor: getHistoryColor(item.title, item.color) }}
@@ -430,7 +573,7 @@ function Mission() {
                 <p>{item.detail}</p>
               </div>
               <time>{item.time}</time>
-            </article>
+            </button>
           ))}
         </div>
       </section>
@@ -456,7 +599,7 @@ function Mission() {
 
       {isFabOpen && (
         <AddSheet
-          onClose={() => { setIsFabOpen(false); setIsCategoryPickerOpen(false); setIsCategoryAddOpen(false); setIsCategoryEditOpen(false); setIsPeriodPickerOpen(false); setIsPeriodDatePickerOpen(false); setAddTitle('') }}
+          onClose={closeMissionSheet}
           onScrollCapture={(event) => {
             if (!isPeriodDatePickerOpen) return
             if ((event.target as HTMLElement).closest('.date_picker_column')) return
@@ -835,7 +978,7 @@ function Mission() {
                     disabled={!canSaveMission}
                     onClick={saveMission}
                   >
-                    저장하기
+                    {isEditingHistory ? '수정하기' : '저장하기'}
                   </Button>
                 </div>
               </>

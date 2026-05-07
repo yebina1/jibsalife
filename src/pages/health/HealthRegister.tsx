@@ -1286,7 +1286,7 @@ function HealthRegister() {
           </button>
           <Button
             type="button"
-            className={`deactivation_btn ${!hasRegisteredContent ? 'is_disabled' : ''}`}
+            className={`purple_btn square_btn ${!hasRegisteredContent ? 'is_disabled' : ''}`}
             aria-disabled={!hasRegisteredContent}
             onClick={handleSubmit}
           >
@@ -1373,7 +1373,7 @@ function HealthRegister() {
               <strong>등록된 기록이 없어요</strong>
               <p>사진, 동영상, 음성, 메모 중 하나를 추가해주세요.</p>
             </div>
-            <Button type="button" className="purple_btn" onClick={() => setIsEmptyAlertOpen(false)}>
+            <Button type="button" className="purple_btn square_btn" onClick={() => setIsEmptyAlertOpen(false)}>
               확인
             </Button>
         </Alert>

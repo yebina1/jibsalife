@@ -894,12 +894,12 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
                 <Button
                   type="button"
                   className={[
+                    'purple_btn',
+                    'square_btn',
                     'community_challenge_reward_button',
-                    isChallengeRewardButtonDisabled ? 'button_disabled_outline' : null,
                   ]
                     .filter(Boolean)
                     .join(' ')}
-                  buttonVariant="icon"
                   disabled={isChallengeRewardButtonDisabled}
                   onClick={() => {
                     if (isChallengeRewardButtonDisabled) return
@@ -960,6 +960,7 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
                             ]
                               .filter(Boolean)
                               .join(' ')}
+                            disabled={isComplete}
                             onClick={() => {
                               if (!isComplete) {
                                 navigate('/community/challenge/reward?amount=10', {
@@ -1506,9 +1507,9 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
                 )}
               </label>
 
-              <button type="submit" className="community_create_submit" disabled={!draftTitle.trim()}>
+              <Button type="submit" className="purple_btn square_btn community_create_submit" disabled={!draftTitle.trim()}>
                 등록하기
-              </button>
+              </Button>
             </form>
           </section>
         ) : null}

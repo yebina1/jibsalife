@@ -198,8 +198,7 @@ function CommunityReward() {
         <div className="community_reward_actions">
           <Button
             type="button"
-            buttonVariant="icon"
-            className="community_reward_confirm"
+            className="purple_btn square_btn community_reward_confirm"
             onClick={goToChallenge}
           >
             확인

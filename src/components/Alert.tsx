@@ -1,11 +1,13 @@
 import './Alert.css'
+import type { ReactNode, Ref } from 'react'
 
 type Props = {
   onClose: () => void
-  children?: React.ReactNode
+  children?: ReactNode
+  dialogRef?: Ref<HTMLElement>
 }
 
-function Alert({ onClose, children }: Props) {
+function Alert({ onClose, children, dialogRef }: Props) {
   return (
     <div className="alert_layer" role="presentation">
       <button
@@ -14,7 +16,7 @@ function Alert({ onClose, children }: Props) {
         aria-label="알림 닫기"
         onClick={onClose}
       />
-      <section className="alert" role="alertdialog" aria-modal="true">
+      <section ref={dialogRef} className="alert" role="alertdialog" aria-modal="true">
         {children}
       </section>
     </div>
