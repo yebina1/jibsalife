@@ -354,11 +354,11 @@ function Home() {
         </ContentSection>
 
         {isPetIdModalOpen ? (
-          <section className="pet_id_modal" role="dialog" aria-modal="true" aria-label="동물등록증 등록">
+          <section className="pet_id_modal" role="dialog" aria-modal="true" aria-label="동물등록증 등록하기">
             <div className="pet_id_modal_backdrop" onClick={closePetIdModal} />
             <div className="pet_id_modal_sheet">
               <div className="pet_id_modal_header">
-                <h2>동물등록증 등록</h2>
+                <h2>동물등록증 등록하기</h2>
                 <button type="button" aria-label="닫기" onClick={closePetIdModal}>
                   ×
                 </button>
@@ -453,12 +453,12 @@ function Home() {
                   }}
                 >
                   <div className="pet_id_form_actions">
-                    <button type="button" className="pet_id_form_cancel" onClick={closePetIdModal}>
-                      취소
-                    </button>
-                    <button type="submit" className="pet_id_form_submit">
-                      등록
-                    </button>
+                    <Button type="button" className="pet_id_form_cancel" onClick={closePetIdModal}>
+                      이전
+                    </Button>
+                    <Button type="submit" className="purple_btn pet_id_form_submit">
+                      확인
+                    </Button>
                   </div>
                 </form>
               </div>

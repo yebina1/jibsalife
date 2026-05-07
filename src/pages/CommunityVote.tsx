@@ -1,6 +1,7 @@
 import './Community.css'
 import './CommunityVote.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import Confetti from 'react-confetti'
 import { useNavigate } from 'react-router'
 import PageHeader from '../components/PageHeader'
 import HeaderIcon from '../components/HeaderIcon'
@@ -38,23 +39,68 @@ const otherRankings = [
 function CommunityVote() {
   const navigate = useNavigate()
   const [isCompleteAlertOpen, setIsCompleteAlertOpen] = useState(false)
+  const [confettiViewport, setConfettiViewport] = useState({ width: 0, height: 0 })
+  const [confettiPieces, setConfettiPieces] = useState(0)
   const [profilePoints, setProfilePoints] = useState(() => readProfilePoints())
   const [isRewardClaimed, setIsRewardClaimed] = useState(() => readCommunityVoteRewardClaimed())
+  const completeAlertRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     setProfilePoints(readProfilePoints())
     setIsRewardClaimed(readCommunityVoteRewardClaimed())
   }, [])
 
+  useEffect(() => {
+    if (!isCompleteAlertOpen) {
+      setConfettiPieces(0)
+      return undefined
+    }
+
+    const updateConfettiViewport = () => {
+      const alertElement = completeAlertRef.current
+
+      if (!alertElement) return
+
+      setConfettiViewport({
+        width: alertElement.clientWidth,
+        height: alertElement.clientHeight,
+      })
+    }
+
+    window.requestAnimationFrame(() => {
+      updateConfettiViewport()
+      setConfettiPieces(80)
+    })
+    window.addEventListener('resize', updateConfettiViewport)
+
+    const timer = window.setTimeout(() => {
+      setConfettiPieces(0)
+    }, 6000)
+
+    return () => {
+      window.removeEventListener('resize', updateConfettiViewport)
+      window.clearTimeout(timer)
+    }
+  }, [isCompleteAlertOpen])
+
   const handleRewardClick = () => {
     if (isRewardClaimed) return
+
+    setIsCompleteAlertOpen(true)
+  }
+
+  const handleRewardConfirm = () => {
+    if (isRewardClaimed) {
+      setIsCompleteAlertOpen(false)
+      return
+    }
 
     const nextPoints = profilePoints + COMMUNITY_VOTE_REWARD_POINTS
     writeProfilePoints(nextPoints)
     writeCommunityVoteRewardClaimed()
     setProfilePoints(nextPoints)
     setIsRewardClaimed(true)
-    setIsCompleteAlertOpen(true)
+    setIsCompleteAlertOpen(false)
   }
 
   return (
@@ -172,7 +218,7 @@ function CommunityVote() {
       <div className="cv_btn_wrap">
         <Button
           type="button"
-          className="purple_btn"
+          className="purple_btn square_btn"
           onClick={handleRewardClick}
           disabled={isRewardClaimed}
         >
@@ -181,7 +227,18 @@ function CommunityVote() {
       </div>
 
       {isCompleteAlertOpen ? (
-        <Alert onClose={() => setIsCompleteAlertOpen(false)}>
+        <Alert dialogRef={completeAlertRef} onClose={() => setIsCompleteAlertOpen(false)}>
+          <Confetti
+            className="cv_complete_confetti_canvas"
+            width={confettiViewport.width}
+            height={confettiViewport.height}
+            numberOfPieces={confettiPieces}
+            recycle={false}
+            opacity={0.8}
+            gravity={0.22}
+            confettiSource={{ x: 0, y: 0, w: confettiViewport.width, h: 0 }}
+            colors={['#F1C93A', '#9C78F0', '#6FCDF0', '#E57DC3', '#8556F4']}
+          />
           <div className="cv_complete_alert">
             <div className="cv_complete_visual" aria-hidden="true">
               <span className="cv_complete_confetti cv_complete_confetti_1" />
@@ -201,20 +258,15 @@ function CommunityVote() {
               <p><span>60포인트</span>를 받았어요.</p>
             </div>
 
-            <button
-              type="button"
-              className="cv_complete_point_card"
-              onClick={() => navigate('/mypage')}
-            >
+            <div className="cv_complete_point_card">
               <span className="cv_complete_point_icon" aria-hidden="true">P</span>
               <span className="cv_complete_point_text">
                 <span>지금까지 모은 포인트</span>
                 <strong>{formatProfilePoints(profilePoints)}</strong>
               </span>
-              <ChevronIcon direction="right" size="sm" />
-            </button>
+            </div>
 
-            <Button type="button" className="purple_btn" onClick={() => setIsCompleteAlertOpen(false)}>
+            <Button type="button" className="purple_btn square_btn" onClick={handleRewardConfirm}>
               확인
             </Button>
           </div>

@@ -652,6 +652,9 @@
   align-content: start;
   gap: 14px;
   padding: 8px 0 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .pet_id_form label {
@@ -683,31 +686,30 @@
 
 .pet_id_form_actions {
   display: flex;
-  gap: 10px;
+  gap: 16px;
   margin-top: 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
-.pet_id_form_cancel,
-.pet_id_form_submit {
+.pet_id_form_actions .pet_id_form_cancel,
+.pet_id_form_actions .pet_id_form_submit {
   flex: 1 1 0;
   height: 54px;
+  border-radius: 12px;
+}
+
+.pet_id_form_actions .pet_id_form_cancel {
   border: 1px solid #e5e5ec;
-  border-radius: 14px;
   background: #ffffff;
-  font-family: 'Pretendard', 'SUIT', system-ui, sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: -0.025em;
-  cursor: pointer;
+  color: #111111;
 }
 
-.pet_id_form_cancel {
-  color: #999999;
-}
-
-.pet_id_form_submit {
-  color: #505050;
+.pet_id_form_actions .pet_id_form_submit {
+  background: #9a82ff;
+  color: #ffffff;
 }
 
 @media (max-width: 900px) {
@@ -796,7 +798,7 @@
   }
 
   .pet_id_form_actions {
-    flex-direction: column;
+    gap: 12px;
   }
 }
 

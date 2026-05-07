@@ -13,10 +13,12 @@ export default function Button(props: Buttonprops){
     icon,
     iconPosition = 'left',
     buttonVariant = 'default',
+    disabled,
     ...rest
   } = props;
   const classNames = [
     className,
+    disabled && buttonVariant !== 'icon' ? 'is_disabled' : null,
     buttonVariant === 'icon' ? 'button_icon' : null,
     buttonVariant === 'challenge' ? 'button_challenge' : null,
   ]
@@ -24,7 +26,7 @@ export default function Button(props: Buttonprops){
     .join(' ')
 
   return (
-    <button {...rest} className={classNames}>
+    <button {...rest} disabled={disabled} className={classNames}>
       {icon && iconPosition === 'left' ? <span className="button_icon_asset" aria-hidden="true">{icon}</span> : null}
       <span className="button_label">{children}</span>
       {icon && iconPosition === 'right' ? <span className="button_icon_asset" aria-hidden="true">{icon}</span> : null}

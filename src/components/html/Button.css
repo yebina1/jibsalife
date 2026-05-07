@@ -16,6 +16,20 @@
 
 .purple_btn.is_disabled {
   background: #A5ADB8;
+  color: #ffffff;
+}
+
+.square_btn {
+  display: inline-flex;
+  width: min(100%, 343px);
+  height: 54px;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+  padding: 10px 16px;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 12px;
 }
 
 .deactivation_btn {
@@ -135,4 +149,11 @@
   background: #ffffff;
   color: #999999;
   cursor: default;
+}
+
+.button_challenge.is_disabled {
+  border-color: #A5ADB8;
+  background: #A5ADB8;
+  color: #ffffff;
+  cursor: not-allowed;
 }
