@@ -428,19 +428,37 @@ function Home() {
                     </div>
                     <div className="pet_id_card_field">
                       <span>성별 :</span>
-                      <input
-                        value={petIdForm.sex}
-                        onChange={(event) => handlePetIdInputChange('sex', event.target.value)}
-                        placeholder="남 / 여"
-                      />
+                      <div className="pet_id_card_radio_group" role="radiogroup" aria-label="성별">
+                        {['남', '여'].map((option) => (
+                          <label key={option} className="pet_id_card_radio">
+                            <input
+                              type="radio"
+                              name="pet-id-sex"
+                              value={option}
+                              checked={petIdForm.sex === option}
+                              onChange={(event) => handlePetIdInputChange('sex', event.target.value)}
+                            />
+                            <span>{option}</span>
+                          </label>
+                        ))}
+                      </div>
                     </div>
                     <div className="pet_id_card_field">
                       <span>중성화 여부 :</span>
-                      <input
-                        value={petIdForm.neutered}
-                        onChange={(event) => handlePetIdInputChange('neutered', event.target.value)}
-                        placeholder="O / X"
-                      />
+                      <div className="pet_id_card_radio_group" role="radiogroup" aria-label="중성화 여부">
+                        {['O', 'X'].map((option) => (
+                          <label key={option} className="pet_id_card_radio">
+                            <input
+                              type="radio"
+                              name="pet-id-neutered"
+                              value={option}
+                              checked={petIdForm.neutered === option}
+                              onChange={(event) => handlePetIdInputChange('neutered', event.target.value)}
+                            />
+                            <span>{option}</span>
+                          </label>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>

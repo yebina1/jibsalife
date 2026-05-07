@@ -22,6 +22,22 @@
   display: none;
 }
 
+.chat_room_form .input_field {
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  font-size: 14px;
+  flex: 1;
+}
+
+.chat_room_form .input_field:focus {
+  border-color: transparent;
+  box-shadow: none;
+}
+
 /* ?? Message row ?? */
 .chat_message {
   display: flex;
