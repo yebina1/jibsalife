@@ -129,24 +129,26 @@
 .layout_community_controls {
   display: flex;
   width: 100%;
-  min-height: 40px;
+  max-height: 80px;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   box-sizing: border-box;
-  padding: 20px var(--layout-inline-padding) 0;
+  padding: 10px var(--layout-inline-padding) 10px;
   background: #ffffff;
   transition:
     opacity 180ms ease,
-    transform 180ms ease,
+    max-height 180ms ease,
     padding 180ms ease;
 }
 
 .layout_community_subtabs_hidden .layout_community_controls {
   opacity: 0;
-  transform: translateY(-12px);
   pointer-events: none;
+  max-height: 0;
   padding-top: 0;
+  padding-bottom: 0;
+  overflow: hidden;
 }
 
 .layout_community_subtab_dropdown {
@@ -208,7 +210,7 @@
   width: 100%;
   padding: 8px 14px;
   box-sizing: border-box;
-  color: #111111 !important;
+  color: #111111;
   font-family: var(--app-font-family);
   font-size: 14px;
   font-weight: 400;
@@ -222,7 +224,7 @@
 .layout_community_subtab_option.active,
 .layout_community_subtab_option.active:link,
 .layout_community_subtab_option.active:visited {
-  color: #6D59F8 !important;
+  color: #6D59F8;
   font-weight: 400;
 }
 
@@ -296,7 +298,7 @@
   min-height: 32px;
   padding: 6px 14px;
   box-sizing: border-box;
-  color: #111111 !important;
+  color: #111111;
   font-family: var(--app-font-family);
   font-size: 13px;
   font-weight: 400;
@@ -310,7 +312,7 @@
 .layout_community_sort_option.active,
 .layout_community_sort_option.active:link,
 .layout_community_sort_option.active:visited {
-  color: #6D59F8 !important;
+  color: #6D59F8;
   font-weight: 400;
 }
 
@@ -443,14 +445,14 @@ button.layout_nav_link {
 }
 
 .layout_nav_link.active .layout_nav_icon_mypage_active .layout_nav_icon_mypage_active_bg {
-  fill: currentColor !important;
-  stroke: currentColor !important;
+  fill: currentColor;
+  stroke: currentColor;
 }
 
 .layout_nav_link.active .layout_nav_icon_mypage_active .layout_nav_icon_mypage_active_face,
 .layout_nav_link.active .layout_nav_icon_mypage_active .layout_nav_icon_mypage_active_body {
-  fill: none !important;
-  stroke: #ffffff !important;
+  fill: none;
+  stroke: #ffffff;
 }
 
 @media (min-width: 768px) {

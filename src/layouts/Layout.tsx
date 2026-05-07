@@ -21,7 +21,6 @@ const communityTabs = [
 
 const petStorySubTabs = [
   { label: '전체', to: '/community/pet-story?sub=all' },
-  { label: '자랑하기', to: '/community/pet-story?sub=brag' },
   { label: '일상', to: '/community/pet-story?sub=daily' },
   { label: '반려상식', to: '/community/pet-story?sub=knowledge' },
 ] as const
@@ -62,11 +61,17 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
       : null
   const showCommunitySort =
     (pathname.startsWith('/community/vote') && !isCommunitySubAll) ||
-    (pathname.startsWith('/community/pet-story') && !isCommunitySubAll)
+    pathname.startsWith('/community/pet-story')
   const activeCommunitySubTab = communitySubTabs
     ? communitySubTabs.find((tab) => {
-        const tabSubParam = getSubParam(tab.to)
-        return communitySubParam === tabSubParam || (!communitySubParam && tabSubParam === 'all')
+        if (tab.to.includes('?')) {
+          const tabSubParam = getSubParam(tab.to)
+          return (
+            pathname === tab.to.split('?')[0] &&
+            (communitySubParam === tabSubParam || (!communitySubParam && tabSubParam === 'all'))
+          )
+        }
+        return pathname.startsWith(tab.to)
       }) ?? communitySubTabs[0]
     : null
   const activeCommunitySort =
@@ -179,8 +184,10 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
                         <div className="layout_community_subtab_menu">
                           {communitySubTabs.map((tab) => {
                             const tabSubParam = getSubParam(tab.to)
-                            const isActive =
-                              communitySubParam === tabSubParam || (!communitySubParam && tabSubParam === 'all')
+                            const isActive = tab.to.includes('?')
+                              ? pathname === tab.to.split('?')[0] &&
+                                (communitySubParam === tabSubParam || (!communitySubParam && tabSubParam === 'all'))
+                              : pathname.startsWith(tab.to)
 
                             return (
                               <NavLink
