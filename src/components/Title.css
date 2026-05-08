@@ -53,8 +53,8 @@
   line-height: var(--line-height-sm);
 }
 
-.caption_medium{
-  font-size: var(--font-caption-md);
+.point_medium{
+  font-size: var(--font-point-md);
   font-weight: var(--font-weight-md);
   line-height: var(--line-height-sm);
 }
