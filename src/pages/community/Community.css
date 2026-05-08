@@ -419,7 +419,6 @@
 
 .community_feed {
   display: grid;
-  gap: 14px;
   padding: 0;
 }
 

@@ -1,13 +1,13 @@
-import './Community.css'
+﻿import './Community.css'
 import './CommunityVoteResult.css'
 import { useEffect, useState } from 'react'
 import Confetti from 'react-confetti'
 import { useNavigate } from 'react-router'
-import PageHeader from '../components/PageHeader'
-import HeaderIcon from '../components/HeaderIcon'
-import ChevronIcon from '../components/ChevronIcon'
-import Alert from '../components/Alert'
-import Button from '../components/html/Button'
+import PageHeader from '../../components/PageHeader'
+import HeaderIcon from '../../components/HeaderIcon'
+import ChevronIcon from '../../components/ChevronIcon'
+import Alert from '../../components/Alert'
+import Button from '../../components/html/Button'
 import {
   COMMUNITY_VOTE_REWARD_POINTS,
   formatProfilePoints,
@@ -15,15 +15,15 @@ import {
   readProfilePoints,
   writeCommunityVoteRewardClaimed,
   writeProfilePoints,
-} from '../utils/profilePoints'
-import crownIcon from '../svg/crown.svg'
-import instaIcon from '../svg/Instagram icon.svg'
-import voting1 from '../img/voting/voting1.jpg'
-import voting2 from '../img/voting/voting2.jpg'
-import voting3 from '../img/voting/voting3.jpg'
-import voting4 from '../img/voting/voting4.jpg'
-import voting5 from '../img/voting/voting5.jpg'
-import voting6 from '../img/voting/voting6.jpg'
+} from '../../utils/profilePoints'
+import crownIcon from '../../svg/crown.svg'
+import instaIcon from '../../svg/Instagram icon.svg'
+import voting1 from '../../img/voting/voting1.jpg'
+import voting2 from '../../img/voting/voting2.jpg'
+import voting3 from '../../img/voting/voting3.jpg'
+import voting4 from '../../img/voting/voting4.jpg'
+import voting5 from '../../img/voting/voting5.jpg'
+import voting6 from '../../img/voting/voting6.jpg'
 
 const top2Rankings = [
   { rank: 2, name: '콩냥이', image: voting2, votes: 842, percentage: 26.1 },

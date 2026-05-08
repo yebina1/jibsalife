@@ -1,3 +1,8 @@
+.layout_content:has(.community_page_pet-story),
+.layout_content:has(.cpsd_page) {
+  padding-block: 0;
+}
+
 /* 일상 뷰 */
 .cpsd_page {
   display: flex;
@@ -16,6 +21,7 @@
   gap: 14px;
   align-items: center;
   border-bottom: 1px solid #f0f0f5;
+  padding-block: 16px;
 }
 
 .cpsd_item_featured {
@@ -105,8 +111,6 @@
 /* 피드 */
 .community_feed {
   display: grid;
-  gap: 14px;
-  padding: 0;
 }
 
 .community_page_pet-story .community_feed {

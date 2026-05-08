@@ -74,6 +74,10 @@
   --layout-header-bar-height: 114px;
 }
 
+.layout_community .layout_content {
+  padding-top: 0;
+}
+
 .layout_community_with_subtabs {
   --layout-header-bar-height: 174px;
 }

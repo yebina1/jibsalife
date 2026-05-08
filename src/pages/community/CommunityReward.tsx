@@ -1,17 +1,17 @@
 ﻿import { useEffect, useState } from 'react'
 import Confetti from 'react-confetti'
 import { useLocation, useNavigate, useSearchParams } from 'react-router'
-import PageHeader from '../components/PageHeader'
-import ChevronIcon from '../components/ChevronIcon'
-import BackButton from '../components/html/BackButton'
-import Button from '../components/html/Button'
+import PageHeader from '../../components/PageHeader'
+import ChevronIcon from '../../components/ChevronIcon'
+import BackButton from '../../components/html/BackButton'
+import Button from '../../components/html/Button'
 import {
   addCompletedChallengeCardId,
   APPLIED_REWARD_EVENTS_STORAGE_KEY,
   CHALLENGE_REWARD_CLAIMED_STORAGE_KEY,
-} from '../constants/points'
-import { formatProfilePoints, readProfilePoints, writeProfilePoints } from '../utils/profilePoints'
-import pointIcon from '../svg/point.svg'
+} from '../../constants/points'
+import { formatProfilePoints, readProfilePoints, writeProfilePoints } from '../../utils/profilePoints'
+import pointIcon from '../../svg/point.svg'
 import './CommunityReward.css'
 
 function CheckIcon() {

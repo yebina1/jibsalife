@@ -1,6 +1,6 @@
-import './CommunityKnowledgeDetail.css'
+﻿import './CommunityKnowledgeDetail.css'
 import { useNavigate } from 'react-router'
-import knowledge1 from '../img/knowledge1.png'
+import knowledge1 from '../../img/knowledge1.png'
 
 const detailItems = [
   {

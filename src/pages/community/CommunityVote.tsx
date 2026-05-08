@@ -1,11 +1,11 @@
-import './Community.css'
+﻿import './Community.css'
 import './CommunityVote.css'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import PageHeader from '../components/PageHeader'
-import HeaderIcon from '../components/HeaderIcon'
-import Button from '../components/html/Button'
-import crownIcon from '../svg/crown.svg'
+import PageHeader from '../../components/PageHeader'
+import HeaderIcon from '../../components/HeaderIcon'
+import Button from '../../components/html/Button'
+import crownIcon from '../../svg/crown.svg'
 
 const topTabs = ['전체', '펫스토리', '챌린지', '투표'] as const
 const topTabRoutes: Record<string, string> = {

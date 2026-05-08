@@ -1,25 +1,25 @@
-import './Community.css'
+﻿import './Community.css'
 import './CommunityPetStory.css'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
-import PageHeader from '../components/PageHeader'
-import HeaderIcon from '../components/HeaderIcon'
-import Button from '../components/html/Button'
-import FloatingWriteButton from '../components/FloatingWriteButton'
-import contents1 from '../img/contents1.png'
-import contents2 from '../img/contents2.png'
-import contents3 from '../img/contents3.png'
-import contents4 from '../img/contents4.png'
-import knowledge1 from '../img/knowledge1.png'
-import knowledge2 from '../img/knowledge2.png'
-import knowledge3 from '../img/knowledge3.png'
-import knowledge4 from '../img/knowledge4.png'
-import life1 from '../img/life1.jpg'
-import life2 from '../img/life2.png'
-import life3 from '../img/life3.png'
-import life4 from '../img/life4.png'
-import life5 from '../img/life5.jpg'
-import life6 from '../img/life6.jpg'
+import PageHeader from '../../components/PageHeader'
+import HeaderIcon from '../../components/HeaderIcon'
+import Button from '../../components/html/Button'
+import FloatingWriteButton from '../../components/FloatingWriteButton'
+import contents1 from '../../img/contents1.png'
+import contents2 from '../../img/contents2.png'
+import contents3 from '../../img/contents3.png'
+import contents4 from '../../img/contents4.png'
+import knowledge1 from '../../img/knowledge1.png'
+import knowledge2 from '../../img/knowledge2.png'
+import knowledge3 from '../../img/knowledge3.png'
+import knowledge4 from '../../img/knowledge4.png'
+import life1 from '../../img/life1.jpg'
+import life2 from '../../img/life2.png'
+import life3 from '../../img/life3.png'
+import life4 from '../../img/life4.png'
+import life5 from '../../img/life5.jpg'
+import life6 from '../../img/life6.jpg'
 
 const dailyPosts = [
   { id: 1, title: '강아지 산책하러 나가면 자는척 해요', author: '탬블러', time: '3시간 전', likes: 20, comments: 16, image: null as null | string },
@@ -84,12 +84,6 @@ const postData: CommunityPost[] = [
   { id: 4, tag: '일상', title: '뽀미랑 부산 여행기', author: '뿌직뿌직', date: '2026.04.30', timeText: '3시간 전', likes: 4, comments: 4, shares: 1, createdAt: '2026-04-30T11:00:00', image: life4 },
   { id: 5, tag: '일상', title: '말숙이랑 벚꽃 구경 다녀왔어요', author: '말숙이맘', date: '2026.04.30', timeText: '3시간 전', likes: 4, comments: 4, shares: 4, createdAt: '2026-04-30T10:20:00', image: life5 },
   { id: 6, tag: '일상', title: '귀여우면 다야?', author: '크림빵', date: '2026.04.30', timeText: '3시간 전', likes: 4, comments: 4, shares: 4, createdAt: '2026-04-30T08:40:00', image: life6 },
-]
-
-const braggingPostData: CommunityPost[] = [
-  { id: 101, tag: '자랑하기', title: '우리 집 막내 미모 좀 봐주세요', author: '몽실엄마', date: '2026.04.30', timeText: '1시간 전', likes: 18, comments: 7, shares: 9, createdAt: '2026-04-30T20:10:00', image: contents1 },
-  { id: 102, tag: '자랑하기', title: '오늘 미용하고 산책 나왔어요', author: '코코산책', date: '2026.04.30', timeText: '2시간 전', likes: 14, comments: 4, shares: 5, createdAt: '2026-04-30T17:00:00', image: contents2 },
-  { id: 103, tag: '자랑하기', title: '간식 앞에서 반짝이는 눈빛', author: '복실누나', date: '2026.04.30', timeText: '5시간 전', likes: 20, comments: 9, shares: 7, createdAt: '2026-04-30T15:20:00', image: contents3 },
 ]
 
 const knowledgeFeedItems = [
@@ -201,7 +195,7 @@ function CommunityPetStory() {
       },
       ...prev,
     ])
-    navigate('/community/pet-story')
+    navigate('/community/petstory')
     closeCreatePost()
   }
 
@@ -290,7 +284,6 @@ function CommunityPetStory() {
         ) : isOverview ? (
           <section className="community_feed">
             {[
-              ...braggingPostData,
               ...postData,
               ...knowledgeFeedItems.map((item) => ({
                 id: item.id + 1000,
