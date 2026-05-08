@@ -1,6 +1,6 @@
 ﻿import './Community.css'
 import './CommunityPetStory.css'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
@@ -45,7 +45,7 @@ function CommentIcon() {
 
 const communitySubTabs = ['전체', '자랑하기', '일상', '반려상식'] as const
 type CommunitySubTab = (typeof communitySubTabs)[number]
-const sortOptions = ['인기순', '최신순', '댓글순'] as const
+type SortOption = '인기순' | '최신순' | '댓글순'
 const createdPostsStorageKey = 'jibsalife.community.createdPosts'
 
 type CommunityPost = {
@@ -101,7 +101,7 @@ const knowledgeFeedItems = [
   { id: 4, tag: '일상', title: '봄철 강아지 알레르기 증상과 관리법', image: knowledge4, likes: 8, comments: 3, viewsText: '482', objectPosition: '48% center', path: '/community/petstory/knowledge/walk-problems' },
 ] as const
 
-const sortByParam: Record<string, (typeof sortOptions)[number]> = {
+const sortByParam: Record<string, SortOption> = {
   popular: '인기순',
   latest: '최신순',
   comments: '댓글순',
@@ -172,8 +172,14 @@ function CommunityPetStory() {
     return () => window.clearInterval(timerId)
   }, [])
 
-  const visibleCreatedPosts = createdPosts.filter((post) => post.tag === '일상')
-  const isCreatedPost = (postId: number) => visibleCreatedPosts.some((post) => post.id === postId)
+  const visibleCreatedPosts = useMemo(
+    () => createdPosts.filter((post) => post.tag === '일상'),
+    [createdPosts],
+  )
+  const isCreatedPost = useCallback(
+    (postId: number) => visibleCreatedPosts.some((post) => post.id === postId),
+    [visibleCreatedPosts],
+  )
   const getPostTimeText = (post: { id: number; createdAt?: string; time?: string; timeText?: string }) => {
     if (post.createdAt && isCreatedPost(post.id)) {
       return getRelativeTimeText(post.createdAt, nowTime)
@@ -182,9 +188,9 @@ function CommunityPetStory() {
     return post.time ?? post.timeText
   }
 
-  const activePostData = [...visibleCreatedPosts, ...postData]
-
   const posts = useMemo(() => {
+    const activePostData = [...visibleCreatedPosts, ...postData]
+
     return [...activePostData].sort((a, b) => {
       const aLikes = a.likes + (likedPostIds.includes(a.id) ? 1 : 0)
       const bLikes = b.likes + (likedPostIds.includes(b.id) ? 1 : 0)
@@ -199,7 +205,7 @@ function CommunityPetStory() {
       }
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     })
-  }, [activePostData, likedPostIds, selectedSort])
+  }, [likedPostIds, selectedSort, visibleCreatedPosts])
 
   const dailyFeedPosts = useMemo(() => {
     const combined: PetStoryFeedPost[] = [
@@ -236,7 +242,7 @@ function CommunityPetStory() {
       }
       return new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
     })
-  }, [likedPostIds, selectedSort, visibleCreatedPosts])
+  }, [isCreatedPost, likedPostIds, selectedSort, visibleCreatedPosts])
 
   const overviewPosts = useMemo(() => {
     const combined: PetStoryFeedPost[] = [
@@ -271,7 +277,7 @@ function CommunityPetStory() {
       }
       return new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
     })
-  }, [dailyFeedPosts, likedPostIds, selectedSort, visibleCreatedPosts])
+  }, [dailyFeedPosts, isCreatedPost, likedPostIds, selectedSort])
 
   const toggleLike = (postId: number) => {
     setLikedPostIds((prev) =>
