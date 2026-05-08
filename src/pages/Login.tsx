@@ -2,10 +2,9 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import Button from '../components/html/Button'
 import Input from '../components/html/Input'
+import Title from '../components/Title'
 import loginPetImg from '../img/illust_login_pet.jpg'
-import eyeIcon from '../svg/eye.svg'
 import helloIcon from '../svg/hello icon.svg'
-import eyeOffIcon from '../svg/eye_off.svg'
 import './Login.css'
 
 function Login() {
@@ -34,10 +33,17 @@ function Login() {
   return (
     <div className="login_page">
       <div className="login_hero">
-        <div className="login_hero_text">
-          <h2>집사인생에 오신 것을<br />환영해요 <img src={helloIcon} alt="" aria-hidden="true" width={28} height={28} style={{ verticalAlign: '-4px' }} /></h2>
+        <Title
+          as="h2"
+          className="login_hero_text"
+          title={(
+            <>
+              집사인생에 오신 것을<br />환영해요 <img src={helloIcon} alt="" aria-hidden="true" width={28} height={28} style={{ verticalAlign: '-4px' }} />
+            </>
+          )}
+        >
           <p>반려동물과 함께하는 소중한 순간을<br />기록하고 관리해 보세요.</p>
-        </div>
+        </Title>
         <img src={loginPetImg} alt="반려동물 일러스트" className="login_hero_img" />
       </div>
 
@@ -52,7 +58,7 @@ function Login() {
               {id && (
                 <div className="login_input_actions">
                   <button type="button" className="login_input_clear" onClick={() => { setId(''); setError('') }}>
-                    <i className="bx bx-x" />
+                    <i className="bxf bx-x-circle" aria-hidden="true" />
                   </button>
                 </div>
               )}
@@ -70,11 +76,14 @@ function Login() {
                   }}
                 >
                   <button type="button" className="login_input_eye" onClick={() => setShowPassword((p) => !p)}>
-                    <img src={showPassword ? eyeIcon : eyeOffIcon} alt="" />
+                    <i
+                      className={`bx ${showPassword ? 'bx-eye login_eye_icon_open' : 'bx-eye-closed login_eye_icon_closed'}`}
+                      aria-hidden="true"
+                    />
                   </button>
                   {password && (
                     <button type="button" className="login_input_clear" onClick={() => { setPassword(''); setError('') }}>
-                      <i className="bx bx-x" />
+                      <i className="bxf bx-x-circle" aria-hidden="true" />
                     </button>
                   )}
                 </div>
@@ -82,7 +91,7 @@ function Login() {
             </div>
           </div>
           {error && <p className="login_error">{error}</p>}
-          <Button type="submit" className="purple_btn" style={!id.trim() && !password.trim() ? { background: '#A5ADB8' } : undefined}>로그인</Button>
+          <Button type="submit" className="purple_btn" disabled={!id.trim() && !password.trim()}>로그인</Button>
         </form>
 
         <Link to="#" className="login_guest_link" onClick={() => { setId('hello@jipsa.app'); setPassword('123456') }}>체험용 계정으로 둘러보기</Link>

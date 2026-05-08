@@ -52,6 +52,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const communitySubParam = searchParams.get('sub')
   const communitySortParam = searchParams.get('sort') ?? 'popular'
   const isCameraPage = pathname === '/health/camera' && searchParams.get('guide') === 'false'
+  const isLoginPage = pathname === '/login'
   const isCommunityPath = pathname.startsWith('/community')
   const isCommunitySubAll = !communitySubParam || communitySubParam === 'all'
   const communitySubTabs = pathname.startsWith('/community/pet-story')
@@ -102,7 +103,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const layoutClassName = isCameraPage
     ? 'layout layout_camera'
     : isMinimal
-      ? 'layout layout_minimal'
+      ? `layout layout_minimal ${isLoginPage ? 'layout_login' : ''}`
       : isCommunityPath
         ? `layout layout_community ${communitySubTabs ? 'layout_community_with_subtabs' : ''} ${
             communitySubTabs && !isCommunityControlsVisible ? 'layout_community_subtabs_hidden' : ''
