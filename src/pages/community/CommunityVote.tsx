@@ -10,7 +10,7 @@ import crownIcon from '../../svg/crown.svg'
 const topTabs = ['전체', '펫스토리', '챌린지', '투표'] as const
 const topTabRoutes: Record<string, string> = {
   전체: '/community/overview',
-  펫스토리: '/community/pet-story',
+  펫스토리: '/community/petstory',
   챌린지: '/community/challenge',
   투표: '/community/vote',
 }

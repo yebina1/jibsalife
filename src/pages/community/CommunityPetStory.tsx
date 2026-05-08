@@ -1,15 +1,11 @@
 ﻿import './Community.css'
 import './CommunityPetStory.css'
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router'
+import { useLocation, useNavigate, useSearchParams } from 'react-router'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
 import Button from '../../components/html/Button'
 import FloatingWriteButton from '../../components/FloatingWriteButton'
-import contents1 from '../../img/contents1.png'
-import contents2 from '../../img/contents2.png'
-import contents3 from '../../img/contents3.png'
-import contents4 from '../../img/contents4.png'
 import knowledge1 from '../../img/knowledge1.png'
 import knowledge2 from '../../img/knowledge2.png'
 import knowledge3 from '../../img/knowledge3.png'
@@ -22,13 +18,13 @@ import life5 from '../../img/life5.jpg'
 import life6 from '../../img/life6.jpg'
 
 const dailyPosts = [
-  { id: 1, title: '강아지 산책하러 나가면 자는척 해요', author: '탬블러', time: '3시간 전', likes: 20, comments: 16, image: null as null | string },
-  { id: 2, title: '강아지 산책하러 나가면 자는척 해요', author: '탬블러', time: '3시간 전', likes: 20, comments: 16, image: life1 },
-  { id: 3, title: '냉전중', author: '장마', time: '3시간 전', likes: 20, comments: 4, image: life2 },
-  { id: 4, title: '강아지 발사탕 스프레이 추천해주세요!', author: '파란꽃', time: '3시간 전', likes: 16, comments: 4, image: life3 },
-  { id: 5, title: '뽀미랑 부산 여행기', author: '뽀직뽀직', time: '3시간 전', likes: 7, comments: 4, image: life4 },
-  { id: 6, title: '말숙이랑 벚꽃', author: '말망', time: '3시간 전', likes: 4, comments: 4, image: life5 },
-  { id: 7, title: '귀여우면 다야?', author: '크림빵', time: '3시간 전', likes: 4, comments: 4, image: life6 },
+  { id: 1, tag: '일상', title: '강아지 산책하러 나가면 자는척 해요', author: '탬블러', time: '3시간 전', likes: 20, comments: 16, image: null as null | string },
+  { id: 2, tag: '일상', title: '강아지 산책하러 나가면 자는척 해요', author: '탬블러', time: '3시간 전', likes: 20, comments: 16, image: life1 },
+  { id: 3, tag: '일상', title: '냉전중', author: '장마', time: '3시간 전', likes: 20, comments: 4, image: life2 },
+  { id: 4, tag: '일상', title: '강아지 발사탕 스프레이 추천해주세요!', author: '파란꽃', time: '3시간 전', likes: 16, comments: 4, image: life3 },
+  { id: 5, tag: '일상', title: '뽀미랑 부산 여행기', author: '뽀직뽀직', time: '3시간 전', likes: 7, comments: 4, image: life4 },
+  { id: 6, tag: '일상', title: '말숙이랑 벚꽃', author: '말망', time: '3시간 전', likes: 4, comments: 4, image: life5 },
+  { id: 7, tag: '일상', title: '귀여우면 다야?', author: '크림빵', time: '3시간 전', likes: 4, comments: 4, image: life6 },
 ]
 
 function HeartIcon() {
@@ -49,7 +45,7 @@ function CommentIcon() {
 
 const communitySubTabs = ['전체', '자랑하기', '일상', '반려상식'] as const
 type CommunitySubTab = (typeof communitySubTabs)[number]
-const sortOptions = ['인기순', '최신순', '댓글순', '공유순'] as const
+const sortOptions = ['인기순', '최신순', '댓글순'] as const
 const createdPostsStorageKey = 'jibsalife.community.createdPosts'
 
 type CommunityPost = {
@@ -61,9 +57,21 @@ type CommunityPost = {
   timeText?: string
   likes: number
   comments: number
-  shares: number
   createdAt: string
-  image: string
+  image: string | null
+}
+
+type PetStoryFeedPost = {
+  id: number
+  tag: string
+  title: string
+  author: string
+  time?: string
+  image: string | null
+  likes: number
+  comments: number
+  createdAt?: string
+  isCreated?: boolean
 }
 
 function loadCreatedPosts(): CommunityPost[] {
@@ -78,32 +86,63 @@ function loadCreatedPosts(): CommunityPost[] {
 }
 
 const postData: CommunityPost[] = [
-  { id: 1, tag: '일상', title: '강아지 산책하러 나가면 자는척 해요', author: '뿌직뿌직', date: '2026.04.30', timeText: '3시간 전', likes: 4, comments: 4, shares: 4, createdAt: '2026-04-30T09:00:00', image: life1 },
-  { id: 2, tag: '일상', title: '냉전중', author: '뿌직뿌직', date: '2026.04.30', timeText: '3시간 전', likes: 4, comments: 4, shares: 2, createdAt: '2026-04-30T18:20:00', image: life2 },
-  { id: 3, tag: '일상', title: '강아지 발사탕 스프레이 추천해주세요!', author: '뿌직뿌직', date: '2026.04.30', timeText: '3시간 전', likes: 4, comments: 4, shares: 6, createdAt: '2026-04-30T14:10:00', image: life3 },
-  { id: 4, tag: '일상', title: '뽀미랑 부산 여행기', author: '뿌직뿌직', date: '2026.04.30', timeText: '3시간 전', likes: 4, comments: 4, shares: 1, createdAt: '2026-04-30T11:00:00', image: life4 },
-  { id: 5, tag: '일상', title: '말숙이랑 벚꽃 구경 다녀왔어요', author: '말숙이맘', date: '2026.04.30', timeText: '3시간 전', likes: 4, comments: 4, shares: 4, createdAt: '2026-04-30T10:20:00', image: life5 },
-  { id: 6, tag: '일상', title: '귀여우면 다야?', author: '크림빵', date: '2026.04.30', timeText: '3시간 전', likes: 4, comments: 4, shares: 4, createdAt: '2026-04-30T08:40:00', image: life6 },
+  { id: 1, tag: '일상', title: '강아지 산책하러 나가면 자는척 해요', author: '뿌직뿌직', date: '2026.04.30', timeText: '3시간 전', likes: 4, comments: 4, createdAt: '2026-04-30T09:00:00', image: life1 },
+  { id: 2, tag: '일상', title: '냉전중', author: '뿌직뿌직', date: '2026.04.30', timeText: '3시간 전', likes: 4, comments: 4, createdAt: '2026-04-30T18:20:00', image: life2 },
+  { id: 3, tag: '일상', title: '강아지 발사탕 스프레이 추천해주세요!', author: '뿌직뿌직', date: '2026.04.30', timeText: '3시간 전', likes: 4, comments: 4, createdAt: '2026-04-30T14:10:00', image: life3 },
+  { id: 4, tag: '일상', title: '뽀미랑 부산 여행기', author: '뿌직뿌직', date: '2026.04.30', timeText: '3시간 전', likes: 4, comments: 4, createdAt: '2026-04-30T11:00:00', image: life4 },
+  { id: 5, tag: '일상', title: '말숙이랑 벚꽃 구경 다녀왔어요', author: '말숙이맘', date: '2026.04.30', timeText: '3시간 전', likes: 4, comments: 4, createdAt: '2026-04-30T10:20:00', image: life5 },
+  { id: 6, tag: '일상', title: '귀여우면 다야?', author: '크림빵', date: '2026.04.30', timeText: '3시간 전', likes: 4, comments: 4, createdAt: '2026-04-30T08:40:00', image: life6 },
 ]
 
 const knowledgeFeedItems = [
-  { id: 1, tag: '산책', title: '강아지 산책 안 하면 생기는 문제점', image: knowledge1, likes: 8, comments: 3, viewsText: '1.2k', objectPosition: '61% center', path: '/community/pet-story/knowledge/walk-problems' },
-  { id: 2, tag: '건강', title: '고양이 점프의 숨겨진 비밀', image: knowledge2, likes: 8, comments: 3, viewsText: '968', objectPosition: '64% center', path: '/community/pet-story/knowledge/walk-problems' },
-  { id: 3, tag: '일상', title: '강아지에게 절대 주면 안 되는 음식 7가지', image: knowledge3, likes: 8, comments: 3, viewsText: '860', objectPosition: '43% center', path: '/community/pet-story/knowledge/walk-problems' },
-  { id: 4, tag: '일상', title: '봄철 강아지 알레르기 증상과 관리법', image: knowledge4, likes: 8, comments: 3, viewsText: '482', objectPosition: '48% center', path: '/community/pet-story/knowledge/walk-problems' },
+  { id: 1, tag: '산책', title: '강아지 산책 안 하면 생기는 문제점', image: knowledge1, likes: 8, comments: 3, viewsText: '1.2k', objectPosition: '61% center', path: '/community/petstory/knowledge/walk-problems' },
+  { id: 2, tag: '건강', title: '고양이 점프의 숨겨진 비밀', image: knowledge2, likes: 8, comments: 3, viewsText: '968', objectPosition: '64% center', path: '/community/petstory/knowledge/walk-problems' },
+  { id: 3, tag: '일상', title: '강아지에게 절대 주면 안 되는 음식 7가지', image: knowledge3, likes: 8, comments: 3, viewsText: '860', objectPosition: '43% center', path: '/community/petstory/knowledge/walk-problems' },
+  { id: 4, tag: '일상', title: '봄철 강아지 알레르기 증상과 관리법', image: knowledge4, likes: 8, comments: 3, viewsText: '482', objectPosition: '48% center', path: '/community/petstory/knowledge/walk-problems' },
 ] as const
 
 const sortByParam: Record<string, (typeof sortOptions)[number]> = {
   popular: '인기순',
   latest: '최신순',
   comments: '댓글순',
-  shares: '공유순',
+}
+
+function toFeedPost(post: CommunityPost): PetStoryFeedPost {
+  return {
+    id: post.id,
+    tag: post.tag,
+    title: post.title,
+    author: post.author,
+    time: post.timeText ?? post.date,
+    image: post.image,
+    likes: post.likes,
+    comments: post.comments,
+    createdAt: post.createdAt,
+    isCreated: true,
+  }
+}
+
+function getRelativeTimeText(createdAt: string, nowTime: number) {
+  const createdTime = new Date(createdAt).getTime()
+  const diffSeconds = Math.max(0, Math.floor((nowTime - createdTime) / 1000))
+  const diffMinutes = Math.floor(diffSeconds / 60)
+  const diffHours = Math.floor(diffMinutes / 60)
+  const diffDays = Math.floor(diffHours / 24)
+  const diffMonths = Math.floor(diffDays / 30)
+  const diffYears = Math.floor(diffMonths / 12)
+
+  if (diffSeconds < 60) return '방금 전'
+  if (diffMinutes < 60) return `${diffMinutes}분 전`
+  if (diffHours <= 23) return `${diffHours}시간 전`
+  if (diffDays <= 31) return `${diffDays}일 전`
+  if (diffMonths <= 12) return `${Math.max(1, diffMonths)}달 전`
+  return `${Math.max(1, diffYears)}년 전`
 }
 
 function CommunityPetStory() {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
-  const subParam = searchParams.get('sub')
   const sortParam = searchParams.get('sort') ?? 'popular'
   const selectedSort = sortByParam[sortParam] ?? '인기순'
 
@@ -115,16 +154,33 @@ function CommunityPetStory() {
   const [draftTitle, setDraftTitle] = useState('')
   const [draftContent, setDraftContent] = useState('')
   const [draftImage, setDraftImage] = useState('')
+  const [nowTime, setNowTime] = useState(() => Date.now())
 
-  const isOverview = !subParam || subParam === 'all'
-  const isKnowledge = subParam === 'knowledge'
-  const isDaily = subParam === 'daily'
+  const isOverview = pathname === '/community/petstory'
+  const isKnowledge = pathname === '/community/petstory/knowledge'
+  const isDaily = pathname === '/community/petstory/daily'
 
   useEffect(() => {
     window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(createdPosts))
   }, [createdPosts])
 
+  useEffect(() => {
+    const timerId = window.setInterval(() => {
+      setNowTime(Date.now())
+    }, 30000)
+
+    return () => window.clearInterval(timerId)
+  }, [])
+
   const visibleCreatedPosts = createdPosts.filter((post) => post.tag === '일상')
+  const isCreatedPost = (postId: number) => visibleCreatedPosts.some((post) => post.id === postId)
+  const getPostTimeText = (post: { id: number; createdAt?: string; time?: string; timeText?: string }) => {
+    if (post.createdAt && isCreatedPost(post.id)) {
+      return getRelativeTimeText(post.createdAt, nowTime)
+    }
+
+    return post.time ?? post.timeText
+  }
 
   const activePostData = [...visibleCreatedPosts, ...postData]
 
@@ -141,13 +197,81 @@ function CommunityPetStory() {
         if (b.comments !== a.comments) return b.comments - a.comments
         return bLikes - aLikes
       }
-      if (selectedSort === '공유순') {
-        if (b.shares !== a.shares) return b.shares - a.shares
-        return bLikes - aLikes
-      }
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     })
   }, [activePostData, likedPostIds, selectedSort])
+
+  const dailyFeedPosts = useMemo(() => {
+    const combined: PetStoryFeedPost[] = [
+      ...visibleCreatedPosts.map(toFeedPost),
+      ...dailyPosts.map((post) => ({
+        id: post.id,
+        tag: post.tag,
+        title: post.title,
+        author: post.author,
+        time: post.time,
+        image: post.image as string | null,
+        likes: post.likes,
+        comments: post.comments,
+        createdAt: '2026-04-30T00:00:00',
+      })),
+    ]
+
+    return combined.sort((a, b) => {
+      const aLikes = a.likes + (likedPostIds.includes(a.id) ? 1 : 0)
+      const bLikes = b.likes + (likedPostIds.includes(b.id) ? 1 : 0)
+
+      if (selectedSort === '인기순') {
+        if (a.createdAt && b.createdAt && a.createdAt !== b.createdAt) {
+          const aIsCreated = isCreatedPost(a.id)
+          const bIsCreated = isCreatedPost(b.id)
+          if (aIsCreated !== bIsCreated) return aIsCreated ? -1 : 1
+        }
+        if (bLikes !== aLikes) return bLikes - aLikes
+        return b.comments - a.comments
+      }
+      if (selectedSort === '댓글순') {
+        if (b.comments !== a.comments) return b.comments - a.comments
+        return bLikes - aLikes
+      }
+      return new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
+    })
+  }, [likedPostIds, selectedSort, visibleCreatedPosts])
+
+  const overviewPosts = useMemo(() => {
+    const combined: PetStoryFeedPost[] = [
+      ...dailyFeedPosts,
+      ...knowledgeFeedItems.map((item) => ({
+        id: item.id + 1000,
+        tag: '반려상식' as string,
+        title: item.title,
+        author: '운영팀',
+        time: undefined as string | undefined,
+        image: item.image as string | null,
+        likes: item.likes,
+        comments: item.comments,
+        createdAt: '2026-04-29T00:00:00',
+      })),
+    ]
+    return combined.sort((a, b) => {
+      const aLikes = a.likes + (likedPostIds.includes(a.id) ? 1 : 0)
+      const bLikes = b.likes + (likedPostIds.includes(b.id) ? 1 : 0)
+      if (selectedSort === '인기순') {
+        if (a.createdAt && b.createdAt && a.createdAt !== b.createdAt) {
+          const aIsCreated = isCreatedPost(a.id)
+          const bIsCreated = isCreatedPost(b.id)
+          if (aIsCreated !== bIsCreated) return aIsCreated ? -1 : 1
+        }
+        if (bLikes !== aLikes) return bLikes - aLikes
+        return b.comments - a.comments
+      }
+      if (selectedSort === '댓글순') {
+        if (b.comments !== a.comments) return b.comments - a.comments
+        return bLikes - aLikes
+      }
+      return new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
+    })
+  }, [dailyFeedPosts, likedPostIds, selectedSort, visibleCreatedPosts])
 
   const toggleLike = (postId: number) => {
     setLikedPostIds((prev) =>
@@ -186,12 +310,10 @@ function CommunityPetStory() {
         title,
         author: '나',
         date: `${year}.${month}.${day}`,
-        timeText: '방금 전',
         likes: 0,
         comments: content ? 1 : 0,
-        shares: 0,
         createdAt: now.toISOString(),
-        image: draftImage || contents4,
+        image: draftImage || null,
       },
       ...prev,
     ])
@@ -218,10 +340,10 @@ function CommunityPetStory() {
         }
       />
 
-      <main className={isDaily ? 'page cpsd_page' : 'page community_page community_page_pet-story'}>
+      <main className={isDaily ? 'page cpsd_page' : 'page community_page community_page_petstory'}>
         {isDaily ? (
           <div className="cpsd_feed">
-            {dailyPosts.map((post) => (
+            {dailyFeedPosts.map((post) => (
               <article
                 key={post.id}
                 className={`cpsd_item${post.image == null ? ' cpsd_item_featured' : ''}`}
@@ -230,16 +352,24 @@ function CommunityPetStory() {
                   <img src={post.image} alt="" className="cpsd_thumb" />
                 )}
                 <div className="cpsd_body">
-                  <h2 className="cpsd_title">{post.title}</h2>
+                  <h2 className="cpsd_title">
+                    <span className="community_post_tag">{post.tag}</span>
+                    <span className="cpsd_title_text">{post.title}</span>
+                  </h2>
                   <div className="cpsd_meta">
                     <span className="cpsd_author">{post.author}</span>
                     <span className="cpsd_meta_divider" aria-hidden="true">|</span>
-                    <span className="cpsd_time">{post.time}</span>
+                    <span className="cpsd_time">{getPostTimeText(post)}</span>
                   </div>
                   <div className="cpsd_actions">
-                    <button type="button" className="cpsd_action_btn" aria-label={`좋아요 ${post.likes}`}>
+                    <button
+                      type="button"
+                      className="cpsd_action_btn"
+                      aria-label={`좋아요 ${post.likes}`}
+                      onClick={() => toggleLike(post.id)}
+                    >
                       <span className="cpsd_action_icon"><HeartIcon /></span>
-                      <span>{post.likes}</span>
+                      <span>{post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}</span>
                     </button>
                     <button type="button" className="cpsd_action_btn" aria-label={`댓글 ${post.comments}`}>
                       <span className="cpsd_action_icon"><CommentIcon /></span>
@@ -283,22 +413,7 @@ function CommunityPetStory() {
           </section>
         ) : isOverview ? (
           <section className="community_feed">
-            {[
-              ...postData,
-              ...knowledgeFeedItems.map((item) => ({
-                id: item.id + 1000,
-                tag: item.tag,
-                title: item.title,
-                author: '운영팀',
-                date: '2026.04.30',
-                timeText: undefined as string | undefined,
-                likes: item.likes,
-                comments: item.comments,
-                shares: 0,
-                createdAt: '2026-04-30T00:00:00',
-                image: item.image,
-              })),
-            ].map((post) => (
+            {overviewPosts.map((post) => (
               <article
                 key={post.id}
                 className={`cpsd_item${post.image == null ? ' cpsd_item_featured' : ''}`}
@@ -309,12 +424,16 @@ function CommunityPetStory() {
                 <div className="cpsd_body">
                   <h2 className="cpsd_title">
                     <span className="community_post_tag">{post.tag}</span>
-                    {post.title}
+                    <span className="cpsd_title_text">{post.title}</span>
                   </h2>
                   <div className="cpsd_meta">
                     <span className="cpsd_author">{post.author}</span>
-                    <span className="cpsd_meta_divider" aria-hidden="true">|</span>
-                    <span className="cpsd_time">{post.timeText ?? post.date}</span>
+                    {getPostTimeText(post) && (
+                      <>
+                        <span className="cpsd_meta_divider" aria-hidden="true">|</span>
+                        <span className="cpsd_time">{getPostTimeText(post)}</span>
+                      </>
+                    )}
                   </div>
                   <div className="cpsd_actions">
                     <button
@@ -339,8 +458,13 @@ function CommunityPetStory() {
           <section className="community_feed">
             {posts.length > 0 ? (
               posts.map((post) => (
-                <article key={post.id} className="community_post">
-                  <img className="community_post_image" src={post.image} alt={post.title} />
+                <article
+                  key={post.id}
+                  className={`community_post${post.image == null ? ' community_post_featured' : ''}`}
+                >
+                  {post.image != null && (
+                    <img className="community_post_image" src={post.image} alt={post.title} />
+                  )}
                   <div className="community_post_body">
                     <div className="community_post_header">
                       <span className="community_post_tag">{post.tag}</span>
@@ -350,7 +474,7 @@ function CommunityPetStory() {
                       <span className="community_post_author">{post.author}</span>
                     </div>
                     <p className="community_post_date">
-                      {post.timeText ? <span>{post.timeText}</span> : null}
+                      {getPostTimeText(post) ? <span>{getPostTimeText(post)}</span> : null}
                       <span>{post.date}</span>
                     </p>
                     <div className="community_post_actions">
@@ -378,15 +502,6 @@ function CommunityPetStory() {
                           </svg>
                         </span>
                         <span className="community_action_count">{post.comments}</span>
-                      </button>
-                      <button type="button" aria-label="공유">
-                        <span className="community_share_icon" aria-hidden="true">
-                          <svg viewBox="0 0 24 24">
-                            <path d="M20 4 9.4 14.6" />
-                            <path d="m20 4-6.7 15-3.3-6.7L3.3 9 20 4Z" />
-                          </svg>
-                        </span>
-                        <span className="community_action_count">{post.shares}</span>
                       </button>
                     </div>
                   </div>

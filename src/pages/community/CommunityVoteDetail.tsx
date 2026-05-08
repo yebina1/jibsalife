@@ -72,7 +72,7 @@ function CommunityVoteDetail() {
               className={tab === '투표' ? 'active' : ''}
               onClick={() => {
                 if (tab === '전체') navigate('/community/overview')
-                else if (tab === '펫스토리') navigate('/community/pet-story')
+                else if (tab === '펫스토리') navigate('/community/petstory')
                 else if (tab === '챌린지') navigate('/community/challenge')
                 else navigate('/community/vote')
               }}

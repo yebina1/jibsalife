@@ -59,8 +59,10 @@ function App() {
           <Route path="/health/vet-chat" element={<HealthVetChat />} />
           <Route path="/community" element={<CommunityOverview />} />
           <Route path="/community/overview" element={<CommunityOverview />} />
-          <Route path="/community/pet-story" element={<CommunityPetStory />} />
-          <Route path="/community/pet-story/knowledge/walk-problems" element={<CommunityKnowledgeDetail />} />
+          <Route path="/community/petstory" element={<CommunityPetStory />} />
+          <Route path="/community/petstory/daily" element={<CommunityPetStory />} />
+          <Route path="/community/petstory/knowledge" element={<CommunityPetStory />} />
+          <Route path="/community/petstory/knowledge/walk-problems" element={<CommunityKnowledgeDetail />} />
           <Route path="/community/challenge" element={<CommunityChallenge />} />
           <Route path="/community/challenge/reward" element={<CommunityReward />} />
           <Route path="/community/vote" element={<CommunityVote />} />

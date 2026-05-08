@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router'
 import Header from '../components/Header'
 import FloatingAiButton from '../components/FloatingAiButton'
@@ -14,15 +14,15 @@ type LayoutProps = {
 
 const communityTabs = [
   { label: '전체', to: '/community/overview' },
-  { label: '펫스토리', to: '/community/pet-story' },
+  { label: '펫스토리', to: '/community/petstory' },
   { label: '챌린지', to: '/community/challenge' },
   { label: '투표', to: '/community/vote' },
 ] as const
 
 const petStorySubTabs = [
-  { label: '전체', to: '/community/pet-story?sub=all' },
-  { label: '일상', to: '/community/pet-story?sub=daily' },
-  { label: '반려상식', to: '/community/pet-story?sub=knowledge' },
+  { label: '전체', to: '/community/petstory' },
+  { label: '일상', to: '/community/petstory/daily' },
+  { label: '반려상식', to: '/community/petstory/knowledge' },
 ] as const
 
 const voteSubTabs = [
@@ -32,8 +32,8 @@ const voteSubTabs = [
 ] as const
 
 const communitySortOptions = [
-  { label: '인기순', value: 'popular' },
   { label: '최신순', value: 'latest' },
+  { label: '인기순', value: 'popular' },
   { label: '댓글순', value: 'comments' },
   { label: '공유순', value: 'shares' },
 ] as const
@@ -47,21 +47,24 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const [isCommunitySubtabOpen, setIsCommunitySubtabOpen] = useState(false)
   const [isCommunitySortOpen, setIsCommunitySortOpen] = useState(false)
   const [isCommunityControlsVisible, setIsCommunityControlsVisible] = useState(true)
+  const headerRef = useRef<HTMLElement>(null)
+  const layoutRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
   const { pathname, search } = useLocation()
   const searchParams = new URLSearchParams(search)
   const communitySubParam = searchParams.get('sub')
-  const communitySortParam = searchParams.get('sort') ?? 'popular'
+  const communitySortParam = searchParams.get('sort') ?? 'latest'
   const isCameraPage = pathname === '/health/camera' && searchParams.get('guide') === 'false'
   const isCommunityPath = pathname.startsWith('/community')
   const isCommunitySubAll = !communitySubParam || communitySubParam === 'all'
-  const communitySubTabs = pathname.startsWith('/community/pet-story')
+  const communitySubTabs = pathname.startsWith('/community/petstory')
     ? petStorySubTabs
     : pathname.startsWith('/community/vote') && pathname !== '/community/vote/detail'
       ? voteSubTabs
       : null
   const showCommunitySort =
     (pathname.startsWith('/community/vote') && !isCommunitySubAll) ||
-    pathname.startsWith('/community/pet-story')
+    pathname.startsWith('/community/petstory')
   const activeCommunitySubTab = communitySubTabs
     ? communitySubTabs.find((tab) => {
         if (tab.to.includes('?')) {
@@ -71,7 +74,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
             (communitySubParam === tabSubParam || (!communitySubParam && tabSubParam === 'all'))
           )
         }
-        return pathname.startsWith(tab.to)
+        return pathname === tab.to
       }) ?? communitySubTabs[0]
     : null
   const activeCommunitySort =
@@ -110,15 +113,27 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
         : 'layout'
 
   useEffect(() => {
+    const headerEl = headerRef.current
+    const layoutEl = layoutRef.current
+    if (!headerEl || !layoutEl) return
+    const observer = new ResizeObserver(() => {
+      layoutEl.style.setProperty('--layout-header-height', `${headerEl.offsetHeight}px`)
+    })
+    observer.observe(headerEl)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
     if (!communitySubTabs || typeof window === 'undefined') {
       setIsCommunityControlsVisible(true)
       return
     }
 
-    let lastScrollY = window.scrollY
+    const scrollEl: HTMLDivElement | Window = contentRef.current ?? window
+    let lastScrollY = contentRef.current ? contentRef.current.scrollTop : window.scrollY
 
     const handleScroll = () => {
-      const currentScrollY = window.scrollY
+      const currentScrollY = contentRef.current ? contentRef.current.scrollTop : window.scrollY
 
       if (currentScrollY <= 8) {
         setIsCommunityControlsVisible(true)
@@ -133,18 +148,18 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
       lastScrollY = currentScrollY
     }
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
+    scrollEl.addEventListener('scroll', handleScroll, { passive: true })
 
     return () => {
-      window.removeEventListener('scroll', handleScroll)
+      scrollEl.removeEventListener('scroll', handleScroll)
     }
   }, [communitySubTabs])
 
   return (
     <HeaderContext.Provider value={setHeader}>
-      <div className={layoutClassName}>
+      <div className={layoutClassName} ref={layoutRef}>
         {!isCameraPage ? (
-          <header>
+          <header ref={headerRef}>
             <StateBar />
             {showHeader && header && <Header {...header} />}
             {isCommunityPath ? (
@@ -187,12 +202,13 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
                             const isActive = tab.to.includes('?')
                               ? pathname === tab.to.split('?')[0] &&
                                 (communitySubParam === tabSubParam || (!communitySubParam && tabSubParam === 'all'))
-                              : pathname.startsWith(tab.to)
+                              : pathname === tab.to
 
                             return (
                               <NavLink
                                 key={tab.to}
                                 to={tab.to}
+                                end
                                 className={`layout_community_subtab_option ${isActive ? 'active' : ''}`}
                                 style={{
                                   color: isActive ? '#6D59F8' : '#111111',
@@ -269,7 +285,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
             ) : null}
           </header>
         ) : null}
-        <div className={contentClassName}>
+        <div className={contentClassName} ref={contentRef}>
           <Outlet />
         </div>
         {!hideFloatingAiButton ? <FloatingAiButton /> : null}

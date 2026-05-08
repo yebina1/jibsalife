@@ -176,7 +176,7 @@ const topTabLabels = ['전체', '커뮤니티', '챌린지', '투표'] as const
 const communitySubTabLabels = ['전체', '자랑하기', '일상', '반려 상식'] as const
 const communityRouteByTopTab: Record<TopTab, string> = {
   전체: '/community/overview',
-  커뮤니티: '/community/pet-story',
+  커뮤니티: '/community/petstory',
   '챌린지 인증': '/community/challenge',
   투표: '/community/vote',
 }
@@ -364,7 +364,7 @@ const knowledgeFeedItems = [
     comments: 3,
     viewsText: '1.2k',
     objectPosition: '61% center',
-    path: '/community/pet-story/knowledge/walk-problems',
+    path: '/community/petstory/knowledge/walk-problems',
   },
   {
     id: 2,
@@ -375,7 +375,7 @@ const knowledgeFeedItems = [
     comments: 3,
     viewsText: '968',
     objectPosition: '64% center',
-    path: '/community/pet-story/knowledge/walk-problems',
+    path: '/community/petstory/knowledge/walk-problems',
   },
   {
     id: 3,
@@ -386,7 +386,7 @@ const knowledgeFeedItems = [
     comments: 3,
     viewsText: '860',
     objectPosition: '43% center',
-    path: '/community/pet-story/knowledge/walk-problems',
+    path: '/community/petstory/knowledge/walk-problems',
   },
   {
     id: 4,
@@ -397,7 +397,7 @@ const knowledgeFeedItems = [
     comments: 3,
     viewsText: '482',
     objectPosition: '48% center',
-    path: '/community/pet-story/knowledge/walk-problems',
+    path: '/community/petstory/knowledge/walk-problems',
   },
 ] as const
 
@@ -646,7 +646,7 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
       },
       ...prev,
     ])
-    navigate('/community/pet-story')
+    navigate('/community/petstory')
     setSelectedTopTab(topTabs[1])
     setSelectedCommunitySubTab(draftTag)
     setSelectedSort(sortOptions[1])
@@ -827,7 +827,7 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
                 <button
                   type="button"
                   onClick={() => {
-                    navigate('/community/pet-story')
+                    navigate('/community/petstory')
                     setSelectedTopTab('커뮤니티')
                     setSelectedCommunitySubTab('전체')
                   }}

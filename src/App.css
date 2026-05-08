@@ -74,10 +74,6 @@
   --layout-header-bar-height: 114px;
 }
 
-.layout_community .layout_content {
-  padding-top: 0;
-}
-
 .layout_community_with_subtabs {
   --layout-header-bar-height: 174px;
 }
@@ -138,7 +134,7 @@
   justify-content: space-between;
   gap: 12px;
   box-sizing: border-box;
-  padding: 10px var(--layout-inline-padding) 10px;
+  padding: 10px var(--layout-inline-padding);
   background: #ffffff;
   transition:
     opacity 180ms ease,

@@ -167,7 +167,7 @@ function CommunityKnowledgeDetail() {
         <button
           type="button"
           className="community_knowledge_detail_cta"
-          onClick={() => navigate('/community/pet-story')}
+          onClick={() => navigate('/community/petstory')}
         >
           관련 제품 보기
         </button>

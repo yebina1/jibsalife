@@ -161,7 +161,7 @@
 }
 
 .community_subtab_toggle {
-  display: inline-flex !important;
+  display: inline-flex;
 }
 
 .community_subtab_menu {
@@ -422,7 +422,7 @@
   padding: 0;
 }
 
-.community_page_pet-story .community_feed,
+.community_page_petstory .community_feed,
 .community_page_challenge .community_challenge_screen,
 .community_page_vote .community_vote_list_screen,
 .community_page_vote .community_vote_candidate_screen,
@@ -438,14 +438,14 @@
   box-sizing: border-box;
 }
 
-.community_page_pet-story .community_list_header,
+.community_page_petstory .community_list_header,
 .community_page_vote .community_list_header {
   padding-right: 0;
   padding-left: 0;
 }
 
 .community_page_vote .community_subtab_bar {
-  display: none !important;
+  display: none;
 }
 
 .community_overview {

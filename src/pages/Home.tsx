@@ -438,7 +438,7 @@ function Home() {
           <Button
             type="button"
             className="more_button"
-            onClick={() => navigate('/community/pet-story?tab=knowledge')}
+            onClick={() => navigate('/community/petstory?tab=knowledge')}
           >
             더보기
             <ChevronIcon direction="right" size="md" />
