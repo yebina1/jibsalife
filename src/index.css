@@ -68,3 +68,46 @@ select {
   font: inherit;
   letter-spacing: inherit;
 }
+
+/* sb 14px 145% */
+.p_semibold{
+  font-size: var(--font-body-sm);
+  font-weight: var(--font-weight-sb);
+  line-height: var(--line-height-sm);
+}
+
+/* md 16px */
+.p_medium{
+  font-size: var(--font-body-md);
+  font-weight: var(--font-weight-md);
+}
+
+/* rg 14px 145% */
+.p_regular{ 
+  font-size: var(--font-body-sm);
+  font-weight: var(--font-weight-rg);
+  line-height: var(--line-height-sm);
+}
+
+/* md 14px 145% */
+.point_medium{
+  font-size: var(--font-point-md);
+  font-weight: var(--font-weight-md);
+  line-height: var(--line-height-sm);
+}
+
+/* rg 14px 145% #E5E5EC*/
+.caption_medium{
+  font-size: var(--font-point-md);
+  font-weight: var(--font-weight-rg);
+  line-height: var(--line-height-sm);
+  color: var(--font-gray);
+}
+
+/* rg 12px 145% #E5E5EC*/
+.caption_regular{
+  font-size: var(--font-point-sm);
+  font-weight: var(--font-weight-rg);
+  line-height: var(--line-height-sm);
+  color: var(--font-gray);
+}

@@ -35,33 +35,11 @@
   font-size: var(--font-title-h5);
 }
 
+
+/* sb 12px 145% */
 .title p{
   margin: 0;
   color: var(--font-gray);
   font-size: var(--font-body-sm);
   line-height: var(--line-height-sm);
-}
-
-.p_semibold{
-  font-size: var(--font-body-md);
-  font-weight: var(--font-weight-md);
-}
-
-.p_regular{ 
-  font-size: var(--font-body-sm);
-  font-weight: var(--font-weight-rg);
-  line-height: var(--line-height-sm);
-}
-
-.point_medium{
-  font-size: var(--font-point-md);
-  font-weight: var(--font-weight-md);
-  line-height: var(--line-height-sm);
-}
-
-.caption_regular{
-  font-size: var(--font-point-sm);
-  font-weight: var(--font-weight-rg);
-  line-height: var(--line-height-sm);
-  color: var(--font-gray);
 }
