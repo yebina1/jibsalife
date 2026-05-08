@@ -60,7 +60,7 @@
 }
 
 .caption_regular{
-  font-size: var(--font-caption-sm);
+  font-size: var(--font-point-sm);
   font-weight: var(--font-weight-rg);
   line-height: var(--line-height-sm);
   color: var(--font-gray);
