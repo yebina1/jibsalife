@@ -12,6 +12,7 @@ import {
   readMissionActivityRecords,
 } from '../utils/missionActivityRecords'
 import {
+  MISSION_HISTORY_RECORDS_CHANGE_EVENT,
   readMissionHistoryRecordsWithDefaults,
   toMissionHistoryRecord,
   writeStoredMissionHistoryRecords,
@@ -185,10 +186,12 @@ function Mission() {
     }
 
     window.addEventListener(MISSION_ACTIVITY_RECORDS_CHANGE_EVENT, syncMissionActivityRecords)
+    window.addEventListener(MISSION_HISTORY_RECORDS_CHANGE_EVENT, syncMissionActivityRecords)
     window.addEventListener('storage', syncMissionActivityRecords)
 
     return () => {
       window.removeEventListener(MISSION_ACTIVITY_RECORDS_CHANGE_EVENT, syncMissionActivityRecords)
+      window.removeEventListener(MISSION_HISTORY_RECORDS_CHANGE_EVENT, syncMissionActivityRecords)
       window.removeEventListener('storage', syncMissionActivityRecords)
     }
   }, [])
@@ -578,6 +581,17 @@ function Mission() {
               <div className="mission_history_body">
                 <strong>{item.title}</strong>
                 <p>{item.detail}</p>
+                {item.media && item.media.length > 0 ? (
+                  <div className="mission_history_media" aria-label="등록 이미지">
+                    {item.media.slice(0, 3).map((media, index) => (
+                      <img
+                        key={`${media.src}-${index}`}
+                        src={media.src}
+                        alt={media.label || `${item.title} 이미지 ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                ) : null}
               </div>
               <time>{item.time}</time>
             </button>

@@ -7,6 +7,16 @@ import HeaderIcon from '../components/HeaderIcon'
 import ContentSection from '../components/ContentSection'
 import SummaryProfileCard, { SummaryProfileAddCard } from '../components/SummaryProfileCard'
 import Button from '../components/html/Button'
+import {
+  MISSION_ACTIVITY_RECORDS_CHANGE_EVENT,
+  readMissionActivityRecords,
+} from '../utils/missionActivityRecords'
+import {
+  MISSION_HISTORY_RECORDS_CHANGE_EVENT,
+  readMissionHistoryRecordsWithDefaults,
+  toMissionHistoryRecord,
+  type MissionHistoryRecord,
+} from '../utils/missionHistoryRecords'
 import pungpungiImage from '../img/pungpungi.png'
 import leeyoriImage from '../img/leeyori.png'
 import contents1 from '../img/contents1.png'
@@ -62,6 +72,25 @@ const contentItems = [
   { id: 4, title: '반려견을 위한 케어 아이템 3종', image: contents4 },
 ]
 
+type SummaryStat = {
+  label: string
+  value: string
+}
+
+type ProfileSummarySlide = {
+  id: number
+  type: 'profile'
+  name: string
+  breed: string
+  image: string
+  details: string
+}
+
+type AddSummarySlide = {
+  id: number
+  type: 'add'
+}
+
 const summarySlides = [
   {
     id: 1,
@@ -70,11 +99,6 @@ const summarySlides = [
     breed: '코리안 쇼트 헤어',
     image: leeyoriImage,
     details: '나이: 5살 · 몸무게: 3 kg · 성별: 남아',
-    stats: [
-      { label: '식사', value: '1회' },
-      { label: '배변', value: '2회' },
-      { label: '산책', value: '10분' },
-    ],
   },
   {
     id: 2,
@@ -83,17 +107,67 @@ const summarySlides = [
     breed: '포메라니안',
     image: pungpungiImage,
     details: '나이: 2살 · 몸무게: 5 kg · 성별: 남아',
-    stats: [
-      { label: '식사', value: '3회' },
-      { label: '배변', value: '1회' },
-      { label: '산책', value: '100분' },
-    ],
   },
   {
     id: 3,
     type: 'add',
   },
-] as const
+] satisfies (ProfileSummarySlide | AddSummarySlide)[]
+
+function getTodayDateKey() {
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const day = String(today.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
+}
+
+function readCalendarRecords() {
+  return [
+    ...readMissionActivityRecords().map(toMissionHistoryRecord),
+    ...readMissionHistoryRecordsWithDefaults(),
+  ]
+}
+
+function isMealRecord(record: MissionHistoryRecord) {
+  return record.title.includes('식사') || record.color.toLowerCase() === '#ffd1a8'
+}
+
+function isPoopRecord(record: MissionHistoryRecord) {
+  return record.title.includes('배변') || record.color.toLowerCase() === '#527ca3'
+}
+
+function parseWalkMinutes(detail: string) {
+  const normalizedDetail = detail.replace(/\s+/g, ' ').trim()
+  if (!normalizedDetail.includes('산책')) return 0
+
+  const hourMinuteMatch = normalizedDetail.match(/(\d+)\s*시간\s*(\d+)?\s*분?/)
+  if (hourMinuteMatch) {
+    return Number(hourMinuteMatch[1]) * 60 + (hourMinuteMatch[2] ? Number(hourMinuteMatch[2]) : 0)
+  }
+
+  const minuteMatch = normalizedDetail.match(/(\d+)\s*분/)
+  if (minuteMatch) {
+    return Number(minuteMatch[1])
+  }
+
+  return 0
+}
+
+function createSummaryStats(records: MissionHistoryRecord[]): SummaryStat[] {
+  const todayDateKey = getTodayDateKey()
+  const todayRecords = records.filter((record) => record.date === todayDateKey)
+  const mealCount = todayRecords.filter(isMealRecord).length
+  const poopCount = todayRecords.filter(isPoopRecord).length
+  const walkMinutes = todayRecords.reduce((sum, record) => sum + parseWalkMinutes(record.detail), 0)
+
+  return [
+    { label: '식사', value: `${mealCount}회` },
+    { label: '배변', value: `${poopCount}회` },
+    { label: '산책', value: `${walkMinutes}분` },
+  ]
+}
 
 function formatTodaySummaryDate() {
   const today = new Date()
@@ -114,10 +188,12 @@ function Home() {
   const [isPetIdModalOpen, setIsPetIdModalOpen] = useState(false)
   const [petIdPhoto, setPetIdPhoto] = useState<string | null>(null)
   const [petIdForm, setPetIdForm] = useState<PetIdCardForm>(emptyPetIdForm)
+  const [calendarRecords, setCalendarRecords] = useState<MissionHistoryRecord[]>(readCalendarRecords)
   const dragStateRef = useRef({ startX: 0 })
 
   const rankingItems = rankingData[rankingType]
   const todaySummaryDate = formatTodaySummaryDate()
+  const todaySummaryStats = createSummaryStats(calendarRecords)
 
   useEffect(() => {
     return () => {
@@ -126,6 +202,22 @@ function Home() {
       }
     }
   }, [petIdPhoto])
+
+  useEffect(() => {
+    const syncCalendarRecords = () => {
+      setCalendarRecords(readCalendarRecords())
+    }
+
+    window.addEventListener(MISSION_ACTIVITY_RECORDS_CHANGE_EVENT, syncCalendarRecords)
+    window.addEventListener(MISSION_HISTORY_RECORDS_CHANGE_EVENT, syncCalendarRecords)
+    window.addEventListener('storage', syncCalendarRecords)
+
+    return () => {
+      window.removeEventListener(MISSION_ACTIVITY_RECORDS_CHANGE_EVENT, syncCalendarRecords)
+      window.removeEventListener(MISSION_HISTORY_RECORDS_CHANGE_EVENT, syncCalendarRecords)
+      window.removeEventListener('storage', syncCalendarRecords)
+    }
+  }, [])
 
   const toggleRankingType = () => {
     setRankingType((current) => {
@@ -255,7 +347,7 @@ function Home() {
                     name={slide.name}
                     breed={slide.breed}
                     details={slide.details}
-                    stats={slide.stats}
+                    stats={todaySummaryStats}
                   />
                 ),
               )}

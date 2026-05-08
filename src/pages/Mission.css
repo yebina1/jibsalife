@@ -264,6 +264,20 @@
   font-size: 14px;
 }
 
+.mission_history_media {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.mission_history_media img {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #f2f2f6;
+}
+
 .mission_history_item time {
   color: #b2b3ba;
   font-size: 14px;

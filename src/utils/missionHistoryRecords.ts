@@ -7,10 +7,18 @@ export type MissionHistoryRecord = {
   time: string
   color: string
   date: string
-  source?: 'chat'
+  source?: 'chat' | 'health'
+  media?: {
+    type: 'image'
+    src: string
+    label?: string
+  }[]
 }
 
 export const MISSION_HISTORY_RECORDS_STORAGE_KEY = 'jibsalife.mission.historyRecords'
+export const MISSION_HISTORY_RECORDS_CHANGE_EVENT = 'mission-history-records-change'
+const HEALTH_CHECK_TITLE = '건강 체크 기록'
+const HEALTH_CHECK_COLOR = '#A08DFF'
 
 export const DEFAULT_MISSION_HISTORY_RECORDS: MissionHistoryRecord[] = [
   { id: 101, title: '식사 기록', detail: '간식 2개', time: '10:30', color: '#ffd1a8', date: '2026-05-01' },
@@ -40,6 +48,21 @@ function isMissionHistoryRecord(record: unknown): record is MissionHistoryRecord
   )
 }
 
+function normalizeMissionHistoryRecord(record: MissionHistoryRecord): MissionHistoryRecord {
+  if (record.source === 'health' || record.title === HEALTH_CHECK_TITLE) {
+    const { media: _media, ...recordWithoutMedia } = record
+
+    return {
+      ...recordWithoutMedia,
+      title: HEALTH_CHECK_TITLE,
+      detail: 'AI 건강 기록',
+      source: 'health',
+    }
+  }
+
+  return record
+}
+
 export function readStoredMissionHistoryRecords() {
   if (typeof window === 'undefined') return []
 
@@ -50,7 +73,7 @@ export function readStoredMissionHistoryRecords() {
     const parsedValue = JSON.parse(savedValue)
     if (!Array.isArray(parsedValue)) return []
 
-    return parsedValue.filter(isMissionHistoryRecord)
+    return parsedValue.filter(isMissionHistoryRecord).map(normalizeMissionHistoryRecord)
   } catch {
     return []
   }
@@ -73,4 +96,38 @@ export function writeStoredMissionHistoryRecords(records: MissionHistoryRecord[]
 
 export function toMissionHistoryRecord(record: MissionActivityRecord): MissionHistoryRecord {
   return record
+}
+
+function getTodayDateKey() {
+  const now = new Date()
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+}
+
+function getCurrentTime() {
+  const now = new Date()
+  return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+}
+
+export function writeHealthCheckMissionHistoryRecord(
+  detail: string,
+  media: MissionHistoryRecord['media'] = [],
+) {
+  if (typeof window === 'undefined') return null
+
+  const nextRecord: MissionHistoryRecord = {
+    id: Date.now(),
+    title: HEALTH_CHECK_TITLE,
+    detail,
+    time: getCurrentTime(),
+    color: HEALTH_CHECK_COLOR,
+    date: getTodayDateKey(),
+    source: 'health',
+    media,
+  }
+  const nextRecords = [nextRecord, ...readMissionHistoryRecordsWithDefaults()].slice(0, 120)
+
+  window.localStorage.setItem(MISSION_HISTORY_RECORDS_STORAGE_KEY, JSON.stringify(nextRecords))
+  window.dispatchEvent(new CustomEvent(MISSION_HISTORY_RECORDS_CHANGE_EVENT, { detail: nextRecord }))
+
+  return nextRecord
 }

@@ -11,6 +11,7 @@ import Alert from '../../components/Alert'
 import AddSheet from '../../components/AddSheet'
 import samplePetImage from '../../img/pungpungi.png'
 import { type ObservationStatus, writeStoredHealthResultInput } from '../../utils/healthResultPolicy'
+import { writeHealthCheckMissionHistoryRecord } from '../../utils/missionHistoryRecords'
 
 const registerSections = [
   { id: 'photo', title: '사진 등록', limit: '최대 3장' },
@@ -520,6 +521,7 @@ function HealthRegister() {
   const [isCropMode, setIsCropMode] = useState(false)
   const [cropPreset, setCropPreset] = useState<CropPresetId>('free')
   const [cropRect, setCropRect] = useState<CropRect>(DEFAULT_CROP_RECT)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const draft = readRegisterDraft()
   const [registeredEntries, setRegisteredEntries] = useState<RegisteredEntries>(draft.entries)
   const [memoEntry, setMemoEntry] = useState(draft.memo)
@@ -902,10 +904,14 @@ function HealthRegister() {
   }
 
   const handleSubmit = () => {
+    if (isSubmitting) return
+
     if (!hasRegisteredContent) {
       setIsEmptyAlertOpen(true)
       return
     }
+
+    setIsSubmitting(true)
 
     const memoText = memoEntry.trim()
     const audioLabels = registeredEntries.audio.map((entry) => entry.label ?? '').join(' ')
@@ -923,6 +929,9 @@ function HealthRegister() {
       ),
       photoStatus: inferPhotoStatus(registeredEntries.photo.length, registeredEntries.video.length),
     })
+
+    writeHealthCheckMissionHistoryRecord('AI 건강 기록')
+    window.sessionStorage.removeItem(HEALTH_REGISTER_DRAFT_KEY)
 
     navigate('/health/check-loading')
   }
@@ -1287,7 +1296,8 @@ function HealthRegister() {
           <Button
             type="button"
             className={`purple_btn square_btn ${!hasRegisteredContent ? 'is_disabled' : ''}`}
-            aria-disabled={!hasRegisteredContent}
+            aria-disabled={!hasRegisteredContent || isSubmitting}
+            disabled={isSubmitting}
             onClick={handleSubmit}
           >
             등록하기

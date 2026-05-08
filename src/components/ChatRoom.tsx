@@ -11,6 +11,7 @@ import {
   writeMissionPoopRecord,
   writeMissionSymptomRecord,
 } from '../utils/missionActivityRecords'
+import { createLocalChatbotAnswer } from '../utils/localChatbotAnswers'
 
 export type ChatMessage = {
   id: number
@@ -50,14 +51,25 @@ function ChatRoom({
     const mealRecordDetail = parseMealRecordDetail(trimmedMessage)
     const symptomRecordDetail = parseSymptomRecordDetail(trimmedMessage)
     const poopRecordDetail = parsePoopRecordDetail(trimmedMessage)
+    const chatbotAnswer = createLocalChatbotAnswer(trimmedMessage)
+    const nextMessageId = Date.now()
 
     setMessages((currentMessages) => [
       ...currentMessages,
       {
-        id: Date.now(),
+        id: nextMessageId,
         sender: 'user',
         text: trimmedMessage,
       },
+      ...(chatbotAnswer
+        ? [
+            {
+              id: nextMessageId + 1,
+              sender: 'bot' as const,
+              text: chatbotAnswer,
+            },
+          ]
+        : []),
     ])
     if (walkActivityDetail) {
       writeMissionActivityRecord(walkActivityDetail)
