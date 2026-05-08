@@ -70,6 +70,10 @@
   --layout-footer-height: 34px;
 }
 
+.layout_login .layout_content {
+  padding-top: 32px;
+}
+
 .layout_community {
   --layout-header-bar-height: 114px;
 }
