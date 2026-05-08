@@ -6,6 +6,7 @@ import CommunityChallenge from './pages/community/CommunityChallenge'
 import CommunityKnowledgeDetail from './pages/community/CommunityKnowledgeDetail'
 import CommunityOverview from './pages/community/CommunityOverview'
 import CommunityPetStory from './pages/community/CommunityPetStory'
+import CommunityPetStoryDetails from './pages/community/CommunityPetStoryDetails'
 import CommunityReward from './pages/community/CommunityReward'
 import CommunityVote from './pages/community/CommunityVote'
 import CommunityVoteDetail from './pages/community/CommunityVoteDetail'
@@ -62,6 +63,7 @@ function App() {
           <Route path="/community/petstory" element={<CommunityPetStory />} />
           <Route path="/community/petstory/daily" element={<CommunityPetStory />} />
           <Route path="/community/petstory/knowledge" element={<CommunityPetStory />} />
+          <Route path="/community/petstory/detail/:postId" element={<CommunityPetStoryDetails />} />
           <Route path="/community/petstory/knowledge/walk-problems" element={<CommunityKnowledgeDetail />} />
           <Route path="/community/challenge" element={<CommunityChallenge />} />
           <Route path="/community/challenge/reward" element={<CommunityReward />} />

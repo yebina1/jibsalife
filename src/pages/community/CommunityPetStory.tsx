@@ -16,6 +16,7 @@ import life3 from '../../img/life3.png'
 import life4 from '../../img/life4.png'
 import life5 from '../../img/life5.jpg'
 import life6 from '../../img/life6.jpg'
+import { petStoryDetailCommentCount } from './CommunityPetStoryDetailData'
 
 const dailyPosts = [
   { id: 1, tag: '일상', title: '강아지 산책하러 나가면 자는척 해요', author: '탬블러', time: '3시간 전', likes: 20, comments: 16, image: null as null | string },
@@ -47,11 +48,13 @@ const communitySubTabs = ['전체', '자랑하기', '일상', '반려상식'] as
 type CommunitySubTab = (typeof communitySubTabs)[number]
 type SortOption = '인기순' | '최신순' | '댓글순'
 const createdPostsStorageKey = 'jibsalife.community.createdPosts'
+const likedPostsStorageKey = 'jibsalife.community.likedPostIds'
 
 type CommunityPost = {
   id: number
   tag: string
   title: string
+  content?: string
   author: string
   date: string
   timeText?: string
@@ -65,6 +68,7 @@ type PetStoryFeedPost = {
   id: number
   tag: string
   title: string
+  content?: string
   author: string
   time?: string
   image: string | null
@@ -80,6 +84,17 @@ function loadCreatedPosts(): CommunityPost[] {
     const saved = window.localStorage.getItem(createdPostsStorageKey)
     const parsed = saved ? JSON.parse(saved) : []
     return Array.isArray(parsed) ? (parsed as CommunityPost[]) : []
+  } catch {
+    return []
+  }
+}
+
+function loadLikedPostIds(): number[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const saved = window.localStorage.getItem(likedPostsStorageKey)
+    const parsed = saved ? JSON.parse(saved) : []
+    return Array.isArray(parsed) ? parsed.filter((id): id is number => typeof id === 'number') : []
   } catch {
     return []
   }
@@ -112,6 +127,7 @@ function toFeedPost(post: CommunityPost): PetStoryFeedPost {
     id: post.id,
     tag: post.tag,
     title: post.title,
+    content: post.content,
     author: post.author,
     time: post.timeText ?? post.date,
     image: post.image,
@@ -146,7 +162,7 @@ function CommunityPetStory() {
   const sortParam = searchParams.get('sort') ?? 'popular'
   const selectedSort = sortByParam[sortParam] ?? '인기순'
 
-  const [likedPostIds, setLikedPostIds] = useState<number[]>([])
+  const [likedPostIds, setLikedPostIds] = useState<number[]>(loadLikedPostIds)
   const [createdPosts, setCreatedPosts] = useState<CommunityPost[]>(loadCreatedPosts)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [isCreateCategoryOpen, setIsCreateCategoryOpen] = useState(false)
@@ -163,6 +179,24 @@ function CommunityPetStory() {
   useEffect(() => {
     window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(createdPosts))
   }, [createdPosts])
+
+  useEffect(() => {
+    window.localStorage.setItem(likedPostsStorageKey, JSON.stringify(likedPostIds))
+  }, [likedPostIds])
+
+  useEffect(() => {
+    const syncLikedPostIds = () => {
+      setLikedPostIds(loadLikedPostIds())
+    }
+
+    window.addEventListener('focus', syncLikedPostIds)
+    window.addEventListener('pageshow', syncLikedPostIds)
+
+    return () => {
+      window.removeEventListener('focus', syncLikedPostIds)
+      window.removeEventListener('pageshow', syncLikedPostIds)
+    }
+  }, [])
 
   useEffect(() => {
     const timerId = window.setInterval(() => {
@@ -186,6 +220,42 @@ function CommunityPetStory() {
     }
 
     return post.time ?? post.timeText
+  }
+  const getPostCommentCount = (post: { id: number; image: string | null }) => {
+    if (isCreatedPost(post.id)) return 0
+    return post.image ? petStoryDetailCommentCount : 0
+  }
+  const openPostDetail = (post: {
+    id: number
+    tag: string
+    title: string
+    content?: string
+    author: string
+    time?: string
+    timeText?: string
+    date?: string
+    image: string | null
+    likes: number
+    comments: number
+    createdAt?: string
+  }) => {
+    navigate(`/community/petstory/detail/${post.id}`, {
+      state: {
+        post: {
+          id: post.id,
+          tag: post.tag,
+          title: post.title,
+          content: post.content,
+          author: post.author,
+          time: getPostTimeText(post),
+          date: post.date,
+          image: post.image,
+          likes: post.likes,
+          comments: getPostCommentCount(post),
+          createdAt: post.createdAt,
+        },
+      },
+    })
   }
 
   const posts = useMemo(() => {
@@ -314,10 +384,11 @@ function CommunityPetStory() {
         id: Date.now(),
         tag: draftTag,
         title,
+        content,
         author: '나',
         date: `${year}.${month}.${day}`,
         likes: 0,
-        comments: content ? 1 : 0,
+        comments: 0,
         createdAt: now.toISOString(),
         image: draftImage || null,
       },
@@ -353,6 +424,7 @@ function CommunityPetStory() {
               <article
                 key={post.id}
                 className={`cpsd_item${post.image == null ? ' cpsd_item_featured' : ''}`}
+                onClick={() => openPostDetail(post)}
               >
                 {post.image != null && (
                   <img src={post.image} alt="" className="cpsd_thumb" />
@@ -368,19 +440,14 @@ function CommunityPetStory() {
                     <span className="cpsd_time">{getPostTimeText(post)}</span>
                   </div>
                   <div className="cpsd_actions">
-                    <button
-                      type="button"
-                      className="cpsd_action_btn"
-                      aria-label={`좋아요 ${post.likes}`}
-                      onClick={() => toggleLike(post.id)}
-                    >
+                    <div className="cpsd_like_stat">
                       <span className="cpsd_action_icon"><HeartIcon /></span>
                       <span>{post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}</span>
-                    </button>
-                    <button type="button" className="cpsd_action_btn" aria-label={`댓글 ${post.comments}`}>
+                    </div>
+                    <div className="cpsd_comment_stat">
                       <span className="cpsd_action_icon"><CommentIcon /></span>
-                      <span>{post.comments}</span>
-                    </button>
+                      <span>{getPostCommentCount(post)}</span>
+                    </div>
                   </div>
                 </div>
               </article>
@@ -423,6 +490,7 @@ function CommunityPetStory() {
               <article
                 key={post.id}
                 className={`cpsd_item${post.image == null ? ' cpsd_item_featured' : ''}`}
+                onClick={() => openPostDetail(post)}
               >
                 {post.image != null && (
                   <img src={post.image} alt="" className="cpsd_thumb" />
@@ -442,19 +510,14 @@ function CommunityPetStory() {
                     )}
                   </div>
                   <div className="cpsd_actions">
-                    <button
-                      type="button"
-                      className="cpsd_action_btn"
-                      aria-label={`좋아요 ${post.likes}`}
-                      onClick={() => toggleLike(post.id)}
-                    >
+                    <div className="cpsd_like_stat">
                       <span className="cpsd_action_icon"><HeartIcon /></span>
                       <span>{post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}</span>
-                    </button>
-                    <button type="button" className="cpsd_action_btn" aria-label={`댓글 ${post.comments}`}>
+                    </div>
+                    <div className="cpsd_comment_stat">
                       <span className="cpsd_action_icon"><CommentIcon /></span>
-                      <span>{post.comments}</span>
-                    </button>
+                      <span>{getPostCommentCount(post)}</span>
+                    </div>
                   </div>
                 </div>
               </article>
@@ -467,6 +530,7 @@ function CommunityPetStory() {
                 <article
                   key={post.id}
                   className={`community_post${post.image == null ? ' community_post_featured' : ''}`}
+                  onClick={() => openPostDetail(post)}
                 >
                   {post.image != null && (
                     <img className="community_post_image" src={post.image} alt={post.title} />
@@ -487,7 +551,10 @@ function CommunityPetStory() {
                       <button
                         type="button"
                         className={likedPostIds.includes(post.id) ? 'active' : ''}
-                        onClick={() => toggleLike(post.id)}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          toggleLike(post.id)
+                        }}
                       >
                         <span className="community_like_icon" aria-hidden="true">
                           <svg viewBox="0 0 24 24">
@@ -498,7 +565,7 @@ function CommunityPetStory() {
                           {post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}
                         </span>
                       </button>
-                      <button type="button" aria-label="댓글">
+                      <button type="button" aria-label="댓글" onClick={(event) => event.stopPropagation()}>
                         <span className="community_comment_icon" aria-hidden="true">
                           <svg viewBox="0 0 24 24">
                             <path d="M12 4.8c-4.4 0-8 2.9-8 6.6 0 2.1 1.2 4 3.1 5.2l-.8 3 3.3-1.8c.8.2 1.6.3 2.4.3 4.4 0 8-2.9 8-6.7s-3.6-6.6-8-6.6Z" />

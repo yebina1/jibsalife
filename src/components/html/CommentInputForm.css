@@ -1,0 +1,113 @@
+.cpsdetail_comment_form {
+  position: fixed;
+  left: 50%;
+  bottom: 34px;
+  z-index: 90;
+  display: grid;
+  width: min(100%, var(--layout-max-width, 1440px));
+  grid-template-columns: 40px minmax(0, 1fr) 40px;
+  align-items: center;
+  gap: 12px;
+  box-sizing: border-box;
+  margin-top: 0;
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 0;
+  background: #ffffff;
+  box-shadow: none;
+  transform: translateX(-50%);
+}
+
+.comment_input_form_submit,
+.comment_input_form_emoji,
+.cpsdetail_form_icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.cpsdetail_form_icon {
+  width: 40px;
+  height: 40px;
+}
+
+.cpsdetail_form_icon img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.cpsdetail_comment_input {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 32px;
+  align-items: center;
+  gap: 16px;
+  height: fit-content;
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 20px;
+  background: #f0f0f4;
+  box-sizing: border-box;
+}
+
+.comment_input_form_textarea {
+  width: 100%;
+  min-width: 0;
+  height: 20px;
+  max-height: 102px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--block);
+  font: inherit;
+  font-size: var(--font-point-md);
+  line-height: var(--line-height-sm);
+  outline: 0;
+  resize: none;
+  scrollbar-width: thin;
+}
+
+.comment_input_form_textarea::placeholder {
+  color: var(--block);
+}
+
+.comment_input_form_submit {
+  width: 32px;
+  height: 40px;
+  align-self: center;
+  color: #111111;
+}
+
+.comment_input_form_submit_icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  padding: 2px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+.comment_input_form_submit_icon i {
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+  line-height: 24px;
+}
+
+.comment_input_form_emoji {
+  width: 40px;
+  height: 40px;
+}
+
+.comment_input_form_emoji img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}

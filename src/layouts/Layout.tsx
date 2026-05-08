@@ -57,15 +57,18 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const isCameraPage = pathname === '/health/camera' && searchParams.get('guide') === 'false'
   const isLoginPage = pathname === '/login'
   const isCommunityPath = pathname.startsWith('/community')
+  const isPetStoryDetailPage = pathname.startsWith('/community/petstory/detail/')
+  const showCommunityChrome = isCommunityPath && !isPetStoryDetailPage
   const isCommunitySubAll = !communitySubParam || communitySubParam === 'all'
-  const communitySubTabs = pathname.startsWith('/community/petstory')
+  const communitySubTabs = !isPetStoryDetailPage && pathname.startsWith('/community/petstory')
     ? petStorySubTabs
-    : pathname.startsWith('/community/vote') && pathname !== '/community/vote/detail'
+    : !isPetStoryDetailPage && pathname.startsWith('/community/vote') && pathname !== '/community/vote/detail'
       ? voteSubTabs
       : null
   const showCommunitySort =
-    (pathname.startsWith('/community/vote') && !isCommunitySubAll) ||
-    pathname.startsWith('/community/petstory')
+    !isPetStoryDetailPage &&
+    ((pathname.startsWith('/community/vote') && !isCommunitySubAll) ||
+      pathname.startsWith('/community/petstory'))
   const activeCommunitySubTab = communitySubTabs
     ? communitySubTabs.find((tab) => {
         if (tab.to.includes('?')) {
@@ -107,7 +110,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
     ? 'layout layout_camera'
     : isMinimal
       ? `layout layout_minimal ${isLoginPage ? 'layout_login' : ''}`
-      : isCommunityPath
+      : showCommunityChrome
         ? `layout layout_community ${communitySubTabs ? 'layout_community_with_subtabs' : ''} ${
             communitySubTabs && !isCommunityControlsVisible ? 'layout_community_subtabs_hidden' : ''
           }`
@@ -126,12 +129,14 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
 
   useEffect(() => {
     if (!communitySubTabs || typeof window === 'undefined') {
-      setIsCommunityControlsVisible(true)
       return
     }
 
     const scrollEl: HTMLDivElement | Window = contentRef.current ?? window
     let lastScrollY = contentRef.current ? contentRef.current.scrollTop : window.scrollY
+    const resetTimerId = window.setTimeout(() => {
+      setIsCommunityControlsVisible(true)
+    }, 0)
 
     const handleScroll = () => {
       const currentScrollY = contentRef.current ? contentRef.current.scrollTop : window.scrollY
@@ -152,6 +157,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
     scrollEl.addEventListener('scroll', handleScroll, { passive: true })
 
     return () => {
+      window.clearTimeout(resetTimerId)
       scrollEl.removeEventListener('scroll', handleScroll)
     }
   }, [communitySubTabs])
@@ -163,7 +169,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
           <header ref={headerRef}>
             <StateBar />
             {showHeader && header && <Header {...header} />}
-            {isCommunityPath ? (
+            {showCommunityChrome ? (
               <>
                 <nav className="layout_community_tabs" aria-label="커뮤니티 카테고리">
                   {communityTabs.map((tab) => (
@@ -292,7 +298,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
         {!hideFloatingAiButton ? <FloatingAiButton /> : null}
         {!isCameraPage ? (
           <footer>
-            {showNav && <Nav />}
+            {showNav && !isPetStoryDetailPage && <Nav />}
             <HomeIndicator />
           </footer>
         ) : null}
