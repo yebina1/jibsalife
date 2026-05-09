@@ -2,6 +2,7 @@ import './CommunityWrite.css'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'
+import Title from '../../components/Title'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
 import { MY_PROFILE_NAME } from '../../utils/myProfile'
@@ -35,16 +36,37 @@ function CommunityWrite() {
 
   const handlePhotoAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? [])
-    files.forEach((file) => {
-      const reader = new FileReader()
-      reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          setPhotos((prev) => (prev.length < MAX_PHOTOS ? [...prev, reader.result as string] : prev))
-        }
-      }
-      reader.readAsDataURL(file)
-    })
     e.target.value = ''
+
+    Promise.all(
+      files.map(
+        (file) =>
+          new Promise<string>((resolve, reject) => {
+            const reader = new FileReader()
+            reader.onload = () => {
+              if (typeof reader.result === 'string') {
+                resolve(reader.result)
+              } else {
+                reject(new Error('Invalid image data'))
+              }
+            }
+            reader.onerror = () => reject(reader.error)
+            reader.readAsDataURL(file)
+          }),
+      ),
+    )
+      .then((nextPhotos) => {
+        setPhotos((prev) => {
+          const merged = [...prev]
+          nextPhotos.forEach((photo) => {
+            if (merged.length < MAX_PHOTOS && !merged.includes(photo)) {
+              merged.push(photo)
+            }
+          })
+          return merged
+        })
+      })
+      .catch(() => {})
   }
 
   const removePhoto = (index: number) => {
@@ -64,7 +86,8 @@ function CommunityWrite() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const trimmedTitle = title.trim()
-    if (!trimmedTitle || !board) return
+    const trimmedContent = content.trim()
+    if (!trimmedTitle || !trimmedContent || !board) return
 
     const now = new Date()
     const year = now.getFullYear()
@@ -75,13 +98,16 @@ function CommunityWrite() {
       id: Date.now(),
       tag: board,
       title: trimmedTitle,
-      content: content.trim(),
+      content: trimmedContent,
       author: MY_PROFILE_NAME,
       date: `${year}.${month}.${day}`,
       likes: 0,
       comments: 0,
+      shares: 0,
       createdAt: now.toISOString(),
       image: photos[0] ?? null,
+      images: photos,
+      tags: selectedTags,
     }
 
     try {
@@ -93,8 +119,6 @@ function CommunityWrite() {
 
     navigate('/community/petstory')
   }
-
-  const emptyPhotoSlots = Math.min(3, MAX_PHOTOS - photos.length)
 
   return (
     <>
@@ -159,47 +183,42 @@ function CommunityWrite() {
 
           {/* 사진 등록 */}
           <div className="cw_section">
-            <div className="cw_media_header">
-              <span className="cw_media_label">사진 등록</span>
-              <span className="cw_media_count">최대 {photos.length}/{MAX_PHOTOS}</span>
-            </div>
+            <Title as="h5" className="cw_media_header" title="사진 등록">
+              <p>최대 {photos.length}/{MAX_PHOTOS}</p>
+            </Title>
             <div className="cw_media_slots">
-              {photos.map((src, i) => (
-                <div key={i} className="cw_media_slot cw_media_filled">
-                  <img src={src} alt="" />
-                  <button type="button" className="cw_media_remove" onClick={() => removePhoto(i)} aria-label="사진 삭제">×</button>
-                </div>
-              ))}
-              {Array.from({ length: emptyPhotoSlots }).map((_, i) => (
-                <label key={i} className="cw_media_slot">
+              {photos.length < MAX_PHOTOS ? (
+                <label className="cw_media_slot">
                   <input type="file" accept="image/*" multiple onChange={handlePhotoAdd} hidden />
                   <span className="cw_media_plus" aria-hidden="true">+</span>
                 </label>
+              ) : null}
+              {photos.map((src, i) => (
+                <div key={i} className="cw_media_slot cw_media_filled">
+                  <img src={src} alt="" />
+                  <button type="button" className="cw_media_remove" onClick={() => removePhoto(i)} aria-label="사진 제거">×</button>
+                </div>
               ))}
             </div>
           </div>
 
           {/* 동영상 등록 */}
           <div className="cw_section">
-            <div className="cw_media_header">
-              <span className="cw_media_label">동영상 등록 <span className="cw_media_sub">(최대 60초)</span></span>
-              <span className="cw_media_count">최대 0/{MAX_VIDEOS}</span>
-            </div>
+            <Title as="h5" className="cw_media_header" title={<span>동영상 등록 <span>(최대 60초)</span></span>}>
+              <p>최대 0/{MAX_VIDEOS}</p>
+            </Title>
             <div className="cw_media_slots">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="cw_media_slot">
-                  <span className="cw_media_plus" aria-hidden="true">+</span>
-                </div>
-              ))}
+              <div className="cw_media_slot">
+                <span className="cw_media_plus" aria-hidden="true">+</span>
+              </div>
             </div>
           </div>
 
           {/* 사료/영양제/간식 정보 등록 */}
           <div className="cw_section">
-            <div className="cw_media_header">
-              <span className="cw_media_label">사료·영양제·간식 정보 등록</span>
-              <span className="cw_media_count">최대 0/{MAX_PRODUCTS}</span>
-            </div>
+            <Title as="h5" className="cw_media_header" title="사료·영양제·간식 정보 등록">
+              <p>최대 0/{MAX_PRODUCTS}</p>
+            </Title>
             <div className="cw_media_slots cw_product_slots">
               <div className="cw_media_slot">
                 <span className="cw_media_plus" aria-hidden="true">+</span>
@@ -213,10 +232,9 @@ function CommunityWrite() {
 
           {/* 태그 선택 */}
           <div className="cw_section">
-            <div className="cw_media_header">
-              <span className="cw_media_label">태그 선택</span>
-              <span className="cw_media_count">최대 {selectedTags.length}/{MAX_TAGS}</span>
-            </div>
+            <Title as="h5" className="cw_media_header" title="태그 선택">
+              <p>최대 {selectedTags.length}/{MAX_TAGS}</p>
+            </Title>
             <div className="cw_tags_grid">
               {allTags.map((tag) => (
                 <button
@@ -234,7 +252,7 @@ function CommunityWrite() {
           <Button
             type="submit"
             className="purple_btn square_btn cw_submit"
-            disabled={!title.trim() || !board}
+            disabled={!title.trim() || !content.trim() || !board}
           >
             등록하기
           </Button>

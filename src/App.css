@@ -74,6 +74,24 @@
   padding-top: 32px;
 }
 
+.layout_knowledge_detail {
+  padding-top: 0;
+}
+
+.layout_knowledge_detail > header {
+  background: transparent;
+}
+
+.layout_knowledge_detail .state_bar,
+.layout_knowledge_detail .header {
+  background: transparent;
+}
+
+.layout_knowledge_detail .layout_content {
+  min-height: calc(100dvh - var(--layout-footer-height));
+  padding: 0;
+}
+
 .layout_community {
   --layout-header-bar-height: 114px;
 }
@@ -159,11 +177,15 @@
   display: none;
 }
 
-.layout_community_subtab_active,
-.layout_community_subtab_active:hover {
+.white_radius_btn.layout_community_subtab_active,
+.white_radius_btn.layout_community_subtab_active:hover {
   background: #6D59F8;
   color: #ffffff;
   border-color: #6D59F8;
+}
+
+.white_radius_btn.layout_community_subtab_active .button_label {
+  color: inherit;
 }
 
 .layout_community_sort_dropdown {

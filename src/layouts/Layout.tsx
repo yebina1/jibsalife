@@ -39,6 +39,12 @@ const communitySortOptions = [
   { label: '공유순', value: 'shares' },
 ] as const
 
+const voteSortOptions = [
+  { label: '최신순', value: 'latest' },
+  { label: '인기순', value: 'popular' },
+  { label: '임박순', value: 'deadline' },
+] as const
+
 function getSubParam(to: string) {
   return new URLSearchParams(to.split('?')[1]).get('sub')
 }
@@ -60,19 +66,20 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const isCommunityPath = pathname.startsWith('/community')
   const isPetStoryDetailPage = pathname.startsWith('/community/petstory/detail/')
   const isPetStoryWritePage = pathname === '/community/petstory/write'
-  const showCommunityChrome = isCommunityPath && !isPetStoryDetailPage && !isPetStoryWritePage
-  const isCommunitySubAll = !communitySubParam || communitySubParam === 'all'
-  const communitySubTabs = !isPetStoryDetailPage && !isPetStoryWritePage && pathname.startsWith('/community/petstory')
+  const isKnowledgeDetailPage = pathname.startsWith('/community/petstory/knowledge/')
+  const showCommunityChrome = isCommunityPath && !isPetStoryDetailPage && !isPetStoryWritePage && !isKnowledgeDetailPage
+  const communitySubTabs = !isPetStoryDetailPage && !isPetStoryWritePage && !isKnowledgeDetailPage && pathname.startsWith('/community/petstory')
     ? petStorySubTabs
-    : !isPetStoryDetailPage && pathname.startsWith('/community/vote') && pathname !== '/community/vote/detail'
+    : !isPetStoryDetailPage && !isKnowledgeDetailPage && pathname.startsWith('/community/vote') && pathname !== '/community/vote/detail'
       ? voteSubTabs
       : null
   const showCommunitySort =
     !isPetStoryDetailPage &&
-    ((pathname.startsWith('/community/vote') && !isCommunitySubAll) ||
-      pathname.startsWith('/community/petstory'))
+    !isKnowledgeDetailPage &&
+    (pathname.startsWith('/community/vote') || pathname.startsWith('/community/petstory'))
+  const activeCommunitySortOptions = pathname.startsWith('/community/vote') ? voteSortOptions : communitySortOptions
   const activeCommunitySort =
-    communitySortOptions.find((option) => option.value === communitySortParam) ?? communitySortOptions[0]
+    activeCommunitySortOptions.find((option) => option.value === communitySortParam) ?? activeCommunitySortOptions[0]
   const hasContentPadding = true
   const contentClassName =
     hasContentPadding ? 'layout_content' : 'layout_content layout_content_no_padding'
@@ -89,6 +96,29 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   ]
   const hideFloatingAiButton = hideFloatingAiButtonPaths.includes(pathname) || isCommunityPath
 
+  const isCommunityTopTabActive = (to: string, isActive: boolean) => {
+    if (pathname === '/community' && to === '/community/overview') return true
+    if (to === '/community/overview') return isActive
+    return pathname === to || pathname.startsWith(`${to}/`)
+  }
+
+  const isCommunitySubTabActive = (to: string) => {
+    if (to === '/community/petstory') {
+      return pathname === '/community/petstory' || pathname === '/community/petstory/'
+    }
+
+    if (to.includes('?')) {
+      const tabPathname = to.split('?')[0]
+      const tabSubParam = getSubParam(to)
+      return (
+        pathname === tabPathname &&
+        (communitySubParam === tabSubParam || (!communitySubParam && tabSubParam === 'all'))
+      )
+    }
+
+    return pathname === to
+  }
+
   const buildCommunitySortTo = (sortValue: string) => {
     const nextParams = new URLSearchParams(search)
     nextParams.set('sort', sortValue)
@@ -104,7 +134,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
         ? `layout layout_community ${communitySubTabs ? 'layout_community_with_subtabs' : ''} ${
             communitySubTabs && !isCommunityControlsVisible ? 'layout_community_subtabs_hidden' : ''
           }`
-        : 'layout'
+        : `layout ${isKnowledgeDetailPage ? 'layout_knowledge_detail' : ''}`
 
   useEffect(() => {
     const headerEl = headerRef.current
@@ -167,12 +197,10 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
                       to={tab.to}
                       className={({ isActive }) =>
                         `layout_community_tab ${
-                          isActive || (pathname === '/community' && tab.to === '/community/overview')
-                            ? 'active'
-                            : ''
+                          isCommunityTopTabActive(tab.to, isActive) ? 'active' : ''
                         }`
                       }
-                      end
+                      end={tab.to === '/community/overview'}
                     >
                       {tab.label}
                     </NavLink>
@@ -192,27 +220,27 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
                         </button>
                         {isCommunitySortOpen ? (
                           <div className="layout_community_sort_menu">
-                            {communitySortOptions.map((option) => (
+                            {activeCommunitySortOptions.map((option) => (
                               <NavLink
                                 key={option.value}
                                 to={buildCommunitySortTo(option.value)}
                                 className={`layout_community_sort_option ${
-                                  option.value === communitySortParam ? 'active' : ''
+                                  option.value === activeCommunitySort.value ? 'active' : ''
                                 }`}
                                 style={{
-                                  color: option.value === communitySortParam ? '#6D59F8' : '#111111',
+                                  color: option.value === activeCommunitySort.value ? '#6D59F8' : '#111111',
                                   WebkitTextFillColor:
-                                    option.value === communitySortParam ? '#6D59F8' : '#111111',
-                                  fontWeight: option.value === communitySortParam ? 600 : 400,
+                                    option.value === activeCommunitySort.value ? '#6D59F8' : '#111111',
+                                  fontWeight: option.value === activeCommunitySort.value ? 600 : 400,
                                 }}
                                 onClick={() => setIsCommunitySortOpen(false)}
                               >
                                 <span
                                   style={{
-                                    color: option.value === communitySortParam ? '#6D59F8' : '#111111',
+                                    color: option.value === activeCommunitySort.value ? '#6D59F8' : '#111111',
                                     WebkitTextFillColor:
-                                      option.value === communitySortParam ? '#6D59F8' : '#111111',
-                                    fontWeight: option.value === communitySortParam ? 600 : 400,
+                                      option.value === activeCommunitySort.value ? '#6D59F8' : '#111111',
+                                    fontWeight: option.value === activeCommunitySort.value ? 600 : 400,
                                   }}
                                 >
                                   {option.label}
@@ -226,11 +254,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
 
                     <div className="layout_community_subtab_scroll">
                       {communitySubTabs.map((tab) => {
-                        const tabSubParam = getSubParam(tab.to)
-                        const isActive = tab.to.includes('?')
-                          ? pathname === tab.to.split('?')[0] &&
-                            (communitySubParam === tabSubParam || (!communitySubParam && tabSubParam === 'all'))
-                          : pathname === tab.to
+                        const isActive = isCommunitySubTabActive(tab.to)
 
                         return (
                           <Button

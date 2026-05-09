@@ -6,7 +6,6 @@
 
 .community_knowledge_detail_hero_wrap {
   position: relative;
-  margin: 0 calc(var(--layout-page-padding, 16px) * -1);
 }
 
 .community_knowledge_detail_hero {
@@ -17,13 +16,10 @@
   object-position: 61% center;
 }
 
-.community_knowledge_detail_back,
-.community_knowledge_detail_bookmark {
-  position: absolute;
-  top: 66px;
+.community_knowledge_detail_header_btn {
   display: inline-flex;
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
   align-items: center;
   justify-content: center;
   padding: 0;
@@ -32,17 +28,7 @@
   color: #ffffff;
 }
 
-.community_knowledge_detail_back {
-  left: 16px;
-}
-
-.community_knowledge_detail_bookmark {
-  right: 16px;
-  color: #111111;
-}
-
-.community_knowledge_detail_back svg,
-.community_knowledge_detail_bookmark svg {
+.community_knowledge_detail_header_btn svg {
   width: 28px;
   height: 28px;
   fill: none;
@@ -93,12 +79,21 @@
 }
 
 .community_knowledge_detail_meta button {
+  width: auto;
+  height: auto;
+  flex-shrink: 0;
   margin-left: auto;
+  white-space: nowrap;
+}
+
+.community_knowledge_detail_meta svg,
+.community_knowledge_detail_meta img {
+  display: block;
+  width: 18px;
+  height: 18px;
 }
 
 .community_knowledge_detail_meta svg {
-  width: 18px;
-  height: 18px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.9;
@@ -146,6 +141,13 @@
   color: #111111;
   font-size: 38px;
   line-height: 1;
+}
+
+.community_knowledge_detail_card_icon img {
+  display: block;
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
 }
 
 .community_knowledge_detail_card_copy {

@@ -1,7 +1,7 @@
 ﻿import './Community.css'
 import './CommunityVote.css'
-import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useMemo, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
 import Button from '../../components/html/Button'
@@ -58,9 +58,34 @@ const regularVoteItems = [
   },
 ] as const
 
+type VoteSort = 'latest' | 'popular' | 'deadline'
+
+function parseDeadline(deadline: string) {
+  const match = deadline.match(/(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일/)
+  if (!match) return Number.POSITIVE_INFINITY
+
+  const [, year, month, day] = match
+  return new Date(Number(year), Number(month) - 1, Number(day)).getTime()
+}
+
 function CommunityVote() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const sort = (searchParams.get('sort') ?? 'latest') as VoteSort
   const [votedIds, setVotedIds] = useState<number[]>([2, 3, 4, 5])
+  const sortedRegularVoteItems = useMemo(() => {
+    return [...regularVoteItems].sort((a, b) => {
+      if (sort === 'popular') {
+        return b.participants - a.participants || b.id - a.id
+      }
+
+      if (sort === 'deadline') {
+        return parseDeadline(a.deadline) - parseDeadline(b.deadline) || b.id - a.id
+      }
+
+      return b.id - a.id
+    })
+  }, [sort])
 
   const handleVote = (id: number) => {
     setVotedIds((prev) => [...prev, id])
@@ -143,7 +168,7 @@ function CommunityVote() {
         <section className="cv2_section">
           <h2 className="cv2_section_title">일반 투표</h2>
           <div className="cv2_regular_list">
-            {regularVoteItems.map((item) => {
+            {sortedRegularVoteItems.map((item) => {
               const isDone = votedIds.includes(item.id)
               return (
                 <div key={item.id} className="cv2_regular_item">

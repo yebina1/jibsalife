@@ -44,8 +44,10 @@ type DetailPost = {
   date?: string
   image: string | null
   images?: string[]
+  tags?: string[]
   likes: number
   comments: number
+  shares?: number
   createdAt?: string
   place?: {
     name: string
@@ -272,7 +274,13 @@ function CommunityPetStoryDetails() {
   const post = statePost ?? findFallbackPost(postId)
   const timeText = post.time ?? post.date ?? '방금 전'
   const fallbackSideImage = post.image === life5 ? life4 : life5
-  const galleryImages = post.images?.length ? post.images : post.image ? [post.image, fallbackSideImage] : []
+  const galleryImages = post.images?.length
+    ? post.images
+    : post.image
+      ? post.createdAt
+        ? [post.image]
+        : [post.image, fallbackSideImage]
+      : []
   const [activeGalleryIndex, setActiveGalleryIndex] = useState(0)
   const [visibleComments, setVisibleComments] = useState<DetailComment[]>(() =>
     readComments(post.id, petStoryDetailComments.slice(0, post.comments))
@@ -300,6 +308,7 @@ function CommunityPetStoryDetails() {
   const content = displayPost.content?.trim() || '함께 나누고 싶은 반려 생활 이야기를 남겼어요.'
   const isLiked = likedPostIds.includes(post.id)
   const likeCount = post.likes + (isLiked ? 1 : 0)
+  const shareCount = post.shares ?? (post.createdAt ? 0 : 10)
   const editCommentText = editCommentId !== null
     ? (visibleComments.find((c) => c.id === editCommentId)?.text ?? '')
     : undefined
@@ -483,7 +492,7 @@ function CommunityPetStoryDetails() {
                 </span>
                 <span>
                   <ShareIcon />
-                  <span>10</span>
+                  <span>{shareCount}</span>
                 </span>
               </div>
             </div>
@@ -492,41 +501,43 @@ function CommunityPetStoryDetails() {
             </button>
           </header>
 
-          <Title as="h4" className="cpsdetail_post_title" title={displayPost.title} />
-          <p className="cpsdetail_content p_regular">{content}</p>
+          <div className="cpsdetail_post_body">
+            <Title as="h4" className="cpsdetail_post_title" title={displayPost.title} />
+            <p className="cpsdetail_content p_regular">{content}</p>
 
-          {galleryImages.length > 0 ? (
-            <div
-              ref={galleryRef}
-              className="cpsdetail_gallery"
-              aria-label="게시글 사진"
-              onScroll={handleGalleryScroll}
-            >
-              {galleryImages.map((image, index) => (
-                <img
-                  key={`${image}-${index}`}
-                  src={image}
-                  alt={index === 0 ? post.title : ''}
-                  className="cpsdetail_gallery_image"
-                  aria-hidden={index === 0 ? undefined : true}
-                />
-              ))}
-            </div>
-          ) : null}
+            {galleryImages.length > 0 ? (
+              <div
+                ref={galleryRef}
+                className="cpsdetail_gallery"
+                aria-label="게시글 사진"
+                onScroll={handleGalleryScroll}
+              >
+                {galleryImages.map((image, index) => (
+                  <img
+                    key={`${image}-${index}`}
+                    src={image}
+                    alt={index === 0 ? post.title : ''}
+                    className="cpsdetail_gallery_image"
+                    aria-hidden={index === 0 ? undefined : true}
+                  />
+                ))}
+              </div>
+            ) : null}
 
-          {galleryImages.length > 1 ? (
-            <div className="cpsdetail_gallery_dots">
-              {galleryImages.map((image, index) => (
-                <button
-                  key={`${image}-dot-${index}`}
-                  type="button"
-                  className={activeGalleryIndex === index ? 'active' : undefined}
-                  aria-label={`${index + 1}번 사진 보기`}
-                  onClick={() => moveGallery(index)}
-                />
-              ))}
-            </div>
-          ) : null}
+            {galleryImages.length > 1 ? (
+              <div className="cpsdetail_gallery_dots">
+                {galleryImages.map((image, index) => (
+                  <button
+                    key={`${image}-dot-${index}`}
+                    type="button"
+                    className={activeGalleryIndex === index ? 'active' : undefined}
+                    aria-label={`${index + 1}번 사진 보기`}
+                    onClick={() => moveGallery(index)}
+                  />
+                ))}
+              </div>
+            ) : null}
+          </div>
 
           {galleryImages.length > 0 && post.place ? (
             <button type="button" className="cpsdetail_place_card" onClick={() => navigate('/place')}>
@@ -537,6 +548,17 @@ function CommunityPetStoryDetails() {
               </span>
               <span className="cpsdetail_place_chevron" aria-hidden="true">&gt;</span>
             </button>
+          ) : null}
+
+          {displayPost.tags?.length ? (
+            <div className="cpsdetail_recommend_tags">
+              <strong>추천태그</strong>
+              <div>
+                {displayPost.tags.map((tag) => (
+                  <span key={tag}>{tag}</span>
+                ))}
+              </div>
+            </div>
           ) : null}
 
           <div className="cpsdetail_reaction_row">
@@ -755,9 +777,8 @@ function CommunityPetStoryDetails() {
               </>
             ) : (
               <>
-                <li><button type="button">차단하기</button></li>
-                <li><button type="button">신고하기</button></li>
-                <li><button type="button">팔로우</button></li>
+                <li><button type="button" className="cpsdetail_more_sheet_disabled" disabled>차단하기</button></li>
+                <li><button type="button" className="cpsdetail_more_sheet_disabled" disabled>신고하기</button></li>
               </>
             )}
           </ul>

@@ -1,6 +1,5 @@
 .layout_content:has(.cw_page) {
   background: #ffffff;
-  padding: 0;
 }
 
 .cw_page {
@@ -11,12 +10,27 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  gap: 20px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  outline: 0;
+  transition: none;
+}
+
+.cw_form:focus-within {
+  border: 0;
+  box-shadow: none;
+  outline: 0;
 }
 
 /* 섹션 공통 */
 .cw_section {
   width: 100%;
-  padding: 16px 20px;
   border-bottom: 1px solid #f0f0f5;
   box-sizing: border-box;
 }
@@ -30,6 +44,7 @@
 .cw_board_select {
   position: relative;
   width: 100%;
+  padding: 12px;
 }
 
 .cw_board_toggle {
@@ -100,7 +115,7 @@
 /* 제목 입력 */
 .cw_title_input {
   width: 100%;
-  padding: 0;
+  padding: 12px;
   border: 0;
   background: transparent;
   color: #111111;
@@ -118,7 +133,7 @@
 /* 내용 입력 */
 .cw_content_textarea {
   width: 100%;
-  padding: 0;
+  padding: 12px;
   border: 0;
   background: transparent;
   color: #111111;
@@ -135,30 +150,17 @@
 }
 
 /* 미디어 헤더 */
-.cw_media_header {
+.cw_media_header.title {
   display: flex;
+  flex-direction: row;
   width: 100%;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   margin-bottom: 12px;
 }
 
-.cw_media_label {
-  color: #111111;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.cw_media_sub {
+.cw_media_header h5 span span {
   color: #a1a9b6;
-  font-size: 13px;
-  font-weight: 400;
-}
-
-.cw_media_count {
-  color: #a1a9b6;
-  font-size: 13px;
-  font-weight: 500;
 }
 
 /* 미디어 슬롯 */
@@ -166,14 +168,15 @@
   display: flex;
   width: 100%;
   gap: 10px;
+  overflow-x: auto;
 }
 
 .cw_media_slot {
   position: relative;
   display: flex;
-  width: 88px;
-  height: 88px;
-  flex: 0 0 88px;
+  width: 97px;
+  height: 97px;
+  flex: 0 0 97px;
   align-items: center;
   justify-content: center;
   border: 1.5px dashed #d8d8e5;

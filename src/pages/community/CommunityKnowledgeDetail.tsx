@@ -1,6 +1,21 @@
-﻿import './CommunityKnowledgeDetail.css'
-import { useNavigate } from 'react-router'
+import './CommunityKnowledgeDetail.css'
+import { useLocation, useNavigate } from 'react-router'
+import PageHeader from '../../components/PageHeader'
 import knowledge1 from '../../img/knowledge1.png'
+import dogWalk1 from '../../img/Knowledge/dog_Walk_1_increased_stress.png'
+import dogWalk2 from '../../img/Knowledge/dog_Walk_2_obesity.png'
+import dogWalk3 from '../../img/Knowledge/dog_Walk_3_a_lack_of_social_skills.png'
+import sharingIcon from '../../svg/sharing.svg'
+
+type KnowledgeDetailState = {
+  item?: {
+    title: string
+    image: string
+    viewsText?: string
+    likes?: number
+    comments?: number
+  }
+}
 
 const detailItems = [
   {
@@ -8,21 +23,21 @@ const detailItems = [
     title: '스트레스 증가',
     description:
       '산책은 강아지의 에너지를 해소하고 외부 자극을 통해 심리적 안정감을 주는 중요한 활동이에요. 산책이 부족하면 에너지가 쌓이면서 짖음, 물건 파손, 과도한 흥분 같은 문제 행동으로 이어질 수 있어요.',
-    emoji: '🐶',
+    image: dogWalk1,
   },
   {
     id: 2,
     title: '비만 및 건강 문제',
     description:
       '운동량이 부족한 강아지는 체중이 쉽게 증가하고 비만으로 이어질 가능성이 높아요. 비만은 관절 질환, 심장 질환 등 다양한 건강 문제의 원인이 될 수 있어요.',
-    emoji: '⚖',
+    image: dogWalk2,
   },
   {
     id: 3,
     title: '사회성 부족',
     description:
       '운동량이 부족한 강아지는 체중이 쉽게 증가하고 비만으로 이어질 가능성이 높아요. 비만은 관절 질환, 심장 질환 등 다양한 건강 문제의 원인이 될 수 있어요.',
-    emoji: '🐕',
+    image: dogWalk3,
   },
 ] as const
 
@@ -68,56 +83,65 @@ function EyeIcon() {
 }
 
 function ShareIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <circle cx="18" cy="5.5" r="2" />
-      <circle cx="6" cy="12" r="2" />
-      <circle cx="18" cy="18.5" r="2" />
-      <path d="M7.8 11.1 16 6.4" />
-      <path d="m7.8 12.9 8.2 4.7" />
-    </svg>
-  )
+  return <img src={sharingIcon} alt="" aria-hidden="true" />
 }
 
 function CommunityKnowledgeDetail() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const item = (location.state as KnowledgeDetailState | null)?.item
+  const detailTitle = item?.title ?? '강아지 산책 안 하면 생기는 문제점'
+  const detailTitleLines =
+    detailTitle === '강아지 산책 안 하면 생기는 문제점'
+      ? ['강아지 산책', '안 하면 생기는 문제점']
+      : [detailTitle]
 
   return (
     <main className="page community_knowledge_detail_page">
+      <PageHeader
+        title=""
+        leftContent={
+          <button
+            type="button"
+            className="community_knowledge_detail_header_btn"
+            aria-label="이전"
+            onClick={() => navigate(-1)}
+          >
+            <BackIcon />
+          </button>
+        }
+        rightContent={
+          <button
+            type="button"
+            className="community_knowledge_detail_header_btn"
+            aria-label="북마크"
+          >
+            <BookmarkIcon />
+          </button>
+        }
+      />
       <section className="community_knowledge_detail_hero_wrap">
         <img
           className="community_knowledge_detail_hero"
-          src={knowledge1}
-          alt="벚꽃길을 산책하는 강아지"
+          src={item?.image ?? knowledge1}
+          alt={detailTitle}
         />
-        <button
-          type="button"
-          className="community_knowledge_detail_back"
-          aria-label="이전"
-          onClick={() => navigate(-1)}
-        >
-          <BackIcon />
-        </button>
-        <button
-          type="button"
-          className="community_knowledge_detail_bookmark"
-          aria-label="북마크"
-        >
-          <BookmarkIcon />
-        </button>
       </section>
 
       <section className="community_knowledge_detail_content">
         <h1>
-          강아지 산책
-          <br />
-          안 하면 생기는 문제점
+          {detailTitleLines.map((line, index) => (
+            <span key={line}>
+              {index > 0 ? <br /> : null}
+              {line}
+            </span>
+          ))}
         </h1>
 
         <div className="community_knowledge_detail_meta">
           <span>
             <EyeIcon />
-            1.2k
+            {item?.viewsText ?? '1.2k'}
           </span>
           <span className="community_knowledge_detail_dot" aria-hidden="true">·</span>
           <span>05.02 게시됨</span>
@@ -139,7 +163,7 @@ function CommunityKnowledgeDetail() {
           {detailItems.map((item) => (
             <article key={item.id} className="community_knowledge_detail_card">
               <div className="community_knowledge_detail_card_icon" aria-hidden="true">
-                <span>{item.emoji}</span>
+                <img src={item.image} alt="" />
               </div>
               <div className="community_knowledge_detail_card_copy">
                 <h2>
@@ -157,11 +181,11 @@ function CommunityKnowledgeDetail() {
         <div className="community_knowledge_detail_reactions">
           <button type="button" aria-label="좋아요">
             <HeartIcon />
-            128
+            {item?.likes ?? 128}
           </button>
           <button type="button" aria-label="댓글">
             <CommentIcon />
-            36
+            {item?.comments ?? 36}
           </button>
         </div>
         <button
