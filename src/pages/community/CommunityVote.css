@@ -1,32 +1,23 @@
 .cv2_page {
   display: flex;
   flex-direction: column;
+  gap: 24px;
   padding-top: 0;
   padding-bottom: 32px;
 }
 
 .cv2_page .community_tab_bar,
 .cv2_page .community_subtab_bar {
-  display: none !important;
+  display: none;
 }
 
 /* 섹션 */
-.cv2_section {
-  padding: 16px 0 0;
-}
-
-.cv2_section:first-of-type {
-  padding-top: 4px;
-}
-
 .cv2_section_title {
   display: flex;
+  flex-direction: row;
   align-items: center;
   gap: 6px;
-  margin: 0 0 12px;
-  font-size: 18px;
-  font-weight: 700;
-  color: #111;
+  margin: 0 0 16px;
 }
 
 .cv2_crown {
@@ -40,8 +31,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 16px 18px;
+  gap: 2px;
+  padding: 20px;
   border: 1px solid #E5E7EB;
   border-radius: 12px;
   background: #fff;
@@ -58,33 +49,23 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--font-point-md);
+  font-weight: var(--font-weight-md);
+  line-height: var(--line-height-sm);
 }
 
-.cv2_timer i {
-  font-size: 14px;
+.cv2_timer img {
+  display: block;
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
 }
 
 .cv2_timer_active {
-  color: #6D59F8;
+  color: #0369A1;
 }
 
 .cv2_timer_closed {
-  color: #9CA3AF;
-}
-
-.cv2_mission_title {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 700;
-  color: #111;
-  line-height: 1.4;
-}
-
-.cv2_mission_meta {
-  margin: 0;
-  font-size: 13px;
   color: #9CA3AF;
 }
 
@@ -135,19 +116,18 @@
 .cv2_regular_list {
   display: flex;
   flex-direction: column;
+  gap: 12px;
 }
 
 .cv2_regular_item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 18px 0;
-  border-bottom: 1px solid #F3F4F6;
-}
-
-.cv2_regular_item:last-child {
-  border-bottom: none;
+  gap: 2px;
+  padding: 20px;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  background: #fff;
 }
 
 .cv2_regular_body {
