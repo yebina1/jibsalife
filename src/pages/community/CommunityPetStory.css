@@ -118,6 +118,14 @@
   font-weight: 600;
 }
 
+.cpsd_like_stat {
+  cursor: pointer;
+}
+
+.cpsd_like_stat.active {
+  color: #ff5f7b;
+}
+
 .cpsd_action_icon {
   display: inline-flex;
   width: 20px;

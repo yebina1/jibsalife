@@ -30,6 +30,7 @@ import {
   CHALLENGE_REWARD_CLAIMED_STORAGE_KEY,
   getCompletedChallengeCardIds,
 } from '../constants/points'
+import { MY_PROFILE_NAME } from '../utils/myProfile'
 
 const challengeItems = [
   {
@@ -225,7 +226,12 @@ function loadCreatedPosts(): CommunityPost[] {
     const savedPosts = window.localStorage.getItem(createdPostsStorageKey)
     const parsedPosts = savedPosts ? JSON.parse(savedPosts) : []
 
-    return Array.isArray(parsedPosts) ? (parsedPosts as CommunityPost[]) : []
+    return Array.isArray(parsedPosts)
+      ? (parsedPosts as CommunityPost[]).map((post) => ({
+          ...post,
+          author: post.author === '나' ? MY_PROFILE_NAME : post.author,
+        }))
+      : []
   } catch {
     return []
   }
@@ -635,7 +641,7 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
         id: Date.now(),
         tag: draftTag,
         title,
-        author: '나',
+        author: MY_PROFILE_NAME,
         date: `${year}.${month}.${day}`,
         timeText: '방금 전',
         likes: 0,

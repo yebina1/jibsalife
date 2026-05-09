@@ -16,6 +16,7 @@ import life3 from '../../img/life3.png'
 import life4 from '../../img/life4.png'
 import life5 from '../../img/life5.jpg'
 import life6 from '../../img/life6.jpg'
+import { MY_PROFILE_NAME } from '../../utils/myProfile'
 import { petStoryDetailCommentCount } from './CommunityPetStoryDetailData'
 
 const dailyPosts = [
@@ -44,8 +45,6 @@ function CommentIcon() {
   )
 }
 
-const communitySubTabs = ['전체', '자랑하기', '일상', '반려상식'] as const
-type CommunitySubTab = (typeof communitySubTabs)[number]
 type SortOption = '인기순' | '최신순' | '댓글순'
 const createdPostsStorageKey = 'jibsalife.community.createdPosts'
 const likedPostsStorageKey = 'jibsalife.community.likedPostIds'
@@ -83,7 +82,12 @@ function loadCreatedPosts(): CommunityPost[] {
   try {
     const saved = window.localStorage.getItem(createdPostsStorageKey)
     const parsed = saved ? JSON.parse(saved) : []
-    return Array.isArray(parsed) ? (parsed as CommunityPost[]) : []
+    return Array.isArray(parsed)
+      ? (parsed as CommunityPost[]).map((post) => ({
+          ...post,
+          author: post.author === '나' ? MY_PROFILE_NAME : post.author,
+        }))
+      : []
   } catch {
     return []
   }
@@ -163,22 +167,12 @@ function CommunityPetStory() {
   const selectedSort = sortByParam[sortParam] ?? '인기순'
 
   const [likedPostIds, setLikedPostIds] = useState<number[]>(loadLikedPostIds)
-  const [createdPosts, setCreatedPosts] = useState<CommunityPost[]>(loadCreatedPosts)
-  const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [isCreateCategoryOpen, setIsCreateCategoryOpen] = useState(false)
-  const [draftTag, setDraftTag] = useState<CommunitySubTab>(communitySubTabs[1])
-  const [draftTitle, setDraftTitle] = useState('')
-  const [draftContent, setDraftContent] = useState('')
-  const [draftImage, setDraftImage] = useState('')
+  const [createdPosts] = useState<CommunityPost[]>(loadCreatedPosts)
   const [nowTime, setNowTime] = useState(() => Date.now())
 
   const isOverview = pathname === '/community/petstory'
   const isKnowledge = pathname === '/community/petstory/knowledge'
   const isDaily = pathname === '/community/petstory/daily'
-
-  useEffect(() => {
-    window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(createdPosts))
-  }, [createdPosts])
 
   useEffect(() => {
     window.localStorage.setItem(likedPostsStorageKey, JSON.stringify(likedPostIds))
@@ -222,6 +216,13 @@ function CommunityPetStory() {
     return post.time ?? post.timeText
   }
   const getPostCommentCount = (post: { id: number; image: string | null }) => {
+    try {
+      const saved = window.localStorage.getItem(`jibsalife.community.comments.${post.id}`)
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed)) return parsed.length
+      }
+    } catch {}
     if (isCreatedPost(post.id)) return 0
     return post.image ? petStoryDetailCommentCount : 0
   }
@@ -355,49 +356,6 @@ function CommunityPetStory() {
     )
   }
 
-  const openCreatePost = () => {
-    setDraftTag(communitySubTabs[2])
-    setDraftTitle('')
-    setDraftContent('')
-    setDraftImage('')
-    setIsCreateCategoryOpen(false)
-    setIsCreateOpen(true)
-  }
-
-  const closeCreatePost = () => {
-    setIsCreateCategoryOpen(false)
-    setIsCreateOpen(false)
-  }
-
-  const createPost = () => {
-    const title = draftTitle.trim()
-    const content = draftContent.trim()
-    if (!title) return
-
-    const now = new Date()
-    const year = now.getFullYear()
-    const month = String(now.getMonth() + 1).padStart(2, '0')
-    const day = String(now.getDate()).padStart(2, '0')
-
-    setCreatedPosts((prev) => [
-      {
-        id: Date.now(),
-        tag: draftTag,
-        title,
-        content,
-        author: '나',
-        date: `${year}.${month}.${day}`,
-        likes: 0,
-        comments: 0,
-        createdAt: now.toISOString(),
-        image: draftImage || null,
-      },
-      ...prev,
-    ])
-    navigate('/community/petstory')
-    closeCreatePost()
-  }
-
   return (
     <>
       <PageHeader
@@ -440,10 +398,14 @@ function CommunityPetStory() {
                     <span className="cpsd_time">{getPostTimeText(post)}</span>
                   </div>
                   <div className="cpsd_actions">
-                    <div className="cpsd_like_stat">
+                    <button
+                      type="button"
+                      className={`cpsd_like_stat${likedPostIds.includes(post.id) ? ' active' : ''}`}
+                      onClick={(e) => { e.stopPropagation(); toggleLike(post.id) }}
+                    >
                       <span className="cpsd_action_icon"><HeartIcon /></span>
                       <span>{post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}</span>
-                    </div>
+                    </button>
                     <div className="cpsd_comment_stat">
                       <span className="cpsd_action_icon"><CommentIcon /></span>
                       <span>{getPostCommentCount(post)}</span>
@@ -510,10 +472,14 @@ function CommunityPetStory() {
                     )}
                   </div>
                   <div className="cpsd_actions">
-                    <div className="cpsd_like_stat">
+                    <button
+                      type="button"
+                      className={`cpsd_like_stat${likedPostIds.includes(post.id) ? ' active' : ''}`}
+                      onClick={(e) => { e.stopPropagation(); toggleLike(post.id) }}
+                    >
                       <span className="cpsd_action_icon"><HeartIcon /></span>
                       <span>{post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}</span>
-                    </div>
+                    </button>
                     <div className="cpsd_comment_stat">
                       <span className="cpsd_action_icon"><CommentIcon /></span>
                       <span>{getPostCommentCount(post)}</span>
@@ -586,109 +552,7 @@ function CommunityPetStory() {
           </section>
         )}
 
-        {isCreateOpen ? (
-          <section className="community_create_sheet" role="dialog" aria-modal="true" aria-label="글쓰기">
-            <form
-              className="community_create_form"
-              onSubmit={(event) => {
-                event.preventDefault()
-                createPost()
-              }}
-            >
-              <div className="community_create_header">
-                <h2>글쓰기</h2>
-                <button type="button" onClick={closeCreatePost} aria-label="닫기">
-                  ×
-                </button>
-              </div>
-
-              <label className="community_create_field community_create_field_category">
-                <span>카테고리</span>
-                <div className="community_create_select">
-                  <button
-                    type="button"
-                    className="community_create_select_toggle"
-                    onClick={() => setIsCreateCategoryOpen((current) => !current)}
-                    aria-haspopup="listbox"
-                    aria-expanded={isCreateCategoryOpen}
-                  >
-                    <span>{draftTag}</span>
-                    <span className="community_create_select_icon" aria-hidden="true" />
-                  </button>
-                  {isCreateCategoryOpen ? (
-                    <div className="community_create_select_menu" role="listbox" aria-label="카테고리 선택">
-                      {communitySubTabs.slice(1, 3).map((tab) => (
-                        <button
-                          key={tab}
-                          type="button"
-                          className={`community_create_select_option ${draftTag === tab ? 'active' : ''}`}
-                          onClick={() => {
-                            setDraftTag(tab)
-                            setIsCreateCategoryOpen(false)
-                          }}
-                          role="option"
-                          aria-selected={draftTag === tab}
-                        >
-                          {tab}
-                        </button>
-                      ))}
-                    </div>
-                  ) : null}
-                </div>
-              </label>
-
-              <label className="community_create_field">
-                <span>제목</span>
-                <input
-                  value={draftTitle}
-                  onChange={(event) => setDraftTitle(event.target.value)}
-                  placeholder="제목을 입력해 주세요"
-                  maxLength={40}
-                />
-              </label>
-
-              <label className="community_create_field">
-                <span>내용</span>
-                <textarea
-                  value={draftContent}
-                  onChange={(event) => setDraftContent(event.target.value)}
-                  placeholder="내용을 입력해 주세요"
-                  rows={5}
-                />
-              </label>
-
-              <label className="community_create_upload">
-                <span>사진</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(event) => {
-                    const file = event.target.files?.[0]
-                    if (!file) return
-                    const reader = new FileReader()
-                    reader.addEventListener('load', () => {
-                      if (typeof reader.result === 'string') {
-                        setDraftImage(reader.result)
-                      }
-                    })
-                    reader.readAsDataURL(file)
-                  }}
-                />
-                {draftImage ? (
-                  <img src={draftImage} alt="업로드한 사진 미리보기" />
-                ) : (
-                  <strong>사진 업로드</strong>
-                )}
-              </label>
-
-              <Button type="submit" className="purple_btn square_btn community_create_submit" disabled={!draftTitle.trim()}>
-                등록하기
-              </Button>
-            </form>
-          </section>
-        ) : null}
-
-        <FloatingWriteButton onClick={openCreatePost} />
+        {!isKnowledge && <FloatingWriteButton onClick={() => navigate('/community/petstory/write')} />}
       </main>
     </>
   )

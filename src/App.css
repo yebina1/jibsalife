@@ -135,8 +135,7 @@
   width: 100%;
   max-height: 80px;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   box-sizing: border-box;
   padding: 10px var(--layout-inline-padding);
   background: #ffffff;
@@ -144,6 +143,31 @@
     opacity 180ms ease,
     max-height 180ms ease,
     padding 180ms ease;
+}
+
+.layout_community_subtab_scroll {
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.layout_community_subtab_scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.layout_community_subtab_active,
+.layout_community_subtab_active:hover {
+  background: #6D59F8;
+  color: #ffffff;
+  border-color: #6D59F8;
+}
+
+.layout_community_sort_dropdown {
+  flex-shrink: 0;
 }
 
 .layout_community_subtabs_hidden .layout_community_controls {
@@ -283,7 +307,7 @@
   top: calc(100% + 6px);
   right: 0;
   display: grid;
-  z-index: 10;
+  z-index: 200;
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;

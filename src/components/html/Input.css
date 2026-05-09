@@ -8,6 +8,9 @@
   color: #111;
   background: #ffffff;
   flex: none;
+  cursor: text;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .input_field:focus {

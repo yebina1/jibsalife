@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { NavLink, Outlet, useLocation } from 'react-router'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router'
 import Header from '../components/Header'
+import Button from '../components/html/Button'
 import FloatingAiButton from '../components/FloatingAiButton'
 import HomeIndicator from '../components/HomeIndicator'
 import Nav from '../components/Nav'
@@ -44,8 +45,8 @@ function getSubParam(to: string) {
 
 function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const [header, setHeader] = useState<HeaderConfig>(null)
-  const [isCommunitySubtabOpen, setIsCommunitySubtabOpen] = useState(false)
   const [isCommunitySortOpen, setIsCommunitySortOpen] = useState(false)
+  const navigate = useNavigate()
   const [isCommunityControlsVisible, setIsCommunityControlsVisible] = useState(true)
   const headerRef = useRef<HTMLElement>(null)
   const layoutRef = useRef<HTMLDivElement>(null)
@@ -58,9 +59,10 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const isLoginPage = pathname === '/login'
   const isCommunityPath = pathname.startsWith('/community')
   const isPetStoryDetailPage = pathname.startsWith('/community/petstory/detail/')
-  const showCommunityChrome = isCommunityPath && !isPetStoryDetailPage
+  const isPetStoryWritePage = pathname === '/community/petstory/write'
+  const showCommunityChrome = isCommunityPath && !isPetStoryDetailPage && !isPetStoryWritePage
   const isCommunitySubAll = !communitySubParam || communitySubParam === 'all'
-  const communitySubTabs = !isPetStoryDetailPage && pathname.startsWith('/community/petstory')
+  const communitySubTabs = !isPetStoryDetailPage && !isPetStoryWritePage && pathname.startsWith('/community/petstory')
     ? petStorySubTabs
     : !isPetStoryDetailPage && pathname.startsWith('/community/vote') && pathname !== '/community/vote/detail'
       ? voteSubTabs
@@ -69,18 +71,6 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
     !isPetStoryDetailPage &&
     ((pathname.startsWith('/community/vote') && !isCommunitySubAll) ||
       pathname.startsWith('/community/petstory'))
-  const activeCommunitySubTab = communitySubTabs
-    ? communitySubTabs.find((tab) => {
-        if (tab.to.includes('?')) {
-          const tabSubParam = getSubParam(tab.to)
-          return (
-            pathname === tab.to.split('?')[0] &&
-            (communitySubParam === tabSubParam || (!communitySubParam && tabSubParam === 'all'))
-          )
-        }
-        return pathname === tab.to
-      }) ?? communitySubTabs[0]
-    : null
   const activeCommunitySort =
     communitySortOptions.find((option) => option.value === communitySortParam) ?? communitySortOptions[0]
   const hasContentPadding = true
@@ -145,7 +135,6 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
         setIsCommunityControlsVisible(true)
       } else if (currentScrollY > lastScrollY) {
         setIsCommunityControlsVisible(false)
-        setIsCommunitySubtabOpen(false)
         setIsCommunitySortOpen(false)
       } else if (currentScrollY < lastScrollY) {
         setIsCommunityControlsVisible(true)
@@ -191,64 +180,12 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
                 </nav>
                 {communitySubTabs ? (
                   <div className="layout_community_controls">
-                    <div className={`layout_community_subtab_dropdown ${isCommunitySubtabOpen ? 'open' : ''}`}>
-                      <button
-                        type="button"
-                        className="layout_community_subtab_toggle"
-                        onClick={() => {
-                          setIsCommunitySubtabOpen((prev) => !prev)
-                          setIsCommunitySortOpen(false)
-                        }}
-                      >
-                        {activeCommunitySubTab?.label}
-                      </button>
-                      {isCommunitySubtabOpen ? (
-                        <div className="layout_community_subtab_menu">
-                          {communitySubTabs.map((tab) => {
-                            const tabSubParam = getSubParam(tab.to)
-                            const isActive = tab.to.includes('?')
-                              ? pathname === tab.to.split('?')[0] &&
-                                (communitySubParam === tabSubParam || (!communitySubParam && tabSubParam === 'all'))
-                              : pathname === tab.to
-
-                            return (
-                              <NavLink
-                                key={tab.to}
-                                to={tab.to}
-                                end
-                                className={`layout_community_subtab_option ${isActive ? 'active' : ''}`}
-                                style={{
-                                  color: isActive ? '#6D59F8' : '#111111',
-                                  WebkitTextFillColor: isActive ? '#6D59F8' : '#111111',
-                                  fontWeight: isActive ? 600 : 400,
-                                }}
-                                onClick={() => setIsCommunitySubtabOpen(false)}
-                              >
-                                <span
-                                  style={{
-                                    color: isActive ? '#6D59F8' : '#111111',
-                                    WebkitTextFillColor: isActive ? '#6D59F8' : '#111111',
-                                    fontWeight: isActive ? 600 : 400,
-                                  }}
-                                >
-                                  {tab.label}
-                                </span>
-                              </NavLink>
-                            )
-                          })}
-                        </div>
-                      ) : null}
-                    </div>
-
                     {showCommunitySort ? (
                       <div className={`layout_community_sort_dropdown ${isCommunitySortOpen ? 'open' : ''}`}>
                         <button
                           type="button"
                           className="layout_community_sort_toggle"
-                          onClick={() => {
-                            setIsCommunitySortOpen((prev) => !prev)
-                            setIsCommunitySubtabOpen(false)
-                          }}
+                          onClick={() => setIsCommunitySortOpen((prev) => !prev)}
                         >
                           <span>{activeCommunitySort.label}</span>
                           <span className="layout_community_sort_icon" aria-hidden="true" />
@@ -286,6 +223,27 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
                         ) : null}
                       </div>
                     ) : null}
+
+                    <div className="layout_community_subtab_scroll">
+                      {communitySubTabs.map((tab) => {
+                        const tabSubParam = getSubParam(tab.to)
+                        const isActive = tab.to.includes('?')
+                          ? pathname === tab.to.split('?')[0] &&
+                            (communitySubParam === tabSubParam || (!communitySubParam && tabSubParam === 'all'))
+                          : pathname === tab.to
+
+                        return (
+                          <Button
+                            key={tab.to}
+                            type="button"
+                            className={`white_radius_btn${isActive ? ' layout_community_subtab_active' : ''}`}
+                            onClick={() => navigate(tab.to)}
+                          >
+                            {tab.label}
+                          </Button>
+                        )
+                      })}
+                    </div>
                   </div>
                 ) : null}
               </>

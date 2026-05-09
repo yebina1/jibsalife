@@ -1,9 +1,12 @@
 import './CommunityPetStoryDetails.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
+import Title from '../../components/Title'
 import BackButton from '../../components/html/BackButton'
+import Alert from '../../components/Alert'
+import AddSheet from '../../components/AddSheet'
 import Button from '../../components/html/Button'
 import CommentInputForm from '../../components/html/CommentInputForm'
 import life1 from '../../img/life1.jpg'
@@ -12,14 +15,25 @@ import life3 from '../../img/life3.png'
 import life4 from '../../img/life4.png'
 import life5 from '../../img/life5.jpg'
 import life6 from '../../img/life6.jpg'
+import profileImage from '../../img/pink_dog_profile.jpg'
 import addIcon from '../../svg/add icon.svg'
 import emojiIcon from '../../svg/emoji.svg'
-import peopleIcon from '../../svg/people.svg'
+import sharingIcon from '../../svg/sharing.svg'
+import { MY_PROFILE_NAME } from '../../utils/myProfile'
 import { petStoryDetailComments } from './CommunityPetStoryDetailData'
 
 const createdPostsStorageKey = 'jibsalife.community.createdPosts'
 const likedPostsStorageKey = 'jibsalife.community.likedPostIds'
+const likedCommentIdsStorageKey = 'jibsalife.community.likedCommentIds'
 
+function readViewCount(postId: number): number {
+  try {
+    const saved = window.localStorage.getItem(`jibsalife.community.views.${postId}`)
+    return saved ? Math.max(0, parseInt(saved, 10)) : 0
+  } catch {
+    return 0
+  }
+}
 type DetailPost = {
   id: number
   tag: string
@@ -29,6 +43,7 @@ type DetailPost = {
   time?: string
   date?: string
   image: string | null
+  images?: string[]
   likes: number
   comments: number
   createdAt?: string
@@ -36,6 +51,11 @@ type DetailPost = {
     name: string
     address: string
   }
+}
+
+type DetailComment = (typeof petStoryDetailComments)[number] & {
+  time?: string
+  parentId?: number
 }
 
 const fallbackPosts: DetailPost[] = [
@@ -58,6 +78,7 @@ const fallbackPosts: DetailPost[] = [
     author: '탬블러',
     time: '3시간 전',
     image: life1,
+    images: [life1, life5],
     likes: 20,
     comments: 4,
   },
@@ -69,6 +90,7 @@ const fallbackPosts: DetailPost[] = [
     author: '장마',
     time: '3시간 전',
     image: life2,
+    images: [life2, life6],
     likes: 20,
     comments: 4,
   },
@@ -80,6 +102,7 @@ const fallbackPosts: DetailPost[] = [
     author: '파란꽃',
     time: '3시간 전',
     image: life3,
+    images: [life3, life1],
     likes: 16,
     comments: 4,
   },
@@ -91,11 +114,12 @@ const fallbackPosts: DetailPost[] = [
     author: '뽀직뽀직',
     time: '3시간 전',
     image: life4,
+    images: [life4, life5],
     likes: 7,
     comments: 4,
     place: {
       name: '우다다 애견풀빌라',
-      address: '부산 금정구',
+      address: '부산광역시 금정구',
     },
   },
   {
@@ -106,6 +130,7 @@ const fallbackPosts: DetailPost[] = [
     author: '말망',
     time: '3시간 전',
     image: life5,
+    images: [life5, life4],
     likes: 4,
     comments: 4,
   },
@@ -117,6 +142,7 @@ const fallbackPosts: DetailPost[] = [
     author: '크림빵',
     time: '3시간 전',
     image: life6,
+    images: [life6, life3],
     likes: 4,
     comments: 4,
   },
@@ -128,7 +154,12 @@ function readCreatedPosts() {
   try {
     const saved = window.localStorage.getItem(createdPostsStorageKey)
     const parsed = saved ? JSON.parse(saved) : []
-    return Array.isArray(parsed) ? (parsed as DetailPost[]) : []
+    return Array.isArray(parsed)
+      ? (parsed as DetailPost[]).map((post) => ({
+          ...post,
+          author: post.author === '나' ? MY_PROFILE_NAME : post.author,
+        }))
+      : []
   } catch {
     return []
   }
@@ -143,6 +174,29 @@ function readLikedPostIds() {
     return Array.isArray(parsed) ? parsed.filter((id): id is number => typeof id === 'number') : []
   } catch {
     return []
+  }
+}
+
+function readLikedCommentIds() {
+  if (typeof window === 'undefined') return []
+
+  try {
+    const saved = window.localStorage.getItem(likedCommentIdsStorageKey)
+    const parsed = saved ? JSON.parse(saved) : []
+    return Array.isArray(parsed) ? parsed.filter((id): id is number => typeof id === 'number') : []
+  } catch {
+    return []
+  }
+}
+
+function readComments(postId: number, fallback: DetailComment[]): DetailComment[] {
+  if (typeof window === 'undefined') return fallback
+
+  try {
+    const saved = window.localStorage.getItem(`jibsalife.community.comments.${postId}`)
+    return saved ? JSON.parse(saved) : fallback
+  } catch {
+    return fallback
   }
 }
 
@@ -167,22 +221,45 @@ function MoreIcon() {
   )
 }
 
-function ShareIcon() {
+function CommentBubbleIcon() {
   return (
-    <svg className="header_icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 6.65685 16.3431 8 18 8Z" />
-      <path d="M6 15C7.65685 15 9 13.6569 9 12C9 10.3431 7.65685 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15Z" />
-      <path d="M18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C16.3431 16 15 17.3431 15 19C15 20.6569 16.3431 22 18 22Z" />
-      <path d="M8.58997 13.51L15.42 17.49" />
-      <path d="M15.41 6.51001L8.58997 10.49" />
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M5 6.5h14v9H8.4L5 18.8Z" />
     </svg>
+  )
+}
+
+function HeartIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 20.2 5.2 13.8a4.55 4.55 0 0 1 6.43-6.43L12 7.74l.37-.37a4.55 4.55 0 1 1 6.43 6.43Z" />
+    </svg>
+  )
+}
+
+function ShareIcon() {
+  return <img className="header_icon" src={sharingIcon} alt="" aria-hidden="true" />
+}
+
+function CommentText({ text }: { text: string }) {
+  const parts = text.split(/(@\S+)/g)
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.startsWith('@') ? (
+          <span key={i} className="cpsdetail_mention">{part}</span>
+        ) : (
+          part
+        )
+      )}
+    </>
   )
 }
 
 function AvatarIcon() {
   return (
     <span className="cpsdetail_avatar_box" aria-hidden="true">
-      <img src={peopleIcon} alt="" />
+      <img src={profileImage} alt="" />
     </span>
   )
 }
@@ -193,21 +270,173 @@ function CommunityPetStoryDetails() {
   const location = useLocation()
   const statePost = (location.state as { post?: DetailPost } | null)?.post
   const post = statePost ?? findFallbackPost(postId)
-  const content = post.content?.trim() || '함께 나누고 싶은 반려 생활 이야기를 남겼어요.'
   const timeText = post.time ?? post.date ?? '방금 전'
-  const visibleComments = petStoryDetailComments.slice(0, post.comments)
+  const fallbackSideImage = post.image === life5 ? life4 : life5
+  const galleryImages = post.images?.length ? post.images : post.image ? [post.image, fallbackSideImage] : []
+  const [activeGalleryIndex, setActiveGalleryIndex] = useState(0)
+  const [visibleComments, setVisibleComments] = useState<DetailComment[]>(() =>
+    readComments(post.id, petStoryDetailComments.slice(0, post.comments))
+  )
   const [likedPostIds, setLikedPostIds] = useState<number[]>(readLikedPostIds)
+  const [likedCommentIds, setLikedCommentIds] = useState<number[]>(readLikedCommentIds)
+  const [replyTo, setReplyTo] = useState<{ author: string; commentId: number } | null>(null)
+  const [moreSheetOpen, setMoreSheetOpen] = useState<'own' | 'other' | false>(false)
+  const [moreTarget, setMoreTarget] = useState<'post' | { commentId: number } | null>(null)
+  const [deleteAlertOpen, setDeleteAlertOpen] = useState(false)
+  const [viewCount, setViewCount] = useState(() => readViewCount(post.id))
+  const [editAlertOpen, setEditAlertOpen] = useState(false)
+  const [pendingEditText, setPendingEditText] = useState('')
+  const [editCommentId, setEditCommentId] = useState<number | null>(null)
+  const [isPostEditOpen, setIsPostEditOpen] = useState(false)
+  const [isEditCategoryOpen, setIsEditCategoryOpen] = useState(false)
+  const [postOverride, setPostOverride] = useState<{ title: string; content: string; tag: string; image: string | null } | null>(null)
+  const [editDraftTag, setEditDraftTag] = useState('')
+  const [editDraftTitle, setEditDraftTitle] = useState('')
+  const [editDraftContent, setEditDraftContent] = useState('')
+  const [editDraftImage, setEditDraftImage] = useState<string | null>(null)
+  const galleryRef = useRef<HTMLDivElement>(null)
+  const viewIncrementedForRef = useRef<number | null>(null)
+  const displayPost = postOverride ? { ...post, ...postOverride } : post
+  const content = displayPost.content?.trim() || '함께 나누고 싶은 반려 생활 이야기를 남겼어요.'
   const isLiked = likedPostIds.includes(post.id)
   const likeCount = post.likes + (isLiked ? 1 : 0)
+  const editCommentText = editCommentId !== null
+    ? (visibleComments.find((c) => c.id === editCommentId)?.text ?? '')
+    : undefined
+
+  useEffect(() => {
+    setVisibleComments(readComments(post.id, petStoryDetailComments.slice(0, post.comments)))
+    setActiveGalleryIndex(0)
+    galleryRef.current?.scrollTo({ left: 0 })
+  }, [post.id, post.comments])
+
+  useEffect(() => {
+    if (viewIncrementedForRef.current === post.id) return
+    viewIncrementedForRef.current = post.id
+    const next = readViewCount(post.id) + 1
+    window.localStorage.setItem(`jibsalife.community.views.${post.id}`, String(next))
+    setViewCount(next)
+  }, [post.id])
+
+  useEffect(() => {
+    window.localStorage.setItem(`jibsalife.community.comments.${post.id}`, JSON.stringify(visibleComments))
+  }, [visibleComments, post.id])
 
   useEffect(() => {
     window.localStorage.setItem(likedPostsStorageKey, JSON.stringify(likedPostIds))
   }, [likedPostIds])
 
+  useEffect(() => {
+    window.localStorage.setItem(likedCommentIdsStorageKey, JSON.stringify(likedCommentIds))
+  }, [likedCommentIds])
+
+  const handleEditConfirm = () => {
+    if (isPostEditOpen) {
+      try {
+        const saved = window.localStorage.getItem(createdPostsStorageKey)
+        if (saved) {
+          const parsed = JSON.parse(saved)
+          if (Array.isArray(parsed)) {
+            const updated = parsed.map((p: { id: number }) =>
+              p.id === post.id
+                ? { ...p, tag: editDraftTag, title: editDraftTitle, content: editDraftContent, image: editDraftImage }
+                : p
+            )
+            window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(updated))
+          }
+        }
+      } catch {}
+      setPostOverride({ title: editDraftTitle, content: editDraftContent, tag: editDraftTag, image: editDraftImage })
+      setIsPostEditOpen(false)
+    } else if (editCommentId !== null) {
+      setVisibleComments((current) =>
+        current.map((c) => (c.id === editCommentId ? { ...c, text: pendingEditText } : c))
+      )
+      setEditCommentId(null)
+      setPendingEditText('')
+    }
+    setEditAlertOpen(false)
+  }
+
+  const handleDelete = () => {
+    if (moreTarget === 'post') {
+      try {
+        const saved = window.localStorage.getItem(createdPostsStorageKey)
+        if (saved) {
+          const parsed = JSON.parse(saved)
+          if (Array.isArray(parsed)) {
+            const updated = parsed.filter((p: { id: number }) => p.id !== post.id)
+            window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(updated))
+          }
+        }
+      } catch {}
+      navigate('/community/petstory')
+    } else if (moreTarget && typeof moreTarget === 'object') {
+      setVisibleComments((current) => current.filter((c) => c.id !== moreTarget.commentId))
+    }
+    setDeleteAlertOpen(false)
+    setMoreTarget(null)
+  }
+
   const toggleLike = () => {
     setLikedPostIds((current) =>
       current.includes(post.id) ? current.filter((id) => id !== post.id) : [...current, post.id],
     )
+  }
+
+  const addComment = (text: string) => {
+    const parentId = replyTo?.commentId
+    setVisibleComments((current) => [
+      ...current,
+      {
+        id: Date.now(),
+        author: MY_PROFILE_NAME,
+        text,
+        time: '방금 전',
+        likes: 0,
+        replies: 0,
+        parentId,
+      },
+    ])
+  }
+
+  const toggleCommentLike = (commentId: number) => {
+    const willLike = !likedCommentIds.includes(commentId)
+
+    setLikedCommentIds((current) =>
+      willLike ? [...current, commentId] : current.filter((id) => id !== commentId),
+    )
+    setVisibleComments((current) =>
+      current.map((comment) =>
+        comment.id === commentId
+          ? { ...comment, likes: Math.max((comment.likes ?? 0) + (willLike ? 1 : -1), 0) }
+          : comment,
+      ),
+    )
+  }
+
+  const handleGalleryScroll = () => {
+    const gallery = galleryRef.current
+    if (!gallery) return
+
+    const maxScrollLeft = Math.max(gallery.scrollWidth - gallery.clientWidth, 0)
+    const progress = maxScrollLeft > 0 ? gallery.scrollLeft / maxScrollLeft : 0
+    const nextIndex = Math.round(progress * (galleryImages.length - 1))
+    setActiveGalleryIndex(Math.min(Math.max(nextIndex, 0), galleryImages.length - 1))
+  }
+
+  const moveGallery = (index: number) => {
+    const gallery = galleryRef.current
+    if (!gallery) return
+    const target = gallery.children[index] as HTMLElement | undefined
+    if (!target) return
+    const maxScrollLeft = Math.max(gallery.scrollWidth - gallery.clientWidth, 0)
+
+    gallery.scrollTo({
+      left: Math.min(target.offsetLeft, maxScrollLeft),
+      behavior: 'smooth',
+    })
+    setActiveGalleryIndex(index)
   }
 
   return (
@@ -217,11 +446,11 @@ function CommunityPetStoryDetails() {
         leftContent={<BackButton to="/community/petstory" />}
         rightContent={
           <>
-            <Button type="button" aria-label="알림" className="community_header_notification">
-              <HeaderIcon type="notification" />
-            </Button>
             <Button type="button" aria-label="공유">
               <ShareIcon />
+            </Button>
+            <Button type="button" aria-label="알림" className="community_header_notification">
+              <HeaderIcon type="notification" />
             </Button>
           </>
         }
@@ -232,27 +461,76 @@ function CommunityPetStoryDetails() {
           <header className="cpsdetail_author_row">
             <AvatarIcon />
             <div className="cpsdetail_author_text">
-              <strong>{post.author}</strong>
-              <span>{timeText}</span>
+              <Title as="h5" title={post.author}>
+                <p>
+                  <span>{timeText}</span>
+                  <span>조회수 {viewCount.toLocaleString()}</span>
+                </p>
+              </Title>
+              <div className="cpsdetail_post_stats" aria-label="게시글 반응">
+                <button
+                  type="button"
+                  aria-label={`좋아요 ${likeCount}`}
+                  className={isLiked ? 'active' : undefined}
+                  onClick={toggleLike}
+                >
+                  <HeartIcon />
+                  <span>{likeCount}</span>
+                </button>
+                <span>
+                  <CommentBubbleIcon />
+                  <span>{visibleComments.length}</span>
+                </span>
+                <span>
+                  <ShareIcon />
+                  <span>10</span>
+                </span>
+              </div>
             </div>
-            <button type="button" className="cpsdetail_more" aria-label="더보기">
+            <button type="button" className="cpsdetail_more" aria-label="더보기" onClick={() => { setMoreTarget('post'); setMoreSheetOpen(post.author === MY_PROFILE_NAME ? 'own' : 'other') }}>
               <MoreIcon />
             </button>
           </header>
 
-          <h1>{post.title}</h1>
-          <p className="cpsdetail_content">{content}</p>
+          <Title as="h4" className="cpsdetail_post_title" title={displayPost.title} />
+          <p className="cpsdetail_content p_regular">{content}</p>
 
-          {post.image ? (
-            <div className="cpsdetail_gallery" aria-label="게시글 사진">
-              <img src={post.image} alt={post.title} className="cpsdetail_main_image" />
-              <img src={post.image} alt="" className="cpsdetail_side_image" aria-hidden="true" />
+          {galleryImages.length > 0 ? (
+            <div
+              ref={galleryRef}
+              className="cpsdetail_gallery"
+              aria-label="게시글 사진"
+              onScroll={handleGalleryScroll}
+            >
+              {galleryImages.map((image, index) => (
+                <img
+                  key={`${image}-${index}`}
+                  src={image}
+                  alt={index === 0 ? post.title : ''}
+                  className="cpsdetail_gallery_image"
+                  aria-hidden={index === 0 ? undefined : true}
+                />
+              ))}
             </div>
           ) : null}
 
-          {post.image && post.place ? (
+          {galleryImages.length > 1 ? (
+            <div className="cpsdetail_gallery_dots">
+              {galleryImages.map((image, index) => (
+                <button
+                  key={`${image}-dot-${index}`}
+                  type="button"
+                  className={activeGalleryIndex === index ? 'active' : undefined}
+                  aria-label={`${index + 1}번 사진 보기`}
+                  onClick={() => moveGallery(index)}
+                />
+              ))}
+            </div>
+          ) : null}
+
+          {galleryImages.length > 0 && post.place ? (
             <button type="button" className="cpsdetail_place_card" onClick={() => navigate('/place')}>
-              <span className="cpsdetail_place_pin" aria-hidden="true" />
+              <img src={galleryImages[1] ?? galleryImages[0]} alt="" className="cpsdetail_place_thumb" aria-hidden="true" />
               <span className="cpsdetail_place_text">
                 <strong>{post.place.name}</strong>
                 <small>{post.place.address}</small>
@@ -276,24 +554,59 @@ function CommunityPetStoryDetails() {
         </article>
 
         <section className="cpsdetail_comments" aria-label="댓글">
-          {visibleComments.map((comment) => (
-            <article key={comment.id} className="cpsdetail_comment">
-              <AvatarIcon />
-              <div className="cpsdetail_comment_body">
-                <div className="cpsdetail_comment_head">
-                  <strong>{comment.author}</strong>
-                  <button type="button" className="cpsdetail_more" aria-label="댓글 더보기">
-                    <MoreIcon />
+          {(() => {
+            const topLevel = visibleComments.filter((c) => !c.parentId)
+            const repliesMap = visibleComments.reduce<Record<number, DetailComment[]>>((acc, c) => {
+              if (c.parentId) {
+                acc[c.parentId] = [...(acc[c.parentId] ?? []), c]
+              }
+              return acc
+            }, {})
+
+            const renderComment = (comment: DetailComment, isReply = false) => {
+              const replyCount = repliesMap[comment.id]?.length ?? 0
+              return (
+              <article key={comment.id} className={`cpsdetail_comment${isReply ? ' cpsdetail_reply' : ''}`}>
+                <AvatarIcon />
+                <div className="cpsdetail_comment_body">
+                  <div className="cpsdetail_comment_head">
+                    <Title as="h5" title={comment.author}>
+                      <p>{comment.time ?? '11시간 전'}</p>
+                    </Title>
+                    <button type="button" className="cpsdetail_more" aria-label="댓글 더보기" onClick={() => { setMoreTarget({ commentId: comment.id }); setMoreSheetOpen(comment.author === MY_PROFILE_NAME ? 'own' : 'other') }}>
+                      <MoreIcon />
+                    </button>
+                  </div>
+                  <p><CommentText text={comment.text} /></p>
+                  <div className="cpsdetail_comment_actions">
+                    <button
+                      type="button"
+                    className={likedCommentIds.includes(comment.id) ? 'active' : undefined}
+                    onClick={() => toggleCommentLike(comment.id)}
+                  >
+                    <i
+                      className={likedCommentIds.includes(comment.id) ? 'bx bxs-heart' : 'bx bx-heart'}
+                      aria-hidden="true"
+                    />
+                    <span>좋아요 {comment.likes || ''}</span>
                   </button>
+                  <button type="button" onClick={() => setReplyTo({ author: comment.author, commentId: comment.parentId ?? comment.id })}>
+                    <i className="bx bx-message-rounded-dots" aria-hidden="true" />
+                    <span>답글쓰기{replyCount > 0 ? ` ${replyCount}` : ''}</span>
+                  </button>
+                  </div>
                 </div>
-                <p>{comment.text}</p>
-                <div className="cpsdetail_comment_actions">
-                  <button type="button">좋아요 {comment.likes || ''}</button>
-                  <button type="button">답글쓰기{comment.replies ? ` ${comment.replies}` : ''}</button>
-                </div>
+              </article>
+              )
+            }
+
+            return topLevel.map((comment) => (
+              <div key={comment.id} className="cpsdetail_comment_group">
+                {renderComment(comment)}
+                {(repliesMap[comment.id] ?? []).map((reply) => renderComment(reply, true))}
               </div>
-            </article>
-          ))}
+            ))
+          })()}
         </section>
 
         <CommentInputForm
@@ -303,8 +616,156 @@ function CommunityPetStoryDetails() {
           placeholder="메시지를 입력해 주세요."
           addIcon={addIcon}
           emojiIcon={emojiIcon}
+          replyTo={replyTo?.author ?? null}
+          onClearReply={() => setReplyTo(null)}
+          prefilledText={editCommentText}
+          onSubmit={(text) => {
+            if (editCommentId !== null) {
+              setPendingEditText(text)
+              setEditAlertOpen(true)
+            } else {
+              addComment(text)
+            }
+          }}
         />
       </main>
+
+      {editAlertOpen && (
+        <Alert onClose={() => { setEditAlertOpen(false); if (!isPostEditOpen) setEditCommentId(null) }}>
+          <p className="cpsdetail_delete_alert_msg">수정하시겠습니까?</p>
+          <div className="cpsdetail_delete_alert_btns">
+            <Button type="button" className="white_btn" onClick={() => { setEditAlertOpen(false); if (!isPostEditOpen) setEditCommentId(null) }}>아니요</Button>
+            <Button type="button" className="purple_btn" onClick={handleEditConfirm}>네</Button>
+          </div>
+        </Alert>
+      )}
+
+      {deleteAlertOpen && (
+        <Alert onClose={() => setDeleteAlertOpen(false)}>
+          <p className="cpsdetail_delete_alert_msg">삭제하시겠습니까?</p>
+          <div className="cpsdetail_delete_alert_btns">
+            <Button type="button" className="white_btn" onClick={() => setDeleteAlertOpen(false)}>아니요</Button>
+            <Button type="button" className="purple_btn" onClick={handleDelete}>네</Button>
+          </div>
+        </Alert>
+      )}
+
+      {isPostEditOpen && (
+        <section className="cpsdetail_edit_sheet" role="dialog" aria-modal="true" aria-label="글 수정">
+          <form
+            className="cpsdetail_edit_form"
+            onSubmit={(e) => { e.preventDefault(); setEditAlertOpen(true) }}
+          >
+            <div className="cpsdetail_edit_header">
+              <h2>글 수정</h2>
+              <button type="button" onClick={() => setIsPostEditOpen(false)} aria-label="닫기">×</button>
+            </div>
+
+            <label className="cpsdetail_edit_field cpsdetail_edit_field_category">
+              <span>카테고리</span>
+              <div className="community_create_select">
+                <button
+                  type="button"
+                  className="community_create_select_toggle"
+                  onClick={() => setIsEditCategoryOpen((c) => !c)}
+                  aria-haspopup="listbox"
+                  aria-expanded={isEditCategoryOpen}
+                >
+                  <span>{editDraftTag}</span>
+                  <span className="community_create_select_icon" aria-hidden="true" />
+                </button>
+                {isEditCategoryOpen && (
+                  <div className="community_create_select_menu" role="listbox" aria-label="카테고리 선택">
+                    {(['자랑하기', '일상'] as const).map((tag) => (
+                      <button
+                        key={tag}
+                        type="button"
+                        className={`community_create_select_option${editDraftTag === tag ? ' active' : ''}`}
+                        onClick={() => { setEditDraftTag(tag); setIsEditCategoryOpen(false) }}
+                        role="option"
+                        aria-selected={editDraftTag === tag}
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </label>
+
+            <label className="cpsdetail_edit_field">
+              <span>제목</span>
+              <input
+                value={editDraftTitle}
+                onChange={(e) => setEditDraftTitle(e.target.value)}
+                placeholder="제목을 입력해 주세요"
+                maxLength={40}
+              />
+            </label>
+
+            <label className="cpsdetail_edit_field">
+              <span>내용</span>
+              <textarea
+                value={editDraftContent}
+                onChange={(e) => setEditDraftContent(e.target.value)}
+                placeholder="내용을 입력해 주세요"
+                rows={5}
+              />
+            </label>
+
+            {editDraftImage && (
+              <div className="cpsdetail_edit_image_preview">
+                <img src={editDraftImage} alt="첨부 이미지" />
+              </div>
+            )}
+
+            <Button type="submit" className="purple_btn square_btn cpsdetail_edit_submit" disabled={!editDraftTitle.trim()}>
+              수정하기
+            </Button>
+          </form>
+        </section>
+      )}
+
+      {moreSheetOpen && (
+        <AddSheet onClose={() => setMoreSheetOpen(false)}>
+          <ul className="cpsdetail_more_sheet_list">
+            {moreSheetOpen === 'own' ? (
+              <>
+                <li><button type="button" onClick={() => { setMoreSheetOpen(false); setDeleteAlertOpen(true) }}>삭제하기</button></li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMoreSheetOpen(false)
+                      if (moreTarget === 'post') {
+                        setEditDraftTag(post.tag)
+                        setEditDraftTitle(displayPost.title)
+                        setEditDraftContent(displayPost.content ?? '')
+                        setEditDraftImage(post.image)
+                        setIsPostEditOpen(true)
+                      } else if (moreTarget && typeof moreTarget === 'object') {
+                        setReplyTo(null)
+                        setEditCommentId(moreTarget.commentId)
+                      }
+                    }}
+                  >
+                    수정하기
+                  </button>
+                </li>
+              </>
+            ) : (
+              <>
+                <li><button type="button">차단하기</button></li>
+                <li><button type="button">신고하기</button></li>
+                <li><button type="button">팔로우</button></li>
+              </>
+            )}
+          </ul>
+          <Button type="button" className="purple_btn cpsdetail_more_sheet_close" onClick={() => setMoreSheetOpen(false)}>
+            닫기
+          </Button>
+        </AddSheet>
+      )}
     </>
   )
 }

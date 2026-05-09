@@ -13,6 +13,7 @@ import {
   formatProfilePoints,
   readProfilePoints,
 } from '../../utils/profilePoints'
+import { MY_PROFILE_NAME } from '../../utils/myProfile'
 import contents2 from '../../img/contents2.png'
 import leeyoriImage from '../../img/leeyori.png'
 import pungpungiImage from '../../img/pungpungi.png'
@@ -382,7 +383,7 @@ function MyPage() {
             <SummaryProfileCard
               image={contents2}
               imageAlt="프로필 이미지"
-              name="뿌직뿌직"
+              name={MY_PROFILE_NAME}
               breed=""
               details={`포인트: ${formatProfilePoints(profilePoints)}`}
               careGuideLabel="보유 뱃지  🏅  🐾  🐾"

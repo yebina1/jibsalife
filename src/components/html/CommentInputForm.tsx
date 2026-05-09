@@ -1,4 +1,4 @@
-import { useRef, useState, type ChangeEvent, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import './CommentInputForm.css'
 
 const textareaMaxHeight = 102
@@ -10,6 +10,9 @@ type CommentInputFormProps = {
   placeholder?: string
   addIcon: string
   emojiIcon: string
+  replyTo?: string | null
+  onClearReply?: () => void
+  prefilledText?: string
   onSubmit?: (value: string) => void
 }
 
@@ -20,10 +23,29 @@ function CommentInputForm({
   placeholder = '메시지를 입력해 주세요.',
   addIcon,
   emojiIcon,
+  replyTo,
+  onClearReply,
+  prefilledText,
   onSubmit,
 }: CommentInputFormProps) {
   const [value, setValue] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    if (replyTo) {
+      setValue('')
+      textareaRef.current?.focus()
+      requestAnimationFrame(resizeTextarea)
+    }
+  }, [replyTo])
+
+  useEffect(() => {
+    if (prefilledText !== undefined) {
+      setValue(prefilledText)
+      requestAnimationFrame(resizeTextarea)
+      if (prefilledText) textareaRef.current?.focus()
+    }
+  }, [prefilledText])
 
   const resizeTextarea = () => {
     const textarea = textareaRef.current
@@ -45,8 +67,10 @@ function CommentInputForm({
     const trimmedValue = value.trim()
     if (!trimmedValue) return
 
-    onSubmit?.(trimmedValue)
+    const fullText = replyTo ? `@${replyTo} ${trimmedValue}` : trimmedValue
+    onSubmit?.(fullText)
     setValue('')
+    onClearReply?.()
     requestAnimationFrame(resizeTextarea)
   }
 
@@ -57,19 +81,32 @@ function CommentInputForm({
       </button>
 
       <label className={inputWrapClassName}>
-        <textarea
-          ref={textareaRef}
-          aria-label="댓글"
-          className="comment_input_form_textarea"
-          placeholder={placeholder}
-          rows={1}
-          value={value}
-          onChange={handleChange}
-        />
+        <div className="comment_input_text_area">
+          {replyTo && (
+            <span className="comment_input_mention">
+              @{replyTo}
+              <button
+                type="button"
+                className="comment_input_mention_clear"
+                aria-label="답글 취소"
+                onClick={onClearReply}
+              >
+                <i className="bx bx-x" aria-hidden="true" />
+              </button>
+            </span>
+          )}
+          <textarea
+            ref={textareaRef}
+            aria-label="댓글"
+            className="comment_input_form_textarea"
+            placeholder={replyTo ? '' : placeholder}
+            rows={1}
+            value={value}
+            onChange={handleChange}
+          />
+        </div>
         <button type="submit" aria-label="댓글 등록" className="comment_input_form_submit">
-          <span className="comment_input_form_submit_icon">
-            <i className="bx bx-arrow-up-stroke" aria-hidden="true" />
-          </span>
+          <i className="bx bx-arrow-up-stroke" aria-hidden="true" />
         </button>
       </label>
 

@@ -12,6 +12,7 @@
   margin-top: 0;
   padding: 12px 20px;
   border: 0;
+  border-top: 1px solid #E5E5EC;
   border-radius: 0;
   background: #ffffff;
   box-shadow: none;
@@ -34,6 +35,8 @@
 .cpsdetail_form_icon {
   width: 40px;
   height: 40px;
+  align-self: end;
+  margin-bottom: 6px;
 }
 
 .cpsdetail_form_icon img {
@@ -44,16 +47,52 @@
 
 .cpsdetail_comment_input {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 32px;
-  align-items: center;
-  gap: 16px;
-  height: fit-content;
-  min-height: 32px;
-  padding: 6px 10px;
+  grid-template-columns: minmax(0, 1fr) 28px;
+  align-items: end;
+  column-gap: 10px;
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  min-height: 40px;
+  padding: 6px 10px 6px 16px;
   border: 0;
   border-radius: 20px;
   background: #f0f0f4;
   box-sizing: border-box;
+}
+
+.comment_input_text_area {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  gap: 0;
+}
+
+.comment_input_mention {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: #0369A1;
+  font-size: var(--font-point-md);
+  line-height: var(--line-height-sm);
+  white-space: nowrap;
+}
+
+.comment_input_mention_clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #505050;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.comment_input_mention_clear .bx {
+  font-size: 16px;
 }
 
 .comment_input_form_textarea {
@@ -71,30 +110,27 @@
   outline: 0;
   resize: none;
   scrollbar-width: thin;
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
 
 .comment_input_form_textarea::placeholder {
-  color: var(--block);
+  color: #b0b0c3;
 }
 
-.comment_input_form_submit {
-  width: 32px;
-  height: 40px;
-  align-self: center;
+.cpsdetail_comment_form .comment_input_form_submit {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  align-self: end;
+  margin: 0;
+  border-radius: 50%;
+  background: #ffffff;
   color: #111111;
 }
 
-.comment_input_form_submit_icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  align-self: center;
-  padding: 2px;
-  border-radius: 50%;
-  background: #ffffff;
-}
-
-.comment_input_form_submit_icon i {
+.cpsdetail_comment_form .comment_input_form_submit i {
   width: 24px;
   height: 24px;
   font-size: 24px;
@@ -104,6 +140,8 @@
 .comment_input_form_emoji {
   width: 40px;
   height: 40px;
+  align-self: end;
+  margin-bottom: 6px;
 }
 
 .comment_input_form_emoji img {
