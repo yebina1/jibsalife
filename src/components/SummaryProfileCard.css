@@ -12,7 +12,7 @@
 .summary_profile_card_top {
   display: flex;
   align-items: flex-start;
-  gap: 20px;
+  gap: var(--gap-contents);
 }
 
 .summary_profile_card .profile_image {
@@ -61,6 +61,14 @@
   gap: 8px;
 }
 
+.summary_profile_card_heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
 .summary_profile_card_name_row {
   display: flex;
   flex-wrap: wrap;
@@ -72,7 +80,7 @@
 .summary_profile_card_name_row strong {
   flex: 0 0 auto;
   min-width: 0;
-  color: #111111;
+  color: var(--font-block);
   font-size: 16px;
   font-weight: 600;
   line-height: 1.4;
@@ -102,46 +110,55 @@
 .summary_profile_card_details {
   display: flex;
   flex-wrap: nowrap;
-  gap: 0 6px;
+  gap: 0;
   margin: 0;
-  color: #505050;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.45;
-  letter-spacing: -0.025em;
   white-space: nowrap;
   word-break: keep-all;
 }
 
-.summary_profile_card_details span {
+.summary_profile_card_detail_item {
   display: inline-flex;
   flex: 0 0 auto;
-  align-items: baseline;
-  gap: 6px;
+  align-items: center;
+  gap: 0;
+}
+
+.summary_profile_card_detail_item:not(:first-child) {
+  margin-left: 6px;
 }
 
 .summary_profile_card_details em {
-  color: #111111;
+  display: inline-block;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #111111;
+  color: transparent;
+  font-size: 0;
   font-style: normal;
+  line-height: 0;
+  flex: 0 0 auto;
+  vertical-align: middle;
+}
+
+.summary_profile_card_details em + .summary_profile_card_detail_label {
+  margin-left: 4px;
 }
 
 .summary_profile_card_detail_label {
   color: #505050;
+  margin-right: 2px;
 }
 
 .summary_profile_card_details strong {
   color: #111111;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.45;
-  letter-spacing: -0.025em;
 }
 
 .summary_profile_card_edit {
   display: inline-flex;
-  width: 20px;
-  height: 20px;
-  flex: 0 0 20px;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
   align-items: center;
   justify-content: center;
   padding: 0;
@@ -153,8 +170,8 @@
 
 .summary_profile_card_edit svg {
   display: block;
-  width: 19px;
-  height: 17px;
+  width: 16px;
+  height: 16px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.7;
@@ -164,7 +181,9 @@
 
 .summary_profile_card_guide {
   display: inline-flex;
-  width: fit-content;
+  width: max-content;
+  height: 20px;
+  align-self: flex-start;
   align-items: center;
   gap: 2px;
   margin-top: auto;
@@ -172,59 +191,65 @@
   border: 0;
   background: transparent;
   color: #A10803;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.45;
-  letter-spacing: -0.025em;
+  line-height: 1;
   cursor: pointer;
 }
 
 .summary_profile_card_guide .chevron_icon {
-  width: auto;
-  height: auto;
+  width: 20px;
+  height: 20px;
   color: #A10803;
 }
 
+.summary_profile_card_guide .chevron_icon_svg {
+  width: 20px;
+  height: 20px;
+}
+
 .summary_profile_card_stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  column-gap: 18px;
+  display: flex;
+  align-items: center;
   margin: 20px 0 0;
   padding: 20px 0 0;
   border-top: 1px solid #E5E5EC;
-  list-style: none;
 }
 
-.summary_profile_card_stats li {
-  position: relative;
+.summary_profile_card_stat_item {
   display: grid;
+  flex: 1 1 0;
   justify-items: center;
-  gap: 4px;
+  gap: 2px;
 }
 
-.summary_profile_card_stats li:not(:last-child)::after {
-  position: absolute;
-  right: -10px;
-  bottom: calc((18px * 1.4 - 4px) / 2);
+.summary_profile_card_stat_divider {
+  display: flex;
+  width: 24px;
+  flex: 0 0 24px;
+  align-items: center;
+  justify-content: center;
+}
+
+.summary_profile_card_stat_dot {
+  display: block;
   width: 4px;
   height: 4px;
   border-radius: 50%;
   background: #E5E5EC;
-  content: '';
+}
+
+.summary_profile_card_stat_label_group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #505050;
 }
 
 .summary_profile_card_stats span {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  color: #505050;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.45;
-  letter-spacing: -0.025em;
 }
 
-.summary_profile_card_stats span i {
+.summary_profile_card_stat_label_group i {
   display: inline-flex;
   width: 13.33px;
   height: 13.35px;
@@ -236,23 +261,29 @@
   transform: translateY(-1px);
 }
 
-.summary_profile_card_stats span i::before {
+.summary_profile_card_stat_edit {
+  appearance: none;
+  display: inline-flex;
+  width: 13.33px;
+  height: 13.35px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.summary_profile_card_stat_label_group i::before {
   display: block;
   width: 13.33px;
   height: 13.35px;
   font-size: 13.35px;
   line-height: 13.35px;
-}
-
-.summary_profile_card_stats span svg {
-  display: block;
-  width: 16px;
-  height: 16px;
-  fill: none;
-  stroke: #767676;
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }
 
 .summary_profile_card_stats strong {
@@ -261,6 +292,12 @@
   font-weight: 600;
   line-height: 1.4;
   letter-spacing: -0.025em;
+}
+
+.summary_profile_card_stat_value {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
 }
 
 .summary_profile_card_add {
@@ -323,11 +360,4 @@
     gap: 20px;
   }
 
-  .summary_profile_card_stats {
-    column-gap: 18px;
-  }
-
-  .summary_profile_card_stats span {
-    font-size: 16px;
-  }
 }

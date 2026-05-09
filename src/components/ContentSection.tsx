@@ -35,7 +35,7 @@ function ContentSection({
         <div className="content_section_copy">
           {beforeTitle}
           <Heading className="content_section_title">{title}</Heading>
-          {subtitle ? <p className="content_section_subtitle">{subtitle}</p> : null}
+          {subtitle ? <p className="content_section_subtitle caption_medium">{subtitle}</p> : null}
         </div>
         {action ? <div className="content_section_action">{action}</div> : null}
       </div>

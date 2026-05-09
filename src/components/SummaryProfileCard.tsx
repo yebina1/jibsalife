@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import ChevronIcon from './ChevronIcon'
 import ProfileImage from './ProfileImage'
 import './SummaryProfileCard.css'
@@ -17,6 +18,7 @@ type SummaryProfileCardProps = {
   imageAlt?: string
   className?: string
   onEdit?: () => void
+  onStatEdit?: (label: string) => void
   onCareGuideClick?: () => void
 }
 
@@ -40,6 +42,19 @@ function StatEditIcon() {
   return <i className="bx bx-edit" aria-hidden="true" />
 }
 
+function splitStatValue(value: string) {
+  const match = value.match(/^(\d+(?:\.\d+)?)(.*)$/)
+
+  if (!match) {
+    return { amount: value, unit: '' }
+  }
+
+  return {
+    amount: match[1],
+    unit: match[2].trim(),
+  }
+}
+
 function ProfileDetails({ details }: { details: string }) {
   const detailItems = details.split(' · ').map((item) => {
     const [label, ...valueParts] = item.split(':')
@@ -50,12 +65,12 @@ function ProfileDetails({ details }: { details: string }) {
   })
 
   return (
-    <p className="summary_profile_card_details">
+    <p className="summary_profile_card_details caption_medium">
       {detailItems.map((item, index) => (
-        <span key={item.label}>
+        <span key={item.label} className="summary_profile_card_detail_item">
           {index > 0 ? <em aria-hidden="true">·</em> : null}
           <span className="summary_profile_card_detail_label">{item.label}:</span>
-          <strong>{item.value}</strong>
+          <strong className="point_medium">{item.value}</strong>
         </span>
       ))}
     </p>
@@ -68,10 +83,11 @@ function SummaryProfileCard({
   breed,
   details,
   stats,
-  careGuideLabel = '케어 가이드',
+  careGuideLabel = '건강 리포트',
   imageAlt,
   className,
   onEdit,
+  onStatEdit,
   onCareGuideClick,
 }: SummaryProfileCardProps) {
   const classNames = className
@@ -86,45 +102,66 @@ function SummaryProfileCard({
         <div className="summary_profile_card_body summary_profile_card_text_frame">
           <div className="summary_profile_card_header">
             <div className="summary_profile_card_copy">
-              <div className="summary_profile_card_name_row">
-                <strong>{name}</strong>
-                <span>{breed}</span>
+              <div className="summary_profile_card_heading">
+                <div className="summary_profile_card_name_row">
+                  <strong>{name}</strong>
+                  <span>{breed}</span>
+                </div>
+                <button
+                  type="button"
+                  className="summary_profile_card_edit"
+                  aria-label="프로필 수정"
+                  onClick={onEdit}
+                >
+                  <ProfileEditIcon />
+                </button>
               </div>
               <ProfileDetails details={details} />
+              <button
+                type="button"
+                className="summary_profile_card_guide point_medium"
+                onClick={onCareGuideClick}
+              >
+                {careGuideLabel}
+                <ChevronIcon direction="right" size="md" />
+              </button>
             </div>
-
-            <button
-              type="button"
-              className="summary_profile_card_edit"
-              aria-label="프로필 수정"
-              onClick={onEdit}
-            >
-              <ProfileEditIcon />
-            </button>
           </div>
-
-          <button
-            type="button"
-            className="summary_profile_card_guide"
-            onClick={onCareGuideClick}
-          >
-            {careGuideLabel}
-            <ChevronIcon direction="right" size="md" />
-          </button>
         </div>
       </div>
 
-      <ul className="summary_profile_card_stats" aria-label={`${name} 활동 요약`}>
-        {stats.map((stat) => (
-          <li key={stat.label}>
-            <span>
-              {stat.label}
-              <StatEditIcon />
-            </span>
-            <strong>{stat.value}</strong>
-          </li>
-        ))}
-      </ul>
+      <div className="summary_profile_card_stats" aria-label={`${name} 활동 요약`} role="list">
+        {stats.map((stat, index) => {
+          const { amount, unit } = splitStatValue(stat.value)
+
+          return (
+            <Fragment key={stat.label}>
+              <div className="summary_profile_card_stat_item" role="listitem">
+                <div className="summary_profile_card_stat_label_group">
+                  <span className="p_medium">{stat.label}</span>
+                  <button
+                    type="button"
+                    className="summary_profile_card_stat_edit"
+                    aria-label={`${stat.label} 기록 수정`}
+                    onClick={() => onStatEdit?.(stat.label)}
+                  >
+                    <StatEditIcon />
+                  </button>
+                </div>
+                <strong className="summary_profile_card_stat_value">
+                  <span>{amount}</span>
+                  {unit ? <span>{unit}</span> : null}
+                </strong>
+              </div>
+              {index < stats.length - 1 ? (
+                <div className="summary_profile_card_stat_divider" aria-hidden="true">
+                  <span className="summary_profile_card_stat_dot" />
+                </div>
+              ) : null}
+            </Fragment>
+          )
+        })}
+      </div>
     </article>
   )
 }
@@ -142,7 +179,12 @@ export function SummaryProfileAddCard({
 
   return (
     <article className={classNames} aria-label={label}>
-      <button type="button" className="summary_profile_card_add_button" aria-label={label} onClick={onClick}>
+      <button
+        type="button"
+        className="summary_profile_card_add_button"
+        aria-label={label}
+        onClick={onClick}
+      >
         <i />
       </button>
     </article>

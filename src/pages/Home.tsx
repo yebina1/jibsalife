@@ -5,6 +5,7 @@ import ChevronIcon from '../components/ChevronIcon'
 import PageHeader from '../components/PageHeader'
 import HeaderIcon from '../components/HeaderIcon'
 import ContentSection from '../components/ContentSection'
+import HomeSummaryBanner from '../components/HomeSummaryBanner'
 import SummaryProfileCard, { SummaryProfileAddCard } from '../components/SummaryProfileCard'
 import Button from '../components/html/Button'
 import {
@@ -23,16 +24,19 @@ import contents1 from '../img/contents1.png'
 import contents2 from '../img/contents2.png'
 import contents3 from '../img/contents3.png'
 import contents4 from '../img/contents4.png'
-import kongyiImage from '../img/kongyi.png'
-import gongnangyiImage from '../img/gongnangyi.png'
-import mocaImage from '../img/moca.png'
-import pointLank1Image from '../img/point_lank1.jpg'
-import pointLank2Image from '../img/point_lank2.jpg'
-import pointLank3Image from '../img/point_lank3.jpg'
-import goldIcon from '../img/gold.png'
-import silverIcon from '../img/silver.png'
-import bronzeIcon from '../img/bronze.png'
 import animalCardImage from '../img/animal_card.png'
+import bannerIconImage from '../img/banner_icon.png'
+import bannerIcon2Image from '../img/banner_icon2.png'
+import voteBbungImage from '../img/vote/vote_bbung.jpg'
+import voteBongImage from '../img/vote/vote_bong.jpg'
+import voteDoraImage from '../img/vote/vote_dora.jpg'
+import voteGongsimImage from '../img/vote/vote_gongsim.jpg'
+import voteHumninImage from '../img/vote/vote_humnin.jpg'
+import voteKongyiImage from '../img/vote/vote_kongyi.png'
+import voteLoyiImage from '../img/vote/vote_loyi.jpg'
+import voteMongImage from '../img/vote/vote_mong.jpg'
+import voteSeoljiImage from '../img/vote/vote_seolji.jpg'
+import voteSyusyuImage from '../img/vote/vote_syusyu.jpg'
 
 type PetIdCardForm = {
   name: string
@@ -52,24 +56,24 @@ const emptyPetIdForm: PetIdCardForm = {
   neutered: '',
 }
 
-const rankingData = {
-  subscribers: [
-    { id: 1, name: '콩이', image: kongyiImage, icon: goldIcon, rank: '1위' },
-    { id: 2, name: '공냥이', image: gongnangyiImage, icon: silverIcon, rank: '2위' },
-    { id: 3, name: '모카', image: mocaImage, icon: bronzeIcon, rank: '3위' },
-  ],
-  points: [
-    { id: 1, name: '밤이', image: pointLank1Image, icon: goldIcon, rank: '1위' },
-    { id: 2, name: '토리', image: pointLank2Image, icon: silverIcon, rank: '2위' },
-    { id: 3, name: '포포', image: pointLank3Image, icon: bronzeIcon, rank: '3위' },
-  ],
-} as const
+const bestPoseVoteItems = [
+  { id: 1, name: '콩이', image: voteKongyiImage },
+  { id: 2, name: '공심이', image: voteGongsimImage },
+  { id: 3, name: '뿡뿡이', image: voteBbungImage },
+  { id: 4, name: '도라', image: voteDoraImage },
+  { id: 5, name: '준하', image: voteHumninImage },
+  { id: 6, name: '재석', image: voteLoyiImage },
+  { id: 7, name: '망수', image: voteBongImage },
+  { id: 8, name: '하하', image: voteSyusyuImage },
+  { id: 9, name: '형돈', image: voteMongImage },
+  { id: 10, name: '공냥이', image: voteSeoljiImage },
+] as const
 
 const contentItems = [
-  { id: 1, title: '활동량이 줄어든 아이를 위한 추천 장난감', image: contents1 },
+  { id: 1, title: '활동량이 줄어든\n아이를 위한 추천 장난감', image: contents1 },
   { id: 2, title: '우리 아이 상태별 추천 혜택', image: contents2 },
   { id: 3, title: '우리 아이 상태별 추천 혜택', image: contents3 },
-  { id: 4, title: '반려견을 위한 케어 아이템 3종', image: contents4 },
+  { id: 4, title: '반려견을 위한\n케어 아이템 3종', image: contents4 },
 ]
 
 type SummaryStat = {
@@ -169,6 +173,12 @@ function createSummaryStats(records: MissionHistoryRecord[]): SummaryStat[] {
   ]
 }
 
+function countTodayCalendarRecords(records: MissionHistoryRecord[]) {
+  const todayDateKey = getTodayDateKey()
+
+  return records.filter((record) => record.date === todayDateKey).length
+}
+
 function formatTodaySummaryDate() {
   const today = new Date()
   const year = today.getFullYear()
@@ -178,22 +188,33 @@ function formatTodaySummaryDate() {
   return `${year}년 ${month}월 ${day}일`
 }
 
+function VoteHeartIcon({ active }: { active: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className={active ? 'best_pose_vote_card_heart is_active' : 'best_pose_vote_card_heart'}
+    >
+      <path d="M12 20.25 4.875 13.125A4.545 4.545 0 0 1 11.303 6.7L12 7.398l.697-.697a4.545 4.545 0 1 1 6.428 6.428Z" />
+    </svg>
+  )
+}
+
 function Home() {
   const navigate = useNavigate()
-  const [rankingType, setRankingType] = useState<'subscribers' | 'points'>('subscribers')
-  const [rankingSlideDirection, setRankingSlideDirection] = useState<'left' | 'right' | null>(null)
   const [summarySlideIndex, setSummarySlideIndex] = useState(1)
   const [dragOffset, setDragOffset] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
+  const [likedBestPoseIds, setLikedBestPoseIds] = useState<number[]>([1])
   const [isPetIdModalOpen, setIsPetIdModalOpen] = useState(false)
   const [petIdPhoto, setPetIdPhoto] = useState<string | null>(null)
   const [petIdForm, setPetIdForm] = useState<PetIdCardForm>(emptyPetIdForm)
   const [calendarRecords, setCalendarRecords] = useState<MissionHistoryRecord[]>(readCalendarRecords)
   const dragStateRef = useRef({ startX: 0 })
 
-  const rankingItems = rankingData[rankingType]
   const todaySummaryDate = formatTodaySummaryDate()
   const todaySummaryStats = createSummaryStats(calendarRecords)
+  const shouldShowNotification = countTodayCalendarRecords(calendarRecords) === 0
 
   useEffect(() => {
     return () => {
@@ -218,14 +239,6 @@ function Home() {
       window.removeEventListener('storage', syncCalendarRecords)
     }
   }, [])
-
-  const toggleRankingType = () => {
-    setRankingType((current) => {
-      const next = current === 'subscribers' ? 'points' : 'subscribers'
-      setRankingSlideDirection(next === 'points' ? 'left' : 'right')
-      return next
-    })
-  }
 
   const handleDragStart = (clientX: number) => {
     dragStateRef.current.startX = clientX
@@ -287,6 +300,12 @@ function Home() {
     setIsPetIdModalOpen(false)
   }
 
+  const toggleBestPoseLike = (id: number) => {
+    setLikedBestPoseIds((current) =>
+      current.includes(id) ? current.filter((itemId) => itemId !== id) : [...current, id],
+    )
+  }
+
   return (
     <>
       <PageHeader
@@ -296,7 +315,12 @@ function Home() {
             <Button type="button" aria-label="캘린더" onClick={() => navigate('/mission')}>
               <HeaderIcon type="calendar" />
             </Button>
-            <Button type="button" aria-label="알림" className="home_header_notification">
+            <Button
+              type="button"
+              aria-label="알림"
+              className={`home_header_notification${shouldShowNotification ? ' is_active' : ''}`}
+              onClick={() => navigate('/mission')}
+            >
               <HeaderIcon type="notification" />
             </Button>
           </>
@@ -348,6 +372,7 @@ function Home() {
                     breed={slide.breed}
                     details={slide.details}
                     stats={todaySummaryStats}
+                    onStatEdit={() => navigate('/mission')}
                   />
                 ),
               )}
@@ -366,62 +391,64 @@ function Home() {
               ))}
             </div>
           </div>
+
         </ContentSection>
+
+        <HomeSummaryBanner
+          text={`AI로 우리 아이\n건강 상태를 확인해 보세요.`}
+          imageSrc={bannerIconImage}
+          backgroundColor="#43779E"
+          ariaLabel="AI 건강 배너"
+        />
 
         <ContentSection
           className="home_section"
-          title="이달의 랭킹"
-          subtitle="참여할수록 순위가 올라가요"
-          action={
-            <button
-              type="button"
-              className={`ranking_switch ${rankingType === 'points' ? 'points' : ''}`}
-              aria-label="랭킹 기준 전환"
-              onClick={toggleRankingType}
-            >
-              <span className="ranking_switch_track" aria-hidden="true">
-                <span className="ranking_switch_thumb" />
-              </span>
-              <span
-                className={`ranking_switch_label ${rankingType === 'subscribers' ? 'active' : ''}`}
-              >
-                구독자
-              </span>
-              <span className={`ranking_switch_label ${rankingType === 'points' ? 'active' : ''}`}>
-                포인트
-              </span>
-            </button>
-          }
+          title="오늘의 BEST 포즈는?!"
+          subtitle="투표 기간에는 결과는 비공개 처리돼요. "
         >
-          <div
-            className={`ranking_grid ${
-              rankingSlideDirection ? `slide_${rankingSlideDirection}` : ''
-            }`}
-            key={rankingType}
-            onAnimationEnd={() => setRankingSlideDirection(null)}
-          >
-            {rankingItems.map((item) => (
-              <article key={item.id} className="ranking_card">
-                <img className="ranking_card_image" src={item.image} alt={`${item.name} 프로필`} />
-                <p>
-                  <span className="ranking_card_icon" aria-hidden="true">
-                    <img src={item.icon} alt="" />
-                  </span>
-                  {item.rank}: {item.name}
-                </p>
-              </article>
-            ))}
+          <div className="best_pose_vote_strip" aria-label="오늘의 베스트 포즈 투표 목록">
+            {bestPoseVoteItems.map((item) => {
+              const isLiked = likedBestPoseIds.includes(item.id)
+
+              return (
+                <article key={item.id} className="best_pose_vote_card">
+                  <div className="best_pose_vote_card_media">
+                    <img src={item.image} alt={`${item.name} 포즈 사진`} />
+                    <button
+                      type="button"
+                      className={`best_pose_vote_card_like${isLiked ? ' is_active' : ''}`}
+                      aria-label={isLiked ? `${item.name} 좋아요 취소` : `${item.name} 좋아요`}
+                      aria-pressed={isLiked}
+                      onClick={() => toggleBestPoseLike(item.id)}
+                    >
+                      <VoteHeartIcon active={isLiked} />
+                    </button>
+                  </div>
+                  <p className="p_semibold">{item.name}</p>
+                </article>
+              )
+            })}
           </div>
 
           <Button
             type="button"
-            className="more_button"
-            onClick={() => navigate('/community/vote?sub=result')}
+            className="white_radius_btn more_button"
+            onClick={() => navigate('/community/vote')}
           >
-            더보기
-            <ChevronIcon direction="right" size="md" />
+           투표하기
           </Button>
         </ContentSection>
+
+        <HomeSummaryBanner
+          text={`궁금한 점이 있다면\n수의사와 상담해 보세요.`}
+          imageSrc={bannerIcon2Image}
+          backgroundColor="#599C64"
+          ariaLabel="수의사 상담 배너"
+          rotateImage={false}
+          imageWidth={95.49}
+          imageHeight={89.5}
+          imageTop={-16}
+        />
 
         <ContentSection className="home_section home_content_section" title="추천 콘텐츠">
           <div className="content_grid">
@@ -429,7 +456,7 @@ function Home() {
               <article key={item.id} className="content_card">
                 <img src={item.image} alt={item.title} />
                 <div className="content_overlay">
-                  <p>{item.title}</p>
+                  <p className="p_semibold">{item.title}</p>
                 </div>
               </article>
             ))}
@@ -437,7 +464,7 @@ function Home() {
 
           <Button
             type="button"
-            className="more_button"
+            className="white_radius_btn more_button"
             onClick={() => navigate('/community/petstory?tab=knowledge')}
           >
             더보기

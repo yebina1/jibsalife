@@ -50,7 +50,8 @@ function isMissionHistoryRecord(record: unknown): record is MissionHistoryRecord
 
 function normalizeMissionHistoryRecord(record: MissionHistoryRecord): MissionHistoryRecord {
   if (record.source === 'health' || record.title === HEALTH_CHECK_TITLE) {
-    const { media: _media, ...recordWithoutMedia } = record
+    const recordWithoutMedia = { ...record }
+    delete recordWithoutMedia.media
 
     return {
       ...recordWithoutMedia,

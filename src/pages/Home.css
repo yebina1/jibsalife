@@ -8,9 +8,17 @@
 
 .home_header_notification {
   position: relative;
+  color: #111111;
+  cursor: pointer !important;
+  pointer-events: auto !important;
 }
 
-.home_header_notification::after {
+.home_header_notification .header_icon {
+  color: #111111 !important;
+  stroke: #111111 !important;
+}
+
+.header_right .home_header_notification::after {
   position: absolute;
   top: 3px;
   right: 2px;
@@ -18,8 +26,12 @@
   height: 7px;
   border: 2px solid #ffffff;
   border-radius: 50%;
-  background: #ff6d4d;
+  background: #111111 !important;
   content: '';
+}
+
+.header_right .home_header_notification.is_active::after {
+  background: #E81B1B !important;
 }
 
 .home_summary_header .content_section_copy {
@@ -342,74 +354,90 @@
   color: #111111;
 }
 
-.ranking_grid {
+.best_pose_vote_strip {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  grid-auto-flow: column;
+  grid-auto-columns: 108px;
+  grid-template-rows: repeat(2, minmax(0, auto));
+  gap: 16px 8px;
+  margin-inline: -16px;
+  padding-inline: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
 }
 
-.ranking_grid.slide_left {
-  animation: ranking-slide-left 220ms ease;
+.best_pose_vote_strip::-webkit-scrollbar {
+  display: none;
 }
 
-.ranking_grid.slide_right {
-  animation: ranking-slide-right 220ms ease;
+.best_pose_vote_card {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
 }
 
-.ranking_card_image {
+.best_pose_vote_card_media {
+  position: relative;
+  width: 108px;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #f3f1ec;
+}
+
+.best_pose_vote_card_media img {
   display: block;
   width: 100%;
-  aspect-ratio: 1 / 1;
-  border-radius: 8px;
+  height: 100%;
   object-fit: cover;
 }
 
-.ranking_card p {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  margin: 10px 0 0;
-  text-align: center;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: normal;
-  letter-spacing: normal;
-}
-
-.ranking_card_icon {
+.best_pose_vote_card_like {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
   display: inline-flex;
-  width: 20px;
-  height: 20px;
-  flex: 0 0 20px;
+  width: 28px;
+  height: 28px;
   align-items: center;
   justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(17 17 17 / 50%);
+  color: #ffffff;
+  cursor: pointer;
 }
 
-.ranking_card_icon img {
+.best_pose_vote_card_heart {
   display: block;
   width: 20px;
   height: 20px;
-  object-fit: contain;
+  filter: drop-shadow(0 1px 4px rgb(17 17 17 / 28%));
+}
+
+.best_pose_vote_card_heart path {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.best_pose_vote_card_heart.is_active path {
+  fill: #A10803;
+}
+
+.best_pose_vote_card p {
+  margin: 0;
+  color: #111111;
+  text-align: center;
+  line-height: 1.2;
 }
 
 .more_button {
-  display: inline-flex;
-  width: 130px;
-  height: 46px;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
   margin: 32px auto 0;
-  padding: 0 12px;
-  box-sizing: border-box;
-  border: 1px solid #E5E5EC;
-  border-radius: 999px;
-  background: #ffffff;
-  color: #111111;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
 }
 
 .more_button .button_label {
@@ -861,7 +889,7 @@
 .content_card {
   position: relative;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 12px;
   background: #f2f3f7;
 }
 
@@ -893,36 +921,9 @@
 .content_overlay p {
   margin: 0;
   color: #ffffff;
-  font-family: Pretendard, sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: -0.025em;
   word-break: keep-all;
-}
-
-@keyframes ranking-slide-left {
-  from {
-    opacity: 0;
-    transform: translateX(16px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes ranking-slide-right {
-  from {
-    opacity: 0;
-    transform: translateX(-16px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  text-align: center;
+  white-space: pre-line;
 }
 
 @media (min-width: 768px) {
@@ -941,10 +942,6 @@
   .summary_stats {
     margin-top: 20px;
     padding-top: 20px;
-  }
-
-  .ranking_grid {
-    gap: 18px;
   }
 
   .content_overlay {
@@ -1004,18 +1001,8 @@
     font-size: 16px;
   }
 
-  .ranking_grid {
-    gap: 10px;
-  }
-
-  .ranking_card p {
-    margin-top: 8px;
-  }
-
   .more_button {
     min-width: 126px;
-    height: 44px;
-    font-size: 16px;
   }
 
   .content_overlay {
@@ -1088,10 +1075,6 @@
 
   .ranking_switch_label {
     font-size: 13px;
-  }
-
-  .ranking_grid {
-    gap: 8px;
   }
 
 }
