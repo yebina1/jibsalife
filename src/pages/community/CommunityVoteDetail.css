@@ -1,3 +1,7 @@
+.layout_content:has(.cvd_page) {
+  padding: 0;
+}
+
 .cvd_page {
   display: flex;
   flex-direction: column;
@@ -6,85 +10,7 @@
 
 .cvd_page .community_tab_bar,
 .cvd_page .community_subtab_bar {
-  display: none !important;
-}
-
-/* 배너 */
-.cvd_banner {
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 0;
-  padding: 20px 20px 20px 20px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #7B5CF5 0%, #5B4FE8 100%);
-  overflow: hidden;
-  min-height: 130px;
-}
-
-.cvd_banner_text {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  z-index: 1;
-}
-
-.cvd_banner_timer {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 13px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.cvd_banner_timer i {
-  font-size: 14px;
-}
-
-.cvd_banner_title {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
-  line-height: 1.4;
-}
-
-.cvd_banner_desc {
-  margin: 0;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.cvd_banner_img {
-  position: absolute;
-  right: -10px;
-  bottom: -10px;
-  width: 130px;
-  height: 130px;
-  object-fit: cover;
-  border-radius: 50%;
-  opacity: 0.35;
-}
-
-/* 투표 섹션 */
-.cvd_vote_section {
-  padding: 24px 0 0;
-}
-
-.cvd_vote_title {
-  margin: 0 0 4px;
-  font-size: 18px;
-  font-weight: 700;
-  color: #111;
-}
-
-.cvd_vote_desc {
-  margin: 0 0 16px;
-  font-size: 14px;
-  color: #6B7280;
+  display: none;
 }
 
 /* 2열 그리드 */
@@ -92,6 +18,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
+  padding: 20px 16px;
 }
 
 /* 후보 카드 */
@@ -158,9 +85,9 @@
   height: 22px;
 }
 
-/* 하단 버튼 */
-.cvd_btn_wrap {
-  padding-top: 24px;
+.cvd_vote_submit {
+  width: calc(100% - 32px);
+  margin: 12px 16px;
 }
 
 .cvd_complete_alert {

@@ -1,12 +1,14 @@
 ﻿import './Community.css'
 import './CommunityVoteDetail.css'
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
 import Alert from '../../components/Alert'
+import VoteMissionBanner from '../../components/VoteMissionBanner'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
+import { writeVotedMissionId } from '../../utils/communityVoteStatus'
 import voting1 from '../../img/voting/voting1.jpg'
 import voting2 from '../../img/voting/voting2.jpg'
 import voting3 from '../../img/voting/voting3.jpg'
@@ -29,17 +31,26 @@ const candidates = [
 
 function CommunityVoteDetail() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const searchParams = new URLSearchParams(location.search)
+  const voteId = searchParams.get('voteId') ?? (location.state as { voteId?: string } | null)?.voteId ?? 'mission'
   const [selectedId, setSelectedId] = useState<number | null>(null)
   const [isVoteCompleteOpen, setIsVoteCompleteOpen] = useState(false)
 
+  const selectCandidate = (candidateId: number) => {
+    setSelectedId(candidateId)
+    writeVotedMissionId(voteId)
+  }
+
   const handleVote = () => {
     if (selectedId === null) return
-    setIsVoteCompleteOpen(true)
+    writeVotedMissionId(voteId)
+    navigate(`/community/vote?sub=all&voted=${voteId}`, { replace: true })
   }
 
   const goToResult = () => {
     setIsVoteCompleteOpen(false)
-    navigate('/community/vote/result')
+    navigate(`/community/vote?sub=all&voted=${voteId}`, { replace: true })
   }
 
   return (
@@ -82,26 +93,10 @@ function CommunityVoteDetail() {
           ))}
         </section>
 
-        {/* 미션 헤더 배너 */}
-        <div className="cvd_banner">
-          <div className="cvd_banner_text">
-            <span className="cvd_banner_timer">
-              <i className="bx bx-time-five" aria-hidden="true" />
-              7시간 남음
-            </span>
-            <h2 className="cvd_banner_title">
-              5월 3주차 멍스타<br />미션 투표
-            </h2>
-            <p className="cvd_banner_desc">밥 먹는 사진 중 BEST를 골라주세요!</p>
-          </div>
-          <img src={voting1} alt="" className="cvd_banner_img" aria-hidden="true" />
-        </div>
+        <VoteMissionBanner backgroundColor="#FFE9BB" />
 
         {/* 투표 후보 목록 */}
         <section className="cvd_vote_section">
-          <h2 className="cvd_vote_title">오늘의 Best 포즈는?</h2>
-          <p className="cvd_vote_desc">가장 포즈가 돋보이는 것을 골라주세요.</p>
-
           <div className="cvd_grid">
             {candidates.map((item) => {
               const isSelected = selectedId === item.id
@@ -110,7 +105,7 @@ function CommunityVoteDetail() {
                   key={item.id}
                   type="button"
                   className={`cvd_candidate${isSelected ? ' selected' : ''}`}
-                  onClick={() => setSelectedId(item.id)}
+                  onClick={() => selectCandidate(item.id)}
                 >
                   <div className="cvd_candidate_img_wrap">
                     <img src={item.image} alt={item.name} className="cvd_candidate_img" />
@@ -130,17 +125,17 @@ function CommunityVoteDetail() {
           </div>
         </section>
 
-        {/* 투표하기 버튼 */}
-        <div className="cvd_btn_wrap">
-          <Button
-            type="button"
-            className="purple_btn"
-            disabled={selectedId === null}
-            onClick={handleVote}
-          >
-            투표하기
-          </Button>
-        </div>
+        <Button
+          type="button"
+          className="purple_btn cvd_vote_submit"
+          disabled={selectedId === null}
+          onPointerDown={() => {
+            if (selectedId !== null) writeVotedMissionId(voteId)
+          }}
+          onClick={handleVote}
+        >
+          투표하기
+        </Button>
       </main>
 
       {isVoteCompleteOpen ? (
