@@ -236,7 +236,9 @@ function CommunityPetStory() {
         const parsed = JSON.parse(saved)
         if (Array.isArray(parsed)) return parsed.length
       }
-    } catch {}
+    } catch {
+      // Ignore malformed localStorage data and fall back to the default count.
+    }
     if (isCreatedPost(post.id)) return 0
     return post.image ? petStoryDetailCommentCount : 0
   }

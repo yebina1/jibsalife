@@ -115,7 +115,9 @@ function CommunityWrite() {
       const existing = saved ? JSON.parse(saved) : []
       const updated = Array.isArray(existing) ? [newPost, ...existing] : [newPost]
       window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(updated))
-    } catch {}
+    } catch {
+      // Ignore localStorage write failures; navigation still returns to the list.
+    }
 
     navigate('/community/petstory')
   }

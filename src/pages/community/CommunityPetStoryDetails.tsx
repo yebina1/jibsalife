@@ -354,7 +354,9 @@ function CommunityPetStoryDetails() {
             window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(updated))
           }
         }
-      } catch {}
+      } catch {
+        // Ignore localStorage write failures and keep the in-memory edit.
+      }
       setPostOverride({ title: editDraftTitle, content: editDraftContent, tag: editDraftTag, image: editDraftImage })
       setIsPostEditOpen(false)
     } else if (editCommentId !== null) {
@@ -378,7 +380,9 @@ function CommunityPetStoryDetails() {
             window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(updated))
           }
         }
-      } catch {}
+      } catch {
+        // Ignore localStorage write failures and continue navigation.
+      }
       navigate('/community/petstory')
     } else if (moreTarget && typeof moreTarget === 'object') {
       setVisibleComments((current) => current.filter((c) => c.id !== moreTarget.commentId))

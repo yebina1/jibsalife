@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import './CommentInputForm.css'
 
 const textareaMaxHeight = 102
@@ -31,13 +31,22 @@ function CommentInputForm({
   const [value, setValue] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
+  const resizeTextarea = useCallback(() => {
+    const textarea = textareaRef.current
+    if (!textarea) return
+
+    textarea.style.height = 'auto'
+    textarea.style.height = `${Math.min(textarea.scrollHeight, textareaMaxHeight)}px`
+    textarea.style.overflowY = textarea.scrollHeight > textareaMaxHeight ? 'auto' : 'hidden'
+  }, [])
+
   useEffect(() => {
     if (replyTo) {
       setValue('')
       textareaRef.current?.focus()
       requestAnimationFrame(resizeTextarea)
     }
-  }, [replyTo])
+  }, [replyTo, resizeTextarea])
 
   useEffect(() => {
     if (prefilledText !== undefined) {
@@ -45,16 +54,7 @@ function CommentInputForm({
       requestAnimationFrame(resizeTextarea)
       if (prefilledText) textareaRef.current?.focus()
     }
-  }, [prefilledText])
-
-  const resizeTextarea = () => {
-    const textarea = textareaRef.current
-    if (!textarea) return
-
-    textarea.style.height = 'auto'
-    textarea.style.height = `${Math.min(textarea.scrollHeight, textareaMaxHeight)}px`
-    textarea.style.overflowY = textarea.scrollHeight > textareaMaxHeight ? 'auto' : 'hidden'
-  }
+  }, [prefilledText, resizeTextarea])
 
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setValue(event.target.value)
