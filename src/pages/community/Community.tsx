@@ -1,36 +1,36 @@
-﻿import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
-import PageHeader from './PageHeader'
-import HeaderIcon from './HeaderIcon'
-import ContentSection from './ContentSection'
-import FloatingWriteButton from './FloatingWriteButton'
-import Button from './html/Button'
-import contents1 from '../img/contents1.png'
-import contents2 from '../img/contents2.png'
-import contents3 from '../img/contents3.png'
-import contents4 from '../img/contents4.png'
-import knowledge1 from '../img/knowledge1.png'
-import knowledge2 from '../img/knowledge2.png'
-import knowledge3 from '../img/knowledge3.png'
-import knowledge4 from '../img/knowledge4.png'
-import life1Image from '../img/life1.jpg'
-import life2Image from '../img/life2.png'
-import life3Image from '../img/life3.png'
-import life4Image from '../img/life4.png'
-import life5Image from '../img/life5.jpg'
-import life6Image from '../img/life6.jpg'
-import challenge1Image from '../img/challenge1.jpg'
-import challenge2Image from '../img/challenge2.png'
-import challenge3Image from '../img/challenge3.png'
-import challenge4Image from '../img/challenge4.png'
-import challenge5Image from '../img/challenge5.png'
-import challenge6Image from '../img/challenge6.png'
-import challengeHeadingImage from '../img/illust_login_pet.jpg'
+import PageHeader from '../../components/PageHeader'
+import HeaderIcon from '../../components/HeaderIcon'
+import ContentSection from '../../components/ContentSection'
+import FloatingWriteButton from '../../components/FloatingWriteButton'
+import Button from '../../components/html/Button'
+import contents1 from '../../img/contents1.png'
+import contents2 from '../../img/contents2.png'
+import contents3 from '../../img/contents3.png'
+import contents4 from '../../img/contents4.png'
+import knowledge1 from '../../img/knowledge1.png'
+import knowledge2 from '../../img/knowledge2.png'
+import knowledge3 from '../../img/knowledge3.png'
+import knowledge4 from '../../img/knowledge4.png'
+import life1Image from '../../img/life1.jpg'
+import life2Image from '../../img/life2.png'
+import life3Image from '../../img/life3.png'
+import life4Image from '../../img/life4.png'
+import life5Image from '../../img/life5.jpg'
+import life6Image from '../../img/life6.jpg'
+import challenge1Image from '../../img/challenge1.jpg'
+import challenge2Image from '../../img/challenge2.png'
+import challenge3Image from '../../img/challenge3.png'
+import challenge4Image from '../../img/challenge4.png'
+import challenge5Image from '../../img/challenge5.png'
+import challenge6Image from '../../img/challenge6.png'
+import challengeHeadingImage from '../../img/illust_login_pet.jpg'
 import {
   CHALLENGE_REWARD_CLAIMED_STORAGE_KEY,
   getCompletedChallengeCardIds,
-} from '../constants/points'
-import { MY_PROFILE_NAME } from '../utils/myProfile'
+} from '../../constants/points'
+import { MY_PROFILE_NAME } from '../../utils/myProfile'
 
 const challengeItems = [
   {
@@ -422,14 +422,11 @@ function getTopTabFromSection(section?: CommunitySection): TopTab | null {
   return null
 }
 
-type CommunityPageProps = {
+type CommunityProps = {
   section?: CommunitySection
-  dependencies?: unknown
 }
 
-function CommunityPage({ section, dependencies }: CommunityPageProps) {
-  void dependencies
-
+function Community({ section }: CommunityProps) {
   const navigate = useNavigate()
   const location = useLocation()
   const currentSearchParams = new URLSearchParams(location.search)
@@ -438,10 +435,6 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
   const currentSortParam = currentSearchParams.get('sort')
   const routeTopTab = getTopTabFromSection(section) ?? getTopTabFromRoute(location.pathname, currentTabParam)
   const initialKnowledgeView = currentTabParam === 'knowledge'
-  const initialCommunitySubTab =
-    communitySubTabByParam[currentSubParam ?? ''] ??
-    (initialKnowledgeView ? communitySubTabs[3] : communitySubTabs[0])
-  void initialCommunitySubTab
 
   const [selectedTopTab, setSelectedTopTab] = useState<TopTab>(
     routeTopTab
@@ -453,7 +446,6 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
   const [selectedSort, setSelectedSort] = useState<(typeof sortOptions)[number]>('인기순')
   const [isSortOpen, setIsSortOpen] = useState(false)
   const [isCommunitySubTabOpen, setIsCommunitySubTabOpen] = useState(false)
-  const [searchTerm] = useState('')
   const [likedPostIds, setLikedPostIds] = useState<number[]>([])
   const [selectedChallengeId, setSelectedChallengeId] = useState<number | null>(null)
   const [isChallengeRewardClaimed, setIsChallengeRewardClaimed] = useState(false)
@@ -575,14 +567,7 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
   const isChallengeRewardAvailable = challengeProgressPercent === 100
   const isChallengeRewardButtonDisabled = isChallengeRewardClaimed || !isChallengeRewardAvailable
   const posts = useMemo(() => {
-    const keyword = searchTerm.trim().toLowerCase()
-    const filtered = activePostData.filter((post) =>
-      [post.title, post.author, post.tag].some((value) =>
-        !keyword || value.toLowerCase().includes(keyword)
-      )
-    )
-
-    return [...filtered].sort((a, b) => {
+    return [...activePostData].sort((a, b) => {
       const aLikes = a.likes + (likedPostIds.includes(a.id) ? 1 : 0)
       const bLikes = b.likes + (likedPostIds.includes(b.id) ? 1 : 0)
 
@@ -603,7 +588,7 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
 
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     })
-  }, [activePostData, likedPostIds, searchTerm, selectedSort])
+  }, [activePostData, likedPostIds, selectedSort])
 
   const toggleLike = (postId: number) => {
     setLikedPostIds((prev) =>
@@ -670,7 +655,6 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
           : '커뮤니티'
 
   const showCommunitySubTabs = isCommunityTab && !isVoteRoute
-  const showVoteSubTabs = false
   const showSort = !isOverviewTab && !isKnowledgeView && !isChallengeTab
   const pageSectionClassName = `community_page_${section ?? 'overview'}`
 
@@ -756,21 +740,6 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
                 </div>
               ) : null}
             </div>
-          </section>
-        ) : null}
-
-        {showVoteSubTabs && !isVoteTab && !isVoteRoute ? (
-          <section className="community_subtab_bar" aria-label="투표 하위 카테고리">
-            {voteSubTabs.map((tab) => (
-              <button
-                key={tab}
-                type="button"
-                className={selectedVoteSubTab === tab ? 'active' : ''}
-                onClick={() => setSelectedVoteSubTab(tab)}
-              >
-                {tab}
-              </button>
-            ))}
           </section>
         ) : null}
 
@@ -1588,4 +1557,4 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
   )
 }
 
-export default CommunityPage
+export default Community
