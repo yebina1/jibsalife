@@ -2,7 +2,8 @@
   height: calc(100dvh - var(--layout-status-bar-height));
   min-height: calc(100dvh - var(--layout-status-bar-height));
   background: #ffffff;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .onboarding_visual_image {

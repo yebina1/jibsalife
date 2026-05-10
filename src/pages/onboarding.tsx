@@ -151,7 +151,7 @@ function Onboarding() {
           reserveTopActionSpace
           title="우리 아이 이름이 뭐예요?"
           subtitle="이후 건강 리포트와 기록에 사용돼요."
-          bodyGap={32}
+          bodyGap={16}
           visual={(
             <img
               className="onboarding_visual_image onboarding_visual_image_pet"
