@@ -6,7 +6,9 @@ import './OnboardingLayout.css'
 type OnboardingLayoutProps = {
   step?: number
   totalSteps?: number
+  topCenterLabel?: ReactNode
   topActionLabel?: string
+  reserveTopActionSpace?: boolean
   onTopAction?: () => void
   title: ReactNode
   subtitle?: ReactNode
@@ -27,7 +29,9 @@ type OnboardingLayoutProps = {
 function OnboardingLayout({
   step,
   totalSteps,
+  topCenterLabel,
   topActionLabel,
+  reserveTopActionSpace = false,
   onTopAction,
   title,
   subtitle,
@@ -48,24 +52,16 @@ function OnboardingLayout({
     ? `onboarding_layout_action ${actionClassName}`
     : 'onboarding_layout_action'
 
-  const sectionClassName = tappable
-    ? 'onboarding_layout is_tappable'
-    : 'onboarding_layout'
+  const sectionClassName = [
+    'onboarding_layout',
+    tappable ? 'is_tappable' : '',
+    topActionLabel || reserveTopActionSpace ? 'has_top_action' : '',
+  ].filter(Boolean).join(' ')
 
   return (
     <section className={sectionClassName}>
-      <div className="onboarding_layout_topbar">
-        <div className="onboarding_layout_topbar_side" />
-        {typeof step === 'number' && typeof totalSteps === 'number' ? (
-          <p className="onboarding_layout_progress" aria-label={`온보딩 ${step} / ${totalSteps}`}>
-            <span className="onboarding_layout_progress_current title_h4_semibold">{step}</span>
-            <span className="onboarding_layout_progress_divider h4_regular">/</span>
-            <span className="onboarding_layout_progress_total h4_regular">{totalSteps}</span>
-          </p>
-        ) : (
-          <div />
-        )}
-        <div className="onboarding_layout_topbar_side onboarding_layout_topbar_side_right">
+      {topActionLabel || reserveTopActionSpace ? (
+        <div className="onboarding_layout_topbar">
           {topActionLabel ? (
             <button
               type="button"
@@ -74,9 +70,16 @@ function OnboardingLayout({
             >
               {topActionLabel}
             </button>
-          ) : null}
+          ) : (
+            <span
+              className="onboarding_layout_top_action onboarding_layout_top_action_placeholder caption_medium"
+              aria-hidden="true"
+            >
+              건너뛰기
+            </span>
+          )}
         </div>
-      </div>
+      ) : null}
 
       <div
         className="onboarding_layout_content"
@@ -92,6 +95,18 @@ function OnboardingLayout({
         } : undefined}
       >
         <div className="onboarding_layout_header">
+          {topCenterLabel ? (
+            <p className="onboarding_layout_progress onboarding_layout_progress_label">
+              <span className="title_h4_semibold">{topCenterLabel}</span>
+            </p>
+          ) : typeof step === 'number' && typeof totalSteps === 'number' ? (
+            <p className="onboarding_layout_progress" aria-label={`온보딩 진행도 ${step} / ${totalSteps}`}>
+              <span className="onboarding_layout_progress_current title_h4_semibold">{step}</span>
+              <span className="onboarding_layout_progress_divider h4_regular">/</span>
+              <span className="onboarding_layout_progress_total h4_regular">{totalSteps}</span>
+            </p>
+          ) : null}
+
           <Title
             as="h2"
             className="onboarding_layout_copy"

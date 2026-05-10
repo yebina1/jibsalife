@@ -1,68 +1,97 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router'
 import './Place.css'
 import PageHeader from '../components/PageHeader'
-import ContentSection from '../components/ContentSection'
-import HospitalList from '../components/HospitalList'
-import type { HospitalListItem } from '../components/HospitalList'
+import HeaderIcon from '../components/HeaderIcon'
+import BackButton from '../components/html/BackButton'
 import Button from '../components/html/Button'
+import { getOperatingState, hospitalSearchItems } from './health/HealthHospitalData'
 
-const nearbyPlaces: HospitalListItem[] = [
-  {
-    name: '24시 해맑은 동물병원',
-    rating: '4.8 (120)',
-    distance: '1.2KM',
-    status: '영업중',
-    hours: '24시간 진료',
-  },
-  {
-    name: '우리 동물병원',
-    rating: '4.6 (98)',
-    distance: '1.8KM',
-    status: '영업중',
-    hours: '09:00~21:00',
-  },
-  {
-    name: '사랑 동물병원',
-    rating: '4.6 (76)',
-    distance: '2.1KM',
-    status: '영업중',
-    hours: '10:00~20:00',
-  },
-]
-
-const quickFilters = ['24시', '응급', '미용', '호텔', '약국'] as const
+function HeartIcon({ filled }: { filled: boolean }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M12 20.2 4.9 13.6a4.8 4.8 0 0 1 6.8-6.8L12 7.1l.3-.3a4.8 4.8 0 0 1 6.8 6.8L12 20.2Z"
+        fill={filled ? 'currentColor' : 'none'}
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
 
 function Place() {
+  const navigate = useNavigate()
+  const [favoriteNames, setFavoriteNames] = useState<string[]>([])
+
+  const handleFavoriteToggle = (hospitalName: string) => {
+    setFavoriteNames((current) =>
+      current.includes(hospitalName)
+        ? current.filter((name) => name !== hospitalName)
+        : [...current, hospitalName],
+    )
+  }
+
   return (
     <>
-      <PageHeader title="장소" />
-      <main className="page place_page">
-        <ContentSection
-          className="place_hero"
-          title="가까운 반려생활 스팟을 한 번에 찾아보세요"
-          subtitle="병원, 응급 진료, 미용 관련 장소를 빠르게 확인할 수 있어요."
-          beforeTitle={<p className="place_eyebrow">내 주변 맞춤 장소</p>}
-        >
-          <div className="place_filters" aria-label="장소 빠른 필터">
-            {quickFilters.map((filter) => (
-              <button key={filter} type="button">
-                {filter}
-              </button>
-            ))}
-          </div>
-        </ContentSection>
-
-        <section className="place_section">
-          <div className="place_section_heading">
-            <div>
-              <strong>현재 위치 기준</strong>
-              <p>서울시 강남구</p>
-            </div>
-            <Button type="button" className="place_location_button">
-              위치 새로고침
+      <PageHeader
+        title="주변 병원 목록"
+        leftContent={<BackButton to="/home" />}
+        rightContent={(
+          <>
+            <Button type="button" aria-label="캘린더" onClick={() => navigate('/mission')}>
+              <HeaderIcon type="calendar" />
             </Button>
-          </div>
+            <Button type="button" aria-label="알림">
+              <HeaderIcon type="notification" />
+            </Button>
+          </>
+        )}
+      />
 
-          <HospitalList items={nearbyPlaces} />
+      <main className="page place_page">
+        <section className="place_section" aria-label="병원 목록">
+          <ul className="place_hospital_list">
+            {hospitalSearchItems.map((item) => {
+              const operatingState = getOperatingState(item.open, item.close)
+              const isFavorite = favoriteNames.includes(item.name)
+
+              return (
+                <li key={item.name}>
+                  <article className="place_hospital_item">
+                    <img src={item.image} alt="" aria-hidden="true" />
+
+                    <div className="place_hospital_body">
+                      <strong>{item.name}</strong>
+
+                      <p className="place_hospital_rating">
+                        {item.rating} ({item.reviewCount})
+                        <span>{item.distanceKm.toFixed(1)} KM</span>
+                      </p>
+
+                      <p className="place_hospital_tags">{item.tags.join(' · ')}</p>
+
+                      <span className={`place_hospital_hours ${operatingState.isOpen ? 'is_open' : ''}`}>
+                        진료 마감 {item.open} ~ {item.close}
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      className={`place_hospital_favorite ${isFavorite ? 'is_active' : ''}`}
+                      aria-label={isFavorite ? `${item.name} 찜 해제` : `${item.name} 찜`}
+                      aria-pressed={isFavorite}
+                      onClick={() => handleFavoriteToggle(item.name)}
+                    >
+                      <HeartIcon filled={isFavorite} />
+                    </button>
+                  </article>
+                </li>
+              )
+            })}
+          </ul>
         </section>
       </main>
     </>

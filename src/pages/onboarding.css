@@ -1,6 +1,8 @@
 .onboarding_page {
-  min-height: 100dvh;
+  height: calc(100dvh - var(--layout-status-bar-height));
+  min-height: calc(100dvh - var(--layout-status-bar-height));
   background: #ffffff;
+  overflow: hidden;
 }
 
 .onboarding_visual_image {

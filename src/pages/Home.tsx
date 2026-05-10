@@ -173,12 +173,6 @@ function createSummaryStats(records: MissionHistoryRecord[]): SummaryStat[] {
   ]
 }
 
-function countTodayCalendarRecords(records: MissionHistoryRecord[]) {
-  const todayDateKey = getTodayDateKey()
-
-  return records.filter((record) => record.date === todayDateKey).length
-}
-
 function formatTodaySummaryDate() {
   const today = new Date()
   const year = today.getFullYear()
@@ -205,7 +199,7 @@ function Home() {
   const [summarySlideIndex, setSummarySlideIndex] = useState(1)
   const [dragOffset, setDragOffset] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
-  const [likedBestPoseIds, setLikedBestPoseIds] = useState<number[]>([1])
+  const [likedBestPoseIds, setLikedBestPoseIds] = useState<number[]>([])
   const [isPetIdModalOpen, setIsPetIdModalOpen] = useState(false)
   const [petIdPhoto, setPetIdPhoto] = useState<string | null>(null)
   const [petIdForm, setPetIdForm] = useState<PetIdCardForm>(emptyPetIdForm)
@@ -214,7 +208,6 @@ function Home() {
 
   const todaySummaryDate = formatTodaySummaryDate()
   const todaySummaryStats = createSummaryStats(calendarRecords)
-  const shouldShowNotification = countTodayCalendarRecords(calendarRecords) === 0
 
   useEffect(() => {
     return () => {
@@ -318,7 +311,6 @@ function Home() {
             <Button
               type="button"
               aria-label="알림"
-              className={`home_header_notification${shouldShowNotification ? ' is_active' : ''}`}
               onClick={() => navigate('/mission')}
             >
               <HeaderIcon type="notification" />

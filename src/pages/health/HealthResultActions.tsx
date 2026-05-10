@@ -1,13 +1,13 @@
 ﻿import './Health.css'
 import './HealthResultActions.css'
 import PageHeader from '../../components/PageHeader'
+import HeaderIcon from '../../components/HeaderIcon'
 import ChevronIcon from '../../components/ChevronIcon'
 import ContentSection from '../../components/ContentSection'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
 import { Link } from 'react-router'
 import calendarIcon from '../../svg/calendar.svg'
-import notificationIcon from '../../svg/notification.svg'
 import petImage from '../../img/pungpungi.png'
 import aiChatImage from '../../img/aichat.svg'
 import consultImage from '../../img/clipboard_3d.png'
@@ -58,8 +58,8 @@ function HealthResultActions() {
             <Button type="button" aria-label="캘린더">
               <img src={calendarIcon} alt="" />
             </Button>
-            <Button type="button" aria-label="알림" className="health_result_actions_notification">
-              <img src={notificationIcon} alt="" />
+            <Button type="button" aria-label="알림">
+              <HeaderIcon type="notification" />
             </Button>
           </>
         }
