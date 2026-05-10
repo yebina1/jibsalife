@@ -11,7 +11,7 @@ const navItems = [
   { path: '/health', label: '건강', icon: 'health' },
   { path: '/community', label: '커뮤니티', icon: 'community' },
   { path: '/home', label: '홈', icon: 'home' },
-  { path: '/place', label: '장소', icon: 'place', disabled: true },
+  { path: '/place', label: '장소', icon: 'place' },
   { path: '/mypage', label: '마이페이지', icon: 'mypage' },
 ] as const
 
@@ -53,20 +53,8 @@ function NavIcon({ type, active }: { type: (typeof navItems)[number]['icon']; ac
   if (active && type === 'mypage') {
     return (
       <svg viewBox="0 0 28 28" className={`${className} layout_nav_icon_mypage_active`} aria-hidden="true">
-        <circle
-          className="layout_nav_icon_mypage_active_bg"
-          cx="14"
-          cy="14"
-          r="11"
-          strokeWidth="1.5"
-        />
-        <circle
-          className="layout_nav_icon_mypage_active_face"
-          cx="14"
-          cy="11.5"
-          r="3.5"
-          strokeWidth="1.5"
-        />
+        <circle className="layout_nav_icon_mypage_active_bg" cx="14" cy="14" r="11" strokeWidth="1.5" />
+        <circle className="layout_nav_icon_mypage_active_face" cx="14" cy="11.5" r="3.5" strokeWidth="1.5" />
         <path
           className="layout_nav_icon_mypage_active_body"
           d="M23.0283 21.4718C21.8427 20.2862 20.4352 19.3457 18.8861 18.7041C17.3371 18.0625 15.6768 17.7322 14.0001 17.7322C12.3234 17.7322 10.6631 18.0625 9.11409 18.7041C7.56503 19.3457 6.15752 20.2862 4.97192 21.4718"
@@ -130,55 +118,38 @@ function Nav() {
   return (
     <nav className="layout_nav" aria-label="주요 메뉴">
       <div className="layout_nav_inner">
-        {navItems.map((item) => {
-          if ('disabled' in item && item.disabled) {
-            return (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                className="layout_nav_link disabled"
-                aria-disabled="true"
-                onClick={(e) => e.preventDefault()}
-              >
-                <NavIcon type={item.icon} active={false} />
+        {navItems.map((item) => (
+          <NavLink
+            key={item.path}
+            to={item.icon === 'community' ? '/community/overview' : item.path}
+            onClick={(event) => {
+              if (item.icon !== 'community') return
+
+              event.preventDefault()
+              navigate('/community/overview', {
+                replace: true,
+                state: {
+                  resetCommunityTabAt: Date.now(),
+                },
+              })
+            }}
+            className={({ isActive }) =>
+              isActive || (item.icon === 'community' && pathname.startsWith('/community'))
+                ? 'layout_nav_link active'
+                : 'layout_nav_link'
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <NavIcon
+                  type={item.icon}
+                  active={isActive || (item.icon === 'community' && pathname.startsWith('/community'))}
+                />
                 <span className="layout_nav_label">{item.label}</span>
-              </NavLink>
-            )
-          }
-
-          return (
-            <NavLink
-              key={item.path}
-              to={item.icon === 'community' ? '/community/overview' : item.path}
-              onClick={(event) => {
-                if (item.icon !== 'community') return
-
-                event.preventDefault()
-                navigate('/community/overview', {
-                  replace: true,
-                  state: {
-                    resetCommunityTabAt: Date.now(),
-                  },
-                })
-              }}
-              className={({ isActive }) =>
-                isActive || (item.icon === 'community' && pathname.startsWith('/community'))
-                  ? 'layout_nav_link active'
-                  : 'layout_nav_link'
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <NavIcon
-                    type={item.icon}
-                    active={isActive || (item.icon === 'community' && pathname.startsWith('/community'))}
-                  />
-                  <span className="layout_nav_label">{item.label}</span>
-                </>
-              )}
-            </NavLink>
-          )
-        })}
+              </>
+            )}
+          </NavLink>
+        ))}
       </div>
     </nav>
   )

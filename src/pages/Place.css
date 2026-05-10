@@ -2,116 +2,156 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding: 0 16px 32px;
-  background:
-    radial-gradient(circle at top left, rgba(255, 210, 176, 0.55), transparent 42%),
-    linear-gradient(180deg, #fffaf5 0%, #ffffff 46%);
-}
-
-.place_hero {
-  padding: 12px 0 4px;
-}
-
-.place_eyebrow {
-  margin: 0 0 8px;
-  color: #c16b32;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-}
-
-.place_hero h2 {
-  margin: 0;
-  color: #1b1b1f;
-  font-size: 28px;
-  font-weight: 800;
-  line-height: 1.3;
-}
-
-.place_description {
-  margin: 10px 0 0;
-  color: #5f6472;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.place_filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 18px;
-}
-
-.place_filters button {
-  padding: 10px 14px;
-  border: 1px solid #f0d6c2;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.92);
-  color: #6e4428;
-  font-size: 13px;
-  font-weight: 700;
+  background: #ffffff;
 }
 
 .place_section {
-  padding: 18px 16px;
-  border: 1px solid #f2e6dd;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 18px 38px rgba(120, 83, 43, 0.08);
+  display: grid;
+  gap: 18px;
 }
 
-.place_section .hospital_list {
-  width: 100%;
+.place_section_header {
+  display: grid;
+  gap: 6px;
 }
 
-.place_section_heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 18px;
-}
-
-.place_section_heading strong {
-  display: block;
-  color: #1f1f23;
-  font-size: 16px;
-  font-weight: 800;
-}
-
-.place_section_heading p {
-  margin: 6px 0 0;
-  color: #7a7f8c;
-  font-size: 13px;
-}
-
-.place_location_button {
-  flex-shrink: 0;
-  padding: 10px 14px;
-  border: 0;
-  border-radius: 999px;
-  background: #1f1f23;
-  color: #ffffff;
-  font-size: 12px;
+.place_section_header h2 {
+  margin: 0;
+  color: #17171c;
+  font-size: 18px;
   font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.03em;
+}
+
+.place_section_header p {
+  margin: 0;
+  color: #626273;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: -0.025em;
+}
+
+.place_hospital_list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.place_hospital_item {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) 24px;
+  align-items: start;
+  gap: 14px;
+}
+
+.place_hospital_item > img {
+  display: block;
+  width: 96px;
+  height: 96px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.place_hospital_body {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.place_hospital_body strong {
+  color: #17171c;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.03em;
+}
+
+.place_hospital_rating,
+.place_hospital_tags {
+  margin: 0;
+  color: #767676;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.025em;
+}
+
+.place_hospital_rating {
+  color: #3a2b2b;
+}
+
+.place_hospital_rating span {
+  margin-left: 8px;
+  color: #626273;
+}
+
+.place_hospital_hours {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 32px;
+  align-items: center;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: #f1f1f5;
+  color: #6f6f7f;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+}
+
+.place_hospital_hours.is_open {
+  background: #f1f1f5;
+  color: #6f6f7f;
+}
+
+.place_hospital_favorite {
+  display: inline-grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #4a3d3d;
+  justify-self: end;
+}
+
+.place_hospital_favorite.is_active {
+  color: #ff5a5f;
+}
+
+.place_hospital_favorite svg {
+  display: block;
+  width: 24px;
+  height: 24px;
 }
 
 @media (max-width: 420px) {
-  .place_page {
-    padding-right: 14px;
-    padding-left: 14px;
+  .place_hospital_list {
+    gap: 16px;
   }
 
-  .place_hero h2 {
-    font-size: 24px;
+  .place_hospital_item {
+    gap: 12px;
   }
 
-  .place_section {
-    padding: 16px 14px;
+  .place_section_header h2 {
+    font-size: 17px;
   }
 
-  .place_section_heading {
-    flex-direction: column;
-    align-items: flex-start;
+  .place_section_header p,
+  .place_hospital_rating,
+  .place_hospital_tags {
+    font-size: 12px;
+  }
+
+  .place_hospital_body strong {
+    font-size: 15px;
   }
 }

@@ -67,11 +67,30 @@
 
 .layout_minimal {
   --layout-header-height: var(--layout-status-bar-height);
-  --layout-footer-height: 34px;
+  --layout-footer-height: 0px;
+}
+
+.layout_minimal_no_header_space {
+  --layout-header-height: 0px;
+  padding-top: var(--layout-status-bar-height);
 }
 
 .layout_login .layout_content {
   padding-top: 32px;
+}
+
+.layout_no_footer {
+  --layout-footer-height: 0px;
+  padding-bottom: 0;
+}
+
+.layout_indicator_only {
+  --layout-footer-height: 34px;
+  background: #f1f1f5;
+}
+
+.layout_indicator_only .layout_content {
+  background: #f1f1f5;
 }
 
 .layout_knowledge_detail {

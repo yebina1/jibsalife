@@ -11,6 +11,8 @@ import { HeaderContext, type HeaderConfig } from '../contexts/HeaderContext'
 type LayoutProps = {
   showHeader?: boolean
   showNav?: boolean
+  showFooter?: boolean
+  hasContentPadding?: boolean
 }
 
 const communityTabs = [
@@ -50,7 +52,12 @@ function getSubParam(to: string) {
   return new URLSearchParams(to.split('?')[1]).get('sub')
 }
 
-function Layout({ showHeader = true, showNav = true }: LayoutProps) {
+function Layout({
+  showHeader = true,
+  showNav = true,
+  showFooter = true,
+  hasContentPadding = true,
+}: LayoutProps) {
   const [header, setHeader] = useState<HeaderConfig>(null)
   const [isCommunitySortOpen, setIsCommunitySortOpen] = useState(false)
   const navigate = useNavigate()
@@ -64,6 +71,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const communitySortParam = searchParams.get('sort') ?? 'latest'
   const isCameraPage = pathname === '/health/camera' && searchParams.get('guide') === 'false'
   const isLoginPage = pathname === '/login'
+  const isOnboardingPage = pathname === '/onboarding'
   const isCommunityPath = pathname.startsWith('/community')
   const isPetStoryDetailPage = pathname.startsWith('/community/petstory/detail/')
   const isPetStoryWritePage = pathname === '/community/petstory/write'
@@ -84,7 +92,6 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const activeCommunitySortOptions = pathname.startsWith('/community/vote') ? voteSortOptions : communitySortOptions
   const activeCommunitySort =
     activeCommunitySortOptions.find((option) => option.value === communitySortParam) ?? activeCommunitySortOptions[0]
-  const hasContentPadding = true
   const contentClassName =
     hasContentPadding ? 'layout_content' : 'layout_content layout_content_no_padding'
   const hideFloatingAiButtonPaths = [
@@ -130,16 +137,20 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
     return `${pathname}?${nextParams.toString()}`
   }
 
-  const isMinimal = !showHeader && !showNav
+  const isMinimal = !showHeader && !showNav && !showFooter
   const layoutClassName = isCameraPage
     ? 'layout layout_camera'
     : isMinimal
-      ? `layout layout_minimal ${isLoginPage ? 'layout_login' : ''}`
+      ? `layout layout_minimal ${isLoginPage ? 'layout_login' : ''} ${
+          isOnboardingPage && !hasContentPadding ? 'layout_minimal_no_header_space' : ''
+        }`
       : showCommunityChrome
         ? `layout layout_community ${communitySubTabs ? 'layout_community_with_subtabs' : ''} ${
             communitySubTabs && !isCommunityControlsVisible ? 'layout_community_subtabs_hidden' : ''
           }`
-        : `layout ${isKnowledgeDetailPage ? 'layout_knowledge_detail' : ''}`
+        : `layout ${!showFooter ? 'layout_no_footer' : ''} ${
+            !showNav && showFooter ? 'layout_indicator_only' : ''
+          } ${isKnowledgeDetailPage ? 'layout_knowledge_detail' : ''}`
 
   useEffect(() => {
     const headerEl = headerRef.current
@@ -291,7 +302,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
           <Outlet />
         </div>
         {!hideFloatingAiButton ? <FloatingAiButton /> : null}
-        {!isCameraPage ? (
+        {!isCameraPage && showFooter ? (
           <footer>
             {showNav && !isPetStoryDetailPage && <Nav />}
             <HomeIndicator />

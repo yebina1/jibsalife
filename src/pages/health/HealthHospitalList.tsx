@@ -2,11 +2,11 @@
 import './Health.css'
 import './HealthHospitalList.css'
 import PageHeader from '../../components/PageHeader'
+import HeaderIcon from '../../components/HeaderIcon'
 import ContentSection from '../../components/ContentSection'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
 import calendarIcon from '../../svg/calendar.svg'
-import notificationIcon from '../../svg/notification.svg'
 import { getOperatingState, hospitalSearchItems } from './HealthHospitalData'
 
 function HeartIcon({ filled }: { filled: boolean }) {
@@ -45,8 +45,8 @@ function HealthHospitalList() {
             <Button type="button" aria-label="캘린더">
               <img src={calendarIcon} alt="" />
             </Button>
-            <Button type="button" aria-label="알림" className="health_hospital_list_notification">
-              <img src={notificationIcon} alt="" />
+            <Button type="button" aria-label="알림">
+              <HeaderIcon type="notification" />
             </Button>
           </>
         }

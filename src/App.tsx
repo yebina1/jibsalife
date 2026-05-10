@@ -38,10 +38,16 @@ function App() {
     <div className="app">
       <ScrollToTop />
       <Routes>
-        <Route element={<Layout showHeader={false} showNav={false} />}>
+        <Route element={<Layout showHeader={false} showNav={false} showFooter={false} hasContentPadding={false} />}>
           <Route path="/onboarding" element={<Onboarding />} />
+        </Route>
+        <Route element={<Layout showHeader={false} showNav={false} showFooter={false} />}>
           <Route path="/login" element={<Login />} />
           <Route path="/mypage/subscription" element={<SubscriptionPage />} />
+        </Route>
+        <Route element={<Layout showNav={false} />}>
+          <Route path="/health/qna" element={<HealthQna />} />
+          <Route path="/health/vet-chat" element={<HealthVetChat />} />
         </Route>
         <Route element={<Layout />}>
           <Route path="/" element={<Navigate to="/onboarding" replace />} />
@@ -59,8 +65,6 @@ function App() {
           <Route path="/health/connect" element={<HealthConnect />} />
           <Route path="/health/hospitals" element={<HealthHospitalSearch />} />
           <Route path="/health/hospitals/list" element={<HealthHospitalList />} />
-          <Route path="/health/qna" element={<HealthQna />} />
-          <Route path="/health/vet-chat" element={<HealthVetChat />} />
           <Route path="/community" element={<CommunityOverview />} />
           <Route path="/community/overview" element={<CommunityOverview />} />
           <Route path="/community/petstory" element={<CommunityPetStory />} />

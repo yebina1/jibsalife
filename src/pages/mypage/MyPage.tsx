@@ -349,7 +349,7 @@ function MyPage() {
             <Button type="button" aria-label="캘린더" onClick={() => navigate('/mission')}>
               <HeaderIcon type="calendar" />
             </Button>
-            <Button type="button" aria-label="알림" className="mypage_notification">
+            <Button type="button" aria-label="알림">
               <HeaderIcon type="notification" />
             </Button>
             <Button type="button" aria-label="설정" className="mypage_header_gear">

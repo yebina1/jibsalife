@@ -689,7 +689,6 @@ function CommunityPage({ section, dependencies }: CommunityPageProps) {
             <Button
               type="button"
               aria-label="notification"
-              className="community_header_notification"
             >
               <HeaderIcon type="notification" />
             </Button>

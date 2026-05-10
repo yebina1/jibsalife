@@ -87,19 +87,32 @@
   stroke-linejoin: round;
 }
 
-.header_right button:is([aria-label='알림'], [aria-label='notification'], [aria-label='설정']) {
-  color: #999999;
-  cursor: default;
-  pointer-events: none;
+.header_right .header_notification_button {
+  position: relative;
+  color: #111111;
+  cursor: pointer;
+  pointer-events: auto;
 }
 
-.header_right button:is([aria-label='알림'], [aria-label='notification'], [aria-label='설정']) .header_icon {
-  color: #999999;
-  stroke: #999999;
+.header_right .header_notification_button .header_icon {
+  color: #111111;
+  stroke: #111111;
 }
 
-.header_right button:is([aria-label='알림'], [aria-label='notification'])::after {
-  background: #999999;
+.header_right .header_notification_button::after {
+  position: absolute;
+  top: 3px;
+  right: 2px;
+  width: 7px;
+  height: 7px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  background: #111111;
+  content: '';
+}
+
+.header_right .header_notification_button.is_active::after {
+  background: #E81B1B;
 }
 
 .header_left button {

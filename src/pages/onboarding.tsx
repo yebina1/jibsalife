@@ -25,7 +25,7 @@ const guardianOptions = [
   },
   {
     type: 'cat' as const,
-    label: '냥냥 집사',
+    label: '냐옹 집사',
     image: onboardingCatLoverImage,
   },
 ] as const
@@ -52,9 +52,9 @@ const featureSlides = [
 ] as const
 
 const featureBodyGapByStep: Record<4 | 5 | 6, number> = {
-  4: 34,
-  5: 34,
-  6: 33,
+  4: 39,
+  5: 39,
+  6: 38,
 }
 
 const featureContentGapByStep: Partial<Record<4 | 5 | 6, number>> = {
@@ -86,6 +86,7 @@ function Onboarding() {
         <OnboardingLayout
           step={1}
           totalSteps={6}
+          reserveTopActionSpace
           title={'집사인생에\n오신 것을 환영해요!'}
           subtitle={'우리 아이의 하루를\n더 건강하고, 더 따뜻하게\n기록해 보세요.'}
           bodyGap={105}
@@ -108,6 +109,7 @@ function Onboarding() {
         <OnboardingLayout
           step={2}
           totalSteps={6}
+          reserveTopActionSpace
           title="어떤 집사님이신가요?"
           subtitle={'선택한 캐릭터로\n집사인생을 시작해요!'}
           bodyGap={108}
@@ -146,6 +148,7 @@ function Onboarding() {
         <OnboardingLayout
           step={3}
           totalSteps={6}
+          reserveTopActionSpace
           title="우리 아이 이름이 뭐예요?"
           subtitle="이후 건강 리포트와 기록에 사용돼요."
           bodyGap={32}
@@ -221,10 +224,11 @@ function Onboarding() {
 
     return (
       <OnboardingLayout
-        topActionLabel="완료"
+        topCenterLabel="완료"
+        reserveTopActionSpace
         title={'이제 함께\n기록해 볼까요?'}
         subtitle={'집사인생이 우리 아이의\n건강한 하루를 응원할게요!'}
-        bodyGap={66}
+        bodyGap={76}
         visual={(
           <img
             className="onboarding_visual_image onboarding_visual_image_complete"

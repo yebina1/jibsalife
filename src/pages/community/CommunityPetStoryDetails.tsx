@@ -462,7 +462,7 @@ function CommunityPetStoryDetails() {
             <Button type="button" aria-label="공유">
               <ShareIcon />
             </Button>
-            <Button type="button" aria-label="알림" className="community_header_notification">
+            <Button type="button" aria-label="알림">
               <HeaderIcon type="notification" />
             </Button>
           </>

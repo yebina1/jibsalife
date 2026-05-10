@@ -1152,7 +1152,7 @@ function HealthRegister() {
             <Button type="button" aria-label="캘린더" onClick={() => navigate('/mission')}>
               <HeaderIcon type="calendar" />
             </Button>
-            <Button type="button" aria-label="알림" className="health_register_notification">
+            <Button type="button" aria-label="알림">
               <HeaderIcon type="notification" />
             </Button>
           </>
