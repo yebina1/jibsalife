@@ -84,6 +84,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const contentClassName =
     hasContentPadding ? 'layout_content' : 'layout_content layout_content_no_padding'
   const hideFloatingAiButtonPaths = [
+    '/onboarding',
     '/login',
     '/mypage',
     '/community',

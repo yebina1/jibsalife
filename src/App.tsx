@@ -29,6 +29,7 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import Mission from './pages/Mission'
 import MyPage from './pages/mypage/MyPage'
+import Onboarding from './pages/onboarding'
 import Place from './pages/Place'
 import SubscriptionPage from './pages/mypage/SubscriptionPage'
 
@@ -38,11 +39,12 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route element={<Layout showHeader={false} showNav={false} />}>
+          <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/login" element={<Login />} />
           <Route path="/mypage/subscription" element={<SubscriptionPage />} />
         </Route>
         <Route element={<Layout />}>
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<Navigate to="/onboarding" replace />} />
           <Route path="/home" element={<Home />} />
           <Route path="/place" element={<Place />} />
           <Route path="/mission" element={<Mission />} />

@@ -1,0 +1,124 @@
+.onboarding_page {
+  min-height: 100dvh;
+  background: #ffffff;
+}
+
+.onboarding_visual_image {
+  display: block;
+  width: 100%;
+  object-fit: contain;
+}
+
+.onboarding_visual_image_welcome {
+  width: 322px;
+  height: 217px;
+}
+
+.onboarding_visual_image_pet {
+  max-width: 166px;
+}
+
+.onboarding_visual_image_feature {
+  width: 317px;
+  height: 217px;
+}
+
+.onboarding_visual_image_complete {
+  width: 100%;
+  height: 271px;
+  object-fit: contain;
+}
+
+.onboarding_action_start {
+  width: 100%;
+}
+
+.onboarding_action_primary {
+  width: 100%;
+}
+
+.onboarding_guardian_grid {
+  display: grid;
+  grid-template-columns: repeat(2, 168px);
+  gap: 10px;
+  justify-content: center;
+  width: 100%;
+}
+
+.onboarding_guardian_card {
+  position: relative;
+  display: grid;
+  grid-template-rows: 181.8px auto auto;
+  gap: 10px;
+  justify-items: center;
+  align-content: start;
+  width: 168px;
+  height: 285px;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 1px solid #e5e5ec;
+  border-radius: 12px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.onboarding_guardian_card.is_selected {
+  border-color: #6d59f8;
+  box-shadow: 0 0 0 2px rgb(109 89 248 / 12%);
+}
+
+.onboarding_guardian_card img {
+  display: block;
+  width: 80.1px;
+  height: 181.8px;
+  object-fit: contain;
+}
+
+.onboarding_guardian_card strong {
+  color: #111111;
+  margin: 0;
+  align-self: end;
+}
+
+.onboarding_guardian_card_check {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #999999;
+}
+
+.onboarding_guardian_card_check i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.onboarding_guardian_card.is_selected .onboarding_guardian_card_check {
+  background: #6d59f8;
+}
+
+.onboarding_name_form {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+}
+
+.onboarding_name_hint {
+  margin: 0;
+  color: #e81b1b;
+  font-size: 12px;
+  font-weight: var(--font-weight-rg);
+  line-height: var(--line-height-sm);
+  text-align: center;
+}
+
+.onboarding_name_hint strong {
+  color: var(--primary-purple);
+  font-weight: var(--font-weight-rg);
+}
