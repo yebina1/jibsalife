@@ -440,7 +440,7 @@
   margin: 32px auto 0;
 }
 
-.more_button .button_label {
+.more_button {
   display: inline-flex;
   align-items: center;
   justify-content: center;

@@ -24,11 +24,17 @@ export default function Button(props: Buttonprops){
   ]
     .filter(Boolean)
     .join(' ')
+  const needsSmallRadiusLabel = classNames.split(' ').includes('s_white_radius_btn')
+  const content = needsSmallRadiusLabel ? (
+    <span className="s_white_radius_btn_label">{children}</span>
+  ) : (
+    children
+  )
 
   return (
     <button {...rest} disabled={disabled} className={classNames}>
       {icon && iconPosition === 'left' ? <span className="button_icon_asset" aria-hidden="true">{icon}</span> : null}
-      <span className="button_label">{children}</span>
+      {content}
       {icon && iconPosition === 'right' ? <span className="button_icon_asset" aria-hidden="true">{icon}</span> : null}
     </button>
   )

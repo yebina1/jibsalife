@@ -3,7 +3,7 @@ import './Title.css'
 
 type TitleProps = {
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
-  title: ReactNode
+  title?: ReactNode
   beforeTitle?: ReactNode
   children?: ReactNode
   className?: string
@@ -13,7 +13,7 @@ function Title({ as: Heading = 'h1', title, beforeTitle, children, className }: 
   return (
     <div className={className ? `title ${className}` : 'title'}>
       {beforeTitle}
-      <Heading>{title}</Heading>
+      {title !== undefined && <Heading>{title}</Heading>}
       {children}
     </div>
   )

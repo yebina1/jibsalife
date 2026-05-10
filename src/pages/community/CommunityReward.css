@@ -244,8 +244,7 @@
   color: #111111;
 }
 
-.community_reward_secondary .button_label {
-  color: inherit;
+.community_reward_secondary {
   font-family: 'Pretendard', 'SUIT', system-ui, sans-serif;
   font-size: 16px;
   font-weight: 600;

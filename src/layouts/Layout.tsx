@@ -28,8 +28,9 @@ const petStorySubTabs = [
 
 const voteSubTabs = [
   { label: '전체', to: '/community/vote?sub=all' },
-  { label: '목록', to: '/community/vote?sub=list' },
-  { label: '투표결과', to: '/community/vote?sub=result' },
+  { label: '투표 목록', to: '/community/vote?sub=list' },
+  { label: '구독자 챌린지', to: '/community/vote?sub=subscriber' },
+  { label: '투표 결과', to: '/community/vote?sub=result' },
 ] as const
 
 const communitySortOptions = [
@@ -67,7 +68,9 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const isPetStoryDetailPage = pathname.startsWith('/community/petstory/detail/')
   const isPetStoryWritePage = pathname === '/community/petstory/write'
   const isKnowledgeDetailPage = pathname.startsWith('/community/petstory/knowledge/')
-  const showCommunityChrome = isCommunityPath && !isPetStoryDetailPage && !isPetStoryWritePage && !isKnowledgeDetailPage
+  const isVoteDetailPage = pathname === '/community/vote/detail'
+  const showCommunityChrome =
+    isCommunityPath && !isPetStoryDetailPage && !isPetStoryWritePage && !isKnowledgeDetailPage && !isVoteDetailPage
   const communitySubTabs = !isPetStoryDetailPage && !isPetStoryWritePage && !isKnowledgeDetailPage && pathname.startsWith('/community/petstory')
     ? petStorySubTabs
     : !isPetStoryDetailPage && !isKnowledgeDetailPage && pathname.startsWith('/community/vote') && pathname !== '/community/vote/detail'
@@ -76,7 +79,8 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
   const showCommunitySort =
     !isPetStoryDetailPage &&
     !isKnowledgeDetailPage &&
-    (pathname.startsWith('/community/vote') || pathname.startsWith('/community/petstory'))
+    !pathname.startsWith('/community/vote') &&
+    pathname.startsWith('/community/petstory')
   const activeCommunitySortOptions = pathname.startsWith('/community/vote') ? voteSortOptions : communitySortOptions
   const activeCommunitySort =
     activeCommunitySortOptions.find((option) => option.value === communitySortParam) ?? activeCommunitySortOptions[0]
@@ -253,15 +257,23 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
                       </div>
                     ) : null}
 
-                    <div className="layout_community_subtab_scroll">
+                    <div
+                      className={`layout_community_subtab_scroll${
+                        pathname.startsWith('/community/vote') ? ' layout_community_vote_subtab_scroll' : ''
+                      }`}
+                    >
                       {communitySubTabs.map((tab) => {
                         const isActive = isCommunitySubTabActive(tab.to)
+                        const isVoteSubtab = pathname.startsWith('/community/vote')
+                        const subtabButtonClassName = isVoteSubtab
+                          ? 's_white_radius_btn'
+                          : 'white_radius_btn'
 
                         return (
                           <Button
                             key={tab.to}
                             type="button"
-                            className={`white_radius_btn${isActive ? ' layout_community_subtab_active' : ''}`}
+                            className={`${subtabButtonClassName}${isActive ? ' layout_community_subtab_active' : ''}`}
                             onClick={() => navigate(tab.to)}
                           >
                             {tab.label}

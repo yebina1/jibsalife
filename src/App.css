@@ -173,19 +173,30 @@
   -webkit-overflow-scrolling: touch;
 }
 
+.layout_community_vote_subtab_scroll {
+  justify-content: flex-start;
+  gap: 10px;
+  margin-right: calc(var(--layout-inline-padding) * -1);
+  padding: 4px var(--layout-inline-padding) 4px 6px;
+  scroll-padding-right: var(--layout-inline-padding);
+}
+
+.layout_community_vote_subtab_scroll .s_white_radius_btn {
+  border-color: #E1E1EA;
+  box-shadow: 0 1px 4px rgba(17, 24, 39, 0.04);
+}
+
 .layout_community_subtab_scroll::-webkit-scrollbar {
   display: none;
 }
 
 .white_radius_btn.layout_community_subtab_active,
-.white_radius_btn.layout_community_subtab_active:hover {
+.white_radius_btn.layout_community_subtab_active:hover,
+.s_white_radius_btn.layout_community_subtab_active,
+.s_white_radius_btn.layout_community_subtab_active:hover {
   background: #6D59F8;
   color: #ffffff;
   border-color: #6D59F8;
-}
-
-.white_radius_btn.layout_community_subtab_active .button_label {
-  color: inherit;
 }
 
 .layout_community_sort_dropdown {

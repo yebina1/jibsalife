@@ -9,43 +9,26 @@ import VoteMissionBanner from '../../components/VoteMissionBanner'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
 import { writeVotedMissionId } from '../../utils/communityVoteStatus'
-import voting1 from '../../img/voting/voting1.jpg'
-import voting2 from '../../img/voting/voting2.jpg'
-import voting3 from '../../img/voting/voting3.jpg'
-import voting4 from '../../img/voting/voting4.jpg'
-import voting5 from '../../img/voting/voting5.jpg'
-import voting6 from '../../img/voting/voting6.jpg'
-
-const candidates = [
-  { id: 1, name: '콩이', image: voting1 },
-  { id: 2, name: '공심이', image: voting2 },
-  { id: 3, name: '뽕뽕이', image: voting3 },
-  { id: 4, name: '도라바라', image: voting4 },
-  { id: 5, name: '봉봉이', image: voting5 },
-  { id: 6, name: '훈민정음', image: voting6 },
-  { id: 7, name: '몽이', image: voting1 },
-  { id: 8, name: '로이', image: voting2 },
-  { id: 9, name: '설기', image: voting3 },
-  { id: 10, name: '슈슈', image: voting4 },
-] as const
+import { voteDetails, type CommunityVoteId } from './CommunityVoteData'
 
 function CommunityVoteDetail() {
   const navigate = useNavigate()
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
-  const voteId = searchParams.get('voteId') ?? (location.state as { voteId?: string } | null)?.voteId ?? 'mission'
+  const requestedVoteId = searchParams.get('voteId') ?? (location.state as { voteId?: string } | null)?.voteId
+  const vote = voteDetails.find((item) => item.id === requestedVoteId) ?? voteDetails[0]
+  const voteId: CommunityVoteId = vote.id
   const [selectedId, setSelectedId] = useState<number | null>(null)
   const [isVoteCompleteOpen, setIsVoteCompleteOpen] = useState(false)
 
   const selectCandidate = (candidateId: number) => {
     setSelectedId(candidateId)
-    writeVotedMissionId(voteId)
   }
 
   const handleVote = () => {
     if (selectedId === null) return
     writeVotedMissionId(voteId)
-    navigate(`/community/vote?sub=all&voted=${voteId}`, { replace: true })
+    setIsVoteCompleteOpen(true)
   }
 
   const goToResult = () => {
@@ -93,12 +76,27 @@ function CommunityVoteDetail() {
           ))}
         </section>
 
-        <VoteMissionBanner backgroundColor="#FFE9BB" />
+        <VoteMissionBanner
+          timeText={vote.timeText}
+          title={
+            <>
+              {vote.bannerTitleLines.map((line) => (
+                <span key={line}>
+                  {line}
+                  <br />
+                </span>
+              ))}
+            </>
+          }
+          description={vote.bannerDescription}
+          backgroundColor={vote.bannerBackgroundColor}
+          imageSrc={vote.bannerImage}
+        />
 
         {/* 투표 후보 목록 */}
         <section className="cvd_vote_section">
           <div className="cvd_grid">
-            {candidates.map((item) => {
+            {vote.candidates.map((item) => {
               const isSelected = selectedId === item.id
               return (
                 <button
@@ -129,9 +127,6 @@ function CommunityVoteDetail() {
           type="button"
           className="purple_btn cvd_vote_submit"
           disabled={selectedId === null}
-          onPointerDown={() => {
-            if (selectedId !== null) writeVotedMissionId(voteId)
-          }}
           onClick={handleVote}
         >
           투표하기

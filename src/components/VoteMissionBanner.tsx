@@ -1,5 +1,5 @@
 import Title from './Title'
-import bannerImage from '../img/2026_05_3_weeks_dog_star_vote.png'
+import defaultBannerImage from '../img/2026_05_3weeks_vote/2026_05_3_weeks_dog_star_vote.png'
 import timerIcon from '../svg/timer.svg'
 import './VoteMissionBanner.css'
 
@@ -8,6 +8,7 @@ type VoteMissionBannerProps = {
   title?: React.ReactNode
   description?: string
   backgroundColor?: string
+  imageSrc?: string
 }
 
 function VoteMissionBanner({
@@ -21,6 +22,7 @@ function VoteMissionBanner({
   ),
   description = '밥 먹는 사진 중 BEST를 골라주세요!',
   backgroundColor,
+  imageSrc = defaultBannerImage,
 }: VoteMissionBannerProps) {
   return (
     <section className="vote_mission_banner" style={backgroundColor ? { backgroundColor } : undefined}>
@@ -37,7 +39,7 @@ function VoteMissionBanner({
       >
         <p>{description}</p>
       </Title>
-      <img className="vote_mission_banner_img" src={bannerImage} alt="" aria-hidden="true" />
+      <img className="vote_mission_banner_img" src={imageSrc} alt="" aria-hidden="true" />
     </section>
   )
 }
