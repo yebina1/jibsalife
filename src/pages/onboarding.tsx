@@ -25,7 +25,7 @@ const guardianOptions = [
   },
   {
     type: 'cat' as const,
-    label: '냐옹 집사',
+    label: '냥냥 집사',
     image: onboardingCatLoverImage,
   },
 ] as const
@@ -89,12 +89,12 @@ function Onboarding() {
           reserveTopActionSpace
           title={'집사인생에\n오신 것을 환영해요!'}
           subtitle={'우리 아이의 하루를\n더 건강하고, 더 따뜻하게\n기록해 보세요.'}
-          bodyGap={105}
+          bodyGap={74}
           visual={(
             <img
               className="onboarding_visual_image onboarding_visual_image_welcome"
               src={onboardingWelcomeImage}
-              alt="집사인생 온보딩 환영 일러스트"
+              alt="집사인생 환영 일러스트"
             />
           )}
           actionLabel="다음"
@@ -112,7 +112,7 @@ function Onboarding() {
           reserveTopActionSpace
           title="어떤 집사님이신가요?"
           subtitle={'선택한 캐릭터로\n집사인생을 시작해요!'}
-          bodyGap={108}
+          bodyGap={90}
           visual={(
             <div className="onboarding_guardian_grid">
               {guardianOptions.map((option) => {
@@ -227,7 +227,7 @@ function Onboarding() {
         topCenterLabel="완료"
         reserveTopActionSpace
         title={'이제 함께\n기록해 볼까요?'}
-        subtitle={'집사인생이 우리 아이의\n건강한 하루를 응원할게요!'}
+        subtitle={'집사인생이 우리 아이의\n건강한 하루를 응원해요!'}
         bodyGap={76}
         visual={(
           <img
