@@ -13,6 +13,7 @@ import onboardingShareImage from '../img/onboarding/onboarding5.png'
 import onboardingDogChatImage from '../img/onboarding/onboarding6_dog.png'
 import onboardingCatChatImage from '../img/onboarding/onboarding6_cat.png'
 import onboardingCompleteImage from '../img/onboarding/onboarding7.png'
+import { writePetProfile } from '../utils/petProfile'
 import './onboarding.css'
 
 type GuardianType = 'dog' | 'cat'
@@ -77,6 +78,11 @@ function Onboarding() {
 
   const handlePetNameContinue = () => {
     if (trimmedPetName.length < 2) return
+
+    writePetProfile({
+      name: trimmedPetName,
+    })
+
     setStep(4)
   }
 

@@ -99,6 +99,13 @@ select {
   font-weight: var(--font-weight-rg);
 }
 
+/* rg 18px */
+.h4_regular{
+  font-size: var(--font-title-h4);
+  font-weight: var(--font-weight-rg);
+  line-height: var(--app-line-height);
+}
+
 /* md 14px 145% */
 .point_medium{
   font-size: var(--font-point-md);

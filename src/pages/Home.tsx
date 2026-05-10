@@ -37,6 +37,7 @@ import voteLoyiImage from '../img/vote/vote_loyi.jpg'
 import voteMongImage from '../img/vote/vote_mong.jpg'
 import voteSeoljiImage from '../img/vote/vote_seolji.jpg'
 import voteSyusyuImage from '../img/vote/vote_syusyu.jpg'
+import { readPetProfileName } from '../utils/petProfile'
 
 type PetIdCardForm = {
   name: string
@@ -94,29 +95,6 @@ type AddSummarySlide = {
   id: number
   type: 'add'
 }
-
-const summarySlides = [
-  {
-    id: 1,
-    type: 'profile',
-    name: '이요리',
-    breed: '코리안 쇼트 헤어',
-    image: leeyoriImage,
-    details: '나이: 5살 · 몸무게: 3 kg · 성별: 남아',
-  },
-  {
-    id: 2,
-    type: 'profile',
-    name: '뿡뿡이',
-    breed: '포메라니안',
-    image: pungpungiImage,
-    details: '나이: 2살 · 몸무게: 5 kg · 성별: 남아',
-  },
-  {
-    id: 3,
-    type: 'add',
-  },
-] satisfies (ProfileSummarySlide | AddSummarySlide)[]
 
 function getTodayDateKey() {
   const today = new Date()
@@ -205,6 +183,30 @@ function Home() {
   const [petIdForm, setPetIdForm] = useState<PetIdCardForm>(emptyPetIdForm)
   const [calendarRecords, setCalendarRecords] = useState<MissionHistoryRecord[]>(readCalendarRecords)
   const dragStateRef = useRef({ startX: 0 })
+  const registeredPetName = readPetProfileName()
+
+  const summarySlides = [
+    {
+      id: 1,
+      type: 'profile',
+      name: '이요리',
+      breed: '코리안 쇼트 헤어',
+      image: leeyoriImage,
+      details: '나이: 5살 · 몸무게: 3 kg · 성별: 남아',
+    },
+    {
+      id: 2,
+      type: 'profile',
+      name: registeredPetName || '뿡뿡이',
+      breed: '포메라니안',
+      image: pungpungiImage,
+      details: '나이: 2살 · 몸무게: 5 kg · 성별: 남아',
+    },
+    {
+      id: 3,
+      type: 'add',
+    },
+  ] satisfies (ProfileSummarySlide | AddSummarySlide)[]
 
   const todaySummaryDate = formatTodaySummaryDate()
   const todaySummaryStats = createSummaryStats(calendarRecords)

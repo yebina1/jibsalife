@@ -76,8 +76,22 @@
   white-space: nowrap;
   flex-shrink: 0;
   background: #fff;
+  color: #111111;
   border-radius: 999px;
   border: 1px solid #E5E5EC;
+}
+
+.white_radius_btn .button_label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.white_radius_btn .button_icon_asset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* 14px, 500 */
