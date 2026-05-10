@@ -142,6 +142,10 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
         : `layout ${isKnowledgeDetailPage ? 'layout_knowledge_detail' : ''}`
 
   useEffect(() => {
+    setIsCommunitySortOpen(false)
+  }, [pathname])
+
+  useEffect(() => {
     const headerEl = headerRef.current
     const layoutEl = layoutRef.current
     if (!headerEl || !layoutEl) return
@@ -215,14 +219,15 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
                   <div className="layout_community_controls">
                     {showCommunitySort ? (
                       <div className={`layout_community_sort_dropdown ${isCommunitySortOpen ? 'open' : ''}`}>
-                        <button
+                        <Button
                           type="button"
-                          className="layout_community_sort_toggle"
+                          className="s_white_radius_btn"
+                          icon={<span className="layout_community_sort_icon" />}
+                          iconPosition="right"
                           onClick={() => setIsCommunitySortOpen((prev) => !prev)}
                         >
-                          <span>{activeCommunitySort.label}</span>
-                          <span className="layout_community_sort_icon" aria-hidden="true" />
-                        </button>
+                          {activeCommunitySort.label}
+                        </Button>
                         {isCommunitySortOpen ? (
                           <div className="layout_community_sort_menu">
                             {activeCommunitySortOptions.map((option) => (
@@ -264,8 +269,9 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
                     >
                       {communitySubTabs.map((tab) => {
                         const isActive = isCommunitySubTabActive(tab.to)
-                        const isVoteSubtab = pathname.startsWith('/community/vote')
-                        const subtabButtonClassName = isVoteSubtab
+                        const isSmallRadiusSubtab =
+                          pathname.startsWith('/community/vote') || pathname.startsWith('/community/petstory')
+                        const subtabButtonClassName = isSmallRadiusSubtab
                           ? 's_white_radius_btn'
                           : 'white_radius_btn'
 
@@ -274,7 +280,7 @@ function Layout({ showHeader = true, showNav = true }: LayoutProps) {
                             key={tab.to}
                             type="button"
                             className={`${subtabButtonClassName}${isActive ? ' layout_community_subtab_active' : ''}`}
-                            onClick={() => navigate(tab.to)}
+                            onClick={() => { navigate(tab.to); setIsCommunitySortOpen(false) }}
                           >
                             {tab.label}
                           </Button>

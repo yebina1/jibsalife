@@ -60,6 +60,12 @@
   border: 1px solid #E5E5EC;
 }
 
+.white_btn.is_disabled {
+  color: #a5adb8;
+  border-color: #e5e5ec;
+  cursor: not-allowed;
+}
+
 .white_radius_btn {
   height: 46px;
   min-width: max-content;
@@ -79,11 +85,12 @@
 /* 14px, 500 */
 .s_white_radius_btn {
   min-width: max-content;
-  padding: 0;
+  min-height: calc((var(--font-body-sm) * var(--line-height-sm)) + 20px + 2px);
+  padding: 10px 16px;
   color: #505050;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 2px;
   white-space: nowrap;
   flex-shrink: 0;
   font-size: var(--font-body-sm);
@@ -96,11 +103,10 @@
 
 .s_white_radius_btn_label {
   display: block;
-  padding: 10px 16px;
   color: inherit;
-  font-size: inherit;
+  font-size: var(--font-body-sm);
   font-weight: inherit;
-  line-height: inherit;
+  line-height: var(--line-height-sm);
 }
 
 .s_white_radius_btn.layout_community_subtab_active .s_white_radius_btn_label {

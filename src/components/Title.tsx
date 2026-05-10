@@ -7,13 +7,14 @@ type TitleProps = {
   beforeTitle?: ReactNode
   children?: ReactNode
   className?: string
+  headingClassName?: string
 }
 
-function Title({ as: Heading = 'h1', title, beforeTitle, children, className }: TitleProps) {
+function Title({ as: Heading = 'h1', title, beforeTitle, children, className, headingClassName }: TitleProps) {
   return (
     <div className={className ? `title ${className}` : 'title'}>
       {beforeTitle}
-      {title !== undefined && <Heading>{title}</Heading>}
+      {title !== undefined && <Heading className={headingClassName}>{title}</Heading>}
       {children}
     </div>
   )

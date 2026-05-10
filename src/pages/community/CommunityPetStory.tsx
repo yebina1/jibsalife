@@ -1,5 +1,6 @@
 ﻿import './Community.css'
 import './CommunityPetStory.css'
+import Title from '../../components/Title'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router'
 import PageHeader from '../../components/PageHeader'
@@ -22,13 +23,13 @@ import { MY_PROFILE_NAME } from '../../utils/myProfile'
 import { petStoryDetailCommentCount } from './CommunityPetStoryDetailData'
 
 const dailyPosts = [
-  { id: 1, tag: '일상', title: '강아지 산책하러 나가면 자는척 해요', author: '탬블러', time: '3시간 전', likes: 20, comments: 16, image: null as null | string },
-  { id: 2, tag: '일상', title: '강아지 산책하러 나가면 자는척 해요', author: '탬블러', time: '3시간 전', likes: 20, comments: 16, image: life1 },
-  { id: 3, tag: '일상', title: '냉전중', author: '장마', time: '3시간 전', likes: 20, comments: 4, image: life2 },
-  { id: 4, tag: '일상', title: '강아지 발사탕 스프레이 추천해주세요!', author: '파란꽃', time: '3시간 전', likes: 16, comments: 4, image: life3 },
-  { id: 5, tag: '일상', title: '뽀미랑 부산 여행기', author: '뽀직뽀직', time: '3시간 전', likes: 7, comments: 4, image: life4 },
-  { id: 6, tag: '일상', title: '말숙이랑 벚꽃', author: '말망', time: '3시간 전', likes: 4, comments: 4, image: life5 },
-  { id: 7, tag: '일상', title: '귀여우면 다야?', author: '크림빵', time: '3시간 전', likes: 4, comments: 4, image: life6 },
+  { id: 1, tag: '일상', title: '강아지 산책하러 나가면 자는척 해요', author: '탬블러', createdAt: '2026-05-11T09:00:00', likes: 20, comments: 16, image: null as null | string },
+  { id: 2, tag: '일상', title: '강아지 산책하러 나가면 자는척 해요', author: '탬블러', createdAt: '2026-05-10T14:00:00', likes: 20, comments: 16, image: life1 },
+  { id: 3, tag: '일상', title: '냉전중', author: '장마', createdAt: '2026-05-09T10:00:00', likes: 20, comments: 4, image: life2 },
+  { id: 4, tag: '일상', title: '강아지 발사탕 스프레이 추천해주세요!', author: '파란꽃', createdAt: '2026-05-06T16:00:00', likes: 16, comments: 4, image: life3 },
+  { id: 5, tag: '일상', title: '뽀미랑 부산 여행기', author: '뽀직뽀직', createdAt: '2026-05-04T09:00:00', likes: 7, comments: 4, image: life4 },
+  { id: 6, tag: '일상', title: '말숙이랑 벚꽃', author: '말망', createdAt: '2026-04-27T12:00:00', likes: 4, comments: 4, image: life5 },
+  { id: 7, tag: '일상', title: '귀여우면 다야?', author: '크림빵', createdAt: '2026-04-11T18:00:00', likes: 4, comments: 4, image: life6 },
 ]
 
 function HeartIcon() {
@@ -223,10 +224,9 @@ function CommunityPetStory() {
     [visibleCreatedPosts],
   )
   const getPostTimeText = (post: { id: number; createdAt?: string; time?: string; timeText?: string }) => {
-    if (post.createdAt && isCreatedPost(post.id)) {
+    if (post.createdAt) {
       return getRelativeTimeText(post.createdAt, nowTime)
     }
-
     return post.time ?? post.timeText
   }
   const getPostCommentCount = (post: { id: number; image: string | null }) => {
@@ -323,11 +323,10 @@ function CommunityPetStory() {
         tag: post.tag,
         title: post.title,
         author: post.author,
-        time: post.time,
         image: post.image as string | null,
         likes: post.likes,
         comments: post.comments,
-        createdAt: '2026-04-30T00:00:00',
+        createdAt: post.createdAt,
       })),
     ]
 
@@ -422,15 +421,16 @@ function CommunityPetStory() {
                 {post.image != null && (
                   <img src={post.image} alt="" className="cpsd_thumb" />
                 )}
-                <div className="cpsd_body">
-                  <h2 className="cpsd_title">
-                    <span className="community_post_tag">{post.tag}</span>
-                    <span className="cpsd_title_text">{post.title}</span>
-                  </h2>
+                <Title
+                  as="h5"
+                  className="cpsd_body"
+                  headingClassName="cpsd_title"
+                  title={<><span className="community_post_tag">{post.tag}</span><span className="cpsd_title_text">{post.title}</span></>}
+                >
                   <div className="cpsd_meta">
-                    <span className="cpsd_author">{post.author}</span>
+                    <p className="cpsd_author">{post.author}</p>
                     <span className="cpsd_meta_divider" aria-hidden="true">|</span>
-                    <span className="cpsd_time">{getPostTimeText(post)}</span>
+                    <p className="cpsd_time">{getPostTimeText(post)}</p>
                   </div>
                   <div className="cpsd_actions">
                     <div
@@ -448,7 +448,7 @@ function CommunityPetStory() {
                       <span>{post.shares ?? 10}</span>
                     </div>
                   </div>
-                </div>
+                </Title>
               </article>
             ))}
           </div>
@@ -510,17 +510,18 @@ function CommunityPetStory() {
                 {post.image != null && (
                   <img src={post.image} alt="" className="cpsd_thumb" />
                 )}
-                <div className="cpsd_body">
-                  <h2 className="cpsd_title">
-                    <span className="community_post_tag">{post.tag}</span>
-                    <span className="cpsd_title_text">{post.title}</span>
-                  </h2>
+                <Title
+                  as="h5"
+                  className="cpsd_body"
+                  headingClassName="cpsd_title"
+                  title={<><span className="community_post_tag">{post.tag}</span><span className="cpsd_title_text">{post.title}</span></>}
+                >
                   <div className="cpsd_meta">
-                    <span className="cpsd_author">{post.author}</span>
+                    <p className="cpsd_author">{post.author}</p>
                     {getPostTimeText(post) && (
                       <>
                         <span className="cpsd_meta_divider" aria-hidden="true">|</span>
-                        <span className="cpsd_time">{getPostTimeText(post)}</span>
+                        <p className="cpsd_time">{getPostTimeText(post)}</p>
                       </>
                     )}
                   </div>
@@ -540,7 +541,7 @@ function CommunityPetStory() {
                       <span>{post.shares ?? 10}</span>
                     </div>
                   </div>
-                </div>
+                </Title>
               </article>
             ))}
           </section>

@@ -67,7 +67,7 @@ const fallbackPosts: DetailPost[] = [
     title: '강아지 산책하러 나가면 자는척 해요',
     content: '산책 가자고 하면 신나하다가 막상 나가려면 졸린 척을 해요. 그래도 현관문 열리면 제일 먼저 뛰어나갑니다.',
     author: '탬블러',
-    time: '3시간 전',
+    createdAt: '2026-05-11T09:00:00',
     image: null,
     likes: 20,
     comments: 0,
@@ -78,7 +78,7 @@ const fallbackPosts: DetailPost[] = [
     title: '강아지 산책하러 나가면 자는척 해요',
     content: '오늘도 산책 전에는 세상 귀찮은 표정이었는데, 공원 도착하자마자 꼬리가 멈추질 않았어요.',
     author: '탬블러',
-    time: '3시간 전',
+    createdAt: '2026-05-10T14:00:00',
     image: life1,
     images: [life1, life5],
     likes: 20,
@@ -90,7 +90,7 @@ const fallbackPosts: DetailPost[] = [
     title: '냉전중',
     content: '간식을 늦게 줬더니 하루 종일 눈도 안 마주쳐요. 그래도 이름 부르면 귀는 살짝 움직입니다.',
     author: '장마',
-    time: '3시간 전',
+    createdAt: '2026-05-09T10:00:00',
     image: life2,
     images: [life2, life6],
     likes: 20,
@@ -102,7 +102,7 @@ const fallbackPosts: DetailPost[] = [
     title: '강아지 발사탕 스프레이 추천해주세요!',
     content: '요즘 발을 자주 핥아서 순한 스프레이를 찾고 있어요. 써보고 괜찮았던 제품 있으면 추천 부탁드려요.',
     author: '파란꽃',
-    time: '3시간 전',
+    createdAt: '2026-05-06T16:00:00',
     image: life3,
     images: [life3, life1],
     likes: 16,
@@ -114,7 +114,7 @@ const fallbackPosts: DetailPost[] = [
     title: '뽀미랑 부산 여행기',
     content: '연휴에 맞춰 급으로 가게 되었는데 뽀미랑 좋은 추억을 만들 수 있어서 너무 좋았어요. 숙소는 애견 동반 풀빌라였는데 추천합니다!',
     author: '뽀직뽀직',
-    time: '3시간 전',
+    createdAt: '2026-05-04T09:00:00',
     image: life4,
     images: [life4, life5],
     likes: 7,
@@ -130,7 +130,7 @@ const fallbackPosts: DetailPost[] = [
     title: '말숙이랑 벚꽃',
     content: '벚꽃 아래에서 사진을 찍었는데 바람이 많이 불어서 귀가 계속 팔랑거렸어요.',
     author: '말망',
-    time: '3시간 전',
+    createdAt: '2026-04-27T12:00:00',
     image: life5,
     images: [life5, life4],
     likes: 4,
@@ -142,7 +142,7 @@ const fallbackPosts: DetailPost[] = [
     title: '귀여우면 다야?',
     content: '사고는 크게 쳤지만 얼굴 보자마자 혼낼 마음이 사라졌어요. 귀여움은 정말 반칙입니다.',
     author: '크림빵',
-    time: '3시간 전',
+    createdAt: '2026-04-11T18:00:00',
     image: life6,
     images: [life6, life3],
     likes: 4,
@@ -213,6 +213,22 @@ function findFallbackPost(postId: string | undefined) {
   )
 }
 
+function formatRelativeTime(createdAt: string): string {
+  const diff = Date.now() - new Date(createdAt).getTime()
+  const minutes = Math.floor(diff / 60_000)
+  if (minutes < 1) return '방금 전'
+  if (minutes < 60) return `${minutes}분 전`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours}시간 전`
+  const days = Math.floor(hours / 24)
+  if (days < 7) return `${days}일 전`
+  const weeks = Math.floor(days / 7)
+  if (weeks < 5) return `${weeks}주 전`
+  const months = Math.floor(days / 30)
+  if (months < 12) return `${months}개월 전`
+  return `${Math.floor(days / 365)}년 전`
+}
+
 function MoreIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -223,17 +239,9 @@ function MoreIcon() {
   )
 }
 
-function CommentBubbleIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M5 6.5h14v9H8.4L5 18.8Z" />
-    </svg>
-  )
-}
-
 function HeartIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
+    <svg viewBox="0 1.8 24 24" aria-hidden="true">
       <path d="M12 20.2 5.2 13.8a4.55 4.55 0 0 1 6.43-6.43L12 7.74l.37-.37a4.55 4.55 0 1 1 6.43 6.43Z" />
     </svg>
   )
@@ -271,8 +279,11 @@ function CommunityPetStoryDetails() {
   const { postId } = useParams()
   const location = useLocation()
   const statePost = (location.state as { post?: DetailPost } | null)?.post
-  const post = statePost ?? findFallbackPost(postId)
-  const timeText = post.time ?? post.date ?? '방금 전'
+  const fallbackPost = findFallbackPost(postId)
+  const post = statePost
+    ? { ...statePost, place: statePost.place ?? fallbackPost.place }
+    : fallbackPost
+  const timeText = post.createdAt ? formatRelativeTime(post.createdAt) : (post.time ?? post.date ?? '방금 전')
   const fallbackSideImage = post.image === life5 ? life4 : life5
   const galleryImages = post.images?.length
     ? post.images
@@ -308,7 +319,6 @@ function CommunityPetStoryDetails() {
   const content = displayPost.content?.trim() || '함께 나누고 싶은 반려 생활 이야기를 남겼어요.'
   const isLiked = likedPostIds.includes(post.id)
   const likeCount = post.likes + (isLiked ? 1 : 0)
-  const shareCount = post.shares ?? (post.createdAt ? 0 : 10)
   const editCommentText = editCommentId !== null
     ? (visibleComments.find((c) => c.id === editCommentId)?.text ?? '')
     : undefined
@@ -480,25 +490,6 @@ function CommunityPetStoryDetails() {
                   <span>조회수 {viewCount.toLocaleString()}</span>
                 </p>
               </Title>
-              <div className="cpsdetail_post_stats" aria-label="게시글 반응">
-                <button
-                  type="button"
-                  aria-label={`좋아요 ${likeCount}`}
-                  className={isLiked ? 'active' : undefined}
-                  onClick={toggleLike}
-                >
-                  <HeartIcon />
-                  <span>{likeCount}</span>
-                </button>
-                <span>
-                  <CommentBubbleIcon />
-                  <span>{visibleComments.length}</span>
-                </span>
-                <span>
-                  <ShareIcon />
-                  <span>{shareCount}</span>
-                </span>
-              </div>
             </div>
             <button type="button" className="cpsdetail_more" aria-label="더보기" onClick={() => { setMoreTarget('post'); setMoreSheetOpen(post.author === MY_PROFILE_NAME ? 'own' : 'other') }}>
               <MoreIcon />
@@ -510,60 +501,88 @@ function CommunityPetStoryDetails() {
             <p className="cpsdetail_content p_regular">{content}</p>
 
             {galleryImages.length > 0 ? (
-              <div
-                ref={galleryRef}
-                className="cpsdetail_gallery"
-                aria-label="게시글 사진"
-                onScroll={handleGalleryScroll}
-              >
-                {galleryImages.map((image, index) => (
-                  <img
-                    key={`${image}-${index}`}
-                    src={image}
-                    alt={index === 0 ? post.title : ''}
-                    className="cpsdetail_gallery_image"
-                    aria-hidden={index === 0 ? undefined : true}
-                  />
-                ))}
-              </div>
-            ) : null}
-
-            {galleryImages.length > 1 ? (
-              <div className="cpsdetail_gallery_dots">
-                {galleryImages.map((image, index) => (
-                  <button
-                    key={`${image}-dot-${index}`}
-                    type="button"
-                    className={activeGalleryIndex === index ? 'active' : undefined}
-                    aria-label={`${index + 1}번 사진 보기`}
-                    onClick={() => moveGallery(index)}
-                  />
-                ))}
-              </div>
+              galleryImages.length > 1 ? (
+                <div className="cpsdetail_gallery_wrap">
+                  <div
+                    ref={galleryRef}
+                    className="cpsdetail_gallery"
+                    aria-label="게시글 사진"
+                    onScroll={handleGalleryScroll}
+                  >
+                    {galleryImages.map((image, index) => (
+                      <img
+                        key={`${image}-${index}`}
+                        src={image}
+                        alt={index === 0 ? post.title : ''}
+                        className="cpsdetail_gallery_image"
+                        aria-hidden={index === 0 ? undefined : true}
+                      />
+                    ))}
+                  </div>
+                  <div className="cpsdetail_gallery_dots">
+                    {galleryImages.map((image, index) => (
+                      <button
+                        key={`${image}-dot-${index}`}
+                        type="button"
+                        className={activeGalleryIndex === index ? 'active' : undefined}
+                        aria-label={`${index + 1}번 사진 보기`}
+                        onClick={() => moveGallery(index)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div
+                  ref={galleryRef}
+                  className="cpsdetail_gallery"
+                  aria-label="게시글 사진"
+                  onScroll={handleGalleryScroll}
+                >
+                  {galleryImages.map((image, index) => (
+                    <img
+                      key={`${image}-${index}`}
+                      src={image}
+                      alt={index === 0 ? post.title : ''}
+                      className="cpsdetail_gallery_image"
+                      aria-hidden={index === 0 ? undefined : true}
+                    />
+                  ))}
+                </div>
+              )
             ) : null}
           </div>
 
           {galleryImages.length > 0 && post.place ? (
-            <button type="button" className="cpsdetail_place_card" onClick={() => navigate('/place')}>
+            <Button type="button" className="white_btn cpsdetail_place_card" onClick={() => navigate('/place')}>
               <img src={galleryImages[1] ?? galleryImages[0]} alt="" className="cpsdetail_place_thumb" aria-hidden="true" />
-              <span className="cpsdetail_place_text">
-                <strong>{post.place.name}</strong>
-                <small>{post.place.address}</small>
-              </span>
-              <span className="cpsdetail_place_chevron" aria-hidden="true">&gt;</span>
-            </button>
+              <Title as="h5" className="cpsdetail_place_text" title={post.place.name}>
+                <span className="cpsdetail_place_address">{post.place.address}</span>
+              </Title>
+              <span className="cpsdetail_place_chevron" aria-hidden="true"><i className="bx bx-chevron-right" /></span>
+            </Button>
           ) : null}
 
-          {displayPost.tags?.length ? (
-            <div className="cpsdetail_recommend_tags">
-              <strong>추천태그</strong>
-              <div>
-                {displayPost.tags.map((tag) => (
-                  <span key={tag}>{tag}</span>
-                ))}
+          <div className="cpsdetail_recommend_tags">
+            {displayPost.tags?.length ? (
+              <div className="cpsdetail_recommend_tags_content">
+                <strong>추천태그</strong>
+                <div>
+                  {displayPost.tags.map((tag) => (
+                    <span key={tag}>{tag}</span>
+                  ))}
+                </div>
               </div>
-            </div>
-          ) : null}
+            ) : null}
+            <Button
+              className={`white_btn cpsdetail_like_tag_btn${isLiked ? ' active' : ''}`}
+              icon={<HeartIcon />}
+              iconPosition="left"
+              aria-label={`좋아요 ${likeCount}`}
+              onClick={toggleLike}
+            >
+              {likeCount}
+            </Button>
+          </div>
 
           <div className="cpsdetail_reaction_row">
             <span>{likeCount}명이 공감 했어요</span>
@@ -610,10 +629,7 @@ function CommunityPetStoryDetails() {
                     className={likedCommentIds.includes(comment.id) ? 'active' : undefined}
                     onClick={() => toggleCommentLike(comment.id)}
                   >
-                    <i
-                      className={likedCommentIds.includes(comment.id) ? 'bx bxs-heart' : 'bx bx-heart'}
-                      aria-hidden="true"
-                    />
+                    <HeartIcon />
                     <span>좋아요 {comment.likes || ''}</span>
                   </button>
                   <button type="button" onClick={() => setReplyTo({ author: comment.author, commentId: comment.parentId ?? comment.id })}>

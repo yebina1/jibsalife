@@ -31,6 +31,7 @@
 /* 섹션 공통 */
 .cw_section {
   width: 100%;
+  padding-bottom: 20px;
   border-bottom: 1px solid #f0f0f5;
   box-sizing: border-box;
 }
@@ -44,7 +45,6 @@
 .cw_board_select {
   position: relative;
   width: 100%;
-  padding: 12px;
 }
 
 .cw_board_toggle {
@@ -52,7 +52,7 @@
   width: 100%;
   align-items: center;
   justify-content: space-between;
-  padding: 0;
+  padding: 12px;
   border: 0;
   background: transparent;
   color: #111111;
@@ -69,11 +69,10 @@
 }
 
 .cw_chevron_icon {
-  width: 20px;
-  height: 20px;
-  flex: 0 0 20px;
-  background: no-repeat center / 12px 10px
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10' viewBox='0 0 12 10' fill='none'%3E%3Cpath d='M4.539 8.624c.78 1.084 2.392 1.084 3.172 0l4.798-6.673C13.439.657 12.515-.125 10.924-.125H1.076C-.515-.125-1.439.657-.509 1.951l5.048 6.673Z' fill='%23A1A9B6'/%3E%3C/svg%3E");
+  flex-shrink: 0;
+  font-size: 20px;
+  line-height: 1;
+  color: #A1A9B6;
 }
 
 .cw_board_menu {
@@ -115,6 +114,7 @@
 /* 제목 입력 */
 .cw_title_input {
   width: 100%;
+  height: auto;
   padding: 12px;
   border: 0;
   background: transparent;
@@ -139,7 +139,7 @@
   color: #111111;
   font: inherit;
   font-size: 14px;
-  line-height: 1.6;
+  line-height: 1.4;
   outline: none;
   resize: none;
   box-sizing: border-box;
@@ -157,10 +157,6 @@
   align-items: flex-end;
   justify-content: space-between;
   margin-bottom: 12px;
-}
-
-.cw_media_header h5 span span {
-  color: #a1a9b6;
 }
 
 /* 미디어 슬롯 */
@@ -182,8 +178,10 @@
   border: 1.5px dashed #d8d8e5;
   border-radius: 10px;
   background: #f8f8fb;
-  cursor: pointer;
+  cursor: not-allowed;
   overflow: hidden;
+  opacity: 0.4;
+  pointer-events: none;
 }
 
 .cw_product_slots .cw_media_slot {
@@ -233,66 +231,72 @@
   background: rgba(0, 0, 0, 0.45);
   color: #ffffff;
   font-size: 14px;
-  line-height: 1;
+  line-height: 1.4;
   cursor: pointer;
 }
 
 /* 사료 추가 버튼 */
 .cw_food_add_btn {
-  display: flex;
-  width: fit-content;
-  align-items: center;
-  gap: 6px;
+  width: 100%;
   margin-top: 12px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: #6D59F8;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 500;
-  white-space: nowrap;
-  cursor: pointer;
+  padding: 22px 20px;
+  gap: 8px;
+  justify-content: flex-start;
+  color: #505050;
+  font-size: var(--font-body-sm);
+  font-weight: var(--font-weight-md);
+  line-height: var(--line-height-sm);
   height: auto;
 }
 
 .cw_food_add_icon {
-  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 4px;
+  border-radius: 99px;
+  background: #e5e5ec;
+  color: #111111;
+  font-size: 16px;
   line-height: 1;
+}
+
+.cw_food_add_btn.is_disabled .cw_food_add_icon {
+  background: #f0f0f5;
+  color: #a5adb8;
 }
 
 /* 태그 */
 .cw_tags_grid {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   width: 100%;
-  grid-template-columns: repeat(4, 1fr);
   gap: 8px;
 }
 
 .cw_tag_btn {
-  display: flex;
+  display: inline-flex;
+  width: fit-content;
   align-items: center;
   justify-content: center;
-  padding: 8px 4px;
-  border: 1px solid #e5e5ec;
+  padding: 8px 12px;
+  border: 1px dashed #E5E5EC;
   border-radius: 999px;
   background: #ffffff;
   color: #505050;
   font: inherit;
   font-size: 12px;
   font-weight: 500;
+  line-height: 1.45;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   cursor: pointer;
   height: auto;
-  min-width: 0;
-  width: 100%;
 }
 
 .cw_tag_btn.active {
-  border-color: #6D59F8;
-  background: #6D59F8;
+  border-color: #505050;
+  background: #505050;
   color: #ffffff;
   font-weight: 600;
 }

@@ -13,14 +13,14 @@ const boardOptions = ['일상'] as const
 type BoardOption = (typeof boardOptions)[number]
 
 const allTags = [
-  '#포메라니안', '#샴푸4개월', '#일상', '#강정',
-  '#성질', '#집사소통', '#생일', '#돌봄',
-  '#토도나산', '#미묘', '#아멍', '#생병일지',
-  '#중성화', '#집사인성', '#이프지아', '#산책',
+  '#포메라니안', '#생후4개월', '#일상', '#입양',
+  '#성장', '#집사소통', '#생일', '#선물',
+  '#내돈내산', '#미용', '#여행', '#병원일지',
+  '#중성화', '#집사인생', '#아프지아', '#간택',
 ]
 
 const MAX_PHOTOS = 4
-const MAX_VIDEOS = 4
+const MAX_VIDEOS = 1
 const MAX_PRODUCTS = 4
 const MAX_TAGS = 4
 
@@ -32,6 +32,7 @@ function CommunityWrite() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [photos, setPhotos] = useState<string[]>([])
+  const [video, setVideo] = useState<string | null>(null)
   const [selectedTags, setSelectedTags] = useState<string[]>([])
 
   const handlePhotoAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,6 +73,19 @@ function CommunityWrite() {
   const removePhoto = (index: number) => {
     setPhotos((prev) => prev.filter((_, i) => i !== index))
   }
+
+  const handleVideoAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      if (typeof reader.result === 'string') setVideo(reader.result)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const removeVideo = () => setVideo(null)
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) =>
@@ -140,7 +154,7 @@ function CommunityWrite() {
                 aria-expanded={isBoardOpen}
               >
                 <span className={board ? '' : 'cw_placeholder'}>{board || '게시판을 선택하세요'}</span>
-                <span className="cw_chevron_icon" aria-hidden="true" />
+                <i className="bx bx-chevron-down cw_chevron_icon" aria-hidden="true" />
               </button>
               {isBoardOpen && (
                 <div className="cw_board_menu" role="listbox">
@@ -206,19 +220,27 @@ function CommunityWrite() {
 
           {/* 동영상 등록 */}
           <div className="cw_section">
-            <Title as="h5" className="cw_media_header" title={<span>동영상 등록 <span>(최대 60초)</span></span>}>
-              <p>최대 0/{MAX_VIDEOS}</p>
+            <Title as="h5" className="cw_media_header" title={<span>동영상 등록 (최대 10초)</span>}>
+              <p>최대 {video ? 1 : 0}/{MAX_VIDEOS}</p>
             </Title>
             <div className="cw_media_slots">
-              <div className="cw_media_slot">
-                <span className="cw_media_plus" aria-hidden="true">+</span>
-              </div>
+              {!video ? (
+                <label className="cw_media_slot">
+                  <input type="file" accept="video/*" onChange={handleVideoAdd} hidden />
+                  <span className="cw_media_plus" aria-hidden="true">+</span>
+                </label>
+              ) : (
+                <div className="cw_media_slot cw_media_filled">
+                  <video src={video} style={{ width: '100%', height: '100%', objectFit: 'cover' }} muted playsInline />
+                  <button type="button" className="cw_media_remove" onClick={removeVideo} aria-label="동영상 제거">×</button>
+                </div>
+              )}
             </div>
           </div>
 
           {/* 사료/영양제/간식 정보 등록 */}
           <div className="cw_section">
-            <Title as="h5" className="cw_media_header" title="사료·영양제·간식 정보 등록">
+            <Title as="h5" className="cw_media_header" title="사료 · 영양제 · 간식 정보 등록">
               <p>최대 0/{MAX_PRODUCTS}</p>
             </Title>
             <div className="cw_media_slots cw_product_slots">
@@ -226,10 +248,12 @@ function CommunityWrite() {
                 <span className="cw_media_plus" aria-hidden="true">+</span>
               </div>
             </div>
-            <button type="button" className="cw_food_add_btn">
-              <span className="cw_food_add_icon" aria-hidden="true">⊕</span>
+            <Button type="button" className="white_btn cw_food_add_btn" disabled>
+              <span className="cw_food_add_icon" aria-hidden="true">
+                <i className="bx bx-plus" />
+              </span>
               뚱뚱이가 먹고 있는 사료 추가하기
-            </button>
+            </Button>
           </div>
 
           {/* 태그 선택 */}
