@@ -114,8 +114,8 @@ function MyPageIcon({ type }: { type: string }) {
   if (type === 'pin') {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 21s7-6.2 7-12A7 7 0 1 0 5 9c0 5.8 7 12 7 12Z" />
-        <circle cx="12" cy="9" r="2.5" />
+        <path d="M12 21c-3.4-3.6-7-7.2-7-11.5A7 7 0 1 1 19 9.5C19 13.8 15.4 17.4 12 21Z" />
+        <circle cx="12" cy="9.5" r="2.5" />
       </svg>
     )
   }
@@ -331,7 +331,7 @@ function MyPage() {
               imageAlt="프로필 이미지"
               name={MY_PROFILE_NAME}
               breed=""
-              details={`포인트: ${profilePoints}`}
+              details={`포인트: ${profilePoints.toLocaleString()}`}
               careGuideLabel={
                 <span className="mypage_profile_badges">
                   <span>보유 뱃지</span>
