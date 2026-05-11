@@ -138,6 +138,7 @@ function Layout({
   }
 
   const isMinimal = !showHeader && !showNav && !showFooter
+  const isIndicatorOnlyLayout = (!showNav && showFooter) || isPetStoryDetailPage || isKnowledgeDetailPage
   const layoutClassName = isCameraPage
     ? 'layout layout_camera'
     : isMinimal
@@ -149,7 +150,7 @@ function Layout({
             communitySubTabs && !isCommunityControlsVisible ? 'layout_community_subtabs_hidden' : ''
           }`
         : `layout ${!showFooter ? 'layout_no_footer' : ''} ${
-            !showNav && showFooter ? 'layout_indicator_only' : ''
+            isIndicatorOnlyLayout ? 'layout_indicator_only' : ''
           } ${isKnowledgeDetailPage ? 'layout_knowledge_detail' : ''}`
 
   useEffect(() => {
@@ -310,7 +311,7 @@ function Layout({
         {!hideFloatingAiButton ? <FloatingAiButton /> : null}
         {!isCameraPage && showFooter ? (
           <footer>
-            {showNav && !isPetStoryDetailPage && <Nav />}
+            {showNav && !isPetStoryDetailPage && !isKnowledgeDetailPage && <Nav />}
             <HomeIndicator />
           </footer>
         ) : null}
