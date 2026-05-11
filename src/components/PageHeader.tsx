@@ -11,7 +11,7 @@ function PageHeader({ title, leftContent, rightContent }: HeaderProps) {
     return () => {
       setHeader(null)
     }
-  }, [setHeader, title, leftContent])
+  }, [setHeader, title, leftContent, rightContent])
 
   return null
 }

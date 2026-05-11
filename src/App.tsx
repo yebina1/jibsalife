@@ -14,6 +14,7 @@ import CommunityVoteDetail from './pages/community/CommunityVoteDetail'
 import CommunityVoteResult from './pages/community/CommunityVoteResult'
 import Health from './pages/health/Health'
 import HealthCamera from './pages/health/HealthCamera'
+import HealthCameraCapture from './pages/health/HealthCameraCapture'
 import HealthCheckLoading from './pages/health/HealthCheckLoading'
 import HealthCheckResult from './pages/health/HealthCheckResult'
 import HealthCheckSummary from './pages/health/HealthCheckSummary'
@@ -56,6 +57,7 @@ function App() {
           <Route path="/mission" element={<Mission />} />
           <Route path="/health" element={<Health />} />
           <Route path="/health/camera" element={<HealthCamera />} />
+          <Route path="/health/camera/capture" element={<HealthCameraCapture />} />
           <Route path="/health/register" element={<HealthRegister />} />
           <Route path="/health/check-loading" element={<HealthCheckLoading />} />
           <Route path="/health/result" element={<HealthCheckResult />} />

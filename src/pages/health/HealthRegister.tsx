@@ -633,13 +633,13 @@ function HealthRegister() {
   const handleActionClick = (action: string) => {
     if (currentActionSection === 'photo' && action === '사진 촬영') {
       setIsActionSheetOpen(false)
-      navigate('/health/camera?mode=photo&guide=false')
+      navigate('/health/camera/capture?mode=photo')
       return
     }
 
     if (currentActionSection === 'photo' && action === '촬영하고 편집 후 추가') {
       setIsActionSheetOpen(false)
-      navigate('/health/camera?mode=photo&guide=false&edit=true')
+      navigate('/health/camera/capture?mode=photo&edit=true')
       return
     }
 
@@ -651,13 +651,13 @@ function HealthRegister() {
 
     if (currentActionSection === 'video' && action === '동영상 촬영') {
       setIsActionSheetOpen(false)
-      navigate('/health/camera?mode=video&guide=false')
+      navigate('/health/camera/capture?mode=video')
       return
     }
 
     if (currentActionSection === 'video' && action === '촬영하고 편집 후 추가') {
       setIsActionSheetOpen(false)
-      navigate('/health/camera?mode=video&guide=false&edit=true')
+      navigate('/health/camera/capture?mode=video&edit=true')
       return
     }
 
@@ -669,7 +669,7 @@ function HealthRegister() {
 
     if (currentActionSection === 'audio' && action === '녹음') {
       setIsActionSheetOpen(false)
-      navigate('/health/camera?mode=audio&guide=false')
+      navigate('/health/camera/capture?mode=audio')
       return
     }
 

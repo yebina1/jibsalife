@@ -318,7 +318,11 @@ function GuideAssetIcon({ type }: { type: GuideIconType }) {
   )
 }
 
-function HealthCamera() {
+type HealthCameraProps = {
+  captureOnly?: boolean
+}
+
+function HealthCamera({ captureOnly = false }: HealthCameraProps) {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -328,7 +332,7 @@ function HealthCamera() {
   const shouldNavigateAfterRecordRef = useRef(false)
   const [cameraError, setCameraError] = useState('')
   const [isRecording, setIsRecording] = useState(false)
-  const [showGuide] = useState(searchParams.get('guide') === 'true')
+  const [showGuide] = useState(!captureOnly && searchParams.get('guide') !== 'false')
   const modeParam = searchParams.get('mode')
   const mode: GuideMode =
     modeParam === 'audio' || modeParam === 'video' || modeParam === 'memo' ? modeParam : 'photo'
@@ -346,7 +350,12 @@ function HealthCamera() {
   ]
 
   const continueAfterGuide = () => {
-    navigate(`/health/register?section=${mode}`, { replace: true })
+    if (mode === 'memo') {
+      navigate('/health/register?section=memo', { replace: true })
+      return
+    }
+
+    navigate(`/health/camera/capture?mode=${mode}${isEditFlow ? '&edit=true' : ''}`, { replace: true })
   }
 
   const returnToRegister = (
@@ -782,7 +791,7 @@ function HealthCamera() {
               disabled={!cameraMode.mode}
               onClick={() => {
                 if (!cameraMode.mode || cameraMode.mode === mode) return
-                navigate(`/health/camera?mode=${cameraMode.mode}&guide=false${isEditFlow ? '&edit=true' : ''}`)
+                navigate(`/health/camera/capture?mode=${cameraMode.mode}${isEditFlow ? '&edit=true' : ''}`)
               }}
             >
               {cameraMode.label}

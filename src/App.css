@@ -31,6 +31,7 @@
   top: 0;
   left: 50%;
   width: min(100%, var(--layout-max-width));
+  min-height: calc(var(--layout-status-bar-height) + var(--layout-header-bar-height));
   z-index: 110;
   background: #ffffff;
   transform: translateX(-50%);

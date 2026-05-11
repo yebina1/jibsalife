@@ -44,7 +44,7 @@
   min-height: 78px;
   flex-direction: column;
   gap: 0;
-  padding-block: 2px;
+  padding: 10px 0 0;
 }
 
 .summary_profile_card_header {
@@ -74,7 +74,10 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+  min-height: 26px;
   min-width: 0;
+  padding-top: 1px;
+  box-sizing: border-box;
 }
 
 .summary_profile_card_name_row strong {
@@ -83,7 +86,7 @@
   color: var(--font-block);
   font-size: 16px;
   font-weight: 600;
-  line-height: 1.4;
+  line-height: 1.5;
   letter-spacing: -0.025em;
   white-space: nowrap;
 }
@@ -91,7 +94,7 @@
 .summary_profile_card_name_row span {
   display: inline-flex;
   min-width: 31px;
-  height: 22px;
+  min-height: 24px;
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
@@ -102,7 +105,7 @@
   color: #ffffff;
   font-size: 13px;
   font-weight: 400;
-  line-height: 1.4;
+  line-height: 1.45;
   letter-spacing: -0.025em;
   white-space: nowrap;
 }

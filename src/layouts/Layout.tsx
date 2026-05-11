@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router'
 import Header from '../components/Header'
 import Button from '../components/html/Button'
@@ -69,7 +69,7 @@ function Layout({
   const searchParams = new URLSearchParams(search)
   const communitySubParam = searchParams.get('sub')
   const communitySortParam = searchParams.get('sort') ?? 'latest'
-  const isCameraPage = pathname === '/health/camera'
+  const isCameraPage = pathname === '/health/camera/capture'
   const isLoginPage = pathname === '/login'
   const isOnboardingPage = pathname === '/onboarding'
   const isCommunityPath = pathname.startsWith('/community')
@@ -101,6 +101,7 @@ function Layout({
     '/community',
     '/mission',
     '/health/camera',
+    '/health/camera/capture',
     '/health/register',
     '/health/qna',
     '/health/vet-chat',
@@ -156,16 +157,25 @@ function Layout({
     setIsCommunitySortOpen(false)
   }, [pathname])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const headerEl = headerRef.current
     const layoutEl = layoutRef.current
     if (!headerEl || !layoutEl) return
-    const observer = new ResizeObserver(() => {
-      layoutEl.style.setProperty('--layout-header-height', `${headerEl.offsetHeight}px`)
-    })
+    const updateHeaderHeight = () => {
+      const statusBarHeight =
+        headerEl.querySelector<HTMLElement>('.state_bar')?.getBoundingClientRect().height ?? 0
+      const pageHeaderHeight =
+        headerEl.querySelector<HTMLElement>('.header')?.getBoundingClientRect().height ?? 56
+      const minimumHeaderHeight = statusBarHeight + pageHeaderHeight
+      const headerHeight = Math.max(headerEl.offsetHeight, minimumHeaderHeight)
+
+      layoutEl.style.setProperty('--layout-header-height', `${headerHeight}px`)
+    }
+    const observer = new ResizeObserver(updateHeaderHeight)
+    updateHeaderHeight()
     observer.observe(headerEl)
     return () => observer.disconnect()
-  }, [])
+  }, [header, showHeader, showCommunityChrome, communitySubTabs, isCommunityControlsVisible])
 
   useEffect(() => {
     if (!communitySubTabs || typeof window === 'undefined') {

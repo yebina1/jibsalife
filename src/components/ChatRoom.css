@@ -1,5 +1,5 @@
 .chat_room {
-  --chat-bot-bubble-max-width: 409px;
+  --chat-bot-bubble-width: 271.42px;
   --chat-bot-bubble-padding: 16px 18px;
   display: flex;
   flex-direction: column;
@@ -70,8 +70,8 @@
 }
 
 .chat_message_bot .chat_message_content {
-  width: fit-content;
-  max-width: min(var(--chat-bot-bubble-max-width), calc(100% - 50px));
+  width: min(var(--chat-bot-bubble-width), calc(100% - 50px));
+  max-width: calc(100% - 50px);
 }
 
 .chat_message_name {
@@ -89,7 +89,7 @@
 }
 
 .chat_message_bot .chat_message_bubble {
-  width: fit-content;
+  width: 100%;
   max-width: 100%;
   padding: var(--chat-bot-bubble-padding);
   background: #ffffff;
