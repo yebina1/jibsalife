@@ -76,7 +76,8 @@ function App() {
           <Route path="/community/petstory/detail/:postId/comments" element={<CommunityPetStoryComments />} />
           <Route path="/community/petstory/detail/:postId" element={<CommunityPetStoryDetails />} />
           <Route path="/community/petstory/write" element={<CommunityWrite />} />
-          <Route path="/community/petstory/knowledge/walk-problems" element={<CommunityKnowledgeDetail />} />
+          <Route path="/community/petstory/knowledge/:knowledgeId/comments" element={<CommunityPetStoryComments />} />
+          <Route path="/community/petstory/knowledge/:knowledgeId" element={<CommunityKnowledgeDetail />} />
           <Route path="/community/challenge" element={<CommunityChallenge />} />
           <Route path="/community/challenge/reward" element={<CommunityReward />} />
           <Route path="/community/vote" element={<CommunityVote />} />

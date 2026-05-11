@@ -99,12 +99,12 @@
 }
 
 .layout_knowledge_detail > header {
-  background: transparent;
+  background: #ffffff;
 }
 
 .layout_knowledge_detail .state_bar,
 .layout_knowledge_detail .header {
-  background: transparent;
+  background: #ffffff;
 }
 
 .layout_knowledge_detail .layout_content {

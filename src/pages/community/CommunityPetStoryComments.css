@@ -7,6 +7,11 @@
   background: #ffffff;
 }
 
+.layout_knowledge_detail .layout_content:has(.cpscomments_page) {
+  height: calc(100dvh - var(--layout-footer-height));
+  padding-top: var(--layout-header-height);
+}
+
 .cpscomments_page {
   min-height: 100%;
   padding: 0 16px 96px;

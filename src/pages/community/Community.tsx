@@ -278,7 +278,7 @@ const knowledgeFeedItems = [
     comments: 3,
     viewsText: '1.2k',
     objectPosition: '61% center',
-    path: '/community/petstory/knowledge/walk-problems',
+    path: '/community/petstory/knowledge/walkproblems',
   },
   {
     id: 2,
@@ -289,7 +289,7 @@ const knowledgeFeedItems = [
     comments: 3,
     viewsText: '968',
     objectPosition: '64% center',
-    path: '/community/petstory/knowledge/walk-problems',
+    path: '/community/petstory/knowledge/catjumpsecret',
   },
   {
     id: 3,
@@ -300,7 +300,7 @@ const knowledgeFeedItems = [
     comments: 3,
     viewsText: '860',
     objectPosition: '43% center',
-    path: '/community/petstory/knowledge/walk-problems',
+    path: '/community/petstory/knowledge/forbiddenfoods',
   },
   {
     id: 4,
@@ -311,7 +311,7 @@ const knowledgeFeedItems = [
     comments: 3,
     viewsText: '482',
     objectPosition: '48% center',
-    path: '/community/petstory/knowledge/walk-problems',
+    path: '/community/petstory/knowledge/springallergy',
   },
 ] as const
 

@@ -475,6 +475,23 @@ function CommunityPetStoryDetails() {
     )
   }
 
+  const scrollToCommentBottom = () => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const scrollContainer = document.querySelector('.layout_content') as HTMLElement | null
+
+        if (!scrollContainer) {
+          window.scrollTo(0, document.documentElement.scrollHeight)
+          lastScrollTopRef.current = window.scrollY
+          return
+        }
+
+        scrollContainer.scrollTop = scrollContainer.scrollHeight
+        lastScrollTopRef.current = scrollContainer.scrollTop
+      })
+    })
+  }
+
   const addComment = (text: string) => {
     const parentId = replyTo?.commentId
     setVisibleComments((current) => [
@@ -489,6 +506,7 @@ function CommunityPetStoryDetails() {
         parentId,
       },
     ])
+    scrollToCommentBottom()
   }
 
   const toggleCommentLike = (commentId: number) => {

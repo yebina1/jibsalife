@@ -1,27 +1,77 @@
 import './CommunityKnowledgeDetail.css'
-import { useEffect, useRef, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router'
+import { type ReactNode, useEffect, useRef, useState } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router'
 import PageHeader from '../../components/PageHeader'
+import Title from '../../components/Title'
 import CommentInputForm from '../../components/html/CommentInputForm'
+import Button from '../../components/html/Button'
 import knowledge1 from '../../img/knowledge1.png'
 import dogWalk1 from '../../img/Knowledge/dog_Walk_1_increased_stress.png'
 import dogWalk2 from '../../img/Knowledge/dog_Walk_2_obesity.png'
 import dogWalk3 from '../../img/Knowledge/dog_Walk_3_a_lack_of_social_skills.png'
+import catJumpSecret1 from '../../img/Knowledge/cat_jump_secret_1.png'
+import catJumpSecret2 from '../../img/Knowledge/cat_jump_secret_2.png'
+import catJumpSecret3 from '../../img/Knowledge/cat_jump_secret_3.png'
+import forbiddenFoods1 from '../../img/Knowledge/forbidden_foods_1.png'
+import forbiddenFoods2 from '../../img/Knowledge/forbidden_foods_2.png'
+import forbiddenFoods3 from '../../img/Knowledge/forbidden_foods_3.png'
+import forbiddenFoods4 from '../../img/Knowledge/forbidden_foods_4.png'
+import forbiddenFoods5 from '../../img/Knowledge/forbidden_foods_5.png'
+import profileImage from '../../img/pink_dog_profile.jpg'
 import addIcon from '../../svg/add icon.svg'
 import emojiIcon from '../../svg/emoji.svg'
-import sharingIcon from '../../svg/sharing.svg'
+import { MY_PROFILE_NAME } from '../../utils/myProfile'
+import { petStoryDetailComments } from './CommunityPetStoryDetailData'
 
 type KnowledgeDetailState = {
   item?: {
+    id?: number
     title: string
     image: string
     viewsText?: string
     likes?: number
     comments?: number
+    createdAt?: string
   }
 }
 
-const detailItems = [
+type KnowledgeComment = (typeof petStoryDetailComments)[number] & {
+  time?: string
+  parentId?: number
+}
+
+type DetailItem = {
+  id: number
+  title: string
+  description: ReactNode
+  image: string
+}
+
+const defaultKnowledgeId = 'walkproblems'
+
+function getKnowledgeCommentsPagePath(knowledgeId: string) {
+  return `/community/petstory/knowledge/${knowledgeId}/comments`
+}
+
+function getKnowledgeCommentsStorageKey(knowledgeId: string) {
+  return `jibsalife.community.knowledge.${knowledgeId}.comments`
+}
+
+function readKnowledgeComments(storageKey: string): KnowledgeComment[] {
+  const fallback = petStoryDetailComments.slice(0, 3)
+
+  if (typeof window === 'undefined') return fallback
+
+  try {
+    const saved = window.localStorage.getItem(storageKey)
+    const parsed = saved ? JSON.parse(saved) : fallback
+    return Array.isArray(parsed) ? parsed : fallback
+  } catch {
+    return fallback
+  }
+}
+
+const detailItems: DetailItem[] = [
   {
     id: 1,
     title: '스트레스 증가',
@@ -43,7 +93,135 @@ const detailItems = [
       '운동량이 부족한 강아지는 체중이 쉽게 증가하고 비만으로 이어질 가능성이 높아요. 비만은 관절 질환, 심장 질환 등 다양한 건강 문제의 원인이 될 수 있어요.',
     image: dogWalk3,
   },
-] as const
+]
+
+const catJumpSecretItems: DetailItem[] = [
+  {
+    id: 1,
+    title: '강한 뒷다리 근육',
+    description: (
+      <>
+        고양이는 뒷다리 근육이 매우 발달해 있어
+        <br />
+        순간적으로 강한 힘을 낼 수 있어요.
+        <br />
+        이 힘 덕분에 자신의 키보다
+        <br />
+        몇 배 높은 곳까지 점프할 수 있어요.
+      </>
+    ),
+    image: catJumpSecret1,
+  },
+  {
+    id: 2,
+    title: '유연한 척추 구조',
+    description: (
+      <>
+        고양이의 척추는 매우 유연해서
+        <br />
+        점프할 때 몸을 길게 늘리거나
+        <br />
+        빠르게 접을 수 있어요. 이 유연성이 점프 높이와
+        <br />
+        거리 모두에 큰 영향을 줘요.
+      </>
+    ),
+    image: catJumpSecret2,
+  },
+  {
+    id: 3,
+    title: '균형 감각과 착지 능력',
+    description: (
+      <>
+        고양이는 뛰어난 균형 감각을 가지고 있어
+        <br />
+        공중에서도 자세를 빠르게 조절할 수 있어요.
+        <br />
+        그래서 높은 곳에서 떨어져도
+        <br />
+        발부터 안전하게 착지할 수 있는 거예요.
+      </>
+    ),
+    image: catJumpSecret3,
+  },
+]
+
+const cforbiddenFoodsItems: DetailItem[] = [
+  {
+    id: 1,
+    title: '초콜릿',
+    description: (
+      <>
+        초콜릿에 들어있는 테오브로민 성분은
+        <br />
+        고양이에게 중독을 일으킬 수 있어요.
+        <br />
+        소량만 섭취해도 구토, 경련 등의
+        <br />
+        증상이 나타날 수 있어요.
+      </>
+    ),
+    image: forbiddenFoods1,
+  },
+  {
+    id: 2,
+    title: '양파 & 마늘',
+    description: (
+      <>
+        양파와 마늘은 적혈구를 파괴해
+        <br />
+        빈혈을 유발할 수 있어요.
+        <br />
+        익힌 음식에도 포함될 수 있어
+        <br />
+        특히 주의가 필요해요.
+      </>
+    ),
+    image: forbiddenFoods2,
+  },
+  {
+    id: 3,
+    title: '포도 & 건포도',
+    description: (
+      <>
+        포도는 원인은 정확히 밝혀지지 않았지만
+        <br />
+        신장 기능에 심각한 영향을 줄 수 있어요.
+        <br />
+        소량 섭취도 위험할 수 있어요.
+      </>
+    ),
+    image: forbiddenFoods3,
+  },
+  {
+    id: 4,
+    title: '알코올',
+    description: (
+      <>
+        아주 소량이라도 신경계와 호흡에
+        <br />
+        치명적인 영향을 줄 수 있어요.
+        <br />
+        절대 먹지 않도록 주의해야 해요.
+      </>
+    ),
+    image: forbiddenFoods4,
+  },
+  {
+    id: 5,
+    title: '날생선 (과다 섭취)',
+    description: (
+      <>
+        날생선을 자주 먹으면
+        <br />
+        비타민 B1 결핍을 일으킬 수 있어요.
+        <br />
+        장기적으로 건강 문제로 이어질 수 있어요.
+      </>
+    ),
+    image: forbiddenFoods5,
+  },
+]
 
 function BookmarkIcon() {
   return (
@@ -77,23 +255,78 @@ function CommentIcon() {
   )
 }
 
-function EyeIcon() {
+function MoreIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
-      <circle cx="12" cy="12" r="3" />
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="5" r="1.8" />
+      <circle cx="12" cy="12" r="1.8" />
+      <circle cx="12" cy="19" r="1.8" />
     </svg>
   )
 }
 
-function ShareIcon() {
-  return <img src={sharingIcon} alt="" aria-hidden="true" />
+function AvatarIcon() {
+  return (
+    <span className="cpsdetail_avatar_box" aria-hidden="true">
+      <img src={profileImage} alt="" />
+    </span>
+  )
+}
+
+function CommentText({ text }: { text: string }) {
+  const parts = text.split(/(@\S+)/g)
+
+  return (
+    <>
+      {parts.map((part, index) =>
+        part.startsWith('@') ? (
+          <span key={`${part}-${index}`} className="cpsdetail_mention">
+            {part}
+          </span>
+        ) : (
+          part
+        ),
+      )}
+    </>
+  )
+}
+
+function getRelativeTimeText(createdAt: string) {
+  const createdTime = new Date(createdAt).getTime()
+  const diffSeconds = Math.max(0, Math.floor((Date.now() - createdTime) / 1000))
+  const diffMinutes = Math.floor(diffSeconds / 60)
+  const diffHours = Math.floor(diffMinutes / 60)
+  const diffDays = Math.floor(diffHours / 24)
+  const diffMonths = Math.floor(diffDays / 30)
+  const diffYears = Math.floor(diffMonths / 12)
+
+  if (diffSeconds < 60) return '방금 전'
+  if (diffMinutes < 60) return `${diffMinutes}분 전`
+  if (diffHours < 24) return `${diffHours}시간 전`
+  if (diffDays < 31) return `${diffDays}일 전`
+  if (diffMonths < 12) return `${Math.max(1, diffMonths)}개월 전`
+  return `${Math.max(1, diffYears)}년 전`
+}
+
+function formatViewsText(viewsText?: string) {
+  if (!viewsText) return '1,240'
+  if (!viewsText.toLowerCase().endsWith('k')) return viewsText
+
+  const numberValue = Number(viewsText.slice(0, -1))
+  if (Number.isNaN(numberValue)) return viewsText
+  return Math.round(numberValue * 1000).toLocaleString('ko-KR')
 }
 
 function CommunityKnowledgeDetail() {
   const navigate = useNavigate()
   const location = useLocation()
+  const { knowledgeId = defaultKnowledgeId } = useParams()
+  const knowledgeCommentsPagePath = getKnowledgeCommentsPagePath(knowledgeId)
+  const knowledgeCommentsStorageKey = getKnowledgeCommentsStorageKey(knowledgeId)
   const [isCommentFormVisible, setIsCommentFormVisible] = useState(true)
+  const [visibleComments, setVisibleComments] = useState<KnowledgeComment[]>(() =>
+    readKnowledgeComments(knowledgeCommentsStorageKey),
+  )
   const lastScrollTopRef = useRef(0)
   const item = (location.state as KnowledgeDetailState | null)?.item
   const detailTitle = item?.title ?? '강아지 산책 안 하면 생기는 문제점'
@@ -101,6 +334,66 @@ function CommunityKnowledgeDetail() {
     detailTitle === '강아지 산책 안 하면 생기는 문제점'
       ? ['강아지 산책', '안 하면 생기는 문제점']
       : [detailTitle]
+  const isCatJumpSecret = knowledgeId === 'catjumpsecret'
+  const isCforbiddenFoods = knowledgeId === 'forbiddenfoods'
+  const activeDetailItems = isCatJumpSecret
+    ? catJumpSecretItems
+    : isCforbiddenFoods
+      ? cforbiddenFoodsItems
+      : detailItems
+  const postedTimeText = getRelativeTimeText(item?.createdAt ?? '2026-05-02T09:00:00')
+  const viewsText = formatViewsText(item?.viewsText)
+  const commentCount = visibleComments.length
+
+  const openCommentsPage = () => {
+    navigate(knowledgeCommentsPagePath, {
+      state: {
+        initialComments: visibleComments,
+        storageKey: knowledgeCommentsStorageKey,
+      },
+    })
+  }
+
+  const scrollToCommentBottom = () => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const scrollContainer = document.querySelector('.layout_content') as HTMLElement | null
+
+        if (!scrollContainer) {
+          window.scrollTo(0, document.documentElement.scrollHeight)
+          lastScrollTopRef.current = window.scrollY
+          return
+        }
+
+        scrollContainer.scrollTop = scrollContainer.scrollHeight
+        lastScrollTopRef.current = scrollContainer.scrollTop
+      })
+    })
+  }
+
+  const addComment = (text: string) => {
+    setVisibleComments((current) => {
+      const nextComments = [
+        ...current,
+        {
+          id: Date.now(),
+          author: MY_PROFILE_NAME,
+          text,
+          time: '방금 전',
+          likes: 0,
+          replies: 0,
+        },
+      ]
+
+      window.localStorage.setItem(knowledgeCommentsStorageKey, JSON.stringify(nextComments))
+      return nextComments
+    })
+    scrollToCommentBottom()
+  }
+
+  useEffect(() => {
+    setVisibleComments(readKnowledgeComments(knowledgeCommentsStorageKey))
+  }, [knowledgeCommentsStorageKey])
 
   useEffect(() => {
     const scrollContainer = document.querySelector('.layout_content') as HTMLElement | null
@@ -165,52 +458,114 @@ function CommunityKnowledgeDetail() {
         </section>
 
       <section className="community_knowledge_detail_content">
-        <h1>
-          {detailTitleLines.map((line, index) => (
-            <span key={line}>
-              {index > 0 ? <br /> : null}
-              {line}
-            </span>
-          ))}
-        </h1>
+        <Title
+          as="h1"
+          className="community_knowledge_detail_title"
+          title={
+            <>
+              {detailTitleLines.map((line, index) => (
+                <span key={line}>
+                  {index > 0 ? <br /> : null}
+                  {line}
+                </span>
+              ))}
+            </>
+          }
+        >
+          <div className="community_knowledge_detail_meta">
+            <span>{postedTimeText}</span>
+            <span>조회수 {viewsText}</span>
+          </div>
+        </Title>
 
-        <div className="community_knowledge_detail_meta">
-          <span>
-            <EyeIcon />
-            {item?.viewsText ?? '1.2k'}
-          </span>
-          <span className="community_knowledge_detail_dot" aria-hidden="true">·</span>
-          <span>05.02 게시됨</span>
-          <button type="button">
-            <ShareIcon />
-            공유하기
-          </button>
-        </div>
-
-        <p className="community_knowledge_detail_intro">
-          산책은 강아지의 신체 건강뿐만 아니라
-          <br />
-          정서 건강에도 매우 중요한 영향을 줍니다.
-          <br />
-          산책이 부족하면 다양한 문제가 생길 수 있어요.
-        </p>
+        {isCatJumpSecret ? (
+          <p className="community_knowledge_detail_intro">
+            고양이가 높이 점프하는 모습,
+            <br />
+            한 번쯤 신기하게 본 적 있지 않나요?
+            <br />
+            사실 고양이는 몸 구조 자체가 점프에 최적화되어 있어요.
+          </p>
+        ) : isCforbiddenFoods ? (
+          <p className="community_knowledge_detail_intro">
+            사람이 먹는 음식 중에는
+            <br />
+            고양이에게 위험한 것들이 생각보다 많아요.
+            <br />
+            건강을 위해 꼭 피해야 할 음식들을 간단히 정리해봤어요.
+          </p>
+        ) : (
+          <p className="community_knowledge_detail_intro">
+            산책은 강아지의 신체 건강뿐만 아니라
+            <br />
+            정서 건강에도 매우 중요한 영향을 줍니다.
+            <br />
+            산책이 부족하면 다양한 문제가 생길 수 있어요.
+          </p>
+        )}
 
         <div className="community_knowledge_detail_cards">
-          {detailItems.map((item) => (
+          {activeDetailItems.map((item) => (
             <article key={item.id} className="community_knowledge_detail_card">
               <div className="community_knowledge_detail_card_icon" aria-hidden="true">
                 <img src={item.image} alt="" />
               </div>
-              <div className="community_knowledge_detail_card_copy">
-                <h2>
-                  <span className="community_knowledge_detail_card_badge">{item.id}</span>
-                  {item.title}
-                </h2>
+              <Title
+                as="h5"
+                className="community_knowledge_detail_card_copy"
+                title={
+                  <>
+                    <span className="community_knowledge_detail_card_badge">{item.id}</span>
+                    {item.title}
+                  </>
+                }
+              >
                 <p>{item.description}</p>
-              </div>
+              </Title>
             </article>
           ))}
         </div>
+
+        <section className="cpsdetail_comments" aria-label="댓글">
+          <Title as="h5" className="cpsdetail_comments_title" title={`댓글 ${commentCount}`} />
+          {visibleComments.slice(0, 8).map((comment) => (
+            <article key={comment.id} className="cpsdetail_comment">
+              <AvatarIcon />
+              <div className="cpsdetail_comment_body">
+                <div className="cpsdetail_comment_head">
+                  <Title as="h5" title={comment.author}>
+                    <p>{comment.time ?? '11시간 전'}</p>
+                  </Title>
+                  <button type="button" className="cpsdetail_more" aria-label="댓글 더보기">
+                    <MoreIcon />
+                  </button>
+                </div>
+                <p>
+                  <CommentText text={comment.text} />
+                </p>
+                <div className="cpsdetail_comment_actions">
+                  <button type="button">
+                    <HeartIcon />
+                    <span>좋아요 {comment.likes || ''}</span>
+                  </button>
+                  <button type="button" onClick={() => setIsCommentFormVisible(true)}>
+                    <i className="bx bx-message-rounded-dots" aria-hidden="true" />
+                    <span>답글쓰기</span>
+                  </button>
+                </div>
+              </div>
+            </article>
+          ))}
+          {commentCount > 8 ? (
+            <Button
+              type="button"
+              className="s_white_radius_btn cpsdetail_comments_more_btn"
+              onClick={openCommentsPage}
+            >
+              댓글 더보기
+            </Button>
+          ) : null}
+        </section>
       </section>
 
       </main>
@@ -223,6 +578,7 @@ function CommunityKnowledgeDetail() {
           placeholder="메시지를 입력해 주세요."
           addIcon={addIcon}
           emojiIcon={emojiIcon}
+          onSubmit={addComment}
         />
         <div className="community_knowledge_detail_actions">
           <div className="community_knowledge_detail_reactions">
@@ -230,9 +586,9 @@ function CommunityKnowledgeDetail() {
               <HeartIcon />
               {item?.likes ?? 128}
             </button>
-            <button type="button" aria-label="댓글" onClick={() => setIsCommentFormVisible(true)}>
+            <button type="button" aria-label="댓글" onClick={openCommentsPage}>
               <CommentIcon />
-              {item?.comments ?? 36}
+              {commentCount}
             </button>
           </div>
           <button
