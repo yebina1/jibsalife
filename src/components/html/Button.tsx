@@ -32,6 +32,8 @@ export default function Button(props: Buttonprops) {
   const notificationSignature = `${ariaLabel} ${className ?? ''}`.toLowerCase()
   const isNotificationButton =
     notificationSignature.includes('notification') ||
+    notificationSignature.includes('\uC54C\uB9BC') ||
+    notificationSignature.includes('알림') ||
     notificationSignature.includes('알림')
 
   const [shouldShowNotification, setShouldShowNotification] = useState(

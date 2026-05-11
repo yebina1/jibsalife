@@ -1,6 +1,6 @@
 ﻿.mypage_page {
   display: grid;
-  gap: 24px;
+  gap: 48px;
   background: #ffffff;
   color: #111111;
 }
@@ -36,7 +36,7 @@
   margin: 0;
   color: #fff;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .mypage_location_card small {
@@ -61,7 +61,7 @@
 
 .mypage_profile_section {
   display: grid;
-  gap: 28px;
+  gap: 16px;
 }
 
 .mypage_profile_heading {
@@ -79,45 +79,21 @@
   line-height: 1.4;
 }
 
-.mypage_profile_heading span {
-  display: inline-flex;
-  width: 44px;
-  height: 29px;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  border-radius: 8px;
-  background: #98B7FF;
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.summary_profile_card.mypage_profile_card {
-  border-radius: 24px;
-}
-
 .mypage_profile_card_wrap {
   position: relative;
 }
 
-.mypage_profile_card .summary_profile_card_name_row span {
-  display: none;
-}
-
-.mypage_profile_card .summary_profile_card_header svg {
-  width: 24px;
-  height: 24px;
-}
-
-.mypage_profile_card .summary_profile_card_edit {
+.mypage_profile_card_wrap .summary_profile_card_edit {
   color: #999999;
   cursor: default;
   pointer-events: none;
 }
 
-.mypage_profile_card .summary_profile_card_details {
-  position: relative;
+.mypage_profile_card_wrap .summary_profile_card_stat_edit {
+  display: none;
+}
+
+.mypage_profile_card_wrap .summary_profile_card_details {
   display: inline-flex;
   width: fit-content;
   align-items: center;
@@ -125,233 +101,51 @@
   background: url('../../svg/point.svg') left center / 20px 20px no-repeat;
 }
 
-.mypage_profile_card .summary_profile_card_details span,
-.mypage_profile_card .summary_profile_card_details strong {
-  color: #6E5DF8;
-}
-
-.mypage_profile_card .summary_profile_card_detail_label {
-  display: none;
-}
-
-.mypage_profile_card .summary_profile_card_guide {
-  width: 100%;
-  justify-content: flex-end;
-  color: #555555;
-  white-space: nowrap;
-}
-
-.mypage_profile_card .summary_profile_card_guide .chevron_icon {
-  color: #111111;
-}
-
-.mypage_profile_card .summary_profile_card_stats {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.mypage_profile_card .summary_profile_card_stats li {
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 8px;
-}
-
-.mypage_profile_card .summary_profile_card_stats li:not(:last-child)::after {
-  bottom: 24px;
-}
-
-.mypage_profile_card .summary_profile_card_stats span i {
-  display: none;
-}
-
-.mypage_profile_card .summary_profile_card_stats li span,
-.mypage_profile_card .summary_profile_card_stats li strong {
-  text-align: center;
-}
-
-.mypage_profile_card .summary_profile_card_stats li span {
-  width: 100%;
-  justify-content: center;
-}
-
-.mypage_pet_area {
-  display: grid;
-  gap: 18px;
-}
-
-.mypage_pet_area > h2 {
-  margin: 0;
-  color: #111111;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.4;
-}
-
-.mypage_pet_slider {
-  margin-inline: -16px;
-  padding-inline: 16px;
-  overflow: hidden;
-  touch-action: pan-y;
-  user-select: none;
-  cursor: grab;
-}
-
-.mypage_pet_slider:active {
-  cursor: grabbing;
-}
-
-.mypage_pet_area ul {
-  display: flex;
-  width: 100%;
-  gap: 18px;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  list-style: none;
-  transition: margin-left 280ms ease;
-}
-
-.mypage_pet_area ul.dragging {
-  transition: none;
-}
-
-.mypage_pet_area li {
-  flex: 0 0 96%;
-  min-width: 0;
-}
-
-.summary_profile_card.mypage_pet_summary_card {
-  position: relative;
-  width: fit-content;
-  max-width: 100%;
-  min-height: 0;
-  box-sizing: border-box;
-  padding: 20px;
-  border-radius: 12px;
-}
-
-.mypage_pet_summary_card .summary_profile_card_body {
-  flex: 0 0 auto;
-  min-width: 0;
-  width: fit-content;
-}
-
-.mypage_pet_summary_card .summary_profile_card_header {
-  display: block;
-  min-width: 0;
-  padding-right: 26px;
-}
-
-.mypage_pet_summary_card .summary_profile_card_copy {
-  min-width: 0;
-}
-
-.mypage_pet_summary_card .summary_profile_card_top {
-  align-items: center;
-  min-width: 0;
-  gap: 16px;
-}
-
-.mypage_pet_summary_card .profile_image {
-  width: 78px;
-  height: 78px;
-  flex-basis: 78px;
-  border-radius: 10px;
-}
-
-.mypage_pet_summary_card .profile_image img {
-  width: 78px;
-  height: 78px;
-}
-
-.mypage_pet_summary_card .summary_profile_card_name_row {
-  gap: 8px;
-  flex-wrap: nowrap;
-}
-
-.mypage_pet_summary_card .summary_profile_card_name_row strong {
-  min-width: max-content;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.mypage_pet_summary_card .summary_profile_card_name_row span {
-  overflow: hidden;
-  min-width: 0;
-  height: 28px;
-  padding: 4px 8px;
-  border: 1px solid #9174FF;
-  border-radius: 4px;
-  background: #ffffff;
-  color: #9174FF;
-  font-size: 13px;
-  font-weight: 500;
-  text-overflow: ellipsis;
-}
-
-.mypage_pet_summary_card .summary_profile_card_details {
-  flex-wrap: nowrap;
-  overflow: visible;
-  color: #333333;
-  font-size: 12px;
-  white-space: nowrap;
-}
-
-.mypage_pet_summary_card .summary_profile_card_details span {
-  flex-shrink: 0;
-  min-width: 0;
-}
-
-.mypage_pet_summary_card .summary_profile_card_details strong {
-  color: #111111;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.mypage_pet_summary_card .summary_profile_card_detail_label {
-  color: #333333;
-}
-
-.mypage_pet_summary_card .summary_profile_card_guide {
-  color: #A10803;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.mypage_pet_summary_card .summary_profile_card_guide .chevron_icon {
-  color: #A10803;
-}
-
-.mypage_pet_summary_card .summary_profile_card_edit {
+.mypage_profile_card_wrap .summary_profile_card_detail_label {
   position: absolute;
-  top: 32px;
-  right: 20px;
-  width: 24px;
-  height: 24px;
-  flex-basis: 24px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
-.mypage_pet_summary_card .summary_profile_card_stats {
-  display: none;
+.mypage_profile_card_wrap .summary_profile_card_details strong {
+  color: #6D59F8;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
 }
 
-.mypage_pet_dots {
-  display: flex;
-  justify-content: center;
+.mypage_profile_card_wrap .summary_profile_card_guide {
+  width: 100%;
+  justify-content: space-between;
+  color: #111111;
+}
+
+.mypage_profile_badges {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
   gap: 8px;
+  color: #111111;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
 }
 
-.mypage_pet_dots button {
-  width: 7px;
-  height: 7px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: #E5E5EC;
-  cursor: pointer;
+.mypage_profile_card_wrap .summary_profile_card_guide .chevron_icon {
+  color: #111111;
 }
 
-.mypage_pet_dots .active {
-  background: #9174FF;
+.mypage_profile_badges img {
+  display: block;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  object-fit: contain;
 }
 
 .mypage_menu_section {
@@ -359,7 +153,7 @@
 }
 
 .mypage_menu_section h2 {
-  margin: 12px 0 16px;
+  margin: 0;
   color: #111111;
   font-size: 18px;
   font-weight: 600;
@@ -383,10 +177,17 @@
   height: auto;
   align-items: center;
   justify-content: space-between;
-  padding: 0;
   border: 0;
   background: #fff;
-  padding: 8px 18px;
+  padding: 16px 20px;
+}
+
+.mypage_activity_section li:first-child .mypage_menu_button {
+  padding: 20px 20px 16px;
+}
+
+.mypage_activity_section li:last-child .mypage_menu_button {
+  padding: 16px 20px 20px;
 }
 
 .mypage_menu_left {
@@ -428,11 +229,7 @@
 
 @media (max-width: 420px) {
   .mypage_page {
-    gap: 22px;
-  }
-
-  .mypage_profile_section {
-    gap: 24px;
+    gap: 48px;
   }
 
   .mypage_profile_heading h1 {
@@ -443,9 +240,6 @@
     padding: 12px 20px;
   }
 
-  .summary_profile_card.mypage_pet_summary_card {
-    padding: 20px;
-  }
 }
 
 @media (max-width: 360px) {
@@ -457,17 +251,8 @@
     font-size: 29px;
   }
 
-  .mypage_profile_card .summary_profile_card_stats {
-    column-gap: 10px;
-  }
-
   .mypage_location_card {
     padding: 12px 20px;
   }
 
-  .mypage_pet_summary_card .profile_image {
-    width: 70px;
-    height: 70px;
-    flex-basis: 70px;
-  }
 }

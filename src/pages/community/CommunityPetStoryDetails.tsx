@@ -15,11 +15,10 @@ import life3 from '../../img/life3.png'
 import life4 from '../../img/life4.png'
 import life5 from '../../img/life5.jpg'
 import life6 from '../../img/life6.jpg'
-import profileImage from '../../img/pink_dog_profile.jpg'
 import addIcon from '../../svg/add icon.svg'
 import emojiIcon from '../../svg/emoji.svg'
 import sharingIcon from '../../svg/sharing.svg'
-import { MY_PROFILE_NAME } from '../../utils/myProfile'
+import { MY_PROFILE_IMAGE, MY_PROFILE_NAME } from '../../utils/myProfile'
 import { petStoryDetailComments } from './CommunityPetStoryDetailData'
 
 const createdPostsStorageKey = 'jibsalife.community.createdPosts'
@@ -311,7 +310,7 @@ function CommentText({ text }: { text: string }) {
 function AvatarIcon() {
   return (
     <span className="cpsdetail_avatar_box" aria-hidden="true">
-      <img src={profileImage} alt="" />
+      <img src={MY_PROFILE_IMAGE} alt="" />
     </span>
   )
 }

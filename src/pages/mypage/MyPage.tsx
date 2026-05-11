@@ -1,6 +1,5 @@
 ﻿import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
-import { useRef } from 'react'
 import './MyPage.css'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
@@ -9,14 +8,9 @@ import ContentSection from '../../components/ContentSection'
 import SummaryProfileCard from '../../components/SummaryProfileCard'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
-import {
-  formatProfilePoints,
-  readProfilePoints,
-} from '../../utils/profilePoints'
-import { MY_PROFILE_NAME } from '../../utils/myProfile'
-import contents2 from '../../img/contents2.png'
-import leeyoriImage from '../../img/leeyori.png'
-import pungpungiImage from '../../img/pungpungi.png'
+import { readProfilePoints } from '../../utils/profilePoints'
+import { MY_PROFILE_IMAGE, MY_PROFILE_NAME } from '../../utils/myProfile'
+import dogBadgeImage from '../../img/badge/dogbadge2.png'
 
 const activityItems = [
   { label: '활동 내역', icon: 'activity' },
@@ -39,23 +33,6 @@ const myProfileStats = [
   { label: '댓글', value: '23' },
   { label: '뱃지', value: '8' },
   { label: '쿠폰', value: '1장' },
-] as const
-
-const myPetSlides = [
-  {
-    id: 1,
-    image: leeyoriImage,
-    name: '이요리',
-    breed: '코리안 쇼트 헤어',
-    details: '나이: 5살 · 몸무게: 3kg · 성별: 남아',
-  },
-  {
-    id: 2,
-    image: pungpungiImage,
-    name: '뿡뿡이',
-    breed: '포메라니안',
-    details: '나이: 2살 · 몸무게: 5kg · 성별: 남아',
-  },
 ] as const
 
 const LOCATION_STORAGE_KEY = 'mypage-location'
@@ -222,10 +199,6 @@ function MyPage() {
   const [locationMessage, setLocationMessage] = useState(DEFAULT_LOCATION_MESSAGE)
   const [isLocating, setIsLocating] = useState(false)
   const [profilePoints, setProfilePoints] = useState(() => readProfilePoints())
-  const [petSlideIndex, setPetSlideIndex] = useState(0)
-  const [petDragOffset, setPetDragOffset] = useState(0)
-  const [isPetDragging, setIsPetDragging] = useState(false)
-  const petDragStateRef = useRef({ startX: 0 })
 
   useEffect(() => {
     const savedValue = window.localStorage.getItem(LOCATION_STORAGE_KEY)
@@ -313,32 +286,6 @@ function MyPage() {
     )
   }
 
-  const handlePetDragStart = (clientX: number) => {
-    petDragStateRef.current.startX = clientX
-    setIsPetDragging(true)
-    setPetDragOffset(0)
-  }
-
-  const handlePetDragMove = (clientX: number) => {
-    if (!isPetDragging) return
-    setPetDragOffset(clientX - petDragStateRef.current.startX)
-  }
-
-  const handlePetDragEnd = () => {
-    if (!isPetDragging) return
-
-    const threshold = 48
-
-    if (petDragOffset <= -threshold && petSlideIndex < myPetSlides.length - 1) {
-      setPetSlideIndex((current) => current + 1)
-    } else if (petDragOffset >= threshold && petSlideIndex > 0) {
-      setPetSlideIndex((current) => current - 1)
-    }
-
-    setIsPetDragging(false)
-    setPetDragOffset(0)
-  }
-
   return (
     <>
       <PageHeader
@@ -367,7 +314,7 @@ function MyPage() {
             ))}
             {savedLocation ? <small>위치 저장 완료</small> : null}
           </p>
-          <button className='white_radius_btn' type="button" onClick={handleLocationSetting} disabled={isLocating}>
+          <button className="s_white_radius_btn" type="button" onClick={handleLocationSetting} disabled={isLocating}>
             {isLocating ? '확인 중...' : '위치설정'}
             <MyPageIcon type="pin" />
           </button>
@@ -375,84 +322,28 @@ function MyPage() {
 
         <section className="mypage_profile_section">
           <div className="mypage_profile_heading">
-            <h3>내 프로필</h3>
-            <span>구독중</span>
+            <h3>집사 프로필</h3>
           </div>
 
           <div className="mypage_profile_card_wrap">
             <SummaryProfileCard
-              image={contents2}
+              image={MY_PROFILE_IMAGE}
               imageAlt="프로필 이미지"
               name={MY_PROFILE_NAME}
               breed=""
-              details={`포인트: ${formatProfilePoints(profilePoints)}`}
-              careGuideLabel="보유 뱃지  🏅  🐾  🐾"
+              details={`포인트: ${profilePoints}`}
+              careGuideLabel={
+                <span className="mypage_profile_badges">
+                  <span>보유 뱃지</span>
+                  <img src={dogBadgeImage} alt="" aria-hidden="true" />
+                </span>
+              }
               stats={myProfileStats}
-              className="mypage_profile_card"
             />
           </div>
         </section>
 
-        <section className="mypage_pet_area" aria-labelledby="mypage_pet_title">
-          <h2 id="mypage_pet_title">내 반려동물</h2>
-          <div
-            className="mypage_pet_slider"
-            aria-label="내 반려동물 슬라이드"
-            onPointerDown={(event) => {
-              handlePetDragStart(event.clientX)
-              event.currentTarget.setPointerCapture(event.pointerId)
-            }}
-            onPointerMove={(event) => handlePetDragMove(event.clientX)}
-            onPointerUp={(event) => {
-              if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-                event.currentTarget.releasePointerCapture(event.pointerId)
-              }
-              handlePetDragEnd()
-            }}
-            onPointerCancel={(event) => {
-              if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-                event.currentTarget.releasePointerCapture(event.pointerId)
-              }
-              handlePetDragEnd()
-            }}
-          >
-            <ul
-              className={isPetDragging ? 'dragging' : undefined}
-              style={{
-                marginLeft: `calc(-${petSlideIndex * 88}% - ${petSlideIndex * 12}px + ${petDragOffset}px)`,
-              }}
-            >
-              {myPetSlides.map((pet) => (
-                <li key={pet.id}>
-                  <SummaryProfileCard
-                    image={pet.image}
-                    imageAlt="반려동물 프로필"
-                    name={pet.name}
-                    breed={pet.breed}
-                    details={pet.details}
-                    careGuideLabel="케어 가이드"
-                    stats={[]}
-                    className="mypage_pet_summary_card"
-                  />
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="mypage_pet_dots" aria-label="반려동물 슬라이드 페이지">
-            {myPetSlides.map((pet, index) => (
-              <button
-                key={pet.id}
-                type="button"
-                className={index === petSlideIndex ? 'active' : ''}
-                aria-label={`${index + 1}번 반려동물 보기`}
-                aria-pressed={index === petSlideIndex}
-                onClick={() => setPetSlideIndex(index)}
-              />
-            ))}
-          </div>
-        </section>
-
-        <ContentSection className="mypage_menu_section" title="내 활동">
+        <ContentSection className="mypage_menu_section mypage_activity_section" title="내 활동">
           <ul>
             {activityItems.map((item) => (
               <li key={item.label}>

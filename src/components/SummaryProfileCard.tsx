@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, type ReactNode } from 'react'
 import ChevronIcon from './ChevronIcon'
 import ProfileImage from './ProfileImage'
 import './SummaryProfileCard.css'
@@ -14,7 +14,7 @@ type SummaryProfileCardProps = {
   breed: string
   details: string
   stats: readonly SummaryProfileStat[]
-  careGuideLabel?: string
+  careGuideLabel?: ReactNode
   imageAlt?: string
   className?: string
   onEdit?: () => void
@@ -105,7 +105,7 @@ function SummaryProfileCard({
               <div className="summary_profile_card_heading">
                 <div className="summary_profile_card_name_row">
                   <strong>{name}</strong>
-                  <span>{breed}</span>
+                  {breed ? <span>{breed}</span> : null}
                 </div>
                 <button
                   type="button"

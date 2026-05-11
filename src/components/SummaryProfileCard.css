@@ -63,7 +63,7 @@
 
 .summary_profile_card_heading {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
   width: 100%;

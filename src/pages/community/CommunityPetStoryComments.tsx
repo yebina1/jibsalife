@@ -5,10 +5,9 @@ import PageHeader from '../../components/PageHeader'
 import Title from '../../components/Title'
 import BackButton from '../../components/html/BackButton'
 import CommentInputForm from '../../components/html/CommentInputForm'
-import profileImage from '../../img/pink_dog_profile.jpg'
 import addIcon from '../../svg/add icon.svg'
 import emojiIcon from '../../svg/emoji.svg'
-import { MY_PROFILE_NAME } from '../../utils/myProfile'
+import { MY_PROFILE_IMAGE, MY_PROFILE_NAME } from '../../utils/myProfile'
 import { petStoryDetailComments } from './CommunityPetStoryDetailData'
 
 const likedCommentIdsStorageKey = 'jibsalife.community.likedCommentIds'
@@ -69,7 +68,7 @@ function HeartIcon() {
 function AvatarIcon() {
   return (
     <span className="cpsdetail_avatar_box" aria-hidden="true">
-      <img src={profileImage} alt="" />
+      <img src={MY_PROFILE_IMAGE} alt="" />
     </span>
   )
 }
