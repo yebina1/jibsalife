@@ -13,7 +13,7 @@ function Alert({ onClose, children, dialogRef }: Props) {
       <button
         type="button"
         className="alert_dim"
-        aria-label="알림 닫기"
+        aria-label="?뚮┝ ?リ린"
         onClick={onClose}
       />
       <section ref={dialogRef} className="alert" role="alertdialog" aria-modal="true">

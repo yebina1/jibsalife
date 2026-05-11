@@ -330,6 +330,7 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const recordedChunksRef = useRef<Blob[]>([])
   const shouldNavigateAfterRecordRef = useRef(false)
+  const albumInputRef = useRef<HTMLInputElement>(null)
   const [cameraError, setCameraError] = useState('')
   const [isRecording, setIsRecording] = useState(false)
   const [showGuide] = useState(!captureOnly && searchParams.get('guide') !== 'false')
@@ -402,6 +403,89 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
 
     context.drawImage(video, 0, 0, canvas.width, canvas.height)
     return canvas.toDataURL('image/jpeg', 0.92)
+  }
+
+  const getAlbumAcceptType = () => {
+    if (mode === 'video') return 'video/*'
+    if (mode === 'audio') return 'audio/*'
+    return 'image/*'
+  }
+
+  const handleAlbumClick = () => {
+    albumInputRef.current?.click()
+  }
+
+  const handleAlbumChange = (event: { target: HTMLInputElement }) => {
+    const file = event.target.files?.[0]
+
+    if (!file) {
+      return
+    }
+
+    const fileUrl = URL.createObjectURL(file)
+    const label = file.name || (mode === 'video' ? '동영상 업로드 완료' : mode === 'audio' ? '녹음 업로드 완료' : '사진 업로드 완료')
+
+    if (mode === 'video') {
+      if (isEditFlow) {
+        returnToRegister('video', {
+          pendingEdit: {
+            section: 'video',
+            src: fileUrl,
+            mediaType: 'video',
+            label,
+          },
+        })
+      } else {
+        returnToRegister('video', {
+          capturedEntry: {
+            section: 'video',
+            entry: {
+              id: `video-upload-${Date.now()}`,
+              preview: fileUrl,
+              label,
+              mediaType: 'video',
+            },
+          },
+        })
+      }
+    } else if (mode === 'audio') {
+      returnToRegister('audio', {
+        capturedEntry: {
+          section: 'audio',
+          entry: {
+            id: `audio-upload-${Date.now()}`,
+            preview: fileUrl,
+            label,
+            mediaType: 'audio',
+          },
+        },
+      })
+    } else {
+      if (isEditFlow) {
+        returnToRegister('photo', {
+          pendingEdit: {
+            section: 'photo',
+            src: fileUrl,
+            mediaType: 'image',
+            label,
+          },
+        })
+      } else {
+        returnToRegister('photo', {
+          capturedEntry: {
+            section: 'photo',
+            entry: {
+              id: `photo-upload-${Date.now()}`,
+              preview: fileUrl,
+              label,
+              mediaType: 'image',
+            },
+          },
+        })
+      }
+    }
+
+    event.target.value = ''
   }
 
   const handleCapture = () => {
@@ -799,7 +883,19 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
           ))}
         </div>
         <div className="health_camera_control_row">
-          <button type="button" className="health_camera_side_button" aria-label="사진첩">
+          <input
+            ref={albumInputRef}
+            type="file"
+            className="health_camera_album_input"
+            accept={getAlbumAcceptType()}
+            onChange={handleAlbumChange}
+          />
+          <button
+            type="button"
+            className="health_camera_side_button"
+            aria-label="사진첩"
+            onClick={handleAlbumClick}
+          >
             <span className="health_camera_gallery_icon" />
           </button>
         <Button

@@ -77,6 +77,10 @@
   flex-shrink: 0;
   background: #fff;
   color: #111111;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
   border-radius: 999px;
   border: 1px solid #E5E5EC;
 }
@@ -85,7 +89,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  line-height: 1;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
 }
 
 .white_radius_btn .button_icon_asset {

@@ -95,7 +95,7 @@
   background: #ffffff;
   border: 1px solid #e5e5ec;
   border-top-left-radius: 4px;
-  box-shadow: 0 4px 14px rgb(17 17 17 / 6%);
+  box-shadow: 0 1px 2px rgb(17 17 17 / 12%);
   color: #111111;
 }
 
@@ -238,6 +238,11 @@
 .chat_message_feedback_button.is_active_dislike {
   color: #505050;
   transform: scale(1.08);
+}
+
+.chat_message_feedback_button.is_active_like svg path,
+.chat_message_feedback_button.is_active_dislike svg path {
+  fill: currentColor;
 }
 
 .chat_room_form {

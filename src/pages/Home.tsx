@@ -8,6 +8,7 @@ import ContentSection from '../components/ContentSection'
 import HomeSummaryBanner from '../components/HomeSummaryBanner'
 import SummaryProfileCard, { SummaryProfileAddCard } from '../components/SummaryProfileCard'
 import Button from '../components/html/Button'
+import Alert from '../components/Alert'
 import {
   MISSION_ACTIVITY_RECORDS_CHANGE_EVENT,
   readMissionActivityRecords,
@@ -20,10 +21,10 @@ import {
 } from '../utils/missionHistoryRecords'
 import pungpungiImage from '../img/pungpungi.png'
 import leeyoriImage from '../img/leeyori.png'
-import contents1 from '../img/contents1.png'
-import contents2 from '../img/contents2.png'
-import contents3 from '../img/contents3.png'
-import contents4 from '../img/contents4.png'
+import knowledge1 from '../img/knowledge1.png'
+import knowledge2 from '../img/knowledge2.png'
+import knowledge3 from '../img/knowledge3.png'
+import knowledge4 from '../img/knowledge4.png'
 import animalCardImage from '../img/animal_card.png'
 import bannerIconImage from '../img/banner_icon.png'
 import bannerIcon2Image from '../img/banner_icon2.png'
@@ -43,6 +44,7 @@ type PetIdCardForm = {
   name: string
   birthDate: string
   breed: string
+  weight: string
   registrationNumber: string
   sex: string
   neutered: string
@@ -52,6 +54,7 @@ const emptyPetIdForm: PetIdCardForm = {
   name: '',
   birthDate: '',
   breed: '',
+  weight: '',
   registrationNumber: '',
   sex: '',
   neutered: '',
@@ -71,11 +74,35 @@ const bestPoseVoteItems = [
 ] as const
 
 const contentItems = [
-  { id: 1, title: '활동량이 줄어든\n아이를 위한 추천 장난감', image: contents1 },
-  { id: 2, title: '우리 아이 상태별 추천 혜택', image: contents2 },
-  { id: 3, title: '우리 아이 상태별 추천 혜택', image: contents3 },
-  { id: 4, title: '반려견을 위한\n케어 아이템 3종', image: contents4 },
-]
+  {
+    id: 1,
+    title: '강아지 산책 안 하면\n생기는 문제점',
+    image: knowledge1,
+    objectPosition: '61% center',
+    path: '/community/petstory/knowledge/walk-problems',
+  },
+  {
+    id: 2,
+    title: '고양이 점프의 숨겨진 비밀',
+    image: knowledge2,
+    objectPosition: '64% center',
+    path: '/community/petstory/knowledge/walk-problems',
+  },
+  {
+    id: 3,
+    title: '강아지에게 절대 주면\n안되는 음식 7가지',
+    image: knowledge3,
+    objectPosition: '43% center',
+    path: '/community/petstory/knowledge/walk-problems',
+  },
+  {
+    id: 4,
+    title: '봄청 강아지\n알레르기 증상과 관리법',
+    image: knowledge4,
+    objectPosition: '48% center',
+    path: '/community/petstory/knowledge/walk-problems',
+  },
+] as const
 
 type SummaryStat = {
   label: string
@@ -88,7 +115,9 @@ type ProfileSummarySlide = {
   name: string
   breed: string
   image: string
-  details: string
+  birthDate: string
+  weight: string
+  sex: string
 }
 
 type AddSummarySlide = {
@@ -160,6 +189,52 @@ function formatTodaySummaryDate() {
   return `${year}년 ${month}월 ${day}일`
 }
 
+function formatBirthDate(value: string) {
+  const digits = value.replace(/\D/g, '').slice(0, 8)
+  const year = digits.slice(0, 4)
+  const month = digits.slice(4, 6)
+  const day = digits.slice(6, 8)
+
+  return [year, month, day].filter(Boolean).join('.')
+}
+
+function formatWeightValue(value: string) {
+  const normalized = value.replace(/[^\d.]/g, '')
+  const [integerPart, ...decimalParts] = normalized.split('.')
+  const decimalPart = decimalParts.join('').slice(0, 2)
+
+  return decimalParts.length > 0 ? `${integerPart}.${decimalPart}` : integerPart
+}
+
+function calculateAgeFromBirthDate(birthDate: string) {
+  const match = birthDate.match(/^(\d{4})\.(\d{2})\.(\d{2})$/)
+
+  if (!match) return ''
+
+  const birthYear = Number(match[1])
+  const birthMonth = Number(match[2])
+  const birthDay = Number(match[3])
+  const today = new Date()
+  let age = today.getFullYear() - birthYear
+  const hasBirthdayPassed =
+    today.getMonth() + 1 > birthMonth ||
+    (today.getMonth() + 1 === birthMonth && today.getDate() >= birthDay)
+
+  if (!hasBirthdayPassed) {
+    age -= 1
+  }
+
+  return `${Math.max(age, 0)}살`
+}
+
+function createProfileDetails(profile: ProfileSummarySlide) {
+  const age = calculateAgeFromBirthDate(profile.birthDate)
+  const sexLabel = profile.sex === '여' ? '여아' : profile.sex === '남' ? '남아' : profile.sex
+  const weightLabel = profile.weight ? `${profile.weight} kg` : '-'
+
+  return `나이: ${age || '-'} · 몸무게: ${weightLabel} · 성별: ${sexLabel || '-'}`
+}
+
 function VoteHeartIcon({ active }: { active: boolean }) {
   return (
     <svg
@@ -179,20 +254,22 @@ function Home() {
   const [isDragging, setIsDragging] = useState(false)
   const [likedBestPoseIds, setLikedBestPoseIds] = useState<number[]>([])
   const [isPetIdModalOpen, setIsPetIdModalOpen] = useState(false)
+  const [editingProfileId, setEditingProfileId] = useState<number | null>(null)
   const [petIdPhoto, setPetIdPhoto] = useState<string | null>(null)
   const [petIdForm, setPetIdForm] = useState<PetIdCardForm>(emptyPetIdForm)
   const [calendarRecords, setCalendarRecords] = useState<MissionHistoryRecord[]>(readCalendarRecords)
   const dragStateRef = useRef({ startX: 0 })
   const registeredPetName = readPetProfileName()
-
-  const summarySlides = [
+  const [profileSlides, setProfileSlides] = useState<ProfileSummarySlide[]>([
     {
       id: 1,
       type: 'profile',
       name: '이요리',
       breed: '코리안 쇼트 헤어',
       image: leeyoriImage,
-      details: '나이: 5살 · 몸무게: 3 kg · 성별: 남아',
+      birthDate: '2021.05.11',
+      weight: '3',
+      sex: '남',
     },
     {
       id: 2,
@@ -200,8 +277,13 @@ function Home() {
       name: registeredPetName || '뿡뿡이',
       breed: '포메라니안',
       image: pungpungiImage,
-      details: '나이: 2살 · 몸무게: 5 kg · 성별: 남아',
+      birthDate: '2024.05.11',
+      weight: '5',
+      sex: '남',
     },
+  ])
+  const summarySlides = [
+    ...profileSlides,
     {
       id: 3,
       type: 'add',
@@ -235,6 +317,32 @@ function Home() {
     }
   }, [])
 
+  useEffect(() => {
+    if (!isPetIdModalOpen) return
+
+    const scrollY = window.scrollY
+    const previousOverflow = document.body.style.overflow
+    const previousHtmlOverflow = document.documentElement.style.overflow
+    const previousPosition = document.body.style.position
+    const previousTop = document.body.style.top
+    const previousWidth = document.body.style.width
+
+    document.documentElement.style.overflow = 'hidden'
+    document.body.style.overflow = 'hidden'
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${scrollY}px`
+    document.body.style.width = '100%'
+
+    return () => {
+      document.documentElement.style.overflow = previousHtmlOverflow
+      document.body.style.overflow = previousOverflow
+      document.body.style.position = previousPosition
+      document.body.style.top = previousTop
+      document.body.style.width = previousWidth
+      window.scrollTo(0, scrollY)
+    }
+  }, [isPetIdModalOpen])
+
   const handleDragStart = (clientX: number) => {
     dragStateRef.current.startX = clientX
     setIsDragging(true)
@@ -264,7 +372,14 @@ function Home() {
   const handlePetIdInputChange = (field: keyof PetIdCardForm, value: string) => {
     setPetIdForm((prev) => ({
       ...prev,
-      [field]: value,
+      [field]:
+        field === 'birthDate'
+          ? formatBirthDate(value)
+          : field === 'weight'
+            ? formatWeightValue(value)
+            : field === 'registrationNumber'
+              ? value.replace(/\D/g, '').slice(0, 15)
+            : value,
     }))
   }
 
@@ -272,27 +387,94 @@ function Home() {
     const file = event.target.files?.[0]
     if (!file) return
 
-    setPetIdPhoto((prev) => {
-      if (prev?.startsWith('blob:')) {
-        URL.revokeObjectURL(prev)
+    const reader = new FileReader()
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        setPetIdPhoto(reader.result)
       }
-      return URL.createObjectURL(file)
-    })
+    }
+    reader.readAsDataURL(file)
   }
 
-  const openPetIdModal = () => {
-    setPetIdForm(emptyPetIdForm)
+  const openPetIdModal = (profile?: ProfileSummarySlide) => {
+    setEditingProfileId(profile?.id ?? null)
+    setPetIdForm({
+      ...emptyPetIdForm,
+      name: profile?.name ?? '',
+      breed: profile?.breed ?? '',
+      birthDate: profile?.birthDate ?? '',
+      weight: formatWeightValue(profile?.weight ?? ''),
+      sex: profile?.sex ?? '',
+    })
     setPetIdPhoto((prev) => {
       if (prev?.startsWith('blob:')) {
         URL.revokeObjectURL(prev)
       }
-      return null
+      return profile?.image ?? null
     })
     setIsPetIdModalOpen(true)
   }
 
   const closePetIdModal = () => {
     setIsPetIdModalOpen(false)
+    setEditingProfileId(null)
+  }
+
+  const submitPetIdModal = () => {
+    if (editingProfileId !== null) {
+      setProfileSlides((current) =>
+        current.map((profile) =>
+          profile.id === editingProfileId
+            ? {
+                ...profile,
+                name: petIdForm.name || profile.name,
+                breed: petIdForm.breed || profile.breed,
+                birthDate: petIdForm.birthDate,
+                weight: petIdForm.weight,
+                sex: petIdForm.sex,
+                image: petIdPhoto || profile.image,
+              }
+            : profile,
+        ),
+      )
+    } else {
+      const nextProfile: ProfileSummarySlide = {
+        id: Date.now(),
+        type: 'profile',
+        name: petIdForm.name || '이름',
+        breed: petIdForm.breed || '품종',
+        image: petIdPhoto || pungpungiImage,
+        birthDate: petIdForm.birthDate,
+        weight: petIdForm.weight,
+        sex: petIdForm.sex,
+      }
+
+      setProfileSlides((current) => {
+        const nextProfiles = [...current, nextProfile]
+        setSummarySlideIndex(nextProfiles.length - 1)
+        return nextProfiles
+      })
+    }
+
+    closePetIdModal()
+  }
+
+  const deletePetIdProfile = () => {
+    if (editingProfileId === null) {
+      closePetIdModal()
+      return
+    }
+
+    setProfileSlides((current) => {
+      const deletedProfileIndex = current.findIndex((profile) => profile.id === editingProfileId)
+      const nextProfiles = current.filter((profile) => profile.id !== editingProfileId)
+      const nextProfileIndex =
+        nextProfiles.length > 0 ? Math.min(Math.max(deletedProfileIndex, 0), nextProfiles.length - 1) : 0
+
+      setSummarySlideIndex(nextProfileIndex)
+      return nextProfiles
+    })
+    closePetIdModal()
   }
 
   const toggleBestPoseLike = (id: number) => {
@@ -364,8 +546,9 @@ function Home() {
                     image={slide.image}
                     name={slide.name}
                     breed={slide.breed}
-                    details={slide.details}
+                    details={createProfileDetails(slide)}
                     stats={todaySummaryStats}
+                    onEdit={() => openPetIdModal(slide)}
                     onStatEdit={() => navigate('/mission')}
                   />
                 ),
@@ -444,11 +627,11 @@ function Home() {
           imageTop={-16}
         />
 
-        <ContentSection className="home_section home_content_section" title="추천 콘텐츠">
+        <ContentSection className="home_section home_content_section" title="반려상식">
           <div className="content_grid">
             {contentItems.map((item) => (
               <article key={item.id} className="content_card">
-                <img src={item.image} alt={item.title} />
+                <img src={item.image} alt={item.title} style={{ objectPosition: item.objectPosition }} />
                 <div className="content_overlay">
                   <p className="p_semibold">{item.title}</p>
                 </div>
@@ -459,7 +642,7 @@ function Home() {
           <Button
             type="button"
             className="white_radius_btn more_button"
-            onClick={() => navigate('/community/petstory?tab=knowledge')}
+            onClick={() => navigate('/community/petstory/knowledge')}
           >
             더보기
             <ChevronIcon direction="right" size="md" />
@@ -467,11 +650,14 @@ function Home() {
         </ContentSection>
 
         {isPetIdModalOpen ? (
-          <section className="pet_id_modal" role="dialog" aria-modal="true" aria-label="동물등록증 등록하기">
-            <div className="pet_id_modal_backdrop" onClick={closePetIdModal} />
-            <div className="pet_id_modal_sheet">
+          <Alert onClose={closePetIdModal}>
+            <div
+              className="pet_id_modal_alert_content"
+              role="document"
+              aria-label={editingProfileId !== null ? '반려동물 프로필 수정하기' : '반려동물 프로필 등록하기'}
+            >
               <div className="pet_id_modal_header">
-                <h2>동물등록증 등록하기</h2>
+                <h2>{editingProfileId !== null ? '반려동물 프로필 수정하기' : '반려동물 프로필 등록하기'}</h2>
                 <button type="button" aria-label="닫기" onClick={closePetIdModal}>
                   ×
                 </button>
@@ -490,7 +676,10 @@ function Home() {
                     accept="image/*"
                     onChange={handlePetIdPhotoChange}
                   />
-                  <label className="pet_id_card_photo_upload" htmlFor="pet-id-photo-upload">
+                  <label
+                    className={`pet_id_card_photo_upload${petIdPhoto ? ' has_photo' : ''}`}
+                    htmlFor="pet-id-photo-upload"
+                  >
                     {petIdPhoto ? (
                       <img
                         className="pet_id_card_photo"
@@ -500,7 +689,13 @@ function Home() {
                     ) : (
                       <span className="pet_id_card_photo_placeholder">
                         <strong>사진 업로드</strong>
-                        <span>클릭해서 이미지를 추가하세요</span>
+                        <span>
+                          클릭해서
+                          <br />
+                          이미지를
+                          <br />
+                          추가하세요
+                        </span>
                       </span>
                     )}
                   </label>
@@ -513,13 +708,30 @@ function Home() {
                         placeholder="이름"
                       />
                     </div>
-                    <div className="pet_id_card_field">
-                      <span>생년월일 :</span>
-                      <input
-                        value={petIdForm.birthDate}
-                        onChange={(event) => handlePetIdInputChange('birthDate', event.target.value)}
-                        placeholder="YYYY.MM.DD"
-                      />
+                    <div className="pet_id_card_field_row">
+                      <div className="pet_id_card_field">
+                        <span>생년월일 :</span>
+                        <input
+                          value={petIdForm.birthDate}
+                          onChange={(event) => handlePetIdInputChange('birthDate', event.target.value)}
+                          placeholder="0000.00.00"
+                          inputMode="numeric"
+                          maxLength={10}
+                        />
+                      </div>
+                      <div className="pet_id_card_field pet_id_card_weight_field">
+                        <span>몸무게 :</span>
+                        <div className="pet_id_card_weight_input">
+                          <input
+                            value={petIdForm.weight}
+                            onChange={(event) => handlePetIdInputChange('weight', event.target.value)}
+                            placeholder="0"
+                            inputMode="decimal"
+                            style={{ width: `${Math.max(petIdForm.weight.length || 1, 1)}ch` }}
+                          />
+                          <span>kg</span>
+                        </div>
+                      </div>
                     </div>
                     <div className="pet_id_card_field">
                       <span>품종 :</span>
@@ -537,6 +749,8 @@ function Home() {
                           handlePetIdInputChange('registrationNumber', event.target.value)
                         }
                         placeholder="등록번호"
+                        inputMode="numeric"
+                        maxLength={15}
                       />
                     </div>
                     <div className="pet_id_card_field">
@@ -580,12 +794,16 @@ function Home() {
                   className="pet_id_form"
                   onSubmit={(event) => {
                     event.preventDefault()
-                    closePetIdModal()
+                    submitPetIdModal()
                   }}
                 >
                   <div className="pet_id_form_actions">
-                    <Button type="button" className="pet_id_form_cancel" onClick={closePetIdModal}>
-                      이전
+                    <Button
+                      type="button"
+                      className="white_btn pet_id_form_cancel"
+                      onClick={editingProfileId !== null ? deletePetIdProfile : closePetIdModal}
+                    >
+                      {editingProfileId !== null ? '삭제하기' : '이전'}
                     </Button>
                     <Button type="submit" className="purple_btn pet_id_form_submit">
                       확인
@@ -594,7 +812,7 @@ function Home() {
                 </form>
               </div>
             </div>
-          </section>
+          </Alert>
         ) : null}
       </main>
     </>
