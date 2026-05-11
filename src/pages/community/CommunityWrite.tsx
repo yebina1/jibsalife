@@ -5,6 +5,7 @@ import PageHeader from '../../components/PageHeader'
 import Title from '../../components/Title'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
+import Input from '../../components/html/Input'
 import { MY_PROFILE_NAME } from '../../utils/myProfile'
 
 const createdPostsStorageKey = 'jibsalife.community.createdPosts'
@@ -144,7 +145,7 @@ function CommunityWrite() {
         <form className="cw_form" onSubmit={handleSubmit}>
 
           {/* 게시판 선택 */}
-          <div className="cw_section cw_board_section">
+          <div className="cw_section cw_section_no_bottom_space cw_board_section">
             <div className="cw_board_select">
               <button
                 type="button"
@@ -176,23 +177,24 @@ function CommunityWrite() {
           </div>
 
           {/* 제목 */}
-          <div className="cw_section">
-            <input
+          <div className="cw_section cw_section_no_bottom_space">
+            <Input
               className="cw_title_input"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={setTitle}
               placeholder="제목"
               maxLength={40}
             />
           </div>
 
           {/* 내용 */}
-          <div className="cw_section">
-            <textarea
+          <div className="cw_section cw_section_no_bottom_space">
+            <Input
               className="cw_content_textarea"
               value={content}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={setContent}
               placeholder="내용을 작성해 주세요"
+              multiline
               rows={4}
             />
           </div>
@@ -248,10 +250,13 @@ function CommunityWrite() {
                 <span className="cw_media_plus" aria-hidden="true">+</span>
               </div>
             </div>
-            <Button type="button" className="white_btn cw_food_add_btn" disabled>
-              <span className="cw_food_add_icon" aria-hidden="true">
-                <i className="bx bx-plus" />
-              </span>
+            <Button
+              type="button"
+              className="white_btn cw_food_add_btn"
+              icon={<i className="bx bx-plus cw_food_add_icon" aria-hidden="true" />}
+              iconWrapper={false}
+              disabled
+            >
               뚱뚱이가 먹고 있는 사료 추가하기
             </Button>
           </div>

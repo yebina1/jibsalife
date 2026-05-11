@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
+import ContentSection from '../../components/ContentSection'
 import Button from '../../components/html/Button'
 import challenge1Image from '../../img/challenge1.jpg'
 import challenge2Image from '../../img/challenge2.png'
@@ -107,6 +108,39 @@ export const challengeCardItems = [
     status: 'complete',
   },
 ] as const
+
+type CommunityChallengePreviewProps = {
+  onNavigate: () => void
+}
+
+export function CommunityChallengePreview({ onNavigate }: CommunityChallengePreviewProps) {
+  return (
+    <ContentSection
+      className="community_overview_section"
+      title="챌린지 인증"
+      action={
+        <button type="button" onClick={onNavigate}>
+          바로가기
+        </button>
+      }
+    >
+      <div className="community_overview_challenge_grid">
+        {challengeCardItems.slice(0, 2).map((item) => (
+          <article key={item.id} className="community_challenge_card">
+            <img src={item.image} alt={item.title} className="community_challenge_card_image" />
+            <div className="community_challenge_card_body">
+              <h3>{item.title}</h3>
+              <div className="community_challenge_card_meta">
+                <span>{item.participants}명</span>
+                <span>{item.deadline}</span>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </ContentSection>
+  )
+}
 
 function CommunityChallenge() {
   const navigate = useNavigate()

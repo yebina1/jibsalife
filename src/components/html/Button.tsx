@@ -10,6 +10,7 @@ import {
 type Buttonprops = React.ComponentPropsWithRef<'button'> & {
   icon?: React.ReactNode
   iconPosition?: 'left' | 'right'
+  iconWrapper?: boolean
   buttonVariant?: 'default' | 'icon' | 'challenge'
 }
 
@@ -20,6 +21,7 @@ export default function Button(props: Buttonprops) {
     className,
     icon,
     iconPosition = 'left',
+    iconWrapper = true,
     buttonVariant = 'default',
     disabled,
     onClick,
@@ -71,6 +73,13 @@ export default function Button(props: Buttonprops) {
   ) : (
     children
   )
+  const iconContent = iconWrapper ? (
+    <span className="button_icon_asset" aria-hidden="true">
+      {icon}
+    </span>
+  ) : (
+    icon
+  )
 
   return (
     <button
@@ -84,17 +93,9 @@ export default function Button(props: Buttonprops) {
         }
       }}
     >
-      {icon && iconPosition === 'left' ? (
-        <span className="button_icon_asset" aria-hidden="true">
-          {icon}
-        </span>
-      ) : null}
+      {icon && iconPosition === 'left' ? iconContent : null}
       <span className="button_label">{content}</span>
-      {icon && iconPosition === 'right' ? (
-        <span className="button_icon_asset" aria-hidden="true">
-          {icon}
-        </span>
-      ) : null}
+      {icon && iconPosition === 'right' ? iconContent : null}
     </button>
   )
 }

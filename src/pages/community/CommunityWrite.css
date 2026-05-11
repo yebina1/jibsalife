@@ -36,6 +36,10 @@
   box-sizing: border-box;
 }
 
+.cw_section_no_bottom_space {
+  padding-bottom: 0;
+}
+
 .cw_board_section {
   position: relative;
   width: 100%;
@@ -112,18 +116,25 @@
 }
 
 /* 제목 입력 */
-.cw_title_input {
+.cw_title_input.input_field {
   width: 100%;
   height: auto;
   padding: 12px;
   border: 0;
+  border-radius: 0;
   background: transparent;
   color: #111111;
   font: inherit;
   font-size: 16px;
   font-weight: 500;
   outline: none;
+  box-shadow: none;
   box-sizing: border-box;
+}
+
+.cw_title_input.input_field:focus {
+  border: 0;
+  box-shadow: none;
 }
 
 .cw_title_input::placeholder {
@@ -131,18 +142,26 @@
 }
 
 /* 내용 입력 */
-.cw_content_textarea {
+.cw_content_textarea.input_field {
   width: 100%;
+  height: auto;
   padding: 12px;
   border: 0;
+  border-radius: 0;
   background: transparent;
   color: #111111;
   font: inherit;
   font-size: 14px;
-  line-height: 1.4;
+  line-height: 1.45;
   outline: none;
   resize: none;
+  box-shadow: none;
   box-sizing: border-box;
+}
+
+.cw_content_textarea.input_field:focus {
+  border: 0;
+  box-shadow: none;
 }
 
 .cw_content_textarea::placeholder {
@@ -178,15 +197,16 @@
   border: 1.5px dashed #d8d8e5;
   border-radius: 10px;
   background: #f8f8fb;
-  cursor: not-allowed;
+  cursor: pointer;
   overflow: hidden;
-  opacity: 0.4;
-  pointer-events: none;
 }
 
 .cw_product_slots .cw_media_slot {
   width: 100%;
   flex-basis: 100%;
+  cursor: not-allowed;
+  opacity: 0.4;
+  pointer-events: none;
 }
 
 .cw_media_slot input[type='file'] {
@@ -237,9 +257,11 @@
 
 /* 사료 추가 버튼 */
 .cw_food_add_btn {
+  display: inline-flex;
   width: 100%;
   margin-top: 12px;
   padding: 22px 20px;
+  align-items: center;
   gap: 8px;
   justify-content: flex-start;
   color: #505050;
