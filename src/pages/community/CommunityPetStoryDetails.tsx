@@ -247,6 +247,48 @@ function HeartIcon() {
   )
 }
 
+function CommentIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 4.8c-4.4 0-8 2.9-8 6.6 0 2.1 1.2 4 3.1 5.2l-.8 3 3.3-1.8c.8.2 1.6.3 2.4.3 4.4 0 8-2.9 8-6.7s-3.6-6.6-8-6.6Z" />
+    </svg>
+  )
+}
+
+type PetStoryDetailFooterReactionsProps = {
+  isLiked: boolean
+  likeCount: number
+  commentCount: number
+  onLike: () => void
+  onComment: () => void
+}
+
+function PetStoryDetailFooterReactions({
+  isLiked,
+  likeCount,
+  commentCount,
+  onLike,
+  onComment,
+}: PetStoryDetailFooterReactionsProps) {
+  return (
+    <div className="cpsdetail_footer_reactions" aria-label="게시글 반응">
+      <button
+        type="button"
+        className={`cpsdetail_footer_reaction${isLiked ? ' active' : ''}`}
+        onClick={onLike}
+        aria-label={`좋아요 ${likeCount}`}
+      >
+        <HeartIcon />
+        <span>{likeCount}</span>
+      </button>
+      <button type="button" className="cpsdetail_footer_reaction" aria-label={`댓글 ${commentCount}`} onClick={onComment}>
+        <CommentIcon />
+        <span>{commentCount}</span>
+      </button>
+    </div>
+  )
+}
+
 function ShareIcon() {
   return <img className="header_icon" src={sharingIcon} alt="" aria-hidden="true" />
 }
@@ -313,12 +355,16 @@ function CommunityPetStoryDetails() {
   const [editDraftTitle, setEditDraftTitle] = useState('')
   const [editDraftContent, setEditDraftContent] = useState('')
   const [editDraftImage, setEditDraftImage] = useState<string | null>(null)
+  const [isCommentFormVisible, setIsCommentFormVisible] = useState(true)
   const galleryRef = useRef<HTMLDivElement>(null)
   const viewIncrementedForRef = useRef<number | null>(null)
+  const lastScrollTopRef = useRef(0)
   const displayPost = postOverride ? { ...post, ...postOverride } : post
   const content = displayPost.content?.trim() || '함께 나누고 싶은 반려 생활 이야기를 남겼어요.'
   const isLiked = likedPostIds.includes(post.id)
   const likeCount = post.likes + (isLiked ? 1 : 0)
+  const commentCount = visibleComments.length
+  const topLevelCommentCount = visibleComments.filter((comment) => !comment.parentId).length
   const editCommentText = editCommentId !== null
     ? (visibleComments.find((c) => c.id === editCommentId)?.text ?? '')
     : undefined
@@ -348,6 +394,29 @@ function CommunityPetStoryDetails() {
   useEffect(() => {
     window.localStorage.setItem(likedCommentIdsStorageKey, JSON.stringify(likedCommentIds))
   }, [likedCommentIds])
+
+  useEffect(() => {
+    const scrollContainer = document.querySelector('.layout_content') as HTMLElement | null
+
+    lastScrollTopRef.current = scrollContainer ? scrollContainer.scrollTop : window.scrollY
+
+    const handleScroll = () => {
+      const currentScrollTop = scrollContainer ? scrollContainer.scrollTop : window.scrollY
+      const scrollDelta = currentScrollTop - lastScrollTopRef.current
+
+      if (Math.abs(scrollDelta) < 8) return
+
+      setIsCommentFormVisible(currentScrollTop <= 8 || scrollDelta < 0)
+      lastScrollTopRef.current = currentScrollTop
+    }
+
+    const scrollTarget: HTMLElement | Window = scrollContainer ?? window
+    scrollTarget.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      scrollTarget.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   const handleEditConfirm = () => {
     if (isPostEditOpen) {
@@ -436,6 +505,21 @@ function CommunityPetStoryDetails() {
           : comment,
       ),
     )
+  }
+
+  const startReply = (comment: DetailComment) => {
+    const nextReplyTo = { author: comment.author, commentId: comment.parentId ?? comment.id }
+
+    if (topLevelCommentCount > 8) {
+      navigate(`/community/petstory/detail/${post.id}/comments`, {
+        state: { replyTo: nextReplyTo },
+      })
+      return
+    }
+
+    setReplyTo(nextReplyTo)
+    setEditCommentId(null)
+    setIsCommentFormVisible(true)
   }
 
   const handleGalleryScroll = () => {
@@ -599,6 +683,7 @@ function CommunityPetStoryDetails() {
         </article>
 
         <section className="cpsdetail_comments" aria-label="댓글">
+          <Title as="h4" className="cpsdetail_comments_title" title={`댓글 ${topLevelCommentCount}`} />
           {(() => {
             const topLevel = visibleComments.filter((c) => !c.parentId)
             const repliesMap = visibleComments.reduce<Record<number, DetailComment[]>>((acc, c) => {
@@ -632,7 +717,7 @@ function CommunityPetStoryDetails() {
                     <HeartIcon />
                     <span>좋아요 {comment.likes || ''}</span>
                   </button>
-                  <button type="button" onClick={() => setReplyTo({ author: comment.author, commentId: comment.parentId ?? comment.id })}>
+                  <button type="button" onClick={() => startReply(comment)}>
                     <i className="bx bx-message-rounded-dots" aria-hidden="true" />
                     <span>답글쓰기{replyCount > 0 ? ` ${replyCount}` : ''}</span>
                   </button>
@@ -642,17 +727,33 @@ function CommunityPetStoryDetails() {
               )
             }
 
-            return topLevel.map((comment) => (
-              <div key={comment.id} className="cpsdetail_comment_group">
-                {renderComment(comment)}
-                {(repliesMap[comment.id] ?? []).map((reply) => renderComment(reply, true))}
-              </div>
-            ))
+            return topLevel.slice(0, 8).map((comment) => {
+              const replies = repliesMap[comment.id] ?? []
+
+              return (
+                <div key={comment.id} className="cpsdetail_comment_group">
+                  {renderComment(comment)}
+                  {replies.map((reply) => renderComment(reply, true))}
+                </div>
+              )
+            })
           })()}
+          {topLevelCommentCount > 8 ? (
+            <Button
+              type="button"
+              className="s_white_radius_btn cpsdetail_comments_more_btn"
+              onClick={() => navigate(`/community/petstory/detail/${post.id}/comments`)}
+            >
+              답글 더보기
+            </Button>
+          ) : null}
         </section>
 
+      </main>
+
+      <footer className="cpsdetail_footer" aria-label="댓글 작성 및 반응">
         <CommentInputForm
-          className="cpsdetail_comment_form"
+          className={`cpsdetail_comment_form ${isCommentFormVisible ? 'is_visible' : 'is_hidden'}`}
           iconButtonClassName="cpsdetail_form_icon"
           inputWrapClassName="cpsdetail_comment_input"
           placeholder="메시지를 입력해 주세요."
@@ -670,7 +771,14 @@ function CommunityPetStoryDetails() {
             }
           }}
         />
-      </main>
+        <PetStoryDetailFooterReactions
+          isLiked={isLiked}
+          likeCount={likeCount}
+          commentCount={commentCount}
+          onLike={toggleLike}
+          onComment={() => navigate(`/community/petstory/detail/${post.id}/comments`)}
+        />
+      </footer>
 
       {editAlertOpen && (
         <Alert onClose={() => { setEditAlertOpen(false); if (!isPostEditOpen) setEditCommentId(null) }}>

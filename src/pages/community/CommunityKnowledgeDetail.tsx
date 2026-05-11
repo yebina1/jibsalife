@@ -1,10 +1,14 @@
 import './CommunityKnowledgeDetail.css'
+import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'
+import CommentInputForm from '../../components/html/CommentInputForm'
 import knowledge1 from '../../img/knowledge1.png'
 import dogWalk1 from '../../img/Knowledge/dog_Walk_1_increased_stress.png'
 import dogWalk2 from '../../img/Knowledge/dog_Walk_2_obesity.png'
 import dogWalk3 from '../../img/Knowledge/dog_Walk_3_a_lack_of_social_skills.png'
+import addIcon from '../../svg/add icon.svg'
+import emojiIcon from '../../svg/emoji.svg'
 import sharingIcon from '../../svg/sharing.svg'
 
 type KnowledgeDetailState = {
@@ -89,6 +93,8 @@ function ShareIcon() {
 function CommunityKnowledgeDetail() {
   const navigate = useNavigate()
   const location = useLocation()
+  const [isCommentFormVisible, setIsCommentFormVisible] = useState(true)
+  const lastScrollTopRef = useRef(0)
   const item = (location.state as KnowledgeDetailState | null)?.item
   const detailTitle = item?.title ?? '강아지 산책 안 하면 생기는 문제점'
   const detailTitleLines =
@@ -96,37 +102,67 @@ function CommunityKnowledgeDetail() {
       ? ['강아지 산책', '안 하면 생기는 문제점']
       : [detailTitle]
 
+  useEffect(() => {
+    const scrollContainer = document.querySelector('.layout_content') as HTMLElement | null
+
+    lastScrollTopRef.current = scrollContainer ? scrollContainer.scrollTop : window.scrollY
+
+    const handleScroll = () => {
+      const currentScrollTop = scrollContainer ? scrollContainer.scrollTop : window.scrollY
+      const scrollDelta = currentScrollTop - lastScrollTopRef.current
+
+      if (Math.abs(scrollDelta) < 8) {
+        return
+      }
+
+      setIsCommentFormVisible(currentScrollTop <= 8 || scrollDelta < 0)
+      lastScrollTopRef.current = currentScrollTop
+    }
+
+    const scrollTarget: HTMLElement | Window = scrollContainer ?? window
+    scrollTarget.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      scrollTarget.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
   return (
-    <main className="page community_knowledge_detail_page">
-      <PageHeader
-        title=""
-        leftContent={
-          <button
-            type="button"
-            className="community_knowledge_detail_header_btn"
-            aria-label="이전"
-            onClick={() => navigate(-1)}
-          >
-            <BackIcon />
-          </button>
-        }
-        rightContent={
-          <button
-            type="button"
-            className="community_knowledge_detail_header_btn"
-            aria-label="북마크"
-          >
-            <BookmarkIcon />
-          </button>
-        }
-      />
-      <section className="community_knowledge_detail_hero_wrap">
-        <img
-          className="community_knowledge_detail_hero"
-          src={item?.image ?? knowledge1}
-          alt={detailTitle}
+    <>
+      <main
+        className={`page community_knowledge_detail_page ${
+          isCommentFormVisible ? 'is_comment_form_visible' : 'is_comment_form_hidden'
+        }`}
+      >
+        <PageHeader
+          title=""
+          leftContent={
+            <button
+              type="button"
+              className="community_knowledge_detail_header_btn"
+              aria-label="이전"
+              onClick={() => navigate(-1)}
+            >
+              <BackIcon />
+            </button>
+          }
+          rightContent={
+            <button
+              type="button"
+              className="community_knowledge_detail_header_btn"
+              aria-label="북마크"
+            >
+              <BookmarkIcon />
+            </button>
+          }
         />
-      </section>
+        <section className="community_knowledge_detail_hero_wrap">
+          <img
+            className="community_knowledge_detail_hero"
+            src={item?.image ?? knowledge1}
+            alt={detailTitle}
+          />
+        </section>
 
       <section className="community_knowledge_detail_content">
         <h1>
@@ -177,26 +213,38 @@ function CommunityKnowledgeDetail() {
         </div>
       </section>
 
-      <div className="community_knowledge_detail_actions">
-        <div className="community_knowledge_detail_reactions">
-          <button type="button" aria-label="좋아요">
-            <HeartIcon />
-            {item?.likes ?? 128}
-          </button>
-          <button type="button" aria-label="댓글">
-            <CommentIcon />
-            {item?.comments ?? 36}
+      </main>
+
+      <footer className="community_knowledge_detail_footer" aria-label="댓글 작성 및 반응">
+        <CommentInputForm
+          className={`cpsdetail_comment_form ${isCommentFormVisible ? 'is_visible' : 'is_hidden'}`}
+          iconButtonClassName="cpsdetail_form_icon"
+          inputWrapClassName="cpsdetail_comment_input"
+          placeholder="메시지를 입력해 주세요."
+          addIcon={addIcon}
+          emojiIcon={emojiIcon}
+        />
+        <div className="community_knowledge_detail_actions">
+          <div className="community_knowledge_detail_reactions">
+            <button type="button" aria-label="좋아요">
+              <HeartIcon />
+              {item?.likes ?? 128}
+            </button>
+            <button type="button" aria-label="댓글" onClick={() => setIsCommentFormVisible(true)}>
+              <CommentIcon />
+              {item?.comments ?? 36}
+            </button>
+          </div>
+          <button
+            type="button"
+            className="community_knowledge_detail_cta"
+            onClick={() => navigate('/community/petstory')}
+          >
+            관련 제품 보기
           </button>
         </div>
-        <button
-          type="button"
-          className="community_knowledge_detail_cta"
-          onClick={() => navigate('/community/petstory')}
-        >
-          관련 제품 보기
-        </button>
-      </div>
-    </main>
+      </footer>
+    </>
   )
 }
 

@@ -1,7 +1,26 @@
+.layout_content:has(.community_knowledge_detail_page) {
+  height: calc(100dvh - var(--layout-footer-height));
+  min-height: unset;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #ffffff;
+}
+
+.layout_indicator_only .layout_content:has(.community_knowledge_detail_page) {
+  background: #ffffff;
+}
+
 .community_knowledge_detail_page {
-  padding: 0 0 calc(var(--layout-footer-height, 90px) + 84px);
+  min-height: 100%;
+  box-sizing: border-box;
+  padding: 0 0 72px;
   background: #ffffff;
   color: #111111;
+}
+
+.community_knowledge_detail_page.is_comment_form_hidden {
+  padding-bottom: 0;
 }
 
 .community_knowledge_detail_hero_wrap {
@@ -193,13 +212,23 @@
   word-break: keep-all;
 }
 
-.community_knowledge_detail_actions {
+.community_knowledge_detail_footer {
   position: fixed;
   right: 50%;
   bottom: var(--layout-footer-height, 90px);
   z-index: 120;
-  display: grid;
   width: min(100%, var(--layout-max-width, 1440px));
+  box-sizing: border-box;
+  background: #ffffff;
+  transform: translateX(50%);
+  overflow: hidden;
+}
+
+.community_knowledge_detail_actions {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 100%;
   grid-template-columns: 156px minmax(0, 1fr);
   align-items: center;
   gap: 16px;
@@ -207,7 +236,6 @@
   box-sizing: border-box;
   border-top: 1px solid #e8e8ee;
   background: #ffffff;
-  transform: translateX(50%);
 }
 
 .community_knowledge_detail_reactions {
