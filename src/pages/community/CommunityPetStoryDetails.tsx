@@ -700,7 +700,7 @@ function CommunityPetStoryDetails() {
         </article>
 
         <section className="cpsdetail_comments" aria-label="댓글">
-          <Title as="h4" className="cpsdetail_comments_title" title={`댓글 ${topLevelCommentCount}`} />
+          <Title as="h5" className="cpsdetail_comments_title" title={`댓글 ${topLevelCommentCount}`} />
           {(() => {
             const topLevel = visibleComments.filter((c) => !c.parentId)
             const repliesMap = visibleComments.reduce<Record<number, DetailComment[]>>((acc, c) => {

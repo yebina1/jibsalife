@@ -16,15 +16,15 @@
 }
 
 .community_knowledge_detail_page {
-  height: 100%;
+  min-height: 100%;
   box-sizing: border-box;
-  padding: 0 0 146px;
+  padding: 0 0 172px;
   background: #ffffff;
   color: #111111;
 }
 
 .community_knowledge_detail_page.is_comment_form_hidden {
-  padding-bottom: 92px;
+  padding-bottom: 96px;
 }
 
 .community_knowledge_detail_hero_wrap {

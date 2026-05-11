@@ -17,6 +17,10 @@ import forbiddenFoods2 from '../../img/Knowledge/forbidden_foods_2.png'
 import forbiddenFoods3 from '../../img/Knowledge/forbidden_foods_3.png'
 import forbiddenFoods4 from '../../img/Knowledge/forbidden_foods_4.png'
 import forbiddenFoods5 from '../../img/Knowledge/forbidden_foods_5.png'
+import springAllergy1 from '../../img/Knowledge/spring_allergy_1.png'
+import springAllergy2 from '../../img/Knowledge/spring_allergy_2.png'
+import springAllergy3 from '../../img/Knowledge/spring_allergy_3.png'
+import springAllergy4 from '../../img/Knowledge/spring_allergy_4.png'
 import profileImage from '../../img/pink_dog_profile.jpg'
 import addIcon from '../../svg/add icon.svg'
 import emojiIcon from '../../svg/emoji.svg'
@@ -223,6 +227,69 @@ const cforbiddenFoodsItems: DetailItem[] = [
   },
 ]
 
+const springAllergyItems: DetailItem[] = [
+  {
+    id: 1,
+    title: '가려움증',
+    description: (
+      <>
+        강아지가 몸을 자주 긁거나 핥는다면
+        <br />
+        알레르기 신호일 수 있어요.
+        <br />
+        특히 발, 귀, 배 부분을 집중적으로 긁는
+        <br />
+        경우가 많아요.
+      </>
+    ),
+    image: springAllergy1,
+  },
+  {
+    id: 2,
+    title: '피부 발진',
+    description: (
+      <>
+        피부가 붉어지거나 작은 트러블이 생기는 경우
+        <br />
+        알레르기를 의심해볼 수 있어요.
+        <br />
+        심해지면 염증으로 이어질 수 있어
+        <br />
+        빠른 관리가 중요해요.
+      </>
+    ),
+    image: springAllergy2,
+  },
+  {
+    id: 3,
+    title: '귀 염증',
+    description: (
+      <>
+        귀를 자주 긁거나 냄새가 난다면
+        <br />
+        알레르기로 인한 염증일 수 있어요.
+        <br />
+        방치하면 상태가 더 악화될 수 있어요.
+      </>
+    ),
+    image: springAllergy3,
+  },
+  {
+    id: 4,
+    title: '관리 방법',
+    description: (
+      <>
+        외출 후에는 발과 털을 깨끗하게 닦아주고
+        <br />
+        실내 청결을 유지하는 것이 중요해요.
+        <br />
+        증상이 지속되면 의사 상담을 받는 것이 좋아요.
+      </>
+    ),
+    image: springAllergy4,
+  },
+]
+
 function BookmarkIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -336,11 +403,14 @@ function CommunityKnowledgeDetail() {
       : [detailTitle]
   const isCatJumpSecret = knowledgeId === 'catjumpsecret'
   const isCforbiddenFoods = knowledgeId === 'forbiddenfoods'
+  const isSpringAllergy = knowledgeId === 'springallergy'
   const activeDetailItems = isCatJumpSecret
     ? catJumpSecretItems
     : isCforbiddenFoods
       ? cforbiddenFoodsItems
-      : detailItems
+      : isSpringAllergy
+        ? springAllergyItems
+        : detailItems
   const postedTimeText = getRelativeTimeText(item?.createdAt ?? '2026-05-02T09:00:00')
   const viewsText = formatViewsText(item?.viewsText)
   const commentCount = visibleComments.length
@@ -493,6 +563,14 @@ function CommunityKnowledgeDetail() {
             고양이에게 위험한 것들이 생각보다 많아요.
             <br />
             건강을 위해 꼭 피해야 할 음식들을 간단히 정리해봤어요.
+          </p>
+        ) : isSpringAllergy ? (
+          <p className="community_knowledge_detail_intro">
+            따뜻한 봄이 되면 꽃가루, 먼지 등으로 인해
+            <br />
+            강아지에게 알레르기 증상이 나타날 수 있어요.
+            <br />
+            미리 증상을 알고 관리해주면 불편함을 크게 줄일 수 있어요.
           </p>
         ) : (
           <p className="community_knowledge_detail_intro">

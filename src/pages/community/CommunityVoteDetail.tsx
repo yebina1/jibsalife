@@ -8,8 +8,14 @@ import Alert from '../../components/Alert'
 import VoteMissionBanner from '../../components/VoteMissionBanner'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
+import ConfettiEffect from '../../components/effect/ConfettiEffect'
+import RewardHero from '../../components/RewardHero'
+import RewardPointCard from '../../components/RewardPointCard'
 import { writeVotedMissionId } from '../../utils/communityVoteStatus'
+import { readProfilePoints } from '../../utils/profilePoints'
 import { voteDetails, type CommunityVoteId } from './CommunityVoteData'
+
+const VOTE_REWARD_AMOUNT = 60
 
 function CommunityVoteDetail() {
   const navigate = useNavigate()
@@ -20,6 +26,7 @@ function CommunityVoteDetail() {
   const voteId: CommunityVoteId = vote.id
   const [selectedId, setSelectedId] = useState<number | null>(null)
   const [isVoteCompleteOpen, setIsVoteCompleteOpen] = useState(false)
+  const [currentPoints] = useState(() => readProfilePoints())
 
   const selectCandidate = (candidateId: number) => {
     setSelectedId(candidateId)
@@ -134,20 +141,18 @@ function CommunityVoteDetail() {
       </main>
 
       {isVoteCompleteOpen ? (
-        <Alert onClose={() => setIsVoteCompleteOpen(false)}>
-          <div className="cvd_complete_alert">
-            <div className="cvd_complete_icon" aria-hidden="true">
-              <svg viewBox="0 0 48 48" focusable="false">
-                <path d="M15 25.2 21.2 31.4 34 18.6" />
-              </svg>
-            </div>
-            <div className="cvd_complete_copy">
-              <strong>투표 완료!</strong>
-              <p>결과 발표 페이지에서 순위를 확인해보세요.</p>
-            </div>
-            <Button type="button" className="purple_btn" onClick={goToResult}>
-              확인
-            </Button>
+        <Alert onClose={goToResult}>
+          <ConfettiEffect contained />
+          <div className="cvd_reward_alert">
+              <RewardHero rewardAmount={VOTE_REWARD_AMOUNT} />
+              <RewardPointCard
+                currentPoints={currentPoints}
+                rewardAmount={VOTE_REWARD_AMOUNT}
+                onClick={() => {}}
+              />
+              <Button type="button" className="purple_btn cvd_reward_confirm" onClick={goToResult}>
+                확인
+              </Button>
           </div>
         </Alert>
       ) : null}

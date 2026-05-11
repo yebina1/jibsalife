@@ -1,33 +1,19 @@
-﻿import { useEffect, useState } from 'react'
-import Confetti from 'react-confetti'
+import { useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router'
 import PageHeader from '../../components/PageHeader'
-import ChevronIcon from '../../components/ChevronIcon'
+import Title from '../../components/Title'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
+import ConfettiEffect from '../../components/effect/ConfettiEffect'
+import RewardHero from '../../components/RewardHero'
+import RewardPointCard from '../../components/RewardPointCard'
 import {
   addCompletedChallengeCardId,
   APPLIED_REWARD_EVENTS_STORAGE_KEY,
   CHALLENGE_REWARD_CLAIMED_STORAGE_KEY,
 } from '../../constants/points'
-import { formatProfilePoints, readProfilePoints, writeProfilePoints } from '../../utils/profilePoints'
-import pointIcon from '../../svg/point.svg'
+import { readProfilePoints, writeProfilePoints } from '../../utils/profilePoints'
 import './CommunityReward.css'
-
-function CheckIcon() {
-  return (
-    <svg viewBox="0 0 64 64" aria-hidden="true">
-      <path
-        d="M18 33.5 28 43l18-20"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
 
 function GiftIcon() {
   return (
@@ -58,8 +44,6 @@ function StarIcon() {
 }
 
 function CommunityReward() {
-  const [viewport, setViewport] = useState({ width: 0, height: 0 })
-  const [numberOfPieces, setNumberOfPieces] = useState(50)
   const [currentPoints, setCurrentPoints] = useState(() => readProfilePoints())
   const navigate = useNavigate()
   const location = useLocation()
@@ -75,37 +59,11 @@ function CommunityReward() {
       ? Number(location.state.rewardSourceItemId)
       : undefined
 
-  useEffect(() => {
-    const updateViewport = () => {
-      setViewport({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      })
-    }
-
-    updateViewport()
-    window.addEventListener('resize', updateViewport)
-
-    const timer = window.setTimeout(() => {
-      setNumberOfPieces(0)
-    }, 10000)
-
-    return () => {
-      window.removeEventListener('resize', updateViewport)
-      window.clearTimeout(timer)
-    }
-  }, [])
-
   const readAppliedRewardEvents = () => {
     try {
-      const savedAppliedRewardEvents = window.localStorage.getItem(APPLIED_REWARD_EVENTS_STORAGE_KEY)
-      const appliedRewardEvents = savedAppliedRewardEvents
-        ? (JSON.parse(savedAppliedRewardEvents) as string[])
-        : []
-
-      return Array.isArray(appliedRewardEvents)
-        ? appliedRewardEvents.filter((eventId) => typeof eventId === 'string')
-        : []
+      const saved = window.localStorage.getItem(APPLIED_REWARD_EVENTS_STORAGE_KEY)
+      const parsed = saved ? (JSON.parse(saved) as string[]) : []
+      return Array.isArray(parsed) ? parsed.filter((id) => typeof id === 'string') : []
     } catch {
       return []
     }
@@ -139,66 +97,33 @@ function CommunityReward() {
     navigate('/community/challenge')
   }
 
-  const goToChallenge = () => {
-    navigate('/community/challenge')
-  }
-
-  const goToMyPage = () => navigate('/mypage')
-
   return (
     <>
-      <Confetti
-        width={viewport.width}
-        height={viewport.height}
-        numberOfPieces={numberOfPieces}
-        opacity={0.7}
-        colors={['#F1C93A', '#9C78F0', '#6FCDF0', '#E57DC3']}
-        style={{ pointerEvents: 'none', zIndex: 20, position: 'fixed' }}
-      />
+      <ConfettiEffect />
       <PageHeader title="포인트 받기" leftContent={<BackButton />} />
       <main className="page community_reward_page">
-        <section className="community_reward_hero">
-          <div className="community_reward_circle" aria-hidden="true">
-            <div className="community_reward_badge">
-              <CheckIcon />
-            </div>
-          </div>
+        <RewardHero rewardAmount={rewardAmount} />
 
-          <h1>
-            참여 완료!
-            <strong>
-              <span>{rewardAmount}P</span>를 받았어요.
-            </strong>
-          </h1>
-        </section>
-
-        <button type="button" className="community_reward_point_card" onClick={goToMyPage}>
-          <div className="community_reward_point_icon" aria-hidden="true">
-            <img src={pointIcon} alt="" />
-          </div>
-          <div className="community_reward_point_copy">
-            <span>지금까지 모은 포인트</span>
-            <strong>{formatProfilePoints(currentPoints + Math.max(0, rewardAmount))}</strong>
-          </div>
-          <span className="community_reward_point_arrow" aria-hidden="true">
-            <ChevronIcon direction="right" size="sm" />
-          </span>
-        </button>
+        <RewardPointCard
+          currentPoints={currentPoints}
+          rewardAmount={rewardAmount}
+          onClick={() => navigate('/mypage')}
+        />
 
         <section className="community_reward_usage">
-          <h2>포인트는 이렇게 사용할 수 있어요!</h2>
+          <Title as="h5" title="포인트는 이렇게 사용할 수 있어요!" />
           <ul>
             <li>
               <span className="community_reward_usage_icon" aria-hidden="true">
                 <GiftIcon />
               </span>
-              <strong>사료/간식 교환</strong>
+              <span className="p_regular">사료/간식 교환</span>
             </li>
             <li>
               <span className="community_reward_usage_icon" aria-hidden="true">
                 <HeartIcon />
               </span>
-              <strong>기부 하기</strong>
+              <span className="p_regular">기부 하기</span>
             </li>
             <li>
               <span className="community_reward_usage_icon is_star_circle" aria-hidden="true">
@@ -206,7 +131,7 @@ function CommunityReward() {
                   <StarIcon />
                 </span>
               </span>
-              <strong>특별한 리워드</strong>
+              <span className="p_regular">특별한 리워드</span>
             </li>
           </ul>
         </section>
@@ -219,7 +144,11 @@ function CommunityReward() {
           >
             확인
           </Button>
-          <Button type="button" className="white_btn community_reward_secondary" onClick={goToChallenge}>
+          <Button
+            type="button"
+            className="white_btn community_reward_secondary"
+            onClick={() => navigate('/community/challenge')}
+          >
             더 많은 챌린지 참여하기
           </Button>
         </div>
