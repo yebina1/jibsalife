@@ -69,7 +69,7 @@ function Layout({
   const searchParams = new URLSearchParams(search)
   const communitySubParam = searchParams.get('sub')
   const communitySortParam = searchParams.get('sort') ?? 'latest'
-  const isCameraPage = pathname === '/health/camera' && searchParams.get('guide') === 'false'
+  const isCameraPage = pathname === '/health/camera'
   const isLoginPage = pathname === '/login'
   const isOnboardingPage = pathname === '/onboarding'
   const isCommunityPath = pathname.startsWith('/community')
