@@ -11,12 +11,17 @@
   position: absolute;
   top: 3px;
   right: 2px;
+  display: none;
   width: 7px;
   height: 7px;
   border: 2px solid #ffffff;
   border-radius: 50%;
   background: #ff3b30;
   content: '';
+}
+
+.health_hospital_list_notification.is_active::after {
+  display: block;
 }
 
 .health_hospital_list_section {

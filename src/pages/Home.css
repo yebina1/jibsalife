@@ -22,16 +22,17 @@
   position: absolute;
   top: 3px;
   right: 2px;
+  display: none;
   width: 7px;
   height: 7px;
   border: 2px solid #ffffff;
   border-radius: 50%;
-  background: #111111 !important;
+  background: #E81B1B !important;
   content: '';
 }
 
 .header_right .home_header_notification.is_active::after {
-  background: #E81B1B !important;
+  display: block;
 }
 
 .home_summary_header .content_section_copy {

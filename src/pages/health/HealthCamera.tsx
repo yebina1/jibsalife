@@ -14,7 +14,6 @@ import guideExampleImage from '../../img/ex.png'
 import guideVideoImage from '../../img/guide_video.png'
 import communicateGuideIcon from '../../svg/nav communicate off.svg?raw'
 import memoGuideIcon from '../../svg/memo.svg?raw'
-import navHomeActiveIcon from '../../svg/nav home active.svg'
 
 type GuideMode = 'photo' | 'audio' | 'video' | 'memo'
 type GuideIconType =
@@ -329,7 +328,7 @@ function HealthCamera() {
   const shouldNavigateAfterRecordRef = useRef(false)
   const [cameraError, setCameraError] = useState('')
   const [isRecording, setIsRecording] = useState(false)
-  const [showGuide] = useState(searchParams.get('guide') !== 'false')
+  const [showGuide] = useState(searchParams.get('guide') === 'true')
   const modeParam = searchParams.get('mode')
   const mode: GuideMode =
     modeParam === 'audio' || modeParam === 'video' || modeParam === 'memo' ? modeParam : 'photo'
@@ -338,6 +337,13 @@ function HealthCamera() {
   const isAudioMode = mode === 'audio'
   const actionLabel = guideConfig.actionLabel
   const isEditFlow = searchParams.get('edit') === 'true'
+  const cameraModes = [
+    { label: 'CINEMATIC' },
+    { label: 'VIDEO', mode: 'video' as const },
+    { label: 'PHOTO', mode: 'photo' as const },
+    { label: 'PORTRAIT' },
+    { label: 'PANO' },
+  ]
 
   const continueAfterGuide = () => {
     navigate(`/health/register?section=${mode}`, { replace: true })
@@ -712,18 +718,34 @@ function HealthCamera() {
 
   return (
     <main className="page health_page health_camera_page">
-      <button
-        type="button"
-        className="health_camera_back"
-        aria-label="뒤로가기"
-        onClick={() => navigate(-1)}
-      >
-        <ChevronIcon direction="left" size="lg" />
-      </button>
+      <div className="health_camera_topbar">
+        <button
+          type="button"
+          className="health_camera_icon_button health_camera_back"
+          aria-label="뒤로가기"
+          onClick={() => navigate(-1)}
+        >
+          <ChevronIcon direction="left" size="lg" />
+        </button>
+        <button type="button" className="health_camera_icon_button health_camera_caret" aria-label="카메라 옵션">
+          <span />
+        </button>
+        <div className="health_camera_tool_group">
+          <button type="button" className="health_camera_icon_button health_camera_raw" aria-label="RAW">
+            RAW
+          </button>
+          <button type="button" className="health_camera_icon_button health_camera_exposure" aria-label="노출">
+            <span />
+          </button>
+        </div>
+      </div>
 
       <section className="health_camera_view" aria-label={actionLabel}>
-        {cameraError ? (
-          <div className="health_camera_error">{cameraError}</div>
+        {cameraError && !isAudioMode ? (
+          <>
+            <img className="health_camera_placeholder" src={guideVideoImage} alt="" aria-hidden="true" />
+            <div className="health_camera_error">{cameraError}</div>
+          </>
         ) : isAudioMode ? (
           <div className="health_camera_audio_capture" aria-hidden="true">
             <div className="health_camera_audio_wave">
@@ -746,6 +768,31 @@ function HealthCamera() {
       </section>
 
       <div className="health_camera_actions">
+        <div className="health_camera_zoom" aria-hidden="true">
+          <span>.5</span>
+          <strong>1x</strong>
+          <span>3</span>
+        </div>
+        <div className="health_camera_modes" aria-label="촬영 모드">
+          {cameraModes.map((cameraMode) => (
+            <button
+              key={cameraMode.label}
+              type="button"
+              className={cameraMode.mode === mode ? 'is_active' : undefined}
+              disabled={!cameraMode.mode}
+              onClick={() => {
+                if (!cameraMode.mode || cameraMode.mode === mode) return
+                navigate(`/health/camera?mode=${cameraMode.mode}&guide=false${isEditFlow ? '&edit=true' : ''}`)
+              }}
+            >
+              {cameraMode.label}
+            </button>
+          ))}
+        </div>
+        <div className="health_camera_control_row">
+          <button type="button" className="health_camera_side_button" aria-label="사진첩">
+            <span className="health_camera_gallery_icon" />
+          </button>
         <Button
           type="button"
           className="health_camera_shutter"
@@ -755,9 +802,13 @@ function HealthCamera() {
           {isRecording ? (
             <span className="health_camera_shutter_recording" />
           ) : (
-            <img src={navHomeActiveIcon} alt="" className="health_camera_shutter_paw" />
+            <span className="health_camera_shutter_inner" />
           )}
         </Button>
+          <button type="button" className="health_camera_side_button" aria-label="카메라 전환">
+            <span className="health_camera_switch_icon" />
+          </button>
+        </div>
       </div>
     </main>
   )

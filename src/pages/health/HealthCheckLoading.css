@@ -6,12 +6,17 @@
   position: absolute;
   top: 2px;
   right: 1px;
+  display: none;
   width: 7px;
   height: 7px;
   border: 2px solid #ffffff;
   border-radius: 50%;
   background: #ff2828;
   content: '';
+}
+
+.health_check_loading_notification.is_active::after {
+  display: block;
 }
 
 .health_check_loading_page {

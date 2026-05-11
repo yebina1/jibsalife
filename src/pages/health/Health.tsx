@@ -21,25 +21,25 @@ function Health() {
       id: 'photo',
       icon: cameraIcon,
       label: '사진',
-      onClick: () => navigate('/health/camera?mode=photo'),
+      onClick: () => navigate('/health/camera?mode=photo&guide=false'),
     },
     {
       id: 'audio',
       icon: voiceIcon,
       label: '녹음',
-      onClick: () => navigate('/health/camera?mode=audio'),
+      onClick: () => navigate('/health/camera?mode=audio&guide=false'),
     },
     {
       id: 'video',
       icon: camcorderIcon,
       label: '영상',
-      onClick: () => navigate('/health/camera?mode=video'),
+      onClick: () => navigate('/health/camera?mode=video&guide=false'),
     },
     {
       id: 'memo',
       icon: memoIcon,
       label: '메모 작성',
-      onClick: () => navigate('/health/camera?mode=memo'),
+      onClick: () => navigate('/health/register?section=memo'),
     },
   ]
 

@@ -103,16 +103,17 @@
   position: absolute;
   top: 3px;
   right: 2px;
+  display: none;
   width: 7px;
   height: 7px;
   border: 2px solid #ffffff;
   border-radius: 50%;
-  background: #111111;
+  background: #E81B1B;
   content: '';
 }
 
 .header_right .header_notification_button.is_active::after {
-  background: #E81B1B;
+  display: block;
 }
 
 .header_left button {
