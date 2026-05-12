@@ -1,6 +1,6 @@
 ﻿import './Community.css'
 import './CommunityVote.css'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
@@ -8,6 +8,7 @@ import Title from '../../components/Title'
 import Button from '../../components/html/Button'
 import crownIcon from '../../svg/crown.svg'
 import timerIcon from '../../svg/timer.svg'
+import { readVotedMissionIds } from '../../utils/communityVoteStatus'
 import { missionVotes, regularVoteItems } from './CommunityVoteData'
 
 const topTabs = ['전체', '펫스토리', '챌린지', '투표'] as const
@@ -32,6 +33,7 @@ function CommunityVote() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const sort = (searchParams.get('sort') ?? 'latest') as VoteSort
+  const [votedIds] = useState(() => readVotedMissionIds())
   const sortedRegularVoteItems = useMemo(() => {
     return [...regularVoteItems].sort((a, b) => {
       if (sort === 'popular') {
@@ -109,7 +111,7 @@ function CommunityVote() {
                 </p>
               </Title>
               <button type="button" className="cv2_vote_btn" onClick={() => openMissionVote(vote.id)}>
-                투표하기
+                {votedIds.includes(vote.id) ? '수정하기' : '투표하기'}
               </button>
             </div>
           </section>
@@ -158,7 +160,7 @@ function CommunityVote() {
                     if (!item.done && 'voteId' in item) openMissionVote(item.voteId)
                   }}
                 >
-                  {item.done ? '투표완료' : '투표하기'}
+                  {item.done ? '투표완료' : 'voteId' in item && votedIds.includes(item.voteId) ? '수정하기' : '투표하기'}
                 </button>
               </div>
             ))}

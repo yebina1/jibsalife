@@ -56,6 +56,7 @@ type DetailPost = {
 
 type DetailComment = (typeof petStoryDetailComments)[number] & {
   time?: string
+  createdAt?: string
   parentId?: number
 }
 
@@ -347,26 +348,20 @@ function CommunityPetStoryDetails() {
   const [editAlertOpen, setEditAlertOpen] = useState(false)
   const [pendingEditText, setPendingEditText] = useState('')
   const [editCommentId, setEditCommentId] = useState<number | null>(null)
-  const [isPostEditOpen, setIsPostEditOpen] = useState(false)
-  const [isEditCategoryOpen, setIsEditCategoryOpen] = useState(false)
-  const [postOverride, setPostOverride] = useState<{ title: string; content: string; tag: string; image: string | null } | null>(null)
-  const [editDraftTag, setEditDraftTag] = useState('')
-  const [editDraftTitle, setEditDraftTitle] = useState('')
-  const [editDraftContent, setEditDraftContent] = useState('')
-  const [editDraftImage, setEditDraftImage] = useState<string | null>(null)
+  const [editMentionAuthor, setEditMentionAuthor] = useState<string | null>(null)
+  const [editCommentInitialText, setEditCommentInitialText] = useState<string | undefined>(undefined)
   const [isCommentFormVisible, setIsCommentFormVisible] = useState(true)
   const galleryRef = useRef<HTMLDivElement>(null)
+  const footerRef = useRef<HTMLElement>(null)
+  const pageRef = useRef<HTMLElement>(null)
   const viewIncrementedForRef = useRef<number | null>(null)
   const lastScrollTopRef = useRef(0)
-  const displayPost = postOverride ? { ...post, ...postOverride } : post
-  const content = displayPost.content?.trim() || '함께 나누고 싶은 반려 생활 이야기를 남겼어요.'
+  const content = post.content?.trim() || '함께 나누고 싶은 반려 생활 이야기를 남겼어요.'
   const isLiked = likedPostIds.includes(post.id)
   const likeCount = post.likes + (isLiked ? 1 : 0)
   const commentCount = visibleComments.length
   const topLevelCommentCount = visibleComments.filter((comment) => !comment.parentId).length
-  const editCommentText = editCommentId !== null
-    ? (visibleComments.find((c) => c.id === editCommentId)?.text ?? '')
-    : undefined
+  const editCommentText = editCommentId !== null ? editCommentInitialText : undefined
 
   useEffect(() => {
     setVisibleComments(readComments(post.id, petStoryDetailComments.slice(0, post.comments)))
@@ -395,6 +390,17 @@ function CommunityPetStoryDetails() {
   }, [likedCommentIds])
 
   useEffect(() => {
+    const footer = footerRef.current
+    const page = pageRef.current
+    if (!footer || !page) return
+    const observer = new ResizeObserver(() => {
+      page.style.paddingBottom = `${footer.offsetHeight}px`
+    })
+    observer.observe(footer)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
     const scrollContainer = document.querySelector('.layout_content') as HTMLElement | null
 
     lastScrollTopRef.current = scrollContainer ? scrollContainer.scrollTop : window.scrollY
@@ -418,31 +424,14 @@ function CommunityPetStoryDetails() {
   }, [])
 
   const handleEditConfirm = () => {
-    if (isPostEditOpen) {
-      try {
-        const saved = window.localStorage.getItem(createdPostsStorageKey)
-        if (saved) {
-          const parsed = JSON.parse(saved)
-          if (Array.isArray(parsed)) {
-            const updated = parsed.map((p: { id: number }) =>
-              p.id === post.id
-                ? { ...p, tag: editDraftTag, title: editDraftTitle, content: editDraftContent, image: editDraftImage }
-                : p
-            )
-            window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(updated))
-          }
-        }
-      } catch {
-        // Ignore localStorage write failures and keep the in-memory edit.
-      }
-      setPostOverride({ title: editDraftTitle, content: editDraftContent, tag: editDraftTag, image: editDraftImage })
-      setIsPostEditOpen(false)
-    } else if (editCommentId !== null) {
+    if (editCommentId !== null) {
       setVisibleComments((current) =>
         current.map((c) => (c.id === editCommentId ? { ...c, text: pendingEditText } : c))
       )
       setEditCommentId(null)
       setPendingEditText('')
+      setEditMentionAuthor(null)
+      setEditCommentInitialText(undefined)
     }
     setEditAlertOpen(false)
   }
@@ -500,7 +489,7 @@ function CommunityPetStoryDetails() {
         id: Date.now(),
         author: MY_PROFILE_NAME,
         text,
-        time: '방금 전',
+        createdAt: new Date().toISOString(),
         likes: 0,
         replies: 0,
         parentId,
@@ -580,7 +569,7 @@ function CommunityPetStoryDetails() {
         }
       />
 
-      <main className="page cpsdetail_page">
+      <main className="page cpsdetail_page" ref={pageRef}>
         <article className="cpsdetail_post">
           <header className="cpsdetail_author_row">
             <AvatarIcon />
@@ -598,7 +587,7 @@ function CommunityPetStoryDetails() {
           </header>
 
           <div className="cpsdetail_post_body">
-            <Title as="h4" className="cpsdetail_post_title" title={displayPost.title} />
+            <Title as="h4" className="cpsdetail_post_title" title={post.title} />
             <p className="cpsdetail_content p_regular">{content}</p>
 
             {galleryImages.length > 0 ? (
@@ -664,11 +653,11 @@ function CommunityPetStoryDetails() {
           ) : null}
 
           <div className="cpsdetail_recommend_tags">
-            {displayPost.tags?.length ? (
+            {post.tags?.length ? (
               <div className="cpsdetail_recommend_tags_content">
                 <strong>추천태그</strong>
                 <div>
-                  {displayPost.tags.map((tag) => (
+                  {post.tags.map((tag) => (
                     <span key={tag}>{tag}</span>
                   ))}
                 </div>
@@ -718,7 +707,7 @@ function CommunityPetStoryDetails() {
                 <div className="cpsdetail_comment_body">
                   <div className="cpsdetail_comment_head">
                     <Title as="h5" title={comment.author}>
-                      <p>{comment.time ?? '11시간 전'}</p>
+                      <p>{comment.createdAt ? formatRelativeTime(comment.createdAt) : (comment.time ?? '11시간 전')}</p>
                     </Title>
                     <button type="button" className="cpsdetail_more" aria-label="댓글 더보기" onClick={() => { setMoreTarget({ commentId: comment.id }); setMoreSheetOpen(comment.author === MY_PROFILE_NAME ? 'own' : 'other') }}>
                       <MoreIcon />
@@ -768,7 +757,7 @@ function CommunityPetStoryDetails() {
 
       </main>
 
-      <footer className="cpsdetail_footer" aria-label="댓글 작성 및 반응">
+      <footer className="cpsdetail_footer" aria-label="댓글 작성 및 반응" ref={footerRef}>
         <CommentInputForm
           className={`cpsdetail_comment_form ${isCommentFormVisible ? 'is_visible' : 'is_hidden'}`}
           iconButtonClassName="cpsdetail_form_icon"
@@ -776,8 +765,8 @@ function CommunityPetStoryDetails() {
           placeholder="메시지를 입력해 주세요."
           addIcon={addIcon}
           emojiIcon={emojiIcon}
-          replyTo={replyTo?.author ?? null}
-          onClearReply={() => setReplyTo(null)}
+          replyTo={editCommentId !== null ? editMentionAuthor : (replyTo?.author ?? null)}
+          onClearReply={editCommentId !== null ? () => setEditMentionAuthor(null) : () => setReplyTo(null)}
           prefilledText={editCommentText}
           onSubmit={(text) => {
             if (editCommentId !== null) {
@@ -798,10 +787,10 @@ function CommunityPetStoryDetails() {
       </footer>
 
       {editAlertOpen && (
-        <Alert onClose={() => { setEditAlertOpen(false); if (!isPostEditOpen) setEditCommentId(null) }}>
+        <Alert onClose={() => { setEditAlertOpen(false); setEditCommentId(null); setEditMentionAuthor(null); setEditCommentInitialText(undefined) }}>
           <p className="cpsdetail_delete_alert_msg">수정하시겠습니까?</p>
           <div className="cpsdetail_delete_alert_btns">
-            <Button type="button" className="white_btn" onClick={() => { setEditAlertOpen(false); if (!isPostEditOpen) setEditCommentId(null) }}>아니요</Button>
+            <Button type="button" className="white_btn" onClick={() => { setEditAlertOpen(false); setEditCommentId(null); setEditMentionAuthor(null); setEditCommentInitialText(undefined) }}>아니요</Button>
             <Button type="button" className="purple_btn" onClick={handleEditConfirm}>네</Button>
           </div>
         </Alert>
@@ -817,82 +806,6 @@ function CommunityPetStoryDetails() {
         </Alert>
       )}
 
-      {isPostEditOpen && (
-        <section className="cpsdetail_edit_sheet" role="dialog" aria-modal="true" aria-label="글 수정">
-          <form
-            className="cpsdetail_edit_form"
-            onSubmit={(e) => { e.preventDefault(); setEditAlertOpen(true) }}
-          >
-            <div className="cpsdetail_edit_header">
-              <h2>글 수정</h2>
-              <button type="button" onClick={() => setIsPostEditOpen(false)} aria-label="닫기">×</button>
-            </div>
-
-            <label className="cpsdetail_edit_field cpsdetail_edit_field_category">
-              <span>카테고리</span>
-              <div className="community_create_select">
-                <button
-                  type="button"
-                  className="community_create_select_toggle"
-                  onClick={() => setIsEditCategoryOpen((c) => !c)}
-                  aria-haspopup="listbox"
-                  aria-expanded={isEditCategoryOpen}
-                >
-                  <span>{editDraftTag}</span>
-                  <span className="community_create_select_icon" aria-hidden="true" />
-                </button>
-                {isEditCategoryOpen && (
-                  <div className="community_create_select_menu" role="listbox" aria-label="카테고리 선택">
-                    {(['자랑하기', '일상'] as const).map((tag) => (
-                      <button
-                        key={tag}
-                        type="button"
-                        className={`community_create_select_option${editDraftTag === tag ? ' active' : ''}`}
-                        onClick={() => { setEditDraftTag(tag); setIsEditCategoryOpen(false) }}
-                        role="option"
-                        aria-selected={editDraftTag === tag}
-                      >
-                        {tag}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </label>
-
-            <label className="cpsdetail_edit_field">
-              <span>제목</span>
-              <input
-                value={editDraftTitle}
-                onChange={(e) => setEditDraftTitle(e.target.value)}
-                placeholder="제목을 입력해 주세요"
-                maxLength={40}
-              />
-            </label>
-
-            <label className="cpsdetail_edit_field">
-              <span>내용</span>
-              <textarea
-                value={editDraftContent}
-                onChange={(e) => setEditDraftContent(e.target.value)}
-                placeholder="내용을 입력해 주세요"
-                rows={5}
-              />
-            </label>
-
-            {editDraftImage && (
-              <div className="cpsdetail_edit_image_preview">
-                <img src={editDraftImage} alt="첨부 이미지" />
-              </div>
-            )}
-
-            <Button type="submit" className="purple_btn square_btn cpsdetail_edit_submit" disabled={!editDraftTitle.trim()}>
-              수정하기
-            </Button>
-          </form>
-        </section>
-      )}
-
       {moreSheetOpen && (
         <AddSheet onClose={() => setMoreSheetOpen(false)}>
           <ul className="cpsdetail_more_sheet_list">
@@ -905,12 +818,18 @@ function CommunityPetStoryDetails() {
                     onClick={() => {
                       setMoreSheetOpen(false)
                       if (moreTarget === 'post') {
-                        setEditDraftTag(post.tag)
-                        setEditDraftTitle(displayPost.title)
-                        setEditDraftContent(displayPost.content ?? '')
-                        setEditDraftImage(post.image)
-                        setIsPostEditOpen(true)
+                        navigate('/community/petstory/write', {
+                          state: { editPost: post },
+                        })
                       } else if (moreTarget && typeof moreTarget === 'object') {
+                        const editingComment = visibleComments.find((c) => c.id === moreTarget.commentId)
+                        const mentionMatch = editingComment?.parentId ? editingComment.text.match(/^@(\S+)\s*/) : null
+                        const mentionAuthor = mentionMatch ? mentionMatch[1] : null
+                        const initialText = mentionAuthor
+                          ? (editingComment?.text.replace(/^@\S+\s*/, '') ?? '')
+                          : (editingComment?.text ?? '')
+                        setEditMentionAuthor(mentionAuthor)
+                        setEditCommentInitialText(initialText)
                         setReplyTo(null)
                         setEditCommentId(moreTarget.commentId)
                       }

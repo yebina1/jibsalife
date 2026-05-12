@@ -1,6 +1,6 @@
 import './CommunityWrite.css'
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'
 import Title from '../../components/Title'
 import BackButton from '../../components/html/BackButton'
@@ -12,6 +12,23 @@ const createdPostsStorageKey = 'jibsalife.community.createdPosts'
 
 const boardOptions = ['일상'] as const
 type BoardOption = (typeof boardOptions)[number]
+
+type EditPost = {
+  id: number
+  tag: string
+  title: string
+  content?: string
+  image: string | null
+  images?: string[]
+  tags?: string[]
+  author?: string
+  likes?: number
+  comments?: number
+  shares?: number
+  createdAt?: string
+  date?: string
+  place?: { name: string; address: string }
+}
 
 const allTags = [
   '#포메라니안', '#생후4개월', '#일상', '#입양',
@@ -27,14 +44,20 @@ const MAX_TAGS = 4
 
 function CommunityWrite() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const editPost = (location.state as { editPost?: EditPost } | null)?.editPost
 
-  const [board, setBoard] = useState<BoardOption | ''>('')
+  const [board, setBoard] = useState<BoardOption | ''>(
+    editPost && boardOptions.includes(editPost.tag as BoardOption) ? (editPost.tag as BoardOption) : '일상'
+  )
   const [isBoardOpen, setIsBoardOpen] = useState(false)
-  const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
-  const [photos, setPhotos] = useState<string[]>([])
+  const [title, setTitle] = useState(editPost?.title ?? '')
+  const [content, setContent] = useState(editPost?.content ?? '')
+  const [photos, setPhotos] = useState<string[]>(
+    editPost?.images?.length ? editPost.images : editPost?.image ? [editPost.image] : []
+  )
   const [video, setVideo] = useState<string | null>(null)
-  const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [selectedTags, setSelectedTags] = useState<string[]>(editPost?.tags ?? [])
 
   const handlePhotoAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? [])
@@ -104,6 +127,30 @@ function CommunityWrite() {
     const trimmedContent = content.trim()
     if (!trimmedTitle || !trimmedContent || !board) return
 
+    if (editPost) {
+      const updatedPost = {
+        ...editPost,
+        tag: board,
+        title: trimmedTitle,
+        content: trimmedContent,
+        image: photos[0] ?? null,
+        images: photos,
+        tags: selectedTags,
+      }
+      try {
+        const saved = window.localStorage.getItem(createdPostsStorageKey)
+        const existing = saved ? JSON.parse(saved) : []
+        const updated = Array.isArray(existing)
+          ? existing.map((p: { id: number }) => (p.id === editPost.id ? updatedPost : p))
+          : [updatedPost]
+        window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(updated))
+      } catch {
+        // Ignore localStorage write failures.
+      }
+      navigate(`/community/petstory/detail/${editPost.id}`, { state: { post: updatedPost } })
+      return
+    }
+
     const now = new Date()
     const year = now.getFullYear()
     const month = String(now.getMonth() + 1).padStart(2, '0')
@@ -139,7 +186,7 @@ function CommunityWrite() {
 
   return (
     <>
-      <PageHeader title="글작성" leftContent={<BackButton />} />
+      <PageHeader title={editPost ? '글수정' : '글작성'} leftContent={<BackButton />} />
 
       <main className="page cw_page">
         <form className="cw_form" onSubmit={handleSubmit}>
@@ -280,13 +327,26 @@ function CommunityWrite() {
             </div>
           </div>
 
-          <Button
-            type="submit"
-            className="purple_btn square_btn cw_submit"
-            disabled={!title.trim() || !content.trim() || !board}
-          >
-            등록하기
-          </Button>
+          {editPost ? (
+            <div className="cw_btn_row">
+              <Button type="button" className="white_btn" onClick={() => navigate(-1)}>취소</Button>
+              <Button
+                type="submit"
+                className="purple_btn square_btn cw_submit"
+                disabled={!title.trim() || !content.trim() || !board}
+              >
+                수정하기
+              </Button>
+            </div>
+          ) : (
+            <Button
+              type="submit"
+              className="purple_btn square_btn cw_submit"
+              disabled={!title.trim() || !content.trim() || !board}
+            >
+              등록하기
+            </Button>
+          )}
 
         </form>
       </main>

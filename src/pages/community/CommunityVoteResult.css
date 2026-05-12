@@ -1,3 +1,11 @@
+.layout_indicator_only:has(.cv_wrap) {
+  background: #ffffff;
+}
+
+.layout_indicator_only .layout_content:has(.cv_wrap) {
+  background: #ffffff;
+}
+
 .cv_wrap {
   display: flex;
   flex-direction: column;
@@ -351,123 +359,13 @@
   padding-bottom: 8px;
 }
 
-.cv_complete_alert {
-  position: relative;
+.cvd_reward_alert {
   display: grid;
-  justify-items: center;
-  width: min(100%, 306px);
-  gap: 28px;
-  overflow: hidden;
-}
-
-.cv_complete_alert > :not(canvas) {
-  position: relative;
-  z-index: 3;
-}
-
-.cv_complete_visual {
-  position: relative;
-  display: grid;
-  width: 198px;
-  height: 198px;
-  place-items: center;
-  border-radius: 50%;
-  background: #F0EAFE;
-}
-
-.cv_complete_circle {
-  display: grid;
-  width: 90px;
-  height: 90px;
-  place-items: center;
-  border-radius: 50%;
-  background: #8556F4;
-  box-shadow: 0 10px 18px rgba(133, 86, 244, 0.32);
-}
-
-.cv_complete_circle svg {
-  width: 48px;
-  height: 48px;
-}
-
-.cv_complete_circle path {
-  fill: none;
-  stroke: #ffffff;
-  stroke-width: 5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.cv_complete_copy {
-  display: grid;
-  justify-items: center;
-  gap: 2px;
-  text-align: center;
-}
-
-.cv_complete_copy strong,
-.cv_complete_copy p {
-  color: #111827;
-  font-size: 22px;
-  font-weight: 800;
-  line-height: 1.15;
-}
-
-.cv_complete_copy p {
-  margin: 0;
-}
-
-.cv_complete_copy span {
-  color: #8556F4;
-}
-
-.cv_complete_point_card {
-  display: flex;
+  gap: 48px;
   width: 100%;
-  min-height: 84px;
-  align-items: center;
-  gap: 12px;
-  padding: 16px 18px;
-  border: 0;
-  border-radius: 14px;
-  background: #F3F0FE;
-  box-sizing: border-box;
-  cursor: pointer;
-  text-align: left;
 }
 
-.cv_complete_point_icon {
-  display: grid;
-  width: 30px;
-  height: 30px;
-  flex: 0 0 auto;
-  place-items: center;
-  border-radius: 50%;
-  background: #8556F4;
-  color: #FFD83D;
-  font-size: 20px;
-  font-weight: 900;
-  line-height: 1;
-  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.32);
-}
-
-.cv_complete_point_text {
-  display: grid;
-  flex: 1;
-  min-width: 0;
-  gap: 2px;
-}
-
-.cv_complete_point_text span {
-  color: #6B7280;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.35;
-}
-
-.cv_complete_point_text strong {
-  color: #8556F4;
-  font-size: 20px;
-  font-weight: 800;
-  line-height: 1.2;
+.cvd_reward_confirm {
+  width: 100%;
+  border-radius: 12px;
 }

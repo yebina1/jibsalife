@@ -77,12 +77,13 @@ function Layout({
   const isPetStoryWritePage = pathname === '/community/petstory/write'
   const isKnowledgeDetailPage = pathname.startsWith('/community/petstory/knowledge/')
   const isVoteDetailPage = pathname === '/community/vote/detail'
+  const isVoteResultPage = pathname === '/community/vote/result'
   const isRewardPage = pathname.startsWith('/community/challenge/reward')
   const showCommunityChrome =
-    isCommunityPath && !isPetStoryDetailPage && !isPetStoryWritePage && !isKnowledgeDetailPage && !isVoteDetailPage && !isRewardPage
+    isCommunityPath && !isPetStoryDetailPage && !isPetStoryWritePage && !isKnowledgeDetailPage && !isVoteDetailPage && !isVoteResultPage && !isRewardPage
   const communitySubTabs = !isPetStoryDetailPage && !isPetStoryWritePage && !isKnowledgeDetailPage && pathname.startsWith('/community/petstory')
     ? petStorySubTabs
-    : !isPetStoryDetailPage && !isKnowledgeDetailPage && pathname.startsWith('/community/vote') && pathname !== '/community/vote/detail'
+    : !isPetStoryDetailPage && !isKnowledgeDetailPage && pathname.startsWith('/community/vote') && pathname !== '/community/vote/detail' && !isVoteResultPage
       ? voteSubTabs
       : null
   const showCommunitySort =
@@ -140,7 +141,7 @@ function Layout({
   }
 
   const isMinimal = !showHeader && !showNav && !showFooter
-  const isIndicatorOnlyLayout = (!showNav && showFooter) || isPetStoryDetailPage || isKnowledgeDetailPage
+  const isIndicatorOnlyLayout = (!showNav && showFooter) || isPetStoryDetailPage || isKnowledgeDetailPage || isVoteResultPage
   const layoutClassName = isCameraPage
     ? 'layout layout_camera'
     : isMinimal
@@ -322,7 +323,7 @@ function Layout({
         {!hideFloatingAiButton ? <FloatingAiButton /> : null}
         {!isCameraPage && showFooter ? (
           <footer>
-            {showNav && !isPetStoryDetailPage && !isKnowledgeDetailPage && <Nav />}
+            {showNav && !isPetStoryDetailPage && !isKnowledgeDetailPage && !isVoteResultPage && <Nav />}
             <HomeIndicator />
           </footer>
         ) : null}

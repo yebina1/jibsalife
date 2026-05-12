@@ -326,7 +326,6 @@
   box-sizing: border-box;
   background: #ffffff;
   transform: translateX(50%);
-  overflow: hidden;
 }
 
 .community_knowledge_detail_actions {

@@ -41,3 +41,27 @@ export function writeVotedMissionId(voteId: string) {
   window.localStorage.setItem(votedIdsStorageKey, JSON.stringify(next))
   window.dispatchEvent(new Event(communityVoteStatusChangedEvent))
 }
+
+const votedCandidatesStorageKey = 'jibsalife.community.votedCandidates'
+
+export function readVotedCandidate(voteId: string): number | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const saved = window.localStorage.getItem(votedCandidatesStorageKey)
+    const parsed = saved ? JSON.parse(saved) : {}
+    const val = parsed[voteId]
+    return typeof val === 'number' ? val : null
+  } catch {
+    return null
+  }
+}
+
+export function writeVotedCandidate(voteId: string, candidateId: number) {
+  if (typeof window === 'undefined') return
+  try {
+    const saved = window.localStorage.getItem(votedCandidatesStorageKey)
+    const parsed = saved ? JSON.parse(saved) : {}
+    parsed[voteId] = candidateId
+    window.localStorage.setItem(votedCandidatesStorageKey, JSON.stringify(parsed))
+  } catch {}
+}

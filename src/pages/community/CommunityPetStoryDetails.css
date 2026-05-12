@@ -356,10 +356,8 @@
   z-index: 90;
   width: min(100%, var(--layout-max-width, 1440px));
   box-sizing: border-box;
-  border-top: 1px solid #E5E5EC;
   background: #ffffff;
   transform: translateX(-50%);
-  overflow: hidden;
 }
 
 .cpsdetail_footer_reactions {
@@ -430,6 +428,7 @@
   display: grid;
   gap: 16px;
   padding-top: 24px;
+  padding-bottom: 24px;
 }
 
 .cpsdetail_comments_title {

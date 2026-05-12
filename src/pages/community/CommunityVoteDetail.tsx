@@ -11,7 +11,7 @@ import Button from '../../components/html/Button'
 import ConfettiEffect from '../../components/effect/ConfettiEffect'
 import RewardHero from '../../components/RewardHero'
 import RewardPointCard from '../../components/RewardPointCard'
-import { writeVotedMissionId } from '../../utils/communityVoteStatus'
+import { hasVotedMission, readVotedCandidate, writeVotedCandidate, writeVotedMissionId } from '../../utils/communityVoteStatus'
 import { readProfilePoints } from '../../utils/profilePoints'
 import { voteDetails, type CommunityVoteId } from './CommunityVoteData'
 
@@ -24,8 +24,10 @@ function CommunityVoteDetail() {
   const requestedVoteId = searchParams.get('voteId') ?? (location.state as { voteId?: string } | null)?.voteId
   const vote = voteDetails.find((item) => item.id === requestedVoteId) ?? voteDetails[0]
   const voteId: CommunityVoteId = vote.id
-  const [selectedId, setSelectedId] = useState<number | null>(null)
+  const isEditMode = hasVotedMission(voteId)
+  const [selectedId, setSelectedId] = useState<number | null>(() => readVotedCandidate(voteId))
   const [isVoteCompleteOpen, setIsVoteCompleteOpen] = useState(false)
+  const [isEditAlertOpen, setIsEditAlertOpen] = useState(false)
   const [currentPoints] = useState(() => readProfilePoints())
 
   const selectCandidate = (candidateId: number) => {
@@ -34,8 +36,25 @@ function CommunityVoteDetail() {
 
   const handleVote = () => {
     if (selectedId === null) return
+    if (isEditMode) {
+      if (selectedId === readVotedCandidate(voteId)) {
+        navigate(-1)
+      } else {
+        setIsEditAlertOpen(true)
+      }
+    } else {
+      writeVotedMissionId(voteId)
+      writeVotedCandidate(voteId, selectedId)
+      setIsVoteCompleteOpen(true)
+    }
+  }
+
+  const handleEditConfirm = () => {
+    if (selectedId === null) return
     writeVotedMissionId(voteId)
-    setIsVoteCompleteOpen(true)
+    writeVotedCandidate(voteId, selectedId)
+    setIsEditAlertOpen(false)
+    navigate(-1)
   }
 
   const goToResult = () => {
@@ -130,15 +149,39 @@ function CommunityVoteDetail() {
           </div>
         </section>
 
-        <Button
-          type="button"
-          className="purple_btn cvd_vote_submit"
-          disabled={selectedId === null}
-          onClick={handleVote}
-        >
-          투표하기
-        </Button>
+        {isEditMode ? (
+          <div className="cvd_vote_submit_row">
+            <Button type="button" className="white_btn" onClick={() => navigate(-1)}>취소</Button>
+            <Button
+              type="button"
+              className="purple_btn cvd_vote_submit"
+              disabled={selectedId === null}
+              onClick={handleVote}
+            >
+              수정하기
+            </Button>
+          </div>
+        ) : (
+          <Button
+            type="button"
+            className="purple_btn cvd_vote_submit"
+            disabled={selectedId === null}
+            onClick={handleVote}
+          >
+            투표하기
+          </Button>
+        )}
       </main>
+
+      {isEditAlertOpen && (
+        <Alert onClose={() => setIsEditAlertOpen(false)}>
+          <p className="cvd_edit_alert_msg">수정하시겠습니까?</p>
+          <div className="cvd_edit_alert_btns">
+            <Button type="button" className="white_btn" onClick={() => setIsEditAlertOpen(false)}>아니요</Button>
+            <Button type="button" className="purple_btn" onClick={handleEditConfirm}>네</Button>
+          </div>
+        </Alert>
+      )}
 
       {isVoteCompleteOpen ? (
         <Alert onClose={goToResult}>

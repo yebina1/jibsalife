@@ -327,3 +327,17 @@
 .cw_submit {
   margin: 20px auto;
 }
+
+.cw_btn_row {
+  display: flex;
+  width: 100%;
+  gap: 12px;
+  padding: 20px 0;
+}
+
+.cw_btn_row .cw_submit,
+.cw_btn_row .white_btn {
+  margin: 0;
+  width: auto;
+  flex: 1;
+}

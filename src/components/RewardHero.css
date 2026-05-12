@@ -37,10 +37,8 @@
   gap: 2px;
   color: #222222;
   font-family: 'Pretendard', 'SUIT', system-ui, sans-serif;
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: -0.025em;
   text-align: center;
 }
 
@@ -66,9 +64,5 @@
   .community_reward_badge {
     width: 96px;
     height: 96px;
-  }
-
-  .community_reward_hero_heading {
-    font-size: 24px;
   }
 }

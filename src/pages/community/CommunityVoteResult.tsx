@@ -1,16 +1,18 @@
 ﻿import './Community.css'
 import './CommunityVoteResult.css'
 import { useEffect, useState } from 'react'
-import Confetti from 'react-confetti'
 import { useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'
-import HeaderIcon from '../../components/HeaderIcon'
-import ChevronIcon from '../../components/ChevronIcon'
+import BackButton from '../../components/html/BackButton'
 import Alert from '../../components/Alert'
+
 import Button from '../../components/html/Button'
+import ChevronIcon from '../../components/ChevronIcon'
+import ConfettiEffect from '../../components/effect/ConfettiEffect'
+import RewardHero from '../../components/RewardHero'
+import RewardPointCard from '../../components/RewardPointCard'
 import {
   COMMUNITY_VOTE_REWARD_POINTS,
-  formatProfilePoints,
   readCommunityVoteRewardClaimed,
   readProfilePoints,
   writeCommunityVoteRewardClaimed,
@@ -70,20 +72,8 @@ function CommunityVoteResult() {
   return (
     <div className="cv_wrap">
       <PageHeader
-        title="집사인생"
-        rightContent={
-          <>
-            <Button type="button" aria-label="검색" className="community_header_search">
-              <HeaderIcon type="search" />
-            </Button>
-            <Button type="button" aria-label="calendar" onClick={() => navigate('/mission')}>
-              <HeaderIcon type="calendar" />
-            </Button>
-            <Button type="button" aria-label="notification">
-              <HeaderIcon type="notification" />
-            </Button>
-          </>
-        }
+        title="투표결과"
+        leftContent={<BackButton />}
       />
       {/* 제목 */}
       <div className="cv_header">
@@ -192,44 +182,15 @@ function CommunityVoteResult() {
 
       {isCompleteAlertOpen ? (
         <Alert onClose={() => setIsCompleteAlertOpen(false)}>
-          <div className="cv_complete_alert">
-            <Confetti
-              width={306}
-              height={520}
-              numberOfPieces={60}
-              recycle={false}
-              gravity={0.18}
-              opacity={0.72}
-              colors={['#F1C93A', '#9C78F0', '#6FCDF0', '#E57DC3']}
-              style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 5 }}
-            />
-            <div className="cv_complete_visual" aria-hidden="true">
-              <span className="cv_complete_circle">
-                <svg viewBox="0 0 48 48" focusable="false">
-                  <path d="M15 25.2 21.2 31.4 34 18.6" />
-                </svg>
-              </span>
-            </div>
-
-            <div className="cv_complete_copy">
-              <strong>참여 완료!</strong>
-              <p><span>60포인트</span>를 받았어요.</p>
-            </div>
-
-            <button
-              type="button"
-              className="cv_complete_point_card"
+          <ConfettiEffect contained />
+          <div className="cvd_reward_alert">
+            <RewardHero rewardAmount={COMMUNITY_VOTE_REWARD_POINTS} />
+            <RewardPointCard
+              currentPoints={profilePoints}
+              rewardAmount={COMMUNITY_VOTE_REWARD_POINTS}
               onClick={() => navigate('/mypage')}
-            >
-              <span className="cv_complete_point_icon" aria-hidden="true">P</span>
-              <span className="cv_complete_point_text">
-                <span>지금까지 모은 포인트</span>
-                <strong>{formatProfilePoints(profilePoints + COMMUNITY_VOTE_REWARD_POINTS)}</strong>
-              </span>
-              <ChevronIcon direction="right" size="sm" />
-            </button>
-
-            <Button type="button" className="purple_btn" onClick={confirmReward}>
+            />
+            <Button type="button" className="purple_btn cvd_reward_confirm" onClick={confirmReward}>
               확인
             </Button>
           </div>
