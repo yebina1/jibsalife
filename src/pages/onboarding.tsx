@@ -13,7 +13,7 @@ import onboardingShareImage from '../img/onboarding/onboarding5.png'
 import onboardingDogChatImage from '../img/onboarding/onboarding6_dog.png'
 import onboardingCatChatImage from '../img/onboarding/onboarding6_cat.png'
 import onboardingCompleteImage from '../img/onboarding/onboarding7.png'
-import { writePetProfile } from '../utils/petProfile'
+import { writeMyProfile } from '../utils/myProfile'
 import './onboarding.css'
 
 type GuardianType = 'dog' | 'cat'
@@ -62,15 +62,39 @@ const featureContentGapByStep: Partial<Record<4 | 5 | 6, number>> = {
   6: 54,
 }
 
+const nicknameSuggestions = [
+  '포근한하루',
+  '노을산책',
+  '따뜻한기록',
+  '느린발걸음',
+  '낮잠러',
+  '몽글몽글',
+  '산책메이트',
+  '간식수집가',
+  '츄르연구원',
+  '꼬리흔들러',
+  '캣타워마스터',
+  '장난감수호자',
+  '오늘도출석',
+  '기록하는하루',
+  '매일산책중',
+  '우리집막내',
+  '간식탐험가',
+] as const
+
+function getRandomNicknameSuggestion() {
+  return nicknameSuggestions[Math.floor(Math.random() * nicknameSuggestions.length)]
+}
+
 function Onboarding() {
   const navigate = useNavigate()
   const pageRef = useRef<HTMLElement>(null)
   const [step, setStep] = useState(1)
   const [guardianType, setGuardianType] = useState<GuardianType | null>(null)
-  const [petName, setPetName] = useState('')
+  const [profileName, setProfileName] = useState<string>(getRandomNicknameSuggestion)
 
   const selectedType = guardianType ?? 'dog'
-  const trimmedPetName = petName.trim()
+  const trimmedProfileName = profileName.trim()
 
   useEffect(() => {
     pageRef.current?.scrollTo({ top: 0 })
@@ -87,11 +111,11 @@ function Onboarding() {
     setStep(3)
   }
 
-  const handlePetNameContinue = () => {
-    if (trimmedPetName.length < 2) return
+  const handleProfileNameContinue = () => {
+    if (trimmedProfileName.length < 2) return
 
-    writePetProfile({
-      name: trimmedPetName,
+    writeMyProfile({
+      name: trimmedProfileName,
     })
 
     setStep(4)
@@ -126,7 +150,7 @@ function Onboarding() {
           step={2}
           totalSteps={6}
           title="어떤 집사님이신가요?"
-          subtitle={'선택한 캐릭터로\n집사인생을 시작해요!'}
+          subtitle={'선택한 캐릭터와 함께\n집사인생을 시작해요!'}
           bodyGap={90}
           visual={(
             <div className="onboarding_guardian_grid">
@@ -163,9 +187,9 @@ function Onboarding() {
         <OnboardingLayout
           step={3}
           totalSteps={6}
-          title="우리 아이 이름이 뭐예요?"
-          subtitle="이후 건강 리포트와 기록에 사용돼요."
-          bodyGap={16}
+          title={'어떤 이름으로\n불러드릴까요?'}
+          subtitle="커뮤니티에서 사용되는 이름이에요."
+          bodyGap={32}
           visual={(
             <img
               className="onboarding_visual_image onboarding_visual_image_pet"
@@ -176,20 +200,18 @@ function Onboarding() {
           )}
           actionLabel="다음"
           actionClassName="purple_btn onboarding_action_primary"
-          actionDisabled={trimmedPetName.length < 2}
-          onAction={handlePetNameContinue}
+          actionDisabled={trimmedProfileName.length < 2}
+          onAction={handleProfileNameContinue}
         >
           <div className="onboarding_name_form">
             <Input
-              value={petName}
+              value={profileName}
               placeholder="이름을 입력해 주세요"
-              ariaLabel="반려동물 이름"
-              onChange={setPetName}
+              ariaLabel="집사 프로필 닉네임"
+              onChange={setProfileName}
             />
             <p className="onboarding_name_hint">
-              2마리 이상 키우시는 경우, 대표 아이의 이름을 기재해 주세요.
-              <br />
-              마이페이지에서 추가 등록이 가능합니다.
+              닉네임은 언제든 수정할 수 있어요.
             </p>
           </div>
         </OnboardingLayout>

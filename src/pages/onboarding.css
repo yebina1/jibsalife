@@ -33,6 +33,10 @@
   width: auto;
 }
 
+.onboarding_page .onboarding_layout_indicators {
+  margin-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+}
+
 .onboarding_visual_image {
   display: block;
   width: 100%;
@@ -141,14 +145,10 @@
 
 .onboarding_name_hint {
   margin: 0;
-  color: #e81b1b;
-  font-size: 12px;
+  color: #505050;
+  font-size: 14px;
   font-weight: var(--font-weight-rg);
   line-height: var(--line-height-sm);
   text-align: center;
 }
 
-.onboarding_name_hint strong {
-  color: var(--primary-purple);
-  font-weight: var(--font-weight-rg);
-}

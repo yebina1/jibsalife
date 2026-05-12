@@ -9,7 +9,11 @@ import SummaryProfileCard from '../../components/SummaryProfileCard'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
 import { readProfilePoints } from '../../utils/profilePoints'
-import { MY_PROFILE_IMAGE, MY_PROFILE_NAME } from '../../utils/myProfile'
+import {
+  MY_PROFILE_CHANGE_EVENT,
+  MY_PROFILE_IMAGE,
+  readMyProfileName,
+} from '../../utils/myProfile'
 import dogBadgeImage from '../../img/badge/dogbadge2.png'
 
 const activityItems = [
@@ -199,6 +203,7 @@ function MyPage() {
   const [locationMessage, setLocationMessage] = useState(DEFAULT_LOCATION_MESSAGE)
   const [isLocating, setIsLocating] = useState(false)
   const [profilePoints, setProfilePoints] = useState(() => readProfilePoints())
+  const [profileName, setProfileName] = useState(() => readMyProfileName())
 
   useEffect(() => {
     const savedValue = window.localStorage.getItem(LOCATION_STORAGE_KEY)
@@ -229,6 +234,20 @@ function MyPage() {
     return () => {
       window.removeEventListener('profile-points-change', handleProfilePointsChange)
       window.removeEventListener('storage', handleProfilePointsChange)
+    }
+  }, [])
+
+  useEffect(() => {
+    const handleMyProfileChange = () => {
+      setProfileName(readMyProfileName())
+    }
+
+    window.addEventListener(MY_PROFILE_CHANGE_EVENT, handleMyProfileChange)
+    window.addEventListener('storage', handleMyProfileChange)
+
+    return () => {
+      window.removeEventListener(MY_PROFILE_CHANGE_EVENT, handleMyProfileChange)
+      window.removeEventListener('storage', handleMyProfileChange)
     }
   }, [])
 
@@ -329,7 +348,7 @@ function MyPage() {
             <SummaryProfileCard
               image={MY_PROFILE_IMAGE}
               imageAlt="프로필 이미지"
-              name={MY_PROFILE_NAME}
+              name={profileName}
               breed=""
               details={`포인트: ${profilePoints.toLocaleString()}`}
               careGuideLabel={

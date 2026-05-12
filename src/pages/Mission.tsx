@@ -6,7 +6,7 @@ import FloatingWriteButton from '../components/FloatingWriteButton'
 import DatePicker from '../components/html/DatePicker'
 import Button from '../components/html/Button'
 import AddSheet from '../components/AddSheet'
-import { readPetProfileName } from '../utils/petProfile'
+import { readMyProfileName } from '../utils/myProfile'
 import {
   MISSION_ACTIVITY_RECORDS_CHANGE_EVENT,
   readMissionActivityRecords,
@@ -200,7 +200,7 @@ function Mission() {
     [calendarDays, selectedDayId]
   )
 
-  const petName = readPetProfileName() || '뿡뿡이'
+  const profileName = readMyProfileName()
   const selectedDate = new Date(selectedDay.year, selectedDay.month - 1, Number(selectedDay.label))
   const selectedDateKey = getDateKey(selectedDay.year, selectedDay.month, Number(selectedDay.label))
   const selectedDateLabel = `${selectedDay.month}월 ${selectedDay.label}일(${weekLabels[selectedDate.getDay()]})`
@@ -429,7 +429,7 @@ function Mission() {
   return (
     <>
       <PageHeader
-        title={`${petName}의 히스토리`}
+        title={`${profileName}의 히스토리`}
         rightContent={(
           <Button type="button" className="mission_pet_switch_button" onClick={() => undefined}>
             반려동물 변경하기
