@@ -1,0 +1,76 @@
+.cc_page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 24px;
+  gap: 24px;
+  background: #F0EDFF;
+  min-height: 100%;
+}
+
+.cc_title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #6D59F8;
+  text-align: center;
+}
+
+.cc_cheer_img {
+  width: 100%;
+  max-width: 320px;
+  object-fit: contain;
+}
+
+/* 스탬프 */
+.cc_stamp_row {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.cc_stamp_item {
+  padding: 4px;
+}
+
+.cc_stamp_icon {
+  display: block;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.cc_stamp_active .cc_stamp_icon {
+  filter: brightness(0) saturate(100%) invert(35%) sepia(90%) saturate(1200%) hue-rotate(228deg) brightness(95%) contrast(100%);
+}
+
+.cc_stamp_inactive .cc_stamp_icon {
+  filter: brightness(0) invert(1) opacity(0.4);
+}
+
+/* 보상 카드 */
+.cc_reward_card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 20px;
+  border-radius: 16px;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.cc_reward_desc {
+  color: #6B7280;
+}
+
+.cc_reward_point {
+  color: #6D59F8;
+  font-weight: 600;
+}
+
+.cc_point_icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  object-fit: contain;
+}

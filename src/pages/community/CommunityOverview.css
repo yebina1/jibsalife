@@ -76,8 +76,9 @@
   font-weight: 500;
 }
 
-.co_challenge_desc {
+.co_challenge_info .co_challenge_desc {
   font-size: 18px;
+  font-weight: 500;
   color: #111;
   margin: 0;
 }
