@@ -102,11 +102,15 @@ function Layout({
     '/mypage',
     '/community',
     '/mission',
+    '/health',
     '/health/camera',
     '/health/camera/capture',
     '/health/register',
     '/health/qna',
     '/health/vet-chat',
+    '/health/check',
+    '/health/report',
+    '/health/hospital',
     '/mypage/subscription',
   ]
   const hideFloatingAiButton = hideFloatingAiButtonPaths.includes(pathname) || isCommunityPath

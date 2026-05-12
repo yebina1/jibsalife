@@ -1,0 +1,152 @@
+.health_check_analysis_page {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  padding: 24px 16px;
+  align-items: center;
+}
+
+.health_check_analysis_top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.health_check_analysis_text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.health_check_analysis_title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111111;
+  line-height: 1.4;
+}
+
+.health_check_analysis_subtitle {
+  font-size: 14px;
+  font-weight: 400;
+  color: #505050;
+  line-height: 1.4;
+}
+
+.health_check_analysis_progress {
+  position: relative;
+  flex-shrink: 0;
+  width: 70px;
+  height: 70px;
+  display: grid;
+  place-items: center;
+}
+
+.health_check_analysis_progress svg {
+  position: absolute;
+  inset: 0;
+}
+
+.health_check_analysis_progress_text {
+  position: relative;
+  z-index: 1;
+  font-size: 17.5px;
+  font-weight: 600;
+  color: #111111;
+  line-height: 1;
+}
+
+/* 2×2 카드 그리드 */
+
+.health_check_analysis_grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 343px;
+}
+
+.health_check_analysis_row {
+  display: flex;
+  gap: 8px;
+}
+
+.health_check_analysis_card {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px;
+  border: 1px solid #E5E5EC;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.health_check_analysis_card_label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111111;
+  line-height: 1.4;
+  animation: health_check_fade_in 0.5s ease;
+}
+
+.health_check_analysis_card_label.is_lg {
+  font-size: 14px;
+}
+
+.health_check_analysis_card_overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(17, 17, 17, 0.5);
+  border-radius: 12px;
+  pointer-events: none;
+  transition: opacity 0.8s ease-in-out;
+}
+
+@keyframes health_check_fade_in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 안내 문구 */
+
+.health_check_analysis_notice {
+  font-size: 12px;
+  font-weight: 400;
+  color: #A10803;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* 하단 버튼 */
+
+.health_check_analysis_btn {
+  width: 343px;
+  height: 54px;
+  border: 0;
+  outline: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  font-family: inherit;
+  transition: background 0.5s ease;
+}
+
+.health_check_analysis_btn:disabled {
+  background: #999999;
+  cursor: default;
+}
+
+.health_check_analysis_btn:not(:disabled) {
+  background: #6D59F8;
+  cursor: pointer;
+}

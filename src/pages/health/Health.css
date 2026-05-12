@@ -207,3 +207,377 @@
     font-size: 14px;
   }
 }
+
+/* ── Health camera UI (피그마 디자인) ───────────────────────────── */
+
+.health_cam_ui {
+  display: grid;
+  grid-template-rows: 1fr auto auto;
+  width: calc(100% + 2 * var(--layout-inline-padding, 16px));
+  max-width: none;
+  height: calc(100dvh - var(--layout-header-height, 97px) - var(--layout-footer-height, 90px));
+  margin-top: calc(-1 * var(--layout-content-padding-block, 24px));
+  margin-left: calc(-1 * var(--layout-inline-padding, 16px));
+  gap: 0;
+  padding: 0 0 12px;
+  overflow: hidden;
+  background: #ffffff;
+  font-family: 'Pretendard', sans-serif;
+  box-sizing: border-box;
+}
+
+/* 1. 카메라 뷰 영역 */
+
+.health_cam_view {
+  position: relative;
+  overflow: hidden;
+  background: #000000;
+  min-height: 0;
+}
+
+.health_cam_img,
+.health_cam_video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.health_cam_overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+}
+
+/* 2. 컨트롤 영역 */
+
+.health_cam_ctrl {
+  display: grid;
+  gap: 14px;
+  padding: 14px 20px 16px;
+  background: #ffffff;
+}
+
+/* 반려동물 변경하기 */
+
+.health_cam_pet_link {
+  display: inline-flex;
+  align-self: center;
+  justify-self: center;
+  align-items: center;
+  gap: 3px;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #505050;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+/* 줌 버튼 — 각각 독립된 원형 버튼 */
+
+.health_cam_zoom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.health_cam_zoom_btn {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 100px;
+  background: #505050;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.health_cam_zoom_lg {
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+}
+
+.health_cam_zoom_on {
+  color: #FFE200;
+}
+
+/* 모드 탭 */
+
+.health_cam_modes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.health_cam_mode {
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #767676;
+  font-size: 16px;
+  font-weight: 400;
+  font-family: inherit;
+  letter-spacing: -0.025em;
+  cursor: pointer;
+}
+
+.health_cam_mode.is_active {
+  color: #111111;
+  font-weight: 600;
+}
+
+/* 셔터 버튼 열 */
+
+.health_cam_shutter_row {
+  display: grid;
+  grid-template-columns: 56px 1fr 56px;
+  align-items: center;
+  justify-items: center;
+}
+
+/* 사이드 버튼 (갤러리 / 전환) */
+
+.health_cam_side {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  outline: none;
+  border-radius: 50%;
+  background: #e5e5ec;
+  cursor: pointer;
+}
+
+
+/* 셔터 버튼 */
+
+.health_cam_shutter {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+
+/* 촬영 완료 버튼 영역 */
+
+.health_cam_result_ctrl {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.health_cam_retake,
+.health_cam_upload {
+  flex: 1;
+  height: 54px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+.health_cam_retake {
+  border: 1px solid #6D59F8;
+  background: #ffffff;
+  color: #7C6FF7;
+}
+
+.health_cam_upload {
+  border: 0;
+  background: #6D59F8;
+  color: #ffffff;
+}
+
+/* 3. 최하단 탭바 */
+
+.health_cam_tabs {
+  display: flex;
+  gap: 4px;
+  margin: 0 20px;
+  padding: 3px;
+  border-radius: 10px;
+  background: #f1f1f5;
+}
+
+.health_cam_tab {
+  flex: 1;
+  padding: 9px 0;
+  border: 0;
+  outline: none;
+  border-radius: 7px;
+  background: transparent;
+  color: #767676;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  line-height: 1.4;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: background 150ms ease, color 150ms ease, box-shadow 150ms ease;
+}
+
+.health_cam_tab.is_active {
+  background: #ffffff;
+  color: #111111;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 4. 반려동물 변경 바텀시트 모달 */
+
+.health_pet_modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+}
+
+.health_pet_modal_overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(17, 17, 17, 0.3);
+}
+
+.health_pet_modal_sheet {
+  position: relative;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 12px 12px 0 0;
+  padding: 0 20px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.health_pet_modal_handle {
+  width: 41px;
+  height: 4px;
+  border-radius: 100px;
+  background: #C8C8D3;
+  margin: 6px auto 0;
+  flex-shrink: 0;
+}
+
+.health_pet_modal_list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.health_pet_modal_item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 20px 10px;
+  border: 0;
+  outline: none;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+
+.health_pet_modal_item.is_selected {
+  background: #EFEFEF;
+}
+
+.health_pet_modal_avatar {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #E5E5EC;
+  display: grid;
+  place-items: center;
+}
+
+.health_pet_modal_avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.health_pet_modal_info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.health_pet_modal_name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111111;
+  line-height: 1.4;
+  letter-spacing: -0.4px;
+}
+
+.health_pet_modal_detail {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.health_pet_modal_detail_label {
+  font-size: 14px;
+  font-weight: 400;
+  color: #505050;
+  line-height: 1.4;
+}
+
+.health_pet_modal_detail_value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111111;
+  line-height: 1.4;
+}
+
+.health_pet_modal_dot {
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #111111;
+  flex-shrink: 0;
+}
+
+.health_pet_modal_close_btn {
+  width: 100%;
+  height: 54px;
+  margin-top: 20px;
+  border: 0;
+  outline: none;
+  border-radius: 12px;
+  background: #6D59F8;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+}
