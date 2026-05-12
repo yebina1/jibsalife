@@ -30,9 +30,9 @@ const petStorySubTabs = [
 
 const voteSubTabs = [
   { label: '전체', to: '/community/vote?sub=all' },
-  { label: '투표 목록', to: '/community/vote?sub=list' },
-  { label: '구독자 챌린지', to: '/community/vote?sub=subscriber' },
-  { label: '투표 결과', to: '/community/vote?sub=result' },
+  { label: '멍스타', to: '/community/vote?sub=mission' },
+  { label: '일반투표', to: '/community/vote?sub=regular' },
+  { label: '투표결과', to: '/community/vote?sub=result' },
 ] as const
 
 const communitySortOptions = [

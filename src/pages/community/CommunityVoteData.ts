@@ -30,13 +30,13 @@ type VoteCandidate = {
 }
 
 export type MissionVote = {
-  id: Extract<CommunityVoteId, 'mission' | 'subscriber'>
+  id: CommunityVoteId
   sectionTitle: string
   title: string
   participants: number
   timeText: string
   organizer: string
-  buttonType?: 'vote' | 'notify'
+  buttonType?: 'vote' | 'notify' | 'result'
   subText?: string
 }
 
@@ -52,7 +52,7 @@ export type VoteDetail = {
 
 export const missionVotes: MissionVote[] = [
   {
-    id: 'mission',
+    id: 'best-pose',
     sectionTitle: '멍스타 미션 투표',
     title: '이달의 BEST 포즈는?',
     participants: 22,
@@ -74,12 +74,12 @@ export const missionVotes: MissionVote[] = [
 export const regularVoteItems = [
   {
     id: 1,
-    voteId: 'best-pose',
     title: '이번 생일파티에 쓸 사진 골라주세요',
     description: '우리 꼬미 생일 파티에 쓸 사진 골라주세요',
     deadline: '2026년 4월 30일까지',
     participants: 10,
     done: false,
+    modified: true,
   },
   {
     id: 2,
@@ -87,7 +87,8 @@ export const regularVoteItems = [
     description: '현실 집사 밸런스 게임',
     deadline: '2026년 4월 30일까지',
     participants: 22,
-    done: true,
+    done: false,
+    resultOnly: true,
   },
   {
     id: 3,
@@ -96,6 +97,7 @@ export const regularVoteItems = [
     deadline: '2026년 4월 30일까지',
     participants: 8,
     done: false,
+    modified: true,
   },
   {
     id: 4,

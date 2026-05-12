@@ -26,7 +26,20 @@
   flex-shrink: 0;
 }
 
+/* 투표 결과 카드 묶음 */
+.cv2_past_cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 /* 미션 카드 */
+.cv2_mission_cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .cv2_mission_card {
   display: flex;
   align-items: center;
@@ -66,7 +79,12 @@
 }
 
 .cv2_timer_closed {
-  color: #9CA3AF;
+  color: #BB0600;
+}
+
+
+.cv2_past_section .cv2_timer_closed {
+  color: #0369A1;
 }
 
 .cv2_divider {
@@ -74,11 +92,40 @@
   color: #D1D5DB;
 }
 
-/* 투표하기 / 결과보기 버튼 */
+/* 투표하기 버튼 */
 .cv2_vote_btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 4px;
+  flex-shrink: 0;
+  width: auto;
+  padding: 0 10px;
+  height: 36px;
+  border: 1px solid #6D59F8;
+  border-radius: 999px;
+  background: #6D59F8;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.cv2_vote_btn img,
+.cv2_vote_btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: currentColor;
+}
+
+/* 알림받기 / 수정하기 버튼 (outline) */
+.cv2_outline_btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   flex-shrink: 0;
   width: auto;
   padding: 0 10px;
@@ -91,6 +138,42 @@
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
+}
+
+.cv2_outline_btn img,
+.cv2_outline_btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: currentColor;
+}
+
+/* 결과보기 버튼 */
+.cv2_result_btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-shrink: 0;
+  width: auto;
+  padding: 0 10px;
+  height: 36px;
+  border: 1px solid #46B5EA;
+  border-radius: 999px;
+  background: #46B5EA;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.cv2_vote_btn:disabled,
+.cv2_outline_btn:disabled,
+.cv2_result_btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
 }
 
 /* 투표완료 버튼 */
@@ -116,7 +199,7 @@
 .cv2_regular_list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .cv2_regular_item {
