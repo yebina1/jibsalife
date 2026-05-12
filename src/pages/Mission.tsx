@@ -3,10 +3,19 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import PageHeader from '../components/PageHeader'
 import ChevronIcon from '../components/ChevronIcon'
 import FloatingWriteButton from '../components/FloatingWriteButton'
+import HeaderIcon from '../components/HeaderIcon'
+import BackButton from '../components/html/BackButton'
 import DatePicker from '../components/html/DatePicker'
 import Button from '../components/html/Button'
 import AddSheet from '../components/AddSheet'
-import { readMyProfileName } from '../utils/myProfile'
+import {
+  PET_PROFILES_CHANGE_EVENT,
+  readPetProfiles,
+  readSelectedPetProfileId,
+  readSelectedPetProfileName,
+  writeSelectedPetProfileId,
+  type PetProfileSummary,
+} from '../utils/petProfiles'
 import {
   MISSION_ACTIVITY_RECORDS_CHANGE_EVENT,
   readMissionActivityRecords,
@@ -113,6 +122,7 @@ function Mission() {
   const [isCategoryPickerOpen, setIsCategoryPickerOpen] = useState(false)
   const [isCategoryAddOpen, setIsCategoryAddOpen] = useState(false)
   const [isCategoryEditOpen, setIsCategoryEditOpen] = useState(false)
+  const [isPetSwitchOpen, setIsPetSwitchOpen] = useState(false)
   const [isPeriodPickerOpen, setIsPeriodPickerOpen] = useState(false)
   const [isPeriodDatePickerOpen, setIsPeriodDatePickerOpen] = useState(false)
   const [addTitle, setAddTitle] = useState('')
@@ -121,6 +131,8 @@ function Mission() {
     ...readMissionActivityRecords().map(toMissionHistoryRecord),
     ...readMissionHistoryRecordsWithDefaults(),
   ])
+  const [petProfiles, setPetProfiles] = useState<PetProfileSummary[]>(readPetProfiles)
+  const [selectedPetProfileId, setSelectedPetProfileId] = useState(readSelectedPetProfileId)
   const [categories, setCategories] = useState<CategoryOption[]>(initialCategoryOptions)
   const [selectedCategoryId, setSelectedCategoryId] = useState(initialCategoryOptions[0].id)
   const [draftCategoryId, setDraftCategoryId] = useState(initialCategoryOptions[0].id)
@@ -195,12 +207,29 @@ function Mission() {
     writeStoredMissionHistoryRecords(historyItems)
   }, [historyItems])
 
+  useEffect(() => {
+    const syncPetProfiles = () => {
+      setPetProfiles(readPetProfiles())
+      setSelectedPetProfileId(readSelectedPetProfileId())
+    }
+
+    window.addEventListener(PET_PROFILES_CHANGE_EVENT, syncPetProfiles)
+    window.addEventListener('storage', syncPetProfiles)
+
+    return () => {
+      window.removeEventListener(PET_PROFILES_CHANGE_EVENT, syncPetProfiles)
+      window.removeEventListener('storage', syncPetProfiles)
+    }
+  }, [])
+
   const selectedDay = useMemo(
     () => calendarDays.find((day) => day.id === selectedDayId) ?? calendarDays[24],
     [calendarDays, selectedDayId]
   )
 
-  const profileName = readMyProfileName()
+  const petName =
+    petProfiles.find((profile) => profile.id === selectedPetProfileId)?.name ??
+    readSelectedPetProfileName()
   const selectedDate = new Date(selectedDay.year, selectedDay.month - 1, Number(selectedDay.label))
   const selectedDateKey = getDateKey(selectedDay.year, selectedDay.month, Number(selectedDay.label))
   const selectedDateLabel = `${selectedDay.month}월 ${selectedDay.label}일(${weekLabels[selectedDate.getDay()]})`
@@ -385,6 +414,12 @@ function Mission() {
     setEditCategoryColor('')
   }
 
+  const selectPetProfile = (profileId: number) => {
+    setSelectedPetProfileId(profileId)
+    writeSelectedPetProfileId(profileId)
+    setIsPetSwitchOpen(false)
+  }
+
   const moveMonth = (direction: 'prev' | 'next') => {
     setMonthSlideDirection(direction)
     setCalendarMonth((prev) => {
@@ -429,15 +464,28 @@ function Mission() {
   return (
     <>
       <PageHeader
-        title={`${profileName}의 히스토리`}
+        title="건강 히스토리"
+        leftContent={<BackButton />}
         rightContent={(
-          <Button type="button" className="mission_pet_switch_button" onClick={() => undefined}>
-            반려동물 변경하기
-            <i className="bx bx-chevron-right" aria-hidden="true" />
-          </Button>
+          <>
+            <Button type="button" aria-label="캘린더" onClick={openDatePicker}>
+              <HeaderIcon type="calendar" />
+            </Button>
+            <Button type="button" aria-label="알림">
+              <HeaderIcon type="notification" />
+            </Button>
+          </>
         )}
       />
       <main className="page mission_page">
+        <section className="mission_profile_header">
+          <h2>{petName}의 히스토리</h2>
+          <Button type="button" className="mission_pet_switch_button" onClick={() => setIsPetSwitchOpen(true)}>
+            반려동물 변경하기
+            <ChevronIcon direction="right" size="md" />
+          </Button>
+        </section>
+
         <section className="mission_calendar_section" ref={calendarRef}>
           <div className="mission_calendar_card">
             <div className="mission_month_bar" ref={monthBarRef}>
@@ -534,7 +582,7 @@ function Mission() {
           </div>
         </section>
 
-        <FloatingWriteButton className="mission_write_button" aria-label="기록 추가" onClick={() => setIsFabOpen(true)} />
+        <FloatingWriteButton aria-label="기록 추가" onClick={() => setIsFabOpen(true)} />
       </main>
 
       {isDatePickerOpen && (
@@ -551,6 +599,37 @@ function Mission() {
           }}
           onCancel={() => setIsDatePickerOpen(false)}
         />
+      )}
+
+      {isPetSwitchOpen && (
+        <AddSheet onClose={() => setIsPetSwitchOpen(false)}>
+          <div className="mission_pet_switch_sheet">
+            <div className="mission_pet_switch_list">
+              {petProfiles.map((profile) => (
+                <button
+                  key={profile.id}
+                  type="button"
+                  className={`mission_pet_switch_option${
+                    profile.id === selectedPetProfileId ? ' is_selected' : ''
+                  }`}
+                  onClick={() => selectPetProfile(profile.id)}
+                >
+                  <img src={profile.image} alt="" aria-hidden="true" />
+                  <span className="mission_pet_switch_copy">
+                    <strong>{profile.name}</strong>
+                    <span>
+                      나이: {profile.birthDate ? `${profile.birthDate.slice(0, 4)}년생` : '-'} · 몸무게:{' '}
+                      <b>{profile.weight ? `${profile.weight}kg` : '-'}</b> · 성별: <b>{profile.sex || '-'}</b>
+                    </span>
+                  </span>
+                </button>
+              ))}
+            </div>
+            <Button type="button" className="purple_btn mission_pet_switch_close" onClick={() => setIsPetSwitchOpen(false)}>
+              닫기
+            </Button>
+          </div>
+        </AddSheet>
       )}
 
       {isFabOpen && (

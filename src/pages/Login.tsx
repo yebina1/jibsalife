@@ -91,7 +91,13 @@ function Login() {
             </div>
           </div>
           {error && <p className="login_error">{error}</p>}
-          <Button type="submit" className="purple_btn" disabled={!id.trim() && !password.trim()}>로그인</Button>
+          <Button
+            type="submit"
+            className={`purple_btn${!id.trim() && !password.trim() ? ' is_disabled' : ''}`}
+            aria-disabled={!id.trim() && !password.trim()}
+          >
+            로그인
+          </Button>
         </form>
 
         <Link to="#" className="login_guest_link" onClick={() => { setId('hello@jipsa.app'); setPassword('123456') }}>체험용 계정으로 둘러보기</Link>

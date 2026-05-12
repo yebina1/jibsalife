@@ -19,8 +19,13 @@ import {
   toMissionHistoryRecord,
   type MissionHistoryRecord,
 } from '../utils/missionHistoryRecords'
-import pungpungiImage from '../img/pungpungi.png'
-import leeyoriImage from '../img/leeyori.png'
+import {
+  defaultPetProfiles,
+  readPetProfiles,
+  writePetProfiles,
+  writeSelectedPetProfileId,
+  type PetProfileSummary,
+} from '../utils/petProfiles'
 import knowledge1 from '../img/knowledge1.png'
 import knowledge2 from '../img/knowledge2.png'
 import knowledge3 from '../img/knowledge3.png'
@@ -38,7 +43,6 @@ import voteLoyiImage from '../img/vote/vote_loyi.jpg'
 import voteMongImage from '../img/vote/vote_mong.jpg'
 import voteSeoljiImage from '../img/vote/vote_seolji.jpg'
 import voteSyusyuImage from '../img/vote/vote_syusyu.jpg'
-import { readPetProfileName } from '../utils/petProfile'
 
 type PetIdCardForm = {
   name: string
@@ -109,16 +113,7 @@ type SummaryStat = {
   value: string
 }
 
-type ProfileSummarySlide = {
-  id: number
-  type: 'profile'
-  name: string
-  breed: string
-  image: string
-  birthDate: string
-  weight: string
-  sex: string
-}
+type ProfileSummarySlide = PetProfileSummary
 
 type AddSummarySlide = {
   id: number
@@ -259,29 +254,7 @@ function Home() {
   const [petIdForm, setPetIdForm] = useState<PetIdCardForm>(emptyPetIdForm)
   const [calendarRecords, setCalendarRecords] = useState<MissionHistoryRecord[]>(readCalendarRecords)
   const dragStateRef = useRef({ startX: 0 })
-  const registeredPetName = readPetProfileName()
-  const [profileSlides, setProfileSlides] = useState<ProfileSummarySlide[]>([
-    {
-      id: 1,
-      type: 'profile',
-      name: '이요리',
-      breed: '코리안 쇼트 헤어',
-      image: leeyoriImage,
-      birthDate: '2021.05.11',
-      weight: '3',
-      sex: '남',
-    },
-    {
-      id: 2,
-      type: 'profile',
-      name: registeredPetName || '뿡뿡이',
-      breed: '포메라니안',
-      image: pungpungiImage,
-      birthDate: '2024.05.11',
-      weight: '5',
-      sex: '남',
-    },
-  ])
+  const [profileSlides, setProfileSlides] = useState<ProfileSummarySlide[]>(readPetProfiles)
   const summarySlides = [
     ...profileSlides,
     {
@@ -316,6 +289,15 @@ function Home() {
       window.removeEventListener('storage', syncCalendarRecords)
     }
   }, [])
+
+  useEffect(() => {
+    writePetProfiles(profileSlides)
+
+    const selectedProfile = profileSlides[summarySlideIndex]
+    if (selectedProfile) {
+      writeSelectedPetProfileId(selectedProfile.id)
+    }
+  }, [profileSlides, summarySlideIndex])
 
   useEffect(() => {
     if (!isPetIdModalOpen) return
@@ -443,7 +425,7 @@ function Home() {
         type: 'profile',
         name: petIdForm.name || '이름',
         breed: petIdForm.breed || '품종',
-        image: petIdPhoto || pungpungiImage,
+        image: petIdPhoto || defaultPetProfiles[1].image,
         birthDate: petIdForm.birthDate,
         weight: petIdForm.weight,
         sex: petIdForm.sex,

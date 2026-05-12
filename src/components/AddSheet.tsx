@@ -1,5 +1,6 @@
 import './AddSheet.css'
 import HomeIndicator from './HomeIndicator'
+import { useState } from 'react'
 
 type Props = {
   onClose: () => void
@@ -11,16 +12,30 @@ type Props = {
 }
 
 function AddSheet({ onClose, children, onScrollCapture, onWheelCapture, onTouchMoveCapture, onMouseDownCapture }: Props) {
+  const [isClosing, setIsClosing] = useState(false)
+
+  const requestClose = () => {
+    setIsClosing(true)
+  }
+
   return (
     <div
-      className="add_sheet_overlay"
-      onClick={onClose}
+      className={`add_sheet_overlay${isClosing ? ' is_closing' : ''}`}
+      onClick={requestClose}
       onScrollCapture={onScrollCapture}
       onWheelCapture={onWheelCapture}
       onTouchMoveCapture={onTouchMoveCapture}
       onMouseDownCapture={onMouseDownCapture}
     >
-      <div className="add_sheet" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="add_sheet"
+        onClick={(e) => e.stopPropagation()}
+        onAnimationEnd={(event) => {
+          if (event.animationName === 'add-sheet-slide-down') {
+            onClose()
+          }
+        }}
+      >
         <div className="add_sheet_handle" />
         {children}
         <HomeIndicator />

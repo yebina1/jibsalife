@@ -1,33 +1,62 @@
 .mission_page {
   background: #ffffff;
   color: #171717;
-  padding-top: 20px;
-  padding-bottom: 120px;
 }
 
-.header_right .mission_pet_switch_button {
+.mission_profile_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.mission_profile_header h2 {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: #111111;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mission_pet_switch_button {
   display: inline-flex;
   width: auto;
-  height: 28px;
+  height: 24px;
   align-items: center;
-  gap: 2px;
+  justify-content: center;
   padding: 0;
   color: #505050;
   font-size: 14px;
   font-weight: 400;
-  line-height: 1.45;
+  line-height: 20px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.header_right .mission_pet_switch_button i {
-  width: 18px;
-  height: 18px;
-  font-size: 18px;
-  line-height: 18px;
+.mission_pet_switch_button .button_label {
+  display: inline-flex;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  line-height: 20px;
+}
+
+.mission_pet_switch_button .chevron_icon_md {
+  --chevron-color: #505050;
+  align-self: center;
+  transform: translateY(1px);
 }
 
 .mission_calendar_section {
-  padding: 0 2px;
+  display: flex;
+  justify-content: center;
+  padding: 0;
 }
 
 .mission_day {
@@ -109,9 +138,10 @@
   background: transparent;
   font-family: inherit;
   color: #111111;
-  font-size: 26px;
-  font-weight: 700;
-  line-height: 1.35;
+  font-size: var(--font-title-h3);
+  font-weight: var(--font-weight-sb);
+  line-height: var(--app-line-height);
+  letter-spacing: var(--app-letter-spacing);
   cursor: pointer;
 }
 
@@ -124,9 +154,12 @@
 }
 
 .mission_calendar_card {
-  padding: 24px 20px 28px;
+  width: min(100%, 343px);
+  height: auto;
+  padding: 17px;
+  box-sizing: border-box;
   border: 1px solid #e1e1ea;
-  border-radius: 16px;
+  border-radius: 12px;
   background: #ffffff;
 }
 
@@ -316,31 +349,77 @@
   line-height: 1.4;
 }
 
-.floating_write_button.mission_write_button,
-.floating_write_button.mission_write_button.is_expanded {
-  right: max(16px, calc((100vw - var(--layout-max-width, 1440px)) / 2 + 16px));
-  bottom: 96px;
-  width: 74px;
-  height: 74px;
-  justify-content: center;
-  padding: 0;
+.mission_pet_switch_sheet {
+  display: grid;
+  gap: 40px;
+  padding: 32px 8px 52px;
+}
+
+.mission_pet_switch_list {
+  display: grid;
+  gap: 34px;
+}
+
+.mission_pet_switch_option {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  padding: 0 16px;
+  border: 0;
+  background: transparent;
+  color: #111111;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mission_pet_switch_option img {
+  display: block;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
-  background: #6d59f8;
-  box-shadow: 0 4px 14px rgba(109, 89, 248, 0.3);
-  transform: none;
+  object-fit: cover;
 }
 
-.mission_write_button .floating_button_icon_frame,
-.mission_write_button .floating_button_icon_frame i,
-.mission_write_button .floating_button_icon_frame i::before {
-  width: 34px;
-  height: 34px;
-  font-size: 34px;
-  line-height: 34px;
+.mission_pet_switch_copy {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
 }
 
-.mission_write_button .floating_write_button_label {
-  display: none;
+.mission_pet_switch_copy strong {
+  overflow: hidden;
+  color: #111111;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mission_pet_switch_copy span {
+  overflow: hidden;
+  color: #505050;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.45;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mission_pet_switch_copy b {
+  color: #111111;
+  font-weight: 700;
+}
+
+.mission_pet_switch_option.is_selected .mission_pet_switch_copy strong {
+  color: #6d59f8;
+}
+
+.mission_pet_switch_close {
+  width: 100%;
 }
 
 .mission_notice {

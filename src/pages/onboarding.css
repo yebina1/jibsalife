@@ -1,4 +1,9 @@
 .onboarding_page {
+  --onboarding-action-height: 54px;
+  --onboarding-action-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+  --onboarding-action-reserved-space: calc(
+    var(--onboarding-action-height) + var(--onboarding-action-bottom) + 40px
+  );
   position: relative;
   height: calc(100dvh - var(--layout-status-bar-height));
   min-height: calc(100dvh - var(--layout-status-bar-height));
@@ -21,20 +26,26 @@
 }
 
 .onboarding_page .onboarding_layout {
-  padding-bottom: calc(112px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: var(--onboarding-action-reserved-space);
+  scroll-padding-bottom: var(--onboarding-action-reserved-space);
 }
 
 .onboarding_page .onboarding_layout_action {
   position: fixed;
   right: max(26px, calc((100vw - var(--layout-max-width, 1440px)) / 2 + 26px));
-  bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+  bottom: var(--onboarding-action-bottom);
   left: max(26px, calc((100vw - var(--layout-max-width, 1440px)) / 2 + 26px));
   z-index: 120;
   width: auto;
+  height: var(--onboarding-action-height);
 }
 
 .onboarding_page .onboarding_layout_indicators {
-  margin-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  margin-bottom: calc(var(--onboarding-action-height) + var(--onboarding-action-bottom) - 8px);
+}
+
+.onboarding_page .onboarding_name_form {
+  margin-bottom: calc(var(--onboarding-action-height) + var(--onboarding-action-bottom) - 4px);
 }
 
 .onboarding_visual_image {
