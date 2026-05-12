@@ -9,6 +9,7 @@ import Alert from '../../components/Alert'
 import AddSheet from '../../components/AddSheet'
 import Button from '../../components/html/Button'
 import CommentInputForm from '../../components/html/CommentInputForm'
+import LikeButton from '../../components/LikeButton'
 import life1 from '../../img/life1.jpg'
 import life2 from '../../img/life2.png'
 import life3 from '../../img/life3.png'
@@ -272,15 +273,14 @@ function PetStoryDetailFooterReactions({
 }: PetStoryDetailFooterReactionsProps) {
   return (
     <div className="cpsdetail_footer_reactions" aria-label="게시글 반응">
-      <button
-        type="button"
-        className={`cpsdetail_footer_reaction${isLiked ? ' active' : ''}`}
+      <LikeButton
+        className="cpsdetail_footer_reaction"
+        liked={isLiked}
         onClick={onLike}
         aria-label={`좋아요 ${likeCount}`}
       >
-        <HeartIcon />
-        <span>{likeCount}</span>
-      </button>
+        {likeCount}
+      </LikeButton>
       <button type="button" className="cpsdetail_footer_reaction" aria-label={`댓글 ${commentCount}`} onClick={onComment}>
         <CommentIcon />
         <span>{commentCount}</span>
@@ -676,15 +676,14 @@ function CommunityPetStoryDetails() {
 
           <div className="cpsdetail_reaction_row">
             <span>{likeCount}명이 공감 했어요</span>
-            <button
-              type="button"
+            <LikeButton
               aria-label={`좋아요 ${likeCount}`}
-              className={`cpsdetail_like_btn${isLiked ? ' active' : ''}`}
+              className="cpsdetail_like_btn"
+              liked={isLiked}
               onClick={toggleLike}
             >
-              <span aria-hidden="true">♡</span>
               <strong>{likeCount}</strong>
-            </button>
+            </LikeButton>
           </div>
         </article>
 

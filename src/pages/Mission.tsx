@@ -126,6 +126,18 @@ const categoryColorOptions = [
   '#d43c48',
 ]
 
+const quickMessageOptions = [
+  '사료 30g',
+  '사료 60g',
+  '사료 90g',
+  '사료 120g',
+  '사료 150g',
+  '잔액조회 입니다?',
+  '거래내역 입니다',
+  '이체',
+  '수익률',
+]
+
 function Mission() {
   const [calendarYear, setCalendarYear] = useState(CALENDAR_YEAR)
   const [calendarMonth, setCalendarMonth] = useState(CALENDAR_MONTH)
@@ -134,6 +146,7 @@ function Mission() {
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
   const [pickerTop, setPickerTop] = useState(0)
   const [isFabOpen, setIsFabOpen] = useState(false)
+  const [isFabClosing, setIsFabClosing] = useState(false)
   const [isCategoryPickerOpen, setIsCategoryPickerOpen] = useState(false)
   const [isCategoryAddOpen, setIsCategoryAddOpen] = useState(false)
   const [isCategoryEditOpen, setIsCategoryEditOpen] = useState(false)
@@ -305,6 +318,7 @@ function Mission() {
 
   const closeMissionSheet = () => {
     setIsFabOpen(false)
+    setIsFabClosing(false)
     setIsCategoryPickerOpen(false)
     setIsCategoryAddOpen(false)
     setIsCategoryEditOpen(false)
@@ -312,6 +326,25 @@ function Mission() {
     setIsPeriodDatePickerOpen(false)
     setAddTitle('')
     setEditingHistoryId(null)
+  }
+
+  const requestCloseMissionSheet = () => {
+    setIsFabClosing(true)
+  }
+
+  const openMissionSheet = () => {
+    setAddDate({
+      year: selectedDay.year,
+      month: selectedDay.month,
+      day: Number(selectedDay.label),
+    })
+    setDraftAddDate({
+      year: selectedDay.year,
+      month: selectedDay.month,
+      day: Number(selectedDay.label),
+    })
+    setIsFabClosing(false)
+    setIsFabOpen(true)
   }
 
   useEffect(() => {
@@ -361,7 +394,7 @@ function Mission() {
             : item
         )
       )
-      closeMissionSheet()
+      requestCloseMissionSheet()
       return
     }
 
@@ -376,7 +409,7 @@ function Mission() {
       },
       ...prev,
     ])
-    closeMissionSheet()
+    requestCloseMissionSheet()
   }
 
   const openHistoryEdit = (item: MissionHistoryRecord) => {
@@ -576,20 +609,7 @@ function Mission() {
                 <div className="mission_history_body">
                   <strong className="title_h5">
                     {item.title}
-                    <svg
-                      className="mission_history_edit_icon"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      aria-hidden="true"
-                    >
-                      <path
-                        d="M13.4 4.2 18.1 6.9M15.7 5.55 6.2 18.8 3.7 19.8 3.35 16.95 12.85 3.7 15.7 5.55ZM6.2 18.8l-2.85-1.85M12.85 3.7l4.7 2.7M12.25 20.1h8.4"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+                    <i className="bx bx-edit-alt mission_history_edit_icon" aria-hidden="true" />
                   </strong>
                   <p className="p_regular">{item.detail}</p>
                   {item.media && item.media.length > 0 ? (
@@ -610,7 +630,7 @@ function Mission() {
           </div>
         </section>
 
-        <FloatingWriteButton aria-label="기록 추가" onClick={() => setIsFabOpen(true)} />
+        <FloatingWriteButton aria-label="기록 추가" onClick={openMissionSheet} />
       </main>
 
       {isDatePickerOpen && (
@@ -666,6 +686,7 @@ function Mission() {
       {isFabOpen && (
         <AddSheet
           onClose={closeMissionSheet}
+          isClosing={isFabClosing}
           onScrollCapture={(event) => {
             if (!isPeriodDatePickerOpen) return
             if ((event.target as HTMLElement).closest('.date_picker_column')) return
@@ -982,18 +1003,6 @@ function Mission() {
               </div>
             ) : (
               <>
-                <textarea
-                  className="mission_add_title"
-                  placeholder="할 일을 입력해주세요."
-                  rows={2}
-                  value={addTitle}
-                  onChange={(e) => {
-                    const lines = e.target.value.split('\n')
-                    if (lines.length > 2) return
-                    setAddTitle(e.target.value)
-                  }}
-                  autoFocus
-                />
                 <div className="mission_add_rows">
                   <div className="mission_add_row">
                     <span className="mission_add_row_label">기간</span>
@@ -1006,6 +1015,16 @@ function Mission() {
                       }}
                     >
                       {addDate.month}월 {addDate.day}일
+                      <ChevronIcon direction="right" size="md" />
+                    </button>
+                  </div>
+                  <div className="mission_add_row">
+                    <span className="mission_add_row_label">
+                      반복
+                      <span className="mission_add_info" aria-hidden="true">i</span>
+                    </span>
+                    <button type="button" className="mission_add_row_value">
+                      매일
                       <ChevronIcon direction="right" size="md" />
                     </button>
                   </div>
@@ -1029,14 +1048,29 @@ function Mission() {
                       <ChevronIcon direction="right" size="md" />
                     </button>
                   </div>
-                  <div className="mission_add_row">
-                    <span className="mission_add_row_label">알림</span>
-                    <button type="button" className="mission_add_row_value">
-                      없음
-                      <ChevronIcon direction="right" size="md" />
-                    </button>
-                  </div>
                 </div>
+                <section className="mission_add_content">
+                  <h2>내용입력</h2>
+                  <div className="mission_quick_messages" aria-label="빠른 입력">
+                    {quickMessageOptions.map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        className="mission_quick_message"
+                        onClick={() => setAddTitle(option)}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
+                  <textarea
+                    className="mission_add_title"
+                    placeholder="기타 입력사항을 자유롭게 작성해 주세요."
+                    rows={4}
+                    value={addTitle}
+                    onChange={(e) => setAddTitle(e.target.value)}
+                  />
+                </section>
                 <div className="mission_add_save_wrap">
                   <Button
                     type="button"

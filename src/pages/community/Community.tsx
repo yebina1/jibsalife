@@ -4,6 +4,7 @@ import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
 import ContentSection from '../../components/ContentSection'
 import FloatingWriteButton from '../../components/FloatingWriteButton'
+import LikeButton from '../../components/LikeButton'
 import Button from '../../components/html/Button'
 import { CommunityChallengePreview } from './CommunityChallenge'
 import contents1 from '../../img/contents1.png'
@@ -980,20 +981,16 @@ function Community({ section }: CommunityProps) {
                         <span>{post.date}</span>
                       </p>
                       <div className="community_post_actions">
-                        <button
+                        <LikeButton
                           type="button"
-                          className={likedPostIds.includes(post.id) ? 'active' : ''}
+                          liked={likedPostIds.includes(post.id)}
                           onClick={() => toggleLike(post.id)}
+                          iconClassName="community_like_icon"
+                          countClassName="community_action_count"
+                          aria-label="좋아요"
                         >
-                          <span className="community_like_icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                              <path d="M12 20.2 4.9 13.6a4.8 4.8 0 0 1 6.8-6.8L12 7.9l.3-.3a4.8 4.8 0 1 1 6.8 6.8Z" />
-                            </svg>
-                          </span>
-                          <span className="community_action_count">
-                            {post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}
-                          </span>
-                        </button>
+                          {post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}
+                        </LikeButton>
                         <button type="button" aria-label="댓글">
                           <span className="community_comment_icon" aria-hidden="true">
                             <svg viewBox="0 0 24 24">
@@ -1089,20 +1086,16 @@ function Community({ section }: CommunityProps) {
                       <span>{post.date}</span>
                     </p>
                     <div className="community_post_actions">
-                      <button
+                      <LikeButton
                         type="button"
-                        className={likedPostIds.includes(post.id) ? 'active' : ''}
+                        liked={likedPostIds.includes(post.id)}
                         onClick={() => toggleLike(post.id)}
+                        iconClassName="community_like_icon"
+                        countClassName="community_action_count"
+                        aria-label="좋아요"
                       >
-                        <span className="community_like_icon" aria-hidden="true">
-                          <svg viewBox="0 0 24 24">
-                            <path d="M12 20.2 4.9 13.6a4.8 4.8 0 0 1 6.8-6.8L12 7.9l.3-.3a4.8 4.8 0 1 1 6.8 6.8Z" />
-                          </svg>
-                        </span>
-                        <span className="community_action_count">
-                          {post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}
-                        </span>
-                      </button>
+                        {post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}
+                      </LikeButton>
                       <button type="button" aria-label="댓글">
                         <span className="community_comment_icon" aria-hidden="true">
                           <svg viewBox="0 0 24 24">

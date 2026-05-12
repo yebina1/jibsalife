@@ -56,9 +56,9 @@
   height: 28px;
   fill: none;
   stroke: currentColor;
-  strokeWidth: 1.7;
-  strokeLinecap: round;
-  strokeLinejoin: round;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 

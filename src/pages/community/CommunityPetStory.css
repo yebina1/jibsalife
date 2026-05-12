@@ -433,9 +433,13 @@
   text-align: center;
 }
 
-.community_like_icon svg {
+.community_like_icon svg,
+.community_like_icon img {
   width: 20px;
   height: 20px;
+}
+
+.community_like_icon svg {
   fill: transparent;
   stroke: #111111;
   stroke-width: 1.8;
@@ -722,6 +726,7 @@
   }
 
   .community_like_icon svg,
+  .community_like_icon img,
   .community_comment_icon svg,
   .community_share_icon svg {
     width: 18px;

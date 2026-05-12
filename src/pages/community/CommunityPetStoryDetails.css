@@ -401,9 +401,24 @@
   stroke-linejoin: round;
 }
 
+.cpsdetail_footer_reaction .like_button_icon,
+.cpsdetail_footer_reaction .like_icon {
+  display: inline-flex;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+}
+
 .cpsdetail_footer_reaction.active svg {
   fill: #A10803;
   stroke: #A10803;
+}
+
+.cpsdetail_like_btn .like_button_icon,
+.cpsdetail_like_btn .like_icon {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
 }
 
 .cpsdetail_footer_reaction i {
