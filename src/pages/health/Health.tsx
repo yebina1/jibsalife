@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router'
 import { ChevronRight, Dog } from 'lucide-react'
 import './Health.css'
 import pungpungiImage from '../../img/pungpungi.png'
+import leeyoriImage from '../../img/leeyori.png'
 import galleryIcon from '../../img/gallery-icon.svg'
 import cameraFlipIcon from '../../img/camera-flip-icon.svg'
 import {
@@ -112,6 +113,8 @@ function Health() {
     setShowPetModal(false)
   }
 
+  const selectedPetName = pets.find((p) => p.id === selectedPetId)?.name || ''
+
   return (
     <main className="health_cam_ui">
       <section className="health_cam_view" aria-label="카메라 뷰">
@@ -120,7 +123,7 @@ function Health() {
         ) : isCameraAvailable ? (
           <video ref={videoRef} className="health_cam_video" autoPlay muted playsInline />
         ) : (
-          <img className="health_cam_img" src={pungpungiImage} alt="" aria-hidden="true" />
+          <img className="health_cam_img health_cam_img_fallback" src={leeyoriImage} alt="" aria-hidden="true" />
         )}
         <div className="health_cam_overlay" aria-hidden="true" />
       </section>
@@ -131,7 +134,13 @@ function Health() {
           className="health_cam_pet_link"
           onClick={() => setShowPetModal(true)}
         >
-          <span>반려동물 변경하기</span>
+          {selectedPetName ? (
+            <span>
+              현재 반려동물 · <span style={{ fontWeight: 700 }}>{selectedPetName}</span>
+            </span>
+          ) : (
+            <span>반려동물 변경하기</span>
+          )}
           <ChevronRight size={16} color="#505050" aria-hidden="true" />
         </button>
 
