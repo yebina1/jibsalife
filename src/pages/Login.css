@@ -139,9 +139,12 @@
 }
 
 .login_error {
+  display: block;
+  width: 100%;
   font-size: 14px;
   font-weight: 500;
   color: #A10803;
+  text-align: center;
 }
 
 .login_guest_link {

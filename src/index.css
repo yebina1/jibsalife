@@ -63,7 +63,7 @@ body{
 }
 
 ::selection {
-  background: #F1F1F5;
+  background: rgba(239, 239, 239, 0.5);
   color: inherit;
 }
 
@@ -82,7 +82,7 @@ button::before {
   inset: 0;
   z-index: -1;
   border-radius: inherit;
-  background: #F1F1F5;
+  background: rgba(239, 239, 239, 0.5);
   content: '';
   opacity: 0;
   pointer-events: none;
