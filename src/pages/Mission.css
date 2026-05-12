@@ -1,13 +1,33 @@
 .mission_page {
   background: #ffffff;
   color: #171717;
+  padding-top: 20px;
+  padding-bottom: 120px;
 }
 
-.mission_month_bar_left {
-  display: flex;
+.header_right .mission_pet_switch_button {
+  display: inline-flex;
+  width: auto;
+  height: 28px;
   align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
+  gap: 2px;
+  padding: 0;
+  color: #505050;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.45;
+  white-space: nowrap;
+}
+
+.header_right .mission_pet_switch_button i {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+  line-height: 18px;
+}
+
+.mission_calendar_section {
+  padding: 0 2px;
 }
 
 .mission_day {
@@ -76,44 +96,38 @@
 .mission_month_bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 22px;
-}
-
-.mission_menu_btn {
-  display: flex;
-  flex: 0 0 32px;
-  height: 32px;
-  align-items: center;
   justify-content: center;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: #202020;
-  font-size: 24px;
-  cursor: pointer;
+  margin-bottom: 30px;
 }
 
-.mission_menu_btn i {
-  font-size: 24px;
-  line-height: 1;
-}
-
-.mission_month_bar_date {
-  display: flex;
+.mission_month_title {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  width: 160px;
+  gap: 14px;
   padding: 0;
   border: 0;
   background: transparent;
-  white-space: nowrap;
-  cursor: pointer;
   font-family: inherit;
-  font-size: 22px;
+  color: #111111;
+  font-size: 26px;
   font-weight: 700;
-  letter-spacing: -0.5px;
-  color: #202020;
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+.mission_month_title i {
+  width: 24px;
+  height: 24px;
+  color: #4b5563;
+  font-size: 24px;
+  line-height: 24px;
+}
+
+.mission_calendar_card {
+  padding: 24px 20px 28px;
+  border: 1px solid #e1e1ea;
+  border-radius: 16px;
+  background: #ffffff;
 }
 
 .mission_weekdays,
@@ -123,13 +137,14 @@
 }
 
 .mission_weekdays {
-  margin-bottom: 18px;
+  margin-bottom: 24px;
 }
 
 .mission_weekdays span {
   text-align: center;
+  color: #767676;
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 .mission_calendar_viewport {
@@ -137,7 +152,7 @@
 }
 
 .mission_calendar_grid {
-  row-gap: 10px;
+  row-gap: 18px;
 }
 
 .mission_calendar_grid.slide_next {
@@ -171,24 +186,25 @@
 .mission_day {
   display: inline-flex;
   position: relative;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
   border-radius: 50%;
-  color: #3c3c3c;
-  font-size: 16px;
+  color: #111111;
+  font-size: 22px;
+  font-weight: 400;
   cursor: pointer;
 }
 
 .mission_day.muted {
-  color: #d3d5dd;
+  color: #9b9b9b;
 }
 
 .mission_day.selected {
-  background: #dce7ff;
-  color: #2d3655;
+  background: #bca8ff;
+  color: #111111;
 }
 
 .mission_day.has_record::after {
@@ -197,13 +213,13 @@
 
 .mission_day_record_dots {
   position: absolute;
-  bottom: 5px;
+  bottom: 6px;
   left: 50%;
   display: flex;
-  max-width: 22px;
+  max-width: 24px;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 3px;
   transform: translateX(-50%);
 }
 
@@ -215,25 +231,27 @@
 }
 
 .mission_history_section {
-  padding: 26px 8px 0;
+  padding: 66px 0 0;
 }
 
 .mission_history_section h2 {
-  margin: 0 0 18px;
-  font-size: 18px;
+  margin: 0 0 22px;
+  color: #111111;
+  font-size: 24px;
   font-weight: 700;
+  line-height: 1.35;
 }
 
 .mission_history_list {
   display: grid;
-  gap: 18px;
+  gap: 28px;
 }
 
 .mission_history_item {
   display: grid;
   width: 100%;
-  grid-template-columns: 34px minmax(0, 1fr) auto;
-  align-items: center;
+  grid-template-columns: 6px minmax(0, 1fr) auto;
+  align-items: start;
   gap: 12px;
   padding: 0;
   border: 0;
@@ -245,23 +263,36 @@
 }
 
 .mission_history_thumb {
-  width: 16px;
-  height: 16px;
-  margin: 0 auto;
-  border-radius: 50%;
+  width: 5px;
+  height: 60px;
+  margin: 3px 0 0;
+  border-radius: 0;
 }
 
 .mission_history_body strong {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   margin-bottom: 4px;
-  font-size: 16px;
+  color: #111111;
+  font-size: 20px;
   font-weight: 700;
+  line-height: 1.35;
+}
+
+.mission_history_body strong i {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 20px;
 }
 
 .mission_history_body p {
   margin: 0;
-  color: #a6a7b0;
-  font-size: 14px;
+  color: #505050;
+  font-size: 16px;
+  line-height: 1.45;
 }
 
 .mission_history_media {
@@ -279,8 +310,37 @@
 }
 
 .mission_history_item time {
-  color: #b2b3ba;
-  font-size: 14px;
+  padding-top: 20px;
+  color: #505050;
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.floating_write_button.mission_write_button,
+.floating_write_button.mission_write_button.is_expanded {
+  right: max(16px, calc((100vw - var(--layout-max-width, 1440px)) / 2 + 16px));
+  bottom: 96px;
+  width: 74px;
+  height: 74px;
+  justify-content: center;
+  padding: 0;
+  border-radius: 50%;
+  background: #6d59f8;
+  box-shadow: 0 4px 14px rgba(109, 89, 248, 0.3);
+  transform: none;
+}
+
+.mission_write_button .floating_button_icon_frame,
+.mission_write_button .floating_button_icon_frame i,
+.mission_write_button .floating_button_icon_frame i::before {
+  width: 34px;
+  height: 34px;
+  font-size: 34px;
+  line-height: 34px;
+}
+
+.mission_write_button .floating_write_button_label {
+  display: none;
 }
 
 .mission_notice {
@@ -690,12 +750,12 @@
 
   .mission_weekdays span,
   .mission_day {
-    font-size: 15px;
+    font-size: 20px;
   }
 
   .mission_day {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
   }
 
 }

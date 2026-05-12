@@ -3,10 +3,10 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import PageHeader from '../components/PageHeader'
 import ChevronIcon from '../components/ChevronIcon'
 import FloatingWriteButton from '../components/FloatingWriteButton'
-import BackButton from '../components/html/BackButton'
 import DatePicker from '../components/html/DatePicker'
 import Button from '../components/html/Button'
 import AddSheet from '../components/AddSheet'
+import { readPetProfileName } from '../utils/petProfile'
 import {
   MISSION_ACTIVITY_RECORDS_CHANGE_EVENT,
   readMissionActivityRecords,
@@ -107,8 +107,6 @@ function Mission() {
   const [calendarMonth, setCalendarMonth] = useState(CALENDAR_MONTH)
   const [selectedDayId, setSelectedDayId] = useState(`c-${CALENDAR_DAY}`)
   const [monthSlideDirection, setMonthSlideDirection] = useState<'prev' | 'next'>('next')
-  const [calendarView, setCalendarView] = useState<'월간' | '주간'>('월간')
-  const [isViewSortOpen, setIsViewSortOpen] = useState(false)
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
   const [pickerTop, setPickerTop] = useState(0)
   const [isFabOpen, setIsFabOpen] = useState(false)
@@ -137,11 +135,8 @@ function Mission() {
   })
   const [draftAddDate, setDraftAddDate] = useState(addDate)
   const calendarRef = useRef<HTMLElement>(null)
-  const dockRef = useRef<HTMLButtonElement>(null)
   const monthBarRef = useRef<HTMLDivElement>(null)
   const weekdaysRef = useRef<HTMLDivElement>(null)
-  const calendarViewRef = useRef(calendarView)
-  useEffect(() => { calendarViewRef.current = calendarView }, [calendarView])
   const calendarDays = useMemo(
     () => createCalendarDays(calendarYear, calendarMonth),
     [calendarMonth, calendarYear]
@@ -205,9 +200,10 @@ function Mission() {
     [calendarDays, selectedDayId]
   )
 
+  const petName = readPetProfileName() || '뿡뿡이'
   const selectedDate = new Date(selectedDay.year, selectedDay.month - 1, Number(selectedDay.label))
   const selectedDateKey = getDateKey(selectedDay.year, selectedDay.month, Number(selectedDay.label))
-  const selectedDateLabel = `${selectedDay.year}년 ${selectedDay.month}월 ${selectedDay.label}일(${weekLabels[selectedDate.getDay()]})`
+  const selectedDateLabel = `${selectedDay.month}월 ${selectedDay.label}일(${weekLabels[selectedDate.getDay()]})`
   const selectedHistoryItems = useMemo(
     () => historyItems.filter((item) => item.date === selectedDateKey),
     [historyItems, selectedDateKey]
@@ -245,12 +241,6 @@ function Mission() {
         category.id !== draftCategoryId &&
         category.color.toLowerCase() === editCategoryColor.toLowerCase()
     )
-  const selectedDayIndex = calendarDays.findIndex((day) => day.id === selectedDayId)
-  const selectedWeekStartIndex = Math.max(0, Math.floor(Math.max(selectedDayIndex, 0) / 7) * 7)
-  const visibleCalendarDays =
-    calendarView === '주간'
-      ? calendarDays.slice(selectedWeekStartIndex, selectedWeekStartIndex + 7)
-      : calendarDays
   const addCalendarDays = useMemo(
     () => createCalendarDays(draftAddDate.year, draftAddDate.month),
     [draftAddDate.month, draftAddDate.year]
@@ -267,10 +257,6 @@ function Mission() {
 
   const togglePeriodDatePicker = () => {
     setIsPeriodDatePickerOpen((prev) => !prev)
-  }
-
-  const toggleCalendarView = () => {
-    setCalendarView((prev) => (prev === '월간' ? '주간' : '월간'))
   }
 
   const closeMissionSheet = () => {
@@ -413,8 +399,7 @@ function Mission() {
 
   useEffect(() => {
     const section = calendarRef.current
-    const dock = dockRef.current
-    if (!section || !dock) return
+    if (!section) return
 
     let startX = 0
     let startY = 0
@@ -432,174 +417,124 @@ function Mission() {
       }
     }
 
-    const handleDockTouchStart = (e: TouchEvent) => {
-      startX = e.touches[0].clientX
-      startY = e.touches[0].clientY
-    }
-
-    const handleDockTouchMove = (e: TouchEvent) => {
-      e.preventDefault()
-    }
-
-    const handleDockTouchEnd = (e: TouchEvent) => {
-      const dy = e.changedTouches[0].clientY - startY
-      const absDy = Math.abs(dy)
-      if (absDy >= 30) {
-        if (dy < 0 && calendarViewRef.current === '월간') setCalendarView('주간')
-        else if (dy > 0 && calendarViewRef.current === '주간') setCalendarView('월간')
-      }
-    }
-
     section.addEventListener('touchstart', handleSectionTouchStart, { passive: true })
     section.addEventListener('touchend', handleSectionTouchEnd, { passive: true })
-    dock.addEventListener('touchstart', handleDockTouchStart, { passive: true })
-    dock.addEventListener('touchmove', handleDockTouchMove, { passive: false })
-    dock.addEventListener('touchend', handleDockTouchEnd, { passive: true })
 
     return () => {
       section.removeEventListener('touchstart', handleSectionTouchStart)
       section.removeEventListener('touchend', handleSectionTouchEnd)
-      dock.removeEventListener('touchstart', handleDockTouchStart)
-      dock.removeEventListener('touchmove', handleDockTouchMove)
-      dock.removeEventListener('touchend', handleDockTouchEnd)
     }
   }, [moveMonth])
 
   return (
     <>
       <PageHeader
-        title="건강 히스토리"
-        leftContent={<BackButton />}
+        title={`${petName}의 히스토리`}
+        rightContent={(
+          <Button type="button" className="mission_pet_switch_button" onClick={() => undefined}>
+            반려동물 변경하기
+            <i className="bx bx-chevron-right" aria-hidden="true" />
+          </Button>
+        )}
       />
       <main className="page mission_page">
         <section className="mission_calendar_section" ref={calendarRef}>
-        <div className="mission_month_bar" ref={monthBarRef}>
-          <div className="mission_month_bar_left">
-            <button type="button" className="mission_month_bar_date" onClick={openDatePicker}>
-              {calendarYear}.{String(calendarMonth).padStart(2, '0')}.{String(Number(selectedDay.label)).padStart(2, '0')}
-              <i className={`bx bx-chevron-${isDatePickerOpen ? 'up' : 'down'}`} />
-            </button>
-          </div>
-          <div className={`mission_view_sort ${isViewSortOpen ? 'open' : ''}`}>
-            <button
-              type="button"
-              className="mission_view_sort_toggle"
-              onClick={() => setIsViewSortOpen((prev) => !prev)}
-            >
-              {calendarView}
-            </button>
-            {isViewSortOpen ? (
-              <div className="mission_view_sort_menu">
-                {(['월간', '주간'] as const).map((view) => (
-                  <button
-                    key={view}
-                    type="button"
-                    className={view === calendarView ? 'mission_view_sort_option active' : 'mission_view_sort_option'}
-                    onClick={() => { setCalendarView(view); setIsViewSortOpen(false) }}
-                  >
-                    {view}
-                  </button>
+          <div className="mission_calendar_card">
+            <div className="mission_month_bar" ref={monthBarRef}>
+              <button type="button" className="mission_month_title" onClick={openDatePicker}>
+                {calendarYear}년 {calendarMonth}월
+                <i className={`bx bx-chevron-${isDatePickerOpen ? 'up' : 'down'}`} aria-hidden="true" />
+              </button>
+            </div>
+
+            <div className="mission_weekdays" ref={weekdaysRef} aria-hidden="true">
+              {weekLabels.map((label) => (
+                <span key={label}>{label}</span>
+              ))}
+            </div>
+
+            <div className="mission_calendar_viewport">
+              <div
+                key={`${calendarYear}-${calendarMonth}`}
+                className={`mission_calendar_grid slide_${monthSlideDirection}`}
+                aria-label={`${calendarYear}년 ${calendarMonth}월 달력`}
+              >
+                {calendarDays.map((day) => (
+                  (() => {
+                    const dayDateKey = getDateKey(day.year, day.month, Number(day.label))
+                    const dayRecordColors = recordedDateColors.get(dayDateKey) ?? []
+
+                    return (
+                      <button
+                        key={day.id}
+                        type="button"
+                        className={`mission_day ${day.muted ? 'muted' : ''} ${
+                          day.id === selectedDayId ? 'selected' : ''
+                        } ${recordedDateKeys.has(dayDateKey) ? 'has_record' : ''}`}
+                        aria-pressed={day.id === selectedDayId}
+                        onClick={() => setSelectedDayId(day.id)}
+                      >
+                        <span>{day.label}</span>
+                        {dayRecordColors.length > 0 && (
+                          <span className="mission_day_record_dots" aria-hidden="true">
+                            {dayRecordColors.slice(0, 3).map((color) => (
+                              <span
+                                key={color}
+                                className="mission_day_record_dot"
+                                style={{ backgroundColor: color }}
+                              />
+                            ))}
+                          </span>
+                        )}
+                      </button>
+                    )
+                  })()
                 ))}
               </div>
-            ) : null}
+            </div>
           </div>
-        </div>
+        </section>
 
-        <div className="mission_weekdays" ref={weekdaysRef} aria-hidden="true">
-          {weekLabels.map((label) => (
-            <span key={label}>{label}</span>
-          ))}
-        </div>
-
-        <div className="mission_calendar_viewport">
-        <div
-          key={`${calendarYear}-${calendarMonth}`}
-          className={`mission_calendar_grid slide_${monthSlideDirection}`}
-          aria-label={`${calendarYear}년 ${calendarMonth}월 달력`}
-        >
-          {visibleCalendarDays.map((day) => (
-            (() => {
-              const dayDateKey = getDateKey(day.year, day.month, Number(day.label))
-              const dayRecordColors = recordedDateColors.get(dayDateKey) ?? []
-
-              return (
-                <button
-                  key={day.id}
-                  type="button"
-                  className={`mission_day ${day.muted ? 'muted' : ''} ${
-                    day.id === selectedDayId ? 'selected' : ''
-                  } ${recordedDateKeys.has(dayDateKey) ? 'has_record' : ''}`}
-                  aria-pressed={day.id === selectedDayId}
-                  onClick={() => setSelectedDayId(day.id)}
-                >
-                  <span>{day.label}</span>
-                  {dayRecordColors.length > 0 && (
-                    <span className="mission_day_record_dots" aria-hidden="true">
-                      {dayRecordColors.slice(0, 3).map((color) => (
-                        <span
-                          key={color}
-                          className="mission_day_record_dot"
-                          style={{ backgroundColor: color }}
+        <section className="mission_history_section">
+          <h2>{selectedDateLabel}</h2>
+          <div className="mission_history_list">
+            {selectedHistoryItems.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className="mission_history_item"
+                onClick={() => openHistoryEdit(item)}
+              >
+                <span
+                  className="mission_history_thumb"
+                  style={{ backgroundColor: getHistoryColor(item.title, item.color) }}
+                  aria-hidden="true"
+                />
+                <div className="mission_history_body">
+                  <strong>
+                    {item.title}
+                    <i className="bx bx-edit-alt" aria-hidden="true" />
+                  </strong>
+                  <p>{item.detail}</p>
+                  {item.media && item.media.length > 0 ? (
+                    <div className="mission_history_media" aria-label="등록 이미지">
+                      {item.media.slice(0, 3).map((media, index) => (
+                        <img
+                          key={`${media.src}-${index}`}
+                          src={media.src}
+                          alt={media.label || `${item.title} 이미지 ${index + 1}`}
                         />
                       ))}
-                    </span>
-                  )}
-                </button>
-              )
-            })()
-          ))}
-        </div>
-        </div>
+                    </div>
+                  ) : null}
+                </div>
+                <time>{item.time}</time>
+              </button>
+            ))}
+          </div>
+        </section>
 
-        <button
-          type="button"
-          className="mission_calendar_dock"
-          ref={dockRef}
-          aria-label={calendarView === '월간' ? '주간 보기로 전환' : '월간 보기로 전환'}
-          onClick={toggleCalendarView}
-        >
-          <span />
-        </button>
-
-      </section>
-
-      <section className="mission_history_section">
-        <h2>{selectedDateLabel}</h2>
-        <div className="mission_history_list">
-          {selectedHistoryItems.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className="mission_history_item"
-              onClick={() => openHistoryEdit(item)}
-            >
-              <span
-                className="mission_history_thumb"
-                style={{ backgroundColor: getHistoryColor(item.title, item.color) }}
-                aria-hidden="true"
-              />
-              <div className="mission_history_body">
-                <strong>{item.title}</strong>
-                <p>{item.detail}</p>
-                {item.media && item.media.length > 0 ? (
-                  <div className="mission_history_media" aria-label="등록 이미지">
-                    {item.media.slice(0, 3).map((media, index) => (
-                      <img
-                        key={`${media.src}-${index}`}
-                        src={media.src}
-                        alt={media.label || `${item.title} 이미지 ${index + 1}`}
-                      />
-                    ))}
-                  </div>
-                ) : null}
-              </div>
-              <time>{item.time}</time>
-            </button>
-          ))}
-        </div>
-      </section>
-
-        <FloatingWriteButton onClick={() => setIsFabOpen(true)} />
+        <FloatingWriteButton className="mission_write_button" aria-label="기록 추가" onClick={() => setIsFabOpen(true)} />
       </main>
 
       {isDatePickerOpen && (
