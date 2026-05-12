@@ -51,9 +51,18 @@
   opacity: 0.72;
 }
 
+.mypage_location_card .s_white_radius_btn {
+  color: #111111;
+}
+
+.mypage_location_card .s_white_radius_btn svg {
+  color: #111111;
+  stroke: #111111;
+}
+
 .mypage_location_card svg {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   fill: none;
   stroke: currentColor;
   stroke-width: 2;
@@ -93,6 +102,14 @@
   display: none;
 }
 
+.mypage_profile_card_wrap .summary_profile_card_stats {
+  pointer-events: none;
+}
+
+.mypage_profile_card_wrap .summary_profile_card_stat_item {
+  cursor: default;
+}
+
 .mypage_profile_card_wrap .summary_profile_card_details {
   display: inline-flex;
   width: fit-content;
@@ -122,6 +139,8 @@
   width: 100%;
   justify-content: space-between;
   color: #111111;
+  cursor: default;
+  pointer-events: none;
 }
 
 .mypage_profile_badges {
@@ -137,15 +156,15 @@
 }
 
 .mypage_profile_card_wrap .summary_profile_card_guide .chevron_icon {
-  color: #111111;
+  color: #999999;
 }
 
 .mypage_profile_badges img {
   display: block;
-  width: 32px;
-  height: 32px;
-  flex: 0 0 32px;
-  object-fit: contain;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  object-fit: cover;
 }
 
 .mypage_menu_section {

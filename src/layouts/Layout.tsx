@@ -77,8 +77,9 @@ function Layout({
   const isPetStoryWritePage = pathname === '/community/petstory/write'
   const isKnowledgeDetailPage = pathname.startsWith('/community/petstory/knowledge/')
   const isVoteDetailPage = pathname === '/community/vote/detail'
+  const isRewardPage = pathname.startsWith('/community/challenge/reward')
   const showCommunityChrome =
-    isCommunityPath && !isPetStoryDetailPage && !isPetStoryWritePage && !isKnowledgeDetailPage && !isVoteDetailPage
+    isCommunityPath && !isPetStoryDetailPage && !isPetStoryWritePage && !isKnowledgeDetailPage && !isVoteDetailPage && !isRewardPage
   const communitySubTabs = !isPetStoryDetailPage && !isPetStoryWritePage && !isKnowledgeDetailPage && pathname.startsWith('/community/petstory')
     ? petStorySubTabs
     : !isPetStoryDetailPage && !isKnowledgeDetailPage && pathname.startsWith('/community/vote') && pathname !== '/community/vote/detail'

@@ -126,11 +126,15 @@ const postData: CommunityPost[] = [
 ]
 
 const knowledgeFeedItems = [
-  { id: 1, tag: '산책', title: '강아지 산책 안 하면 생기는 문제점', image: knowledge1, likes: 8, comments: 3, viewsText: '1.2k', objectPosition: '61% center', path: '/community/petstory/knowledge/walk-problems' },
-  { id: 2, tag: '건강', title: '고양이 점프의 숨겨진 비밀', image: knowledge2, likes: 8, comments: 3, viewsText: '968', objectPosition: '64% center', path: '/community/petstory/knowledge/walk-problems' },
-  { id: 3, tag: '일상', title: '강아지에게 절대 주면 안 되는 음식 7가지', image: knowledge3, likes: 8, comments: 3, viewsText: '860', objectPosition: '43% center', path: '/community/petstory/knowledge/walk-problems' },
-  { id: 4, tag: '일상', title: '봄철 강아지 알레르기 증상과 관리법', image: knowledge4, likes: 8, comments: 3, viewsText: '482', objectPosition: '48% center', path: '/community/petstory/knowledge/walk-problems' },
+  { id: 1, tag: '산책', title: '강아지 산책 안 하면 생기는 문제점', image: knowledge1, likes: 8, comments: 3, viewsText: '1.2k', objectPosition: '61% center', path: '/community/petstory/knowledge/walkproblems', createdAt: '2026-05-02T09:00:00' },
+  { id: 2, tag: '건강', title: '고양이 점프의 숨겨진 비밀', image: knowledge2, likes: 8, comments: 3, viewsText: '968', objectPosition: '64% center', path: '/community/petstory/knowledge/catjumpsecret', createdAt: '2026-05-01T10:00:00' },
+  { id: 3, tag: '일상', title: '고양이에게 절대 주면 안 되는 음식 7가지', titleLines: ['고양이에게 절대 주면', '안 되는 음식 7가지'], image: knowledge3, likes: 8, comments: 3, viewsText: '860', objectPosition: '43% center', path: '/community/petstory/knowledge/forbiddenfoods', createdAt: '2026-04-30T11:00:00' },
+  { id: 4, tag: '일상', title: '봄철 강아지 알레르기 증상과 관리법', titleLines: ['봄철 강아지 알레르기', '증상과 관리법'], image: knowledge4, likes: 8, comments: 3, viewsText: '482', objectPosition: '48% center', path: '/community/petstory/knowledge/springallergy', createdAt: '2026-04-29T12:00:00' },
 ] as const
+
+function getKnowledgeTitleLines(item: (typeof knowledgeFeedItems)[number]) {
+  return 'titleLines' in item ? [...item.titleLines] : [item.title]
+}
 
 const sortByParam: Record<string, SortOption> = {
   popular: '인기순',
@@ -291,8 +295,9 @@ function CommunityPetStory() {
     viewsText?: string
     objectPosition?: string
     path?: string
+    createdAt?: string
   }) => {
-    navigate(item.path ?? '/community/petstory/knowledge/walk-problems', {
+    navigate(item.path ?? `/community/petstory/knowledge/${item.id}`, {
       state: {
         item,
       },
@@ -363,7 +368,7 @@ function CommunityPetStory() {
         path: item.path,
         viewsText: item.viewsText,
         objectPosition: item.objectPosition,
-        createdAt: '2026-04-29T00:00:00',
+        createdAt: item.createdAt,
       })),
     ]
     return combined.sort((a, b) => {
@@ -467,18 +472,25 @@ function CommunityPetStory() {
                     alt={item.title}
                     style={{ objectPosition: item.objectPosition }}
                   />
-                  <div className="community_knowledge_feed_overlay">
-                    <h3>{item.title}</h3>
-                    <span className="community_knowledge_feed_views">
-                      <span className="community_knowledge_feed_view_icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24">
-                          <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
-                          <circle cx="12" cy="12" r="3" />
-                        </svg>
-                      </span>
+                  <Title
+                    as="h5"
+                    className="community_knowledge_feed_overlay"
+                    title={
+                      <>
+                      {getKnowledgeTitleLines(item).map((line) => (
+                        <span key={line}>{line}</span>
+                      ))}
+                      </>
+                    }
+                  >
+                    <p className="community_knowledge_feed_views">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
                       <span>{item.viewsText}</span>
-                    </span>
-                  </div>
+                    </p>
+                  </Title>
                 </article>
               ))}
             </div>
@@ -501,6 +513,7 @@ function CommunityPetStory() {
                       viewsText: post.viewsText,
                       objectPosition: post.objectPosition,
                       path: post.path,
+                      createdAt: post.createdAt,
                     })
                     return
                   }

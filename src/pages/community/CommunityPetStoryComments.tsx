@@ -10,7 +10,7 @@ import emojiIcon from '../../svg/emoji.svg'
 import { MY_PROFILE_IMAGE, MY_PROFILE_NAME } from '../../utils/myProfile'
 import { petStoryDetailComments } from './CommunityPetStoryDetailData'
 
-const likedCommentIdsStorageKey = 'jibsalife.community.likedCommentIds'
+const defaultLikedCommentIdsStorageKey = 'jibsalife.community.likedCommentIds'
 
 type DetailComment = (typeof petStoryDetailComments)[number] & {
   time?: string
@@ -18,17 +18,19 @@ type DetailComment = (typeof petStoryDetailComments)[number] & {
 }
 
 type CommentsPageState = {
+  initialComments?: DetailComment[]
   replyTo?: {
     author: string
     commentId: number
   }
+  storageKey?: string
 }
 
-function readLikedCommentIds() {
+function readLikedCommentIds(storageKey = defaultLikedCommentIdsStorageKey) {
   if (typeof window === 'undefined') return []
 
   try {
-    const saved = window.localStorage.getItem(likedCommentIdsStorageKey)
+    const saved = window.localStorage.getItem(storageKey)
     const parsed = saved ? JSON.parse(saved) : []
     return Array.isArray(parsed) ? parsed.filter((id): id is number => typeof id === 'number') : []
   } catch {
@@ -36,11 +38,21 @@ function readLikedCommentIds() {
   }
 }
 
-function readComments(postId: string | undefined, fallback: DetailComment[]): DetailComment[] {
-  if (typeof window === 'undefined' || !postId) return fallback
+function getCommentsStorageKey(postId: string | undefined, storageKey?: string) {
+  return storageKey ?? (postId ? `jibsalife.community.comments.${postId}` : null)
+}
+
+function readComments(
+  postId: string | undefined,
+  fallback: DetailComment[],
+  storageKey?: string,
+): DetailComment[] {
+  const commentsStorageKey = getCommentsStorageKey(postId, storageKey)
+
+  if (typeof window === 'undefined' || !commentsStorageKey) return fallback
 
   try {
-    const saved = window.localStorage.getItem(`jibsalife.community.comments.${postId}`)
+    const saved = window.localStorage.getItem(commentsStorageKey)
     return saved ? JSON.parse(saved) : fallback
   } catch {
     return fallback
@@ -92,11 +104,23 @@ function CommentText({ text }: { text: string }) {
 }
 
 function CommunityPetStoryComments() {
-  const { postId } = useParams()
+  const { postId, knowledgeId } = useParams()
   const location = useLocation()
-  const initialReplyTo = (location.state as CommentsPageState | null)?.replyTo ?? null
-  const [visibleComments, setVisibleComments] = useState(() => readComments(postId, petStoryDetailComments))
-  const [likedCommentIds, setLikedCommentIds] = useState<number[]>(readLikedCommentIds)
+  const commentsPageState = location.state as CommentsPageState | null
+  const initialReplyTo = commentsPageState?.replyTo ?? null
+  const commentsFallback = commentsPageState?.initialComments ?? petStoryDetailComments
+  const commentsStorageKey =
+    commentsPageState?.storageKey ??
+    (knowledgeId ? `jibsalife.community.knowledge.${knowledgeId}.comments` : undefined)
+  const likedCommentIdsStorageKey = commentsStorageKey
+    ? `${commentsStorageKey}.likedCommentIds`
+    : defaultLikedCommentIdsStorageKey
+  const [visibleComments, setVisibleComments] = useState(() =>
+    readComments(postId, commentsFallback, commentsStorageKey),
+  )
+  const [likedCommentIds, setLikedCommentIds] = useState<number[]>(() =>
+    readLikedCommentIds(likedCommentIdsStorageKey),
+  )
   const [replyTo, setReplyTo] = useState<{ author: string; commentId: number } | null>(initialReplyTo)
 
   const toggleCommentLike = (commentId: number) => {
@@ -142,8 +166,10 @@ function CommunityPetStoryComments() {
     setVisibleComments(nextComments)
     setReplyTo(null)
 
-    if (postId) {
-      window.localStorage.setItem(`jibsalife.community.comments.${postId}`, JSON.stringify(nextComments))
+    const nextStorageKey = getCommentsStorageKey(postId, commentsStorageKey)
+
+    if (nextStorageKey) {
+      window.localStorage.setItem(nextStorageKey, JSON.stringify(nextComments))
     }
   }
 

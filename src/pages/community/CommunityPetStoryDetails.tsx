@@ -475,6 +475,23 @@ function CommunityPetStoryDetails() {
     )
   }
 
+  const scrollToCommentBottom = () => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const scrollContainer = document.querySelector('.layout_content') as HTMLElement | null
+
+        if (!scrollContainer) {
+          window.scrollTo(0, document.documentElement.scrollHeight)
+          lastScrollTopRef.current = window.scrollY
+          return
+        }
+
+        scrollContainer.scrollTop = scrollContainer.scrollHeight
+        lastScrollTopRef.current = scrollContainer.scrollTop
+      })
+    })
+  }
+
   const addComment = (text: string) => {
     const parentId = replyTo?.commentId
     setVisibleComments((current) => [
@@ -489,6 +506,7 @@ function CommunityPetStoryDetails() {
         parentId,
       },
     ])
+    scrollToCommentBottom()
   }
 
   const toggleCommentLike = (commentId: number) => {
@@ -682,7 +700,7 @@ function CommunityPetStoryDetails() {
         </article>
 
         <section className="cpsdetail_comments" aria-label="댓글">
-          <Title as="h4" className="cpsdetail_comments_title" title={`댓글 ${topLevelCommentCount}`} />
+          <Title as="h5" className="cpsdetail_comments_title" title={`댓글 ${topLevelCommentCount}`} />
           {(() => {
             const topLevel = visibleComments.filter((c) => !c.parentId)
             const repliesMap = visibleComments.reduce<Record<number, DetailComment[]>>((acc, c) => {
