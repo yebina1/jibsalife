@@ -5,6 +5,38 @@ import Title from './Title'
 import { dailyPosts } from '../pages/community/CommunityPetStory'
 import commentIcon from '../svg/nav communicate.svg'
 import sharingIcon from '../svg/sharing.svg'
+import { MY_PROFILE_NAME } from '../utils/myProfile'
+
+const createdPostsStorageKey = 'jibsalife.community.createdPosts'
+
+type CreatedPost = {
+  id: number
+  tag: string
+  title: string
+  author: string
+  createdAt: string
+  likes: number
+  comments: number
+  image: string | null
+}
+
+function loadCreatedPosts(): CreatedPost[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const saved = window.localStorage.getItem(createdPostsStorageKey)
+    const parsed = saved ? JSON.parse(saved) : []
+    return Array.isArray(parsed)
+      ? (parsed as CreatedPost[])
+          .filter((post) => post.tag === '일상')
+          .map((post) => ({
+            ...post,
+            author: post.author === '나' ? MY_PROFILE_NAME : post.author,
+          }))
+      : []
+  } catch {
+    return []
+  }
+}
 
 function HeartIcon() {
   return (
@@ -33,8 +65,9 @@ function getRelativeTimeText(createdAt: string, nowTime: number) {
 function PetStoryPreviewSection() {
   const navigate = useNavigate()
   const [nowTime] = useState(() => Date.now())
+  const [createdPosts] = useState<CreatedPost[]>(loadCreatedPosts)
 
-  const latestPosts = [...dailyPosts]
+  const latestPosts = [...createdPosts, ...dailyPosts]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 4)
 

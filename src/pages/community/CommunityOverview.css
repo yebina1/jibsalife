@@ -37,15 +37,12 @@
 }
 
 /* 챌린지 카드 */
-.co_challenge_card {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.co_page .co_challenge_card {
   margin: 0 16px;
 }
 
-.co_challenge_card_first {
-  padding: 20px;
+.co_page .co_challenge_card_first {
+  padding-block: 0;
 }
 
 .co_petstory_card {

@@ -1,11 +1,28 @@
+.layout_content:has(.cc_page) {
+  padding: 0;
+}
+
 .cc_page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 32px 24px;
   gap: 24px;
-  background: #F0EDFF;
   min-height: 100%;
+}
+
+.cc_page .co_challenge_card {
+  width: calc(100% - 32px);
+  box-sizing: border-box;
+}
+
+.cc_progress_section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  padding: 24px 16px; 
+  background: #F5F3FF;
 }
 
 .cc_title {
@@ -29,7 +46,19 @@
 }
 
 .cc_stamp_item {
-  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #E5E5EC;
+  border-radius: 50%;
+  background: #F3F4F6;
+  box-sizing: border-box;
+}
+
+.cc_stamp_active {
+  background: #6C59F7;
 }
 
 .cc_stamp_icon {
@@ -37,14 +66,11 @@
   width: 32px;
   height: 32px;
   object-fit: contain;
+  filter: brightness(0) invert(0.6);
 }
 
 .cc_stamp_active .cc_stamp_icon {
-  filter: brightness(0) saturate(100%) invert(35%) sepia(90%) saturate(1200%) hue-rotate(228deg) brightness(95%) contrast(100%);
-}
-
-.cc_stamp_inactive .cc_stamp_icon {
-  filter: brightness(0) invert(1) opacity(0.4);
+  filter: brightness(0) invert(1);
 }
 
 /* 보상 카드 */
@@ -73,4 +99,28 @@
   height: 32px;
   flex-shrink: 0;
   object-fit: contain;
+}
+
+.cc_day_list_section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  padding-inline: 16px;
+}
+
+.cc_day_scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+}
+
+.cc_day_scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.cc_day_scroll .cdc_card {
+  flex: 0 0 auto;
 }

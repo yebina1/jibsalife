@@ -1,0 +1,51 @@
+.co_challenge_card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.co_challenge_card_first {
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+}
+
+.wcc_header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.co_challenge_card_first .co_challenge_info {
+  gap: 4px;
+}
+
+.co_challenge_info strong {
+  font-size: 28px;
+  font-weight: 600;
+  color: #6D59F8;
+}
+
+.wcc_timer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin: 0;
+  color: #EF4444;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.wcc_timer svg {
+  stroke: #EF4444;
+  flex-shrink: 0;
+}
+
+.wcc_challenge_img {
+  width: 100%;
+  max-width: 200px;
+  object-fit: contain;
+}
