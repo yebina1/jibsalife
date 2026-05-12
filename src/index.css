@@ -61,6 +61,16 @@ body{
   letter-spacing: var(--app-letter-spacing);
 }
 
+::selection {
+  background: #F1F1F5;
+  color: inherit;
+}
+
+button,
+button * {
+  -webkit-tap-highlight-color: #F1F1F5;
+}
+
 #root {
   min-height: 100vh;
 }
