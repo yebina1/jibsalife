@@ -87,6 +87,21 @@ function getDateKey(year: number, month: number, day: number) {
   return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 }
 
+function getPetAgeLabel(birthDate: string) {
+  const [birthYear, birthMonth, birthDay] = birthDate.split('.').map(Number)
+  if (!birthYear || !birthMonth || !birthDay) return '-'
+
+  const today = new Date()
+  let age = today.getFullYear() - birthYear
+  const birthdayThisYear = new Date(today.getFullYear(), birthMonth - 1, birthDay)
+
+  if (today < birthdayThisYear) {
+    age -= 1
+  }
+
+  return `${Math.max(age, 0)}살`
+}
+
 type CategoryOption = {
   id: string
   label: string
@@ -497,7 +512,7 @@ function Mission() {
 
             <div className="mission_weekdays" ref={weekdaysRef} aria-hidden="true">
               {weekLabels.map((label) => (
-                <span key={label}>{label}</span>
+                <span key={label} className="p_regular">{label}</span>
               ))}
             </div>
 
@@ -522,7 +537,7 @@ function Mission() {
                         aria-pressed={day.id === selectedDayId}
                         onClick={() => setSelectedDayId(day.id)}
                       >
-                        <span>{day.label}</span>
+                        <span className="p_medium">{day.label}</span>
                         {dayRecordColors.length > 0 && (
                           <span className="mission_day_record_dots" aria-hidden="true">
                             {dayRecordColors.slice(0, 3).map((color) => (
@@ -559,11 +574,24 @@ function Mission() {
                   aria-hidden="true"
                 />
                 <div className="mission_history_body">
-                  <strong>
+                  <strong className="title_h5">
                     {item.title}
-                    <i className="bx bx-edit-alt" aria-hidden="true" />
+                    <svg
+                      className="mission_history_edit_icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M13.4 4.2 18.1 6.9M15.7 5.55 6.2 18.8 3.7 19.8 3.35 16.95 12.85 3.7 15.7 5.55ZM6.2 18.8l-2.85-1.85M12.85 3.7l4.7 2.7M12.25 20.1h8.4"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                   </strong>
-                  <p>{item.detail}</p>
+                  <p className="p_regular">{item.detail}</p>
                   {item.media && item.media.length > 0 ? (
                     <div className="mission_history_media" aria-label="등록 이미지">
                       {item.media.slice(0, 3).map((media, index) => (
@@ -576,7 +604,7 @@ function Mission() {
                     </div>
                   ) : null}
                 </div>
-                <time>{item.time}</time>
+                <time className="p_regular">{item.time}</time>
               </button>
             ))}
           </div>
@@ -617,9 +645,12 @@ function Mission() {
                   <img src={profile.image} alt="" aria-hidden="true" />
                   <span className="mission_pet_switch_copy">
                     <strong>{profile.name}</strong>
-                    <span>
-                      나이: {profile.birthDate ? `${profile.birthDate.slice(0, 4)}년생` : '-'} · 몸무게:{' '}
-                      <b>{profile.weight ? `${profile.weight}kg` : '-'}</b> · 성별: <b>{profile.sex || '-'}</b>
+                    <span className="mission_pet_switch_meta">
+                      <span>나이: <b>{profile.birthDate ? getPetAgeLabel(profile.birthDate) : '-'}</b></span>
+                      <span className="mission_pet_switch_dot" aria-hidden="true">·</span>
+                      <span>몸무게: <b>{profile.weight ? `${profile.weight}kg` : '-'}</b></span>
+                      <span className="mission_pet_switch_dot" aria-hidden="true">·</span>
+                      <span>성별: <b>{profile.sex || '-'}</b></span>
                     </span>
                   </span>
                 </button>

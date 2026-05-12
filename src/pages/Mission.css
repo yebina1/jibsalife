@@ -8,14 +8,14 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .mission_profile_header h2 {
   min-width: 0;
   margin: 0;
   overflow: hidden;
-  color: #111111;
+  color: var(--font-block);
   font-size: 18px;
   font-weight: 700;
   line-height: 1.4;
@@ -50,11 +50,12 @@
 .mission_pet_switch_button .chevron_icon_md {
   --chevron-color: #505050;
   align-self: center;
-  transform: translateY(1px);
+  transform: none;
 }
 
 .mission_calendar_section {
   display: flex;
+  width: 100%;
   justify-content: center;
   padding: 0;
 }
@@ -81,8 +82,8 @@
   padding: 0 12px;
   border: 1px solid #d8dbe7;
   border-radius: 999px;
-  background: #ffffff;
-  color: #111111;
+  background: var(--white);
+  color: var(--font-block);
   font-size: 13px;
   font-weight: 800;
 }
@@ -124,6 +125,7 @@
 
 .mission_month_bar {
   display: flex;
+  width: 100%;
   align-items: center;
   justify-content: center;
   margin-bottom: 30px;
@@ -154,7 +156,7 @@
 }
 
 .mission_calendar_card {
-  width: min(100%, 343px);
+  width: 100%;
   height: auto;
   padding: 17px;
   box-sizing: border-box;
@@ -166,6 +168,7 @@
 .mission_weekdays,
 .mission_calendar_grid {
   display: grid;
+  width: 100%;
   grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 
@@ -176,11 +179,10 @@
 .mission_weekdays span {
   text-align: center;
   color: #767676;
-  font-size: 16px;
-  font-weight: 400;
 }
 
 .mission_calendar_viewport {
+  width: 100%;
   overflow: hidden;
 }
 
@@ -219,25 +221,27 @@
 .mission_day {
   display: inline-flex;
   position: relative;
-  width: 48px;
-  height: 48px;
+  width: 49px;
+  height: 49px;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
   border-radius: 50%;
   color: #111111;
-  font-size: 22px;
-  font-weight: 400;
   cursor: pointer;
 }
 
 .mission_day.muted {
-  color: #9b9b9b;
+  color: var(--font-disable);
+}
+
+.mission_day > span:first-child {
+  color: inherit;
 }
 
 .mission_day.selected {
   background: #bca8ff;
-  color: #111111;
+  color: var(--font-block);
 }
 
 .mission_day.has_record::after {
@@ -257,27 +261,28 @@
 }
 
 .mission_day_record_dot {
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
   flex: 0 0 auto;
   border-radius: 50%;
 }
 
 .mission_history_section {
-  padding: 66px 0 0;
+  padding: 48px 0 0;
 }
 
 .mission_history_section h2 {
-  margin: 0 0 22px;
-  color: #111111;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.35;
+  margin: 0 0 16px;
+  color: var(--font-block);
+  font-size: var(--font-title-h3);
+  font-weight: var(--font-weight-sb);
+  line-height: var(--app-line-height);
+  letter-spacing: var(--app-letter-spacing);
 }
 
 .mission_history_list {
   display: grid;
-  gap: 28px;
+  gap: 20px;
 }
 
 .mission_history_item {
@@ -285,7 +290,7 @@
   width: 100%;
   grid-template-columns: 6px minmax(0, 1fr) auto;
   align-items: start;
-  gap: 12px;
+  gap: 8px;
   padding: 0;
   border: 0;
   background: transparent;
@@ -296,36 +301,41 @@
 }
 
 .mission_history_thumb {
-  width: 5px;
-  height: 60px;
+  width: 4px;
+  height: 100%;
   margin: 3px 0 0;
+  align-self: stretch;
   border-radius: 0;
+}
+
+.mission_history_body {
+  display: grid;
+  gap: 2px;
 }
 
 .mission_history_body strong {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  margin-bottom: 4px;
-  color: #111111;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.35;
+  margin-bottom: 0;
+  color: var(--font-block);
+  font-size: var(--font-title-h5);
+  font-weight: var(--font-weight-sb);
+  line-height: var(--app-line-height);
+  letter-spacing: var(--app-letter-spacing);
 }
 
-.mission_history_body strong i {
+.mission_history_edit_icon {
+  display: block;
   width: 20px;
   height: 20px;
-  font-size: 20px;
-  font-weight: 400;
-  line-height: 20px;
+  flex: 0 0 auto;
+  color: currentColor;
 }
 
 .mission_history_body p {
   margin: 0;
   color: #505050;
-  font-size: 16px;
-  line-height: 1.45;
 }
 
 .mission_history_media {
@@ -343,31 +353,31 @@
 }
 
 .mission_history_item time {
-  padding-top: 20px;
+  align-self: center;
+  padding-top: 0;
   color: #505050;
-  font-size: 18px;
-  line-height: 1.4;
 }
 
 .mission_pet_switch_sheet {
   display: grid;
-  gap: 40px;
-  padding: 32px 8px 52px;
+  gap: 10px;
 }
 
 .mission_pet_switch_list {
   display: grid;
-  gap: 34px;
+  gap: 0;
 }
 
 .mission_pet_switch_option {
   display: grid;
-  grid-template-columns: 64px minmax(0, 1fr);
+  grid-template-columns: 44px minmax(0, 1fr);
   align-items: center;
-  gap: 24px;
+  gap: 16px;
   width: 100%;
-  padding: 0 16px;
+  min-height: 104px;
+  padding: 20px 10px;
   border: 0;
+  border-radius: 12px;
   background: transparent;
   color: #111111;
   font: inherit;
@@ -377,8 +387,8 @@
 
 .mission_pet_switch_option img {
   display: block;
-  width: 64px;
-  height: 64px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -392,26 +402,42 @@
 .mission_pet_switch_copy strong {
   overflow: hidden;
   color: #111111;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 1.35;
+  font-size: var(--font-title-h5);
+  font-weight: var(--font-weight-sb);
+  line-height: var(--app-line-height);
+  letter-spacing: var(--app-letter-spacing);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.mission_pet_switch_copy span {
+.mission_pet_switch_meta,
+.mission_pet_switch_meta span {
   overflow: hidden;
   color: #505050;
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 1.45;
+  font-size: var(--font-body-sm);
+  font-weight: var(--font-weight-rg);
+  line-height: var(--line-height-sm);
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.mission_pet_switch_meta {
+  display: flex;
+  gap: 4px;
+  min-width: 0;
+}
+
+.mission_pet_switch_meta .mission_pet_switch_dot {
+  color: var(--font-block);
 }
 
 .mission_pet_switch_copy b {
-  color: #111111;
+  color: var(--font-block);
   font-weight: 700;
+}
+
+.mission_pet_switch_option.is_selected {
+  background: #f1f1f1;
 }
 
 .mission_pet_switch_option.is_selected .mission_pet_switch_copy strong {
@@ -420,6 +446,7 @@
 
 .mission_pet_switch_close {
   width: 100%;
+  margin: 0 0 10px 0;
 }
 
 .mission_notice {
@@ -825,11 +852,6 @@
   .mission_calendar_section {
     padding-right: 0;
     padding-left: 0;
-  }
-
-  .mission_weekdays span,
-  .mission_day {
-    font-size: 20px;
   }
 
   .mission_day {
