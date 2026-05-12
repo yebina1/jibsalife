@@ -257,7 +257,7 @@ function Onboarding() {
 
   return (
     <main key={step} ref={pageRef} className="onboarding_page">
-      {step <= 6 ? (
+      {step >= 4 && step <= 6 ? (
         <button
           type="button"
           className="onboarding_skip_button caption_medium"
