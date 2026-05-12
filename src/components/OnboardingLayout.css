@@ -12,10 +12,14 @@
 }
 
 .onboarding_layout_topbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
   display: flex;
   justify-content: flex-end;
   min-height: 24px;
   box-sizing: border-box;
+  background: #ffffff;
 }
 
 .onboarding_layout.has_top_action {

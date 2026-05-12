@@ -1,9 +1,23 @@
 .onboarding_page {
+  position: relative;
   height: calc(100dvh - var(--layout-status-bar-height));
   min-height: calc(100dvh - var(--layout-status-bar-height));
   background: #ffffff;
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+.onboarding_skip_button {
+  position: fixed;
+  top: calc(var(--layout-status-bar-height) + 16px);
+  right: max(24px, calc((100vw - var(--layout-max-width, 1440px)) / 2 + 24px));
+  z-index: 130;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #505050;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 .onboarding_visual_image {

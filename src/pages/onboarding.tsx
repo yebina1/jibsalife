@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import OnboardingLayout from '../components/OnboardingLayout'
 import Input from '../components/html/Input'
@@ -64,12 +64,23 @@ const featureContentGapByStep: Partial<Record<4 | 5 | 6, number>> = {
 
 function Onboarding() {
   const navigate = useNavigate()
+  const pageRef = useRef<HTMLElement>(null)
   const [step, setStep] = useState(1)
   const [guardianType, setGuardianType] = useState<GuardianType | null>(null)
   const [petName, setPetName] = useState('')
 
   const selectedType = guardianType ?? 'dog'
   const trimmedPetName = petName.trim()
+
+  useEffect(() => {
+    pageRef.current?.scrollTo({ top: 0 })
+    pageRef.current?.querySelector('.onboarding_layout')?.scrollTo({ top: 0 })
+    window.scrollTo({ top: 0 })
+  }, [step])
+
+  const handleSkip = () => {
+    setStep(7)
+  }
 
   const handleGuardianContinue = () => {
     if (!guardianType) return
@@ -92,7 +103,6 @@ function Onboarding() {
         <OnboardingLayout
           step={1}
           totalSteps={6}
-          reserveTopActionSpace
           title={'집사인생에\n오신 것을 환영해요!'}
           subtitle={'우리 아이의 하루를\n더 건강하고, 더 따뜻하게\n기록해 보세요.'}
           bodyGap={74}
@@ -115,7 +125,6 @@ function Onboarding() {
         <OnboardingLayout
           step={2}
           totalSteps={6}
-          reserveTopActionSpace
           title="어떤 집사님이신가요?"
           subtitle={'선택한 캐릭터로\n집사인생을 시작해요!'}
           bodyGap={90}
@@ -154,7 +163,6 @@ function Onboarding() {
         <OnboardingLayout
           step={3}
           totalSteps={6}
-          reserveTopActionSpace
           title="우리 아이 이름이 뭐예요?"
           subtitle="이후 건강 리포트와 기록에 사용돼요."
           bodyGap={16}
@@ -205,8 +213,6 @@ function Onboarding() {
         <OnboardingLayout
           step={step}
           totalSteps={6}
-          topActionLabel="건너뛰기"
-          onTopAction={() => setStep(7)}
           bodyGap={featureBodyGapByStep[featureStep]}
           contentGap={featureContentGapByStep[featureStep]}
           title={slide.title}
@@ -249,7 +255,20 @@ function Onboarding() {
     )
   }
 
-  return <main className="onboarding_page">{renderStep()}</main>
+  return (
+    <main key={step} ref={pageRef} className="onboarding_page">
+      {step <= 6 ? (
+        <button
+          type="button"
+          className="onboarding_skip_button caption_medium"
+          onClick={handleSkip}
+        >
+          건너뛰기
+        </button>
+      ) : null}
+      {renderStep()}
+    </main>
+  )
 }
 
 export default Onboarding
