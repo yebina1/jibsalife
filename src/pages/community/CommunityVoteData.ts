@@ -36,6 +36,8 @@ export type MissionVote = {
   participants: number
   timeText: string
   organizer: string
+  buttonType?: 'vote' | 'notify'
+  subText?: string
 }
 
 export type VoteDetail = {
@@ -52,18 +54,20 @@ export const missionVotes: MissionVote[] = [
   {
     id: 'mission',
     sectionTitle: '멍스타 미션 투표',
-    title: '밥 먹는 사진 중 BEST를 골라주세요!',
+    title: '이달의 BEST 포즈는?',
     participants: 22,
     timeText: '7시간 남음',
     organizer: '운영자',
   },
   {
     id: 'subscriber',
-    sectionTitle: '구독자 전용 참여하기',
-    title: '멍스타 도전하기',
-    participants: 22,
-    timeText: '7시간 남음',
+    sectionTitle: '멍스타 미션 투표',
+    title: '집사일기 멍스타 모델 도전하기',
+    participants: 10,
+    timeText: '02:18:35 남음',
     organizer: '운영자',
+    buttonType: 'notify',
+    subText: '선착순 10명 한정 오픈 예정',
   },
 ]
 
@@ -71,43 +75,35 @@ export const regularVoteItems = [
   {
     id: 1,
     voteId: 'best-pose',
-    title: '오늘의 베스트 포즈는?',
-    description: '가장 포즈가 돋보이는 것을 골라주세요.',
+    title: '이번 생일파티에 쓸 사진 골라주세요',
+    description: '우리 꼬미 생일 파티에 쓸 사진 골라주세요',
     deadline: '2026년 4월 30일까지',
     participants: 10,
     done: false,
   },
   {
     id: 2,
-    title: '간식 기다리기 챔피언은?',
-    description: '간식을 기다리는 가장 귀여운 순간을 골라주세요',
+    title: '침대 올라오면 봐준다 vs 절대 안 된다',
+    description: '현실 집사 밸런스 게임',
     deadline: '2026년 4월 30일까지',
     participants: 22,
     done: true,
   },
   {
     id: 3,
-    title: '집사 바라기 1등은?',
-    description: '가장 마음이 녹는 것을 골라주세요',
+    title: '간식은 하루에 몇 번 정도 주시나요?',
+    description: '다들 어떻게 관리하시는지 궁금해요!',
     deadline: '2026년 4월 30일까지',
     participants: 8,
-    done: true,
+    done: false,
   },
   {
     id: 4,
-    title: '표정 부자는 누구?',
-    description: '가장 매력적인 순간을 골라주세요.',
+    title: '우리 아이 사진이 사람 사진보다 많다',
+    description: '집사들의 OX 투표',
     deadline: '2026년 4월 30일까지',
     participants: 4,
-    done: true,
-  },
-  {
-    id: 5,
-    title: '표정 부자는 누구?',
-    description: '가장 매력적인 순간을 골라주세요.',
-    deadline: '2026년 4월 30일까지',
-    participants: 4,
-    done: true,
+    done: false,
   },
 ] as const
 
