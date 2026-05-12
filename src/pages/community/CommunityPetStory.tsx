@@ -22,7 +22,7 @@ import sharingIcon from '../../svg/sharing.svg'
 import { MY_PROFILE_NAME } from '../../utils/myProfile'
 import { petStoryDetailCommentCount } from './CommunityPetStoryDetailData'
 
-const dailyPosts = [
+export const dailyPosts = [
   { id: 1, tag: '일상', title: '강아지 산책하러 나가면 자는척 해요', author: '탬블러', createdAt: '2026-05-11T09:00:00', likes: 20, comments: 16, image: null as null | string },
   { id: 2, tag: '일상', title: '강아지 산책하러 나가면 자는척 해요', author: '탬블러', createdAt: '2026-05-10T14:00:00', likes: 20, comments: 16, image: life1 },
   { id: 3, tag: '일상', title: '냉전중', author: '장마', createdAt: '2026-05-09T10:00:00', likes: 20, comments: 4, image: life2 },

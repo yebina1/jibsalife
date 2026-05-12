@@ -1,0 +1,118 @@
+.layout_content:has(.co_page) {
+  padding: 0;
+}
+
+/* 페이지 */
+.co_page {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  gap: 48px;
+}
+
+.co_page .vote_mission_banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.co_page .vote_mission_banner_title {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.co_page .vote_mission_banner_img {
+  flex-shrink: 0;
+  width: auto;
+  max-height: 132px;
+  object-fit: contain;
+}
+
+.co_page .cv2_section_title {
+  margin: 0;
+}
+
+.co_page .cv2_mission_cards {
+  gap: 16px;
+}
+
+/* 챌린지 카드 */
+.co_challenge_card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 16px;
+}
+
+.co_challenge_card_first {
+  padding: 20px;
+}
+
+.co_petstory_card {
+  gap: 4px;
+}
+
+.co_challenge_info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.co_challenge_info h2 {
+  margin: 0;
+}
+
+.co_challenge_info h2 strong {
+  font-size: 24px;
+  font-weight: 600;
+  color: #6D59F8;
+}
+
+.co_day_label {
+  color: #767676;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.co_challenge_desc {
+  font-size: 18px;
+  color: #111;
+  margin: 0;
+}
+
+.co_challenge_meta {
+  display: flex;
+  gap: 32px;
+}
+
+.co_challenge_meta p {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: #505050;
+}
+
+/* 투표/펫스토리 헤더 */
+.co_vote_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.co_vote_header p {
+  margin: 0;
+  font-size: 14px;
+  color: #505050;
+}
+
+.co_vote_more_btn {
+  background: none;
+  border: none;
+  color: #505050;
+  font-size: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
