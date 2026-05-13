@@ -1,12 +1,31 @@
+import { type CSSProperties } from 'react'
 import { useNavigate } from 'react-router'
 import ChevronIcon from '../ChevronIcon'
 import Button from './Button'
 
 type BackButtonProps = {
   to?: number | string
+  replace?: boolean
+  bgColor?: string
+  iconColor?: string
+  size?: number
+  icon?: React.ReactNode
+  className?: string
+  style?: CSSProperties
+  'aria-label'?: string
 }
 
-export default function BackButton({ to = -1 }: BackButtonProps) {
+export default function BackButton({
+  to = -1,
+  replace = false,
+  bgColor,
+  iconColor,
+  size,
+  icon,
+  className,
+  style,
+  'aria-label': ariaLabel,
+}: BackButtonProps) {
   const navigate = useNavigate()
 
   const handleClick = () => {
@@ -15,15 +34,24 @@ export default function BackButton({ to = -1 }: BackButtonProps) {
       return
     }
 
-    navigate(to)
+    navigate(to, { replace })
+  }
+
+  const computedStyle: CSSProperties = {
+    ...(bgColor !== undefined ? { backgroundColor: bgColor } : {}),
+    ...(iconColor !== undefined ? { color: iconColor } : {}),
+    ...(size !== undefined ? { width: size, height: size } : {}),
+    ...style,
   }
 
   return (
     <Button
       type="button"
-      className="back_btn"
+      aria-label={ariaLabel}
+      className={['back_btn', className].filter(Boolean).join(' ')}
+      style={Object.keys(computedStyle).length > 0 ? computedStyle : undefined}
       onClick={handleClick}
-      icon={<ChevronIcon direction="left" size="lg" />}
+      icon={icon ?? <ChevronIcon direction="left" size="lg" />}
     />
   )
 }

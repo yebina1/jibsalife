@@ -56,7 +56,7 @@ function HealthHospitalList() {
         <ContentSection
           className="health_hospital_list_section"
           title="병원 목록"
-          subtitle="내 주변 추천 병원을 한눈에 확인해 보세요."
+          subtitle="내 주변 병원 목록을 한눈에 확인해 보세요."
         >
           <ul className="health_hospital_list">
             {hospitalSearchItems.map((item) => {

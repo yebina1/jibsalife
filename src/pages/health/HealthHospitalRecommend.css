@@ -33,6 +33,7 @@
   color: #505050;
   font-family: inherit;
   cursor: pointer;
+  display: none;
 }
 
 /* 병원 목록 */

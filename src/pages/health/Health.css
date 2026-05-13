@@ -432,6 +432,7 @@
   align-items: center;
   width: 100%;
   background: #ffffff;
+  border-radius: 0;
   padding: 8px 0;
   box-sizing: border-box;
 }

@@ -7,6 +7,7 @@ import leeyoriImage from '../../img/leeyori.png'
 import galleryIcon from '../../img/gallery-icon.svg'
 import cameraFlipIcon from '../../img/camera-flip-icon.svg'
 import ChevronIcon from '../../components/ChevronIcon'
+import BackButton from '../../components/html/BackButton'
 import StateBar from '../../components/StateBar'
 import {
   readPetProfiles,
@@ -211,6 +212,30 @@ function Health() {
           <img className="health_cam_img health_cam_img_fallback" src={leeyoriImage} alt="" aria-hidden="true" />
         )}
         <div className="health_cam_overlay" aria-hidden="true" />
+        <BackButton
+          bgColor="#505050"
+          iconColor="#fff"
+          size={36}
+          icon={
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          }
+          style={{
+            position: 'absolute',
+            top: 12,
+            right: 12,
+            zIndex: 2,
+            borderRadius: '50%',
+            padding: 0,
+            border: 'none',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          aria-label="닫기"
+        />
       </section>
 
       <div className="health_cam_ctrl">

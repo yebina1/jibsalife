@@ -98,7 +98,7 @@ function HealthHospitalRecommend() {
       />
       <main className="page health_hospital_recommend_page">
         <div className="health_hospital_recommend_header">
-          <span className="health_hospital_recommend_title">내 주변 추천 병원</span>
+          <span className="health_hospital_recommend_title">내 주변 병원 목록</span>
           <button type="button" className="health_hospital_recommend_more">
             더보기
             <ChevronRight size={16} color="#505050" aria-hidden="true" />

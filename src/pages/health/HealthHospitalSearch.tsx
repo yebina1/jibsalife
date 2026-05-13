@@ -93,7 +93,7 @@ function HealthHospitalSearch() {
 
         <ContentSection
           className="health_hospital_search_nearby"
-          title="내 주변 추천 병원"
+          title="내 주변 병원 목록"
           action={
             <Link className="content_section_text_action" to="/health/hospitals/list">
               더보기

@@ -70,6 +70,7 @@ function Layout({
   const communitySubParam = searchParams.get('sub')
   const communitySortParam = searchParams.get('sort') ?? 'latest'
   const isCameraPage = pathname === '/health/camera/capture' || pathname === '/health/cam'
+  const isNoLayoutPage = isCameraPage || pathname === '/health/check'
   const isLoginPage = pathname === '/login'
   const isOnboardingPage = pathname === '/onboarding'
   const isCommunityPath = pathname.startsWith('/community')
@@ -278,7 +279,7 @@ function Layout({
   return (
     <HeaderContext.Provider value={setHeader}>
       <div className={layoutClassName} ref={layoutRef}>
-        {!isCameraPage ? (
+        {!isNoLayoutPage ? (
           <header ref={headerRef}>
             <StateBar />
             {showHeader && header && <Header {...header} />}
@@ -382,7 +383,7 @@ function Layout({
           <Outlet />
         </div>
         {!hideFloatingAiButton ? <FloatingAiButton /> : null}
-        {!isCameraPage && showFooter ? (
+        {!isNoLayoutPage && showFooter ? (
           <footer>
             {showNav && !isPetStoryDetailPage && !isKnowledgeDetailPage && !isVoteResultPage && <Nav />}
             <HomeIndicator />

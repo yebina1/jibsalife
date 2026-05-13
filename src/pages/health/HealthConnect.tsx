@@ -55,7 +55,7 @@ function HealthConnect() {
 
         <ContentSection
           className="health_connect_hospitals"
-          title="내 주변 추천 병원"
+          title="내 주변 병원 목록"
           action={
             <button
               type="button"

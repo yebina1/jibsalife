@@ -35,7 +35,7 @@ function HealthReport() {
     <>
       <PageHeader
         title="AI 건강 체크"
-        leftContent={<BackButton />}
+        leftContent={<BackButton to="/health/cam" replace />}
         rightContent={
           <>
             <Button type="button" aria-label="calendar" onClick={() => navigate('/mission')}>
@@ -196,15 +196,15 @@ function HealthReport() {
           </button>
           <button
             type="button"
-            onClick={() => navigate('/health/vet-chat')}
-            style={{ background: '#c0dcff', flex: '1 0 0', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '20px 0', borderRadius: '12px', minWidth: 0, border: 0, outline: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+            aria-disabled="true"
+            style={{ background: '#E5E5EC', flex: '1 0 0', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '20px 0', borderRadius: '12px', minWidth: 0, border: 0, outline: 'none', cursor: 'not-allowed', fontFamily: 'inherit' }}
           >
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-              <img src={consultImage} alt="" aria-hidden="true" style={{ width: '60px', height: '60px', objectFit: 'cover', flexShrink: 0 }} />
+              <img src={consultImage} alt="" aria-hidden="true" style={{ width: '60px', height: '60px', objectFit: 'cover', flexShrink: 0, filter: 'grayscale(100%)', opacity: 0.45 }} />
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '93px', alignItems: 'flex-start' }}>
-                <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#111', letterSpacing: '-0.35px', lineHeight: 1.4 }}>수의사 상담</p>
-                <p style={{ margin: 0, fontSize: '12px', color: '#505050', letterSpacing: '-0.3px', lineHeight: 1.45 }}>실시간 상담으로</p>
-                <p style={{ margin: 0, fontSize: '12px', color: '#505050', letterSpacing: '-0.3px', lineHeight: 1.45 }}>전문가와 대화</p>
+                <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#ABABAB', letterSpacing: '-0.35px', lineHeight: 1.4 }}>수의사 상담</p>
+                <p style={{ margin: 0, fontSize: '12px', color: '#ABABAB', letterSpacing: '-0.3px', lineHeight: 1.45 }}>실시간 상담으로</p>
+                <p style={{ margin: 0, fontSize: '12px', color: '#ABABAB', letterSpacing: '-0.3px', lineHeight: 1.45 }}>전문가와 대화</p>
               </div>
             </div>
           </button>
