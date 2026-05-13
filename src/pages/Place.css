@@ -40,13 +40,20 @@
   padding: 0;
   margin: 0;
   list-style: none;
+  overflow: visible;
+}
+
+.place_hospital_list li {
+  overflow: visible;
 }
 
 .place_hospital_item {
   display: grid;
+  position: relative;
   grid-template-columns: 96px minmax(0, 1fr) 24px;
   align-items: start;
   gap: 14px;
+  overflow: visible;
 }
 
 .place_hospital_item > img {
@@ -112,6 +119,8 @@
 
 .place_hospital_favorite {
   display: inline-grid;
+  position: relative;
+  z-index: 2;
   width: 24px;
   height: 24px;
   place-items: center;
@@ -120,16 +129,19 @@
   background: transparent;
   color: #4a3d3d;
   justify-self: end;
-}
-
-.place_hospital_favorite.is_active {
-  color: #ff5a5f;
+  isolation: auto;
+  overflow: visible;
 }
 
 .place_hospital_favorite svg {
   display: block;
   width: 24px;
   height: 24px;
+}
+
+.place_hospital_favorite .heart_effect_area {
+  bottom: 50%;
+  z-index: 20;
 }
 
 @media (max-width: 420px) {

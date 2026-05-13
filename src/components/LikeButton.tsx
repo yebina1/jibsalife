@@ -1,6 +1,7 @@
 import { useState, type ButtonHTMLAttributes, type CSSProperties, type ReactNode } from 'react'
 import './LikeButton.css'
-import heartIcon from '../svg/heart/heart.svg'
+import heartOutlineIcon from '../svg/heart.svg'
+import heartFilledIcon from '../svg/heart-filled.svg'
 import heart1 from '../svg/heart/heart-1.svg'
 import heart2 from '../svg/heart/heart-2.svg'
 import heart3 from '../svg/heart/heart-3.svg'
@@ -83,7 +84,7 @@ function LikeButton({
         ))}
       </span>
       <span className={iconClassName} aria-hidden="true">
-        <img src={heartIcon} alt="" className="like_icon" />
+        <img src={liked ? heartFilledIcon : heartOutlineIcon} alt="" className="like_icon" />
       </span>
       {children !== undefined ? <span className={countClassName}>{children}</span> : null}
     </button>

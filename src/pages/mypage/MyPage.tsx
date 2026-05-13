@@ -367,7 +367,7 @@ function MyPage() {
               image={profileImage}
               imageAlt="프로필 이미지"
               name={profileName}
-              breed=""
+              breed="구독중"
               details={`포인트: ${profilePoints.toLocaleString()}`}
               careGuideLabel={
                 <span className="mypage_profile_badges">

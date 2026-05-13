@@ -23,6 +23,8 @@ type Props = {
   isEditing: boolean
   quickMessageOptions: string[]
   selectedQuickMessage: string
+  isPeriodPickerOpen?: boolean
+  periodPickerContent?: React.ReactNode
   onOpenPeriodPicker: () => void
   onOpenRepeatPicker: () => void
   onOpenCategoryPicker: () => void
@@ -43,6 +45,8 @@ function MissionRecordSheet({
   isEditing,
   quickMessageOptions,
   selectedQuickMessage,
+  isPeriodPickerOpen = false,
+  periodPickerContent,
   onOpenPeriodPicker,
   onOpenRepeatPicker,
   onOpenCategoryPicker,
@@ -64,6 +68,9 @@ function MissionRecordSheet({
   return (
     <>
       <div className="mission_add_rows">
+        {isPeriodPickerOpen && periodPickerContent ? (
+          periodPickerContent
+        ) : (
         <div className="mission_add_row">
           <span className="mission_add_row_label">기간</span>
           <button
@@ -75,6 +82,7 @@ function MissionRecordSheet({
             <ChevronIcon direction="right" size="md" />
           </button>
         </div>
+        )}
         <div className="mission_add_row">
           <span className="mission_add_row_label">
             반복
@@ -148,9 +156,21 @@ function MissionRecordSheet({
                 </>
               ) : (
                 <>
-                  <button type="button" aria-label={`${amountInputLabel} 줄이기`}>-</button>
-                  <strong>30분</strong>
-                  <button type="button" aria-label={`${amountInputLabel} 올리기`}>+</button>
+                  <button
+                    type="button"
+                    aria-label={`${amountInputLabel} 5분 줄이기`}
+                    onClick={() => onFeedAmountChange(Math.max(0, feedAmount - 5))}
+                  >
+                    -
+                  </button>
+                  <strong>{feedAmount}분</strong>
+                  <button
+                    type="button"
+                    aria-label={`${amountInputLabel} 5분 올리기`}
+                    onClick={() => onFeedAmountChange(feedAmount + 5)}
+                  >
+                    +
+                  </button>
                 </>
               )}
             </div>

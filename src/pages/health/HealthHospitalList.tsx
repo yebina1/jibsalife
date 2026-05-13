@@ -6,23 +6,9 @@ import HeaderIcon from '../../components/HeaderIcon'
 import ContentSection from '../../components/ContentSection'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
+import LikeButton from '../../components/LikeButton'
 import calendarIcon from '../../svg/calendar.svg'
 import { getOperatingState, hospitalSearchItems } from './HealthHospitalData'
-
-function HeartIcon({ filled }: { filled: boolean }) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        d="M12 20.2 4.9 13.6a4.8 4.8 0 0 1 6.8-6.8L12 7.1l.3-.3a4.8 4.8 0 0 1 6.8 6.8L12 20.2Z"
-        fill={filled ? 'currentColor' : 'none'}
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
 
 function HealthHospitalList() {
   const [favoriteNames, setFavoriteNames] = useState<string[]>([])
@@ -85,15 +71,13 @@ function HealthHospitalList() {
                       </span>
                     </div>
 
-                    <button
+                    <LikeButton
                       type="button"
-                      className={`health_hospital_list_favorite ${isFavorite ? 'is_active' : ''}`}
+                      liked={isFavorite}
+                      className="health_hospital_list_favorite"
                       aria-label={isFavorite ? `${item.name} 찜 해제` : `${item.name} 찜`}
-                      aria-pressed={isFavorite}
                       onClick={() => handleFavoriteToggle(item.name)}
-                    >
-                      <HeartIcon filled={isFavorite} />
-                    </button>
+                    />
                   </div>
                 </li>
               )

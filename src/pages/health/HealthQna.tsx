@@ -39,8 +39,13 @@ type RecordDraft = {
   walkTime?: string
 }
 
+type PendingOtherRecord = {
+  kind: RecordKind
+  category: ChatbotRecordCategory
+}
+
 const HEALTH_QNA_STORAGE_KEY = 'jibsalife.health.qna.history'
-const DEFAULT_CHIPS = ['식사', '배변', '증상', '활동', '캘린더', '커뮤니티', '투표', '주변병원'] as const
+const DEFAULT_CHIPS = ['식사', '배변·배뇨', '증상', '활동', '캘린더', '커뮤니티', '투표', '주변병원'] as const
 const WALK_TIME_OPTIONS = ['10분 미만', '10~30분', '30~60분', '60분 이상'] as const
 
 const chipResponses = {
@@ -50,7 +55,7 @@ const chipResponses = {
     kind: 'meal' as const,
     category: '식사' as const,
   },
-  배변: {
+  '배변·배뇨': {
     message: '오늘 배변 상태는 어땠나요? 🐾',
     options: ['정상', '묽음', '딱딱함', '이상 있음'],
     kind: 'poop' as const,
@@ -69,6 +74,13 @@ const chipResponses = {
     category: '활동' as const,
   },
 } as const
+
+const calendarQuickMessageOptions: Record<RecordKind, string[]> = {
+  meal: ['사료 30g', '사료 60g', '사료 90g', '사료 120g', '사료 150g', '기타'],
+  poop: ['정상 변', '묽은 변', '딱딱한 변', '배변 못함', '소변 잦음', '실수 배뇨', '평소와 다름', '기타'],
+  symptom: ['기침', '재채기', '구토', '설사', '헐떡', '무기력', '긁음', '기타'],
+  activity: ['활발함', '보통', '활동 적음', '무기력', '평소와 다름', '기타'],
+}
 
 const introMessages: ChatMessage[] = [
   {
@@ -141,12 +153,13 @@ function buildConfirmMessage(draft: RecordDraft, preface?: string): ChatMessage 
 
 function buildChipOptionMessage(chip: keyof typeof chipResponses): ChatMessage {
   const response = chipResponses[chip]
+  const options = calendarQuickMessageOptions[response.kind]
 
   return {
     id: buildMessageId(),
     sender: 'bot',
     text: response.message,
-    actions: response.options.map((option) => ({
+    actions: options.map((option) => ({
       label: option,
       value: 'select-option',
       data: {
@@ -176,6 +189,8 @@ function buildWalkTimeMessage(activityValue: string): ChatMessage {
   }
 }
 
+void buildWalkTimeMessage
+
 function buildFeedbackSelections() {
   return readChatbotDataStore().feedbacks.reduce<Record<number, ChatbotFeedbackType>>(
     (result, feedback) => {
@@ -192,9 +207,12 @@ function buildFeedbackSelections() {
 function HealthQna() {
   const navigate = useNavigate()
   const [feedbackSelections, setFeedbackSelections] = useState(buildFeedbackSelections)
+  const [pendingOtherRecord, setPendingOtherRecord] = useState<PendingOtherRecord | null>(null)
 
   const handleChipSelect = (chip: string) => {
-    if (chip === '식사' || chip === '배변' || chip === '증상' || chip === '활동') {
+    setPendingOtherRecord(null)
+
+    if (chip === '식사' || chip === '배변·배뇨' || chip === '증상' || chip === '활동') {
       return buildChipOptionMessage(chip)
     }
 
@@ -219,6 +237,20 @@ function HealthQna() {
   }
 
   const handleMessageSubmit = (message: string) => {
+    if (pendingOtherRecord) {
+      const draft: RecordDraft = {
+        kind: pendingOtherRecord.kind,
+        category: pendingOtherRecord.category,
+        value: message,
+        calendarDetail: message,
+      }
+
+      setPendingOtherRecord(null)
+      saveRecordDraft(draft)
+
+      return buildConfirmMessage(draft)
+    }
+
     const walkActivityDetail = parseWalkActivityDetail(message)
     if (walkActivityDetail) {
       const walkTime = walkActivityDetail.replace(/^산책\s*/, '')
@@ -281,10 +313,12 @@ function HealthQna() {
 
   const handleActionSelect = (action: ChatAction) => {
     if (action.value === 'dismiss') {
+      setPendingOtherRecord(null)
       return buildContinueMessage()
     }
 
     if (action.value === 'register') {
+      setPendingOtherRecord(null)
       const kind = action.data?.kind as RecordKind | undefined
       const calendarDetail = action.data?.calendarDetail
       if (!kind || !calendarDetail) return
@@ -308,15 +342,23 @@ function HealthQna() {
 
       if (!kind || !category || !value) return
 
-      if (kind === 'activity') {
-        return buildWalkTimeMessage(value)
+      if (value === '기타') {
+        setPendingOtherRecord({ kind, category })
+
+        return {
+          id: buildMessageId(),
+          sender: 'bot' as const,
+          text: '추가로 기록할 내용을 입력해 주세요.',
+        }
       }
+
+      setPendingOtherRecord(null)
 
       const draft: RecordDraft = {
         kind,
         category,
         value,
-        calendarDetail: kind === 'symptom' ? value : `${category} ${value}`,
+        calendarDetail: value,
       }
 
       saveRecordDraft(draft)

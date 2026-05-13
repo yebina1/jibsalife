@@ -240,14 +240,6 @@ function MoreIcon() {
   )
 }
 
-function HeartIcon() {
-  return (
-    <svg viewBox="0 1.8 24 24" aria-hidden="true">
-      <path d="M12 20.2 5.2 13.8a4.55 4.55 0 0 1 6.43-6.43L12 7.74l.37-.37a4.55 4.55 0 1 1 6.43 6.43Z" />
-    </svg>
-  )
-}
-
 function CommentIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -663,15 +655,16 @@ function CommunityPetStoryDetails() {
                 </div>
               </div>
             ) : null}
-            <Button
-              className={`white_btn cpsdetail_like_tag_btn${isLiked ? ' active' : ''}`}
-              icon={<HeartIcon />}
-              iconPosition="left"
+            <LikeButton
+              className="white_btn cpsdetail_like_tag_btn"
+              liked={isLiked}
+              iconClassName="cpsdetail_like_tag_icon"
+              countClassName="cpsdetail_like_tag_count"
               aria-label={`좋아요 ${likeCount}`}
               onClick={toggleLike}
             >
               {likeCount}
-            </Button>
+            </LikeButton>
           </div>
 
           <div className="cpsdetail_reaction_row">
@@ -714,14 +707,16 @@ function CommunityPetStoryDetails() {
                   </div>
                   <p><CommentText text={comment.text} /></p>
                   <div className="cpsdetail_comment_actions">
-                    <button
+                    <LikeButton
                       type="button"
-                    className={likedCommentIds.includes(comment.id) ? 'active' : undefined}
-                    onClick={() => toggleCommentLike(comment.id)}
-                  >
-                    <HeartIcon />
-                    <span>좋아요 {comment.likes || ''}</span>
-                  </button>
+                      liked={likedCommentIds.includes(comment.id)}
+                      className="cpsdetail_comment_like"
+                      iconClassName="cpsdetail_comment_like_icon"
+                      countClassName="cpsdetail_comment_like_text"
+                      onClick={() => toggleCommentLike(comment.id)}
+                    >
+                      좋아요 {comment.likes || ''}
+                    </LikeButton>
                   <button type="button" onClick={() => startReply(comment)}>
                     <i className="bx bx-message-rounded-dots" aria-hidden="true" />
                     <span>답글쓰기{replyCount > 0 ? ` ${replyCount}` : ''}</span>

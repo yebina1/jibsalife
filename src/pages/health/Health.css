@@ -609,6 +609,112 @@
   flex-shrink: 0;
 }
 
+.health_cam_ui .mission_pet_switch_sheet {
+  display: grid;
+  gap: 10px;
+}
+
+.health_cam_ui .mission_pet_switch_list {
+  display: grid;
+  gap: 0;
+}
+
+.health_cam_ui .mission_pet_switch_option {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  min-height: 104px;
+  padding: 20px 10px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #111111;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.health_cam_ui .mission_pet_switch_option img,
+.health_cam_ui .mission_pet_switch_avatar_fallback {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 50%;
+  object-fit: cover;
+  overflow: hidden;
+}
+
+.health_cam_ui .mission_pet_switch_avatar_fallback {
+  background: #E5E5EC;
+}
+
+.health_cam_ui .mission_pet_switch_copy {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.health_cam_ui .mission_pet_switch_copy strong {
+  overflow: hidden;
+  color: #111111;
+  font-size: var(--font-title-h5);
+  font-weight: var(--font-weight-sb);
+  line-height: var(--app-line-height);
+  letter-spacing: var(--app-letter-spacing);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.health_cam_ui .mission_pet_switch_meta,
+.health_cam_ui .mission_pet_switch_meta span {
+  overflow: hidden;
+  color: #505050;
+  font-size: var(--font-body-sm);
+  font-weight: var(--font-weight-rg);
+  line-height: var(--line-height-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.health_cam_ui .mission_pet_switch_meta {
+  display: flex;
+  gap: 4px;
+  min-width: 0;
+}
+
+.health_cam_ui .mission_pet_switch_meta .mission_pet_switch_dot {
+  color: var(--font-block);
+}
+
+.health_cam_ui .mission_pet_switch_copy b {
+  color: var(--font-block);
+  font-weight: 700;
+}
+
+.health_cam_ui .mission_pet_switch_option.is_selected {
+  background: #F5F3FF;
+}
+
+.health_cam_ui .mission_pet_switch_option.is_selected .mission_pet_switch_copy strong {
+  color: #6d59f8;
+}
+
+.health_cam_ui .mission_pet_switch_close {
+  width: 100%;
+  height: 54px;
+  margin: 0 0 10px;
+  border: 0;
+  border-radius: 12px;
+  background: #6D59F8;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 /* ── 메모 바텀시트 ──────────────────────────────────────── */
 
 .health_memo_overlay {

@@ -1,4 +1,5 @@
 import type { MissionActivityRecord } from './missionActivityRecords'
+import { readSelectedPetProfileId } from './petProfiles'
 
 export type MissionHistoryRecord = {
   id: number
@@ -39,9 +40,39 @@ export const DEFAULT_MISSION_HISTORY_RECORDS: MissionHistoryRecord[] = [
   { id: 116, title: '식사 기록', detail: '사료 90g', time: '16:00', color: '#F2B472', date: '2026-05-13' },
 ]
 
-const DEFAULT_MISSION_HISTORY_RECORD_IDS = new Set(
-  DEFAULT_MISSION_HISTORY_RECORDS.map((record) => record.id),
-)
+const LEEYORI_MISSION_HISTORY_RECORDS: MissionHistoryRecord[] = [
+  { id: 201, title: '식사 기록', detail: '건식 사료 42g', time: '07:45', color: '#F2B472', date: '2026-05-01' },
+  { id: 202, title: '활동 기록', detail: '캣타워 놀이 12분', time: '13:30', color: '#162447', date: '2026-05-01' },
+  { id: 203, title: '배변 · 배뇨 기록', detail: '모래 화장실 정상 변', time: '09:20', color: '#BEE3F8', date: '2026-05-02' },
+  { id: 204, title: '식사 기록', detail: '습식 파우치 28g', time: '18:15', color: '#F2B472', date: '2026-05-02' },
+  { id: 205, title: '증상 기록', detail: '헤어볼 토함', time: '21:10', color: '#A28BFA', date: '2026-05-03' },
+  { id: 206, title: '활동 기록', detail: '낚싯대 놀이 8분', time: '15:40', color: '#162447', date: '2026-05-04' },
+  { id: 207, title: '배변 · 배뇨 기록', detail: '소변 잦음', time: '10:05', color: '#BEE3F8', date: '2026-05-05' },
+  { id: 208, title: '식사 기록', detail: '건식 사료 38g', time: '19:00', color: '#F2B472', date: '2026-05-06' },
+  { id: 209, title: '증상 기록', detail: '귀 주변 긁음', time: '16:25', color: '#A28BFA', date: '2026-05-12' },
+  { id: 210, title: '활동 기록', detail: '창가 휴식 많음', time: '17:50', color: '#162447', date: '2026-05-13' },
+  { id: 211, title: '산책 기록', detail: '하네스 적응 산책 7분', time: '18:20', color: '#A4CE95', date: '2026-05-13' },
+]
+
+const PUNGPUNGI_MISSION_HISTORY_RECORDS: MissionHistoryRecord[] = [
+  { id: 301, title: '식사 기록', detail: '사료 95g', time: '08:00', color: '#F2B472', date: '2026-05-01' },
+  { id: 302, title: '활동 기록', detail: '공놀이 25분', time: '13:20', color: '#162447', date: '2026-05-01' },
+  { id: 303, title: '산책 기록', detail: '산책 35분', time: '18:40', color: '#A4CE95', date: '2026-05-02' },
+  { id: 304, title: '식사 기록', detail: '사료 110g', time: '08:20', color: '#F2B472', date: '2026-05-02' },
+  { id: 305, title: '배변 · 배뇨 기록', detail: '단단한 변', time: '09:15', color: '#BEE3F8', date: '2026-05-03' },
+  { id: 306, title: '배변 · 배뇨 기록', detail: '산책 후 정상 배뇨', time: '16:30', color: '#BEE3F8', date: '2026-05-03' },
+  { id: 307, title: '증상 기록', detail: '가벼운 기침', time: '14:10', color: '#A28BFA', date: '2026-05-04' },
+  { id: 308, title: '활동 기록', detail: '터그 놀이 18분', time: '17:45', color: '#162447', date: '2026-05-04' },
+  { id: 309, title: '식사 기록', detail: '사료 100g', time: '07:50', color: '#F2B472', date: '2026-05-05' },
+  { id: 310, title: '증상 기록', detail: '산책 후 헐떡임', time: '18:10', color: '#A28BFA', date: '2026-05-05' },
+  { id: 311, title: '활동 기록', detail: '활동 적음', time: '16:46', color: '#162447', date: '2026-05-06' },
+  { id: 312, title: '산책 기록', detail: '산책 45분', time: '19:20', color: '#A4CE95', date: '2026-05-06' },
+  { id: 313, title: '배변 · 배뇨 기록', detail: '묽은 변', time: '08:40', color: '#BEE3F8', date: '2026-05-12' },
+  { id: 314, title: '증상 기록', detail: '식욕 감소', time: '19:36', color: '#A28BFA', date: '2026-05-12' },
+  { id: 315, title: '배변 · 배뇨 기록', detail: '평소보다 배변 적음', time: '10:10', color: '#BEE3F8', date: '2026-05-13' },
+  { id: 316, title: '식사 기록', detail: '사료 80g', time: '16:00', color: '#F2B472', date: '2026-05-13' },
+]
+
 const DEFAULT_MISSION_HISTORY_RECORD_MAP = new Map(
   DEFAULT_MISSION_HISTORY_RECORDS.map((record) => [record.id, record]),
 )
@@ -63,6 +94,27 @@ const LEGACY_DEFAULT_MISSION_HISTORY_COLORS = new Set([
   '#527ca3',
   '#b9dfe3',
 ])
+
+function getMissionHistoryStorageKey() {
+  return `${MISSION_HISTORY_RECORDS_STORAGE_KEY}.${readSelectedPetProfileId()}`
+}
+
+function getDefaultMissionHistoryRecords() {
+  const selectedPetId = readSelectedPetProfileId()
+
+  if (selectedPetId === 1) return LEEYORI_MISSION_HISTORY_RECORDS
+  if (selectedPetId === 2) return PUNGPUNGI_MISSION_HISTORY_RECORDS
+
+  return DEFAULT_MISSION_HISTORY_RECORDS
+}
+
+function getDefaultMissionHistoryRecordIds() {
+  return new Set(getDefaultMissionHistoryRecords().map((record) => record.id))
+}
+
+function getDefaultMissionHistoryRecordMap() {
+  return new Map(getDefaultMissionHistoryRecords().map((record) => [record.id, record]))
+}
 
 function isMissionHistoryRecord(record: unknown): record is MissionHistoryRecord {
   if (!record || typeof record !== 'object') return false
@@ -99,7 +151,7 @@ export function readStoredMissionHistoryRecords() {
   if (typeof window === 'undefined') return []
 
   try {
-    const savedValue = window.localStorage.getItem(MISSION_HISTORY_RECORDS_STORAGE_KEY)
+    const savedValue = window.localStorage.getItem(getMissionHistoryStorageKey())
     if (!savedValue) return []
 
     const parsedValue = JSON.parse(savedValue)
@@ -113,11 +165,14 @@ export function readStoredMissionHistoryRecords() {
 
 export function readMissionHistoryRecordsWithDefaults() {
   const storedRecords = readStoredMissionHistoryRecords()
+  const defaultRecords = getDefaultMissionHistoryRecords()
+  const defaultRecordIds = getDefaultMissionHistoryRecordIds()
+  const defaultRecordMap = getDefaultMissionHistoryRecordMap()
 
-  if (storedRecords.length === 0) return DEFAULT_MISSION_HISTORY_RECORDS
+  if (storedRecords.length === 0) return defaultRecords
 
   const hasCurrentDefaults = storedRecords.some((record) =>
-    DEFAULT_MISSION_HISTORY_RECORD_IDS.has(record.id)
+    defaultRecordIds.has(record.id)
   )
   const hasLegacyDefaults = storedRecords.some((record) =>
     LEGACY_DEFAULT_MISSION_HISTORY_RECORD_IDS.has(record.id) &&
@@ -129,11 +184,11 @@ export function readMissionHistoryRecordsWithDefaults() {
       (record) => !LEGACY_DEFAULT_MISSION_HISTORY_RECORD_IDS.has(record.id),
     )
 
-    return [...DEFAULT_MISSION_HISTORY_RECORDS, ...customRecords]
+    return [...defaultRecords, ...customRecords]
   }
 
   return storedRecords.map((record) =>
-    DEFAULT_MISSION_HISTORY_RECORD_MAP.get(record.id) ?? record
+    defaultRecordMap.get(record.id) ?? DEFAULT_MISSION_HISTORY_RECORD_MAP.get(record.id) ?? record
   )
 }
 
@@ -141,7 +196,7 @@ export function writeStoredMissionHistoryRecords(records: MissionHistoryRecord[]
   if (typeof window === 'undefined') return
 
   window.localStorage.setItem(
-    MISSION_HISTORY_RECORDS_STORAGE_KEY,
+    getMissionHistoryStorageKey(),
     JSON.stringify(records.filter((record) => record.source !== 'chat')),
   )
 }
@@ -178,7 +233,7 @@ export function writeHealthCheckMissionHistoryRecord(
   }
   const nextRecords = [nextRecord, ...readMissionHistoryRecordsWithDefaults()].slice(0, 120)
 
-  window.localStorage.setItem(MISSION_HISTORY_RECORDS_STORAGE_KEY, JSON.stringify(nextRecords))
+  window.localStorage.setItem(getMissionHistoryStorageKey(), JSON.stringify(nextRecords))
   window.dispatchEvent(new CustomEvent(MISSION_HISTORY_RECORDS_CHANGE_EVENT, { detail: nextRecord }))
 
   return nextRecord

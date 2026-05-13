@@ -361,6 +361,23 @@
   letter-spacing: -0.025em;
 }
 
+.community_knowledge_detail_like_icon {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+}
+
+.community_knowledge_detail_like_icon .like_icon {
+  width: 24px;
+  height: 24px;
+}
+
+.community_knowledge_detail_like_count {
+  display: inline-block;
+}
+
 .community_knowledge_detail_reactions svg {
   width: 24px;
   height: 24px;

@@ -46,7 +46,12 @@ function AddSheet({
           }
         }}
       >
-        <div className="add_sheet_handle" />
+        <button
+          type="button"
+          className="add_sheet_handle"
+          aria-label="닫기"
+          onClick={requestClose}
+        />
         {children}
         <HomeIndicator />
       </div>

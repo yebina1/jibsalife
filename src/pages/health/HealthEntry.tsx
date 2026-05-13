@@ -32,10 +32,7 @@ const quickMessages = [
   '사료 90g',
   '사료 120g',
   '사료 150g',
-  '잔액조회 입니다?',
-  '거래내역 입니다',
-  '이체',
-  '수익률',
+  '기타',
 ]
 
 function getDateKey(year: number, month: number, day: number) {

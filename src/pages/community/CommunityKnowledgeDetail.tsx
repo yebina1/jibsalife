@@ -6,6 +6,7 @@ import PageHeader from '../../components/PageHeader'
 import Title from '../../components/Title'
 import CommentInputForm from '../../components/html/CommentInputForm'
 import Button from '../../components/html/Button'
+import LikeButton from '../../components/LikeButton'
 import knowledge1 from '../../img/knowledge1.png'
 import dogWalk1 from '../../img/Knowledge/dog_Walk_1_increased_stress.png'
 import dogWalk2 from '../../img/Knowledge/dog_Walk_2_obesity.png'
@@ -397,6 +398,8 @@ function CommunityKnowledgeDetail() {
   )
   const lastScrollTopRef = useRef(0)
   const item = (location.state as KnowledgeDetailState | null)?.item
+  const knowledgeLikeKey = String(item?.id ?? knowledgeId)
+  const [likedKnowledgeKeys, setLikedKnowledgeKeys] = useState<string[]>([])
   const detailTitle = item?.title ?? '강아지 산책 안 하면 생기는 문제점'
   const detailTitleLines =
     detailTitle === '강아지 산책 안 하면 생기는 문제점'
@@ -415,6 +418,20 @@ function CommunityKnowledgeDetail() {
   const postedTimeText = getRelativeTimeText(item?.createdAt ?? '2026-05-02T09:00:00')
   const viewsText = formatViewsText(item?.viewsText)
   const commentCount = visibleComments.length
+  const isKnowledgeLiked = likedKnowledgeKeys.includes(knowledgeLikeKey)
+  const knowledgeLikeCount = (item?.likes ?? 128) + (isKnowledgeLiked ? 1 : 0)
+
+  const toggleKnowledgeLike = () => {
+    if (!isKnowledgeLiked) {
+      markKnowledgeLiked()
+    }
+
+    setLikedKnowledgeKeys((current) =>
+      current.includes(knowledgeLikeKey)
+        ? current.filter((key) => key !== knowledgeLikeKey)
+        : [...current, knowledgeLikeKey],
+    )
+  }
 
   const openCommentsPage = () => {
     navigate(knowledgeCommentsPagePath, {
@@ -661,10 +678,17 @@ function CommunityKnowledgeDetail() {
         />
         <div className="community_knowledge_detail_actions">
           <div className="community_knowledge_detail_reactions">
-            <button type="button" aria-label="좋아요" onClick={markKnowledgeLiked}>
-              <HeartIcon />
-              {item?.likes ?? 128}
-            </button>
+            <LikeButton
+              type="button"
+              liked={isKnowledgeLiked}
+              className="community_knowledge_detail_like"
+              iconClassName="community_knowledge_detail_like_icon"
+              countClassName="community_knowledge_detail_like_count"
+              aria-label="좋아요"
+              onClick={toggleKnowledgeLike}
+            >
+              {knowledgeLikeCount}
+            </LikeButton>
             <button type="button" aria-label="댓글" onClick={openCommentsPage}>
               <CommentIcon />
               {commentCount}

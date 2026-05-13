@@ -6,8 +6,10 @@ import pungpungiImage from '../../img/pungpungi.png'
 import leeyoriImage from '../../img/leeyori.png'
 import galleryIcon from '../../img/gallery-icon.svg'
 import cameraFlipIcon from '../../img/camera-flip-icon.svg'
+import AddSheet from '../../components/AddSheet'
 import ChevronIcon from '../../components/ChevronIcon'
 import BackButton from '../../components/html/BackButton'
+import MissionRecordSheet from '../../components/MissionRecordSheet'
 import StateBar from '../../components/StateBar'
 import {
   readPetProfiles,
@@ -81,14 +83,17 @@ function Health() {
   const [activeTab, setActiveTab] = useState<'camera' | 'memo'>('camera')
   const [capturedImage, setCapturedImage] = useState<string | null>(null)
   const [showPetModal, setShowPetModal] = useState(false)
+  const [showCalendarPetSwitch, setShowCalendarPetSwitch] = useState(false)
   const [pets, setPets] = useState<PetProfileSummary[]>(readPetProfiles)
   const [selectedPetId, setSelectedPetId] = useState<number>(readSelectedPetProfileId)
 
   // 메모 바텀시트 state
   const [showMemoSheet, setShowMemoSheet] = useState(false)
+  const [showCalendarMemoSheet, setShowCalendarMemoSheet] = useState(false)
   const [selectedCategoryId, setSelectedCategoryId] = useState(categoryOptions[0].id)
   const [memoText, setMemoText] = useState('')
   const [selectedAmount, setSelectedAmount] = useState('')
+  const [feedAmount, setFeedAmount] = useState(30)
 
   useEffect(() => {
     const sync = () => {
@@ -209,14 +214,18 @@ function Health() {
     writeSelectedPetProfileId(pet.id)
     setSelectedPetId(pet.id)
     setShowPetModal(false)
+    setShowCalendarPetSwitch(false)
   }
 
   // 메모 저장 로직
   const selectedCategory = categoryOptions.find((c) => c.id === selectedCategoryId) ?? categoryOptions[0]
-  const isActive = memoText.trim() !== '' || selectedAmount !== ''
+  const isActive = memoText.trim() !== '' || selectedAmount !== '' || (selectedCategory.id === 'meal' && feedAmount > 0)
 
   const handleMemoSave = () => {
-    const title = (selectedAmount || memoText).trim()
+    const primaryDetail = selectedCategory.id === 'meal' && feedAmount > 0
+      ? `사료 ${feedAmount}g`
+      : selectedAmount
+    const title = [primaryDetail, memoText.trim()].filter(Boolean).join('\n').trim()
     if (!title) return
 
     const now = new Date()
@@ -237,11 +246,13 @@ function Health() {
     window.dispatchEvent(new CustomEvent(MISSION_HISTORY_RECORDS_CHANGE_EVENT, { detail: newItem }))
     setMemoText('')
     setSelectedAmount('')
+    setFeedAmount(30)
   }
 
   const handleMemoSaveOnly = () => {
     handleMemoSave()
     setShowMemoSheet(false)
+    setShowCalendarMemoSheet(false)
   }
 
   const handleMemoUpload = () => {
@@ -301,7 +312,7 @@ function Health() {
         <button
           type="button"
           className="health_cam_pet_link"
-          onClick={() => setShowPetModal(true)}
+          onClick={() => setShowCalendarPetSwitch(true)}
         >
           {selectedPetName ? (
             <span>
@@ -382,7 +393,7 @@ function Health() {
             <button
               type="button"
               className={`health_cam_tab${activeTab === 'memo' ? ' is_active' : ''}`}
-              onClick={() => { setActiveTab('memo'); setShowMemoSheet(true) }}
+              onClick={() => { setActiveTab('memo'); setShowCalendarMemoSheet(true) }}
             >
               메모
             </button>
@@ -404,6 +415,48 @@ function Health() {
       </div>
 
       {/* 반려동물 변경 모달 */}
+      {showCalendarPetSwitch && (
+        <AddSheet onClose={() => setShowCalendarPetSwitch(false)}>
+          <div className="mission_pet_switch_sheet">
+            <div className="mission_pet_switch_list">
+              {pets.map((pet) => (
+                <button
+                  key={pet.id}
+                  type="button"
+                  className={`mission_pet_switch_option${pet.id === selectedPetId ? ' is_selected' : ''}`}
+                  onClick={() => handleSelectPet(pet)}
+                >
+                  {pet.image ? (
+                    <img src={pet.image} alt="" aria-hidden="true" />
+                  ) : (
+                    <span className="mission_pet_switch_avatar_fallback" aria-hidden="true">
+                      <Dog size={24} color="#505050" />
+                    </span>
+                  )}
+                  <span className="mission_pet_switch_copy">
+                    <strong>{pet.name}</strong>
+                    <span className="mission_pet_switch_meta">
+                      <span>나이: <b>{getPetAge(pet.birthDate)}</b></span>
+                      <span className="mission_pet_switch_dot" aria-hidden="true">·</span>
+                      <span>몸무게: <b>{pet.weight ? `${pet.weight}kg` : '-'}</b></span>
+                      <span className="mission_pet_switch_dot" aria-hidden="true">·</span>
+                      <span>성별: <b>{pet.sex || '-'}</b></span>
+                    </span>
+                  </span>
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="purple_btn mission_pet_switch_close"
+              onClick={() => setShowCalendarPetSwitch(false)}
+            >
+              닫기
+            </button>
+          </div>
+        </AddSheet>
+      )}
+
       {showPetModal && (
         <div className="health_pet_modal">
           <div
@@ -462,6 +515,36 @@ function Health() {
       )}
 
       {/* 메모 바텀시트 */}
+      {showCalendarMemoSheet && (
+        <AddSheet onClose={() => setShowCalendarMemoSheet(false)}>
+          <MissionRecordSheet
+            addDate={{ month: today.getMonth() + 1, day: today.getDate() }}
+            selectedCategory={selectedCategory}
+            repeatLabel="매일"
+            addTitle={memoText}
+            feedAmount={feedAmount}
+            canSave={isActive}
+            isEditing={false}
+            quickMessageOptions={quickMessages}
+            selectedQuickMessage={selectedAmount}
+            onOpenPeriodPicker={() => {}}
+            onOpenRepeatPicker={() => {}}
+            onOpenCategoryPicker={handleCategoryClick}
+            onQuickMessageSelect={(message) => {
+              setSelectedAmount(message)
+              setMemoText('')
+            }}
+            onTitleChange={(title) => {
+              setMemoText(title)
+              setSelectedAmount('')
+            }}
+            onFeedAmountChange={setFeedAmount}
+            onDelete={() => {}}
+            onSave={handleMemoSaveOnly}
+          />
+        </AddSheet>
+      )}
+
       {showMemoSheet && (
         <>
           <div

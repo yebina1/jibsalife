@@ -120,10 +120,16 @@
   padding: 0;
   margin: 0;
   list-style: none;
+  overflow: visible;
+}
+
+.health_hospital_search_list li {
+  overflow: visible;
 }
 
 .health_hospital_search_item {
   display: grid;
+  position: relative;
   grid-template-columns: 96px minmax(0, 1fr) 24px;
   align-items: start;
   gap: 14px;
@@ -131,6 +137,7 @@
   height: auto;
   padding: 0;
   text-align: left;
+  overflow: visible;
 }
 
 .health_hospital_search_item > img {
@@ -212,6 +219,8 @@
 
 .health_hospital_search_favorite {
   display: inline-grid;
+  position: relative;
+  z-index: 2;
   width: 24px;
   height: 24px;
   place-items: center;
@@ -220,6 +229,8 @@
   background: transparent;
   color: #4a3d3d;
   justify-self: end;
+  isolation: auto;
+  overflow: visible;
 }
 
 .health_hospital_search_favorite.is_active {
@@ -235,6 +246,11 @@
   display: block;
   width: 24px;
   height: 24px;
+}
+
+.health_hospital_search_favorite .heart_effect_area {
+  bottom: 50%;
+  z-index: 20;
 }
 
 @media (max-width: 420px) {

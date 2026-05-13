@@ -7,6 +7,7 @@ import ChevronIcon from '../../components/ChevronIcon'
 import ContentSection from '../../components/ContentSection'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
+import LikeButton from '../../components/LikeButton'
 import { Link } from 'react-router'
 import calendarIcon from '../../svg/calendar.svg'
 import hospital3d from '../../img/hospital_3d.png'
@@ -34,21 +35,6 @@ const serviceCards: ServiceCard[] = [
     to: '/health/vet-chat',
   },
 ]
-
-function HeartIcon({ filled }: { filled: boolean }) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        d="M12 20.2 4.9 13.6a4.8 4.8 0 0 1 6.8-6.8L12 7.1l.3-.3a4.8 4.8 0 0 1 6.8 6.8L12 20.2Z"
-        fill={filled ? 'currentColor' : 'none'}
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
 
 function HealthHospitalSearch() {
   const [favoriteNames, setFavoriteNames] = useState<string[]>([])
@@ -131,15 +117,13 @@ function HealthHospitalSearch() {
                       </span>
                     </div>
 
-                    <button
+                    <LikeButton
                       type="button"
-                      className={`health_hospital_search_favorite ${isFavorite ? 'is_active' : ''}`}
+                      liked={isFavorite}
+                      className="health_hospital_search_favorite"
                       aria-label={isFavorite ? `${item.name} 찜 해제` : `${item.name} 찜`}
-                      aria-pressed={isFavorite}
                       onClick={() => handleFavoriteToggle(item.name)}
-                    >
-                      <HeartIcon filled={isFavorite} />
-                    </button>
+                    />
                   </div>
                 </li>
               )
