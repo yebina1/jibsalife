@@ -17,9 +17,9 @@ type CommentInputFormProps = {
 }
 
 function CommentInputForm({
-  className,
-  iconButtonClassName,
-  inputWrapClassName,
+  className = 'cpsdetail_comment_form',
+  iconButtonClassName = 'cpsdetail_form_icon',
+  inputWrapClassName = 'cpsdetail_comment_input',
   placeholder = '메시지를 입력해 주세요.',
   addIcon,
   emojiIcon,

@@ -70,6 +70,13 @@
   cursor: pointer;
 }
 
+.header_right .s_purple_btn {
+  width: auto;
+  height: auto;
+  padding: 6px 10px;
+  background: #6D59F8;
+}
+
 .header_right img {
   display: block;
   width: 28px;

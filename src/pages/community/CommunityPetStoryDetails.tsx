@@ -698,7 +698,12 @@ function CommunityPetStoryDetails() {
                 <AvatarIcon />
                 <div className="cpsdetail_comment_body">
                   <div className="cpsdetail_comment_head">
-                    <Title as="h5" title={comment.author}>
+                    <Title as="h5" title={
+                      <>
+                        {comment.author}
+                        {comment.author === post.author && <span className="cpsdetail_author_badge">작성자</span>}
+                      </>
+                    }>
                       <p>{comment.createdAt ? formatRelativeTime(comment.createdAt) : (comment.time ?? '11시간 전')}</p>
                     </Title>
                     <button type="button" className="cpsdetail_more" aria-label="댓글 더보기" onClick={() => { setMoreTarget({ commentId: comment.id }); setMoreSheetOpen(comment.author === MY_PROFILE_NAME ? 'own' : 'other') }}>

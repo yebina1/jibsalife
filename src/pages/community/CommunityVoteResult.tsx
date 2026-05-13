@@ -24,6 +24,7 @@ import goldMedalImg from '../../img/vote/gold_medal.png'
 import silverMedalImg from '../../img/vote/silver_medal.png'
 import bronzeMedalImg from '../../img/vote/bronze_medal.png'
 import voting1 from '../../img/vote/vote_result/voting1.png'
+import votingProfile from '../../img/vote/vote_result/voting_istagram_profile.jpg'
 import voting2 from '../../img/vote/vote_result/voting2.jpg'
 import voting3 from '../../img/vote/vote_result/voting3.jpg'
 import voting4 from '../../img/vote/vote_result/voting4.jpg'
@@ -99,7 +100,7 @@ function CommunityVoteResult() {
       {/* SNS 프로필 카드 */}
       <div className="cv_profile_card">
         <div className="cv_profile_row">
-          <ProfileImage src={voting1} alt="콩이" className="cv_profile_avatar" />
+          <ProfileImage src={votingProfile} alt="콩이" className="cv_profile_avatar" />
           <div className="cv_profile_right">
             <div className="cv_profile_info">
               <Title
@@ -151,7 +152,7 @@ function CommunityVoteResult() {
       {/* 기타 순위 (4위~10위) */}
       <section className="cv_others_section">
         <Title as="h4" title="기타 순위 (4위~10위)" className="section_header">
-          <Button type="button" className="cv_others_more_btn">
+          <Button type="button" className="cv_others_more_btn" disabled>
             더보기
             <ChevronIcon direction="right" size="sm" />
           </Button>

@@ -509,6 +509,26 @@
   gap: 8px;
 }
 
+.cpsdetail_comment_head .title h5 {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cpsdetail_author_badge {
+  display: flex;
+  padding: 1px 4px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 100px;
+  border: 0.8px solid #6C59F7;
+  font-size: 8px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: #6C59F7;
+}
+
 .cpsdetail_mention {
   color: #0369A1;
 }
@@ -612,7 +632,6 @@
   color: #111111;
   font-size: 16px;
   font-weight: 500;
-  line-height: 1.45;
   text-align: center;
   cursor: pointer;
 }

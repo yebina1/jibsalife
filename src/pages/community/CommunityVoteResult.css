@@ -10,7 +10,6 @@
 .cv_wrap {
   display: flex;
   flex-direction: column;
-  gap: 24px;
 }
 
 /* ── 1위 ── */
@@ -45,20 +44,33 @@
 .cv_first_img_wrap {
   width: 100%;
   border-radius: 16px;
+  padding-inline: 48px;
   overflow: hidden;
 }
 
 .cv_first_img {
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
+  height: auto;
 }
 
 .cv_first_stats {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.cv_first_stats .cv_stats_row .cv_votes_label{
+  font-size: 20px;
+}
+
+.cv_first_stats .cv_stats_row strong{
+  font-weight: 700;
+}
+
+.cv_first_stats .cv_stats_row .cv_percent_label {
+  color: #818CF8;
+  font-size: 20px;
 }
 
 /* 공통 stats row */
@@ -140,8 +152,9 @@
   flex-shrink: 0;
   border-radius: 50%;
   overflow: hidden;
-  padding: 4px;
+  padding: 3px;
   background: linear-gradient(135deg, #FBBF00 17%, #DD0657 50%, #FF0038 66%, #FA01A3 83%, #E600CC 99%);
+  
 }
 
 .profile_image.cv_profile_avatar img {
@@ -149,6 +162,7 @@
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
+  border: 3px solid #fff;
 }
 
 .cv_profile_info {
@@ -229,7 +243,7 @@
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 /* ── 다른순위 (2위~3위) ── */
@@ -237,7 +251,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 24px 16px;
+  padding: 48px 16px 24px;
 }
 
 .cv_rank_item {
@@ -261,7 +275,7 @@
   width: 88px;
   height: 88px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 8px;
   flex-shrink: 0;
 }
 
@@ -302,6 +316,11 @@
   gap: 4px;
 }
 
+.cv_others_more_btn.is_disabled {
+  color: #999999;
+  cursor: default;
+}
+
 .cv_others_grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -320,7 +339,7 @@
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .cv_others_label {

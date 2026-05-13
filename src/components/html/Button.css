@@ -19,6 +19,29 @@
   color: #ffffff;
 }
 
+.s_purple_btn {
+  display: flex;
+  padding: 6px 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 12px;
+  background: #6D59F8;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.s_purple_btn:disabled,
+.s_purple_btn.is_disabled {
+  display: flex;
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: #A5ADB8;
+  color: #ffffff;
+  cursor: not-allowed;
+}
+
 .square_btn {
   display: inline-flex;
   width: min(100%, 343px);

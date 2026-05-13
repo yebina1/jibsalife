@@ -5,7 +5,10 @@ import Button from '../components/html/Button'
 import FloatingAiButton from '../components/FloatingAiButton'
 import HomeIndicator from '../components/HomeIndicator'
 import Nav from '../components/Nav'
+import CommentInputForm from '../components/html/CommentInputForm'
 import StateBar from '../components/StateBar'
+import addIcon from '../svg/add icon.svg'
+import emojiIcon from '../svg/emoji.svg'
 import { HeaderContext, type HeaderConfig } from '../contexts/HeaderContext'
 
 type LayoutProps = {
@@ -149,7 +152,7 @@ function Layout({
   }
 
   const isMinimal = !showHeader && !showNav && !showFooter
-  const isIndicatorOnlyLayout = (!showNav && showFooter) || isPetStoryDetailPage || isKnowledgeDetailPage || isVoteResultPage
+  const isIndicatorOnlyLayout = (!showNav && showFooter) || isPetStoryDetailPage || isKnowledgeDetailPage || isVoteResultPage || isPetStoryWritePage
   const layoutClassName = isCameraPage
     ? 'layout layout_camera'
     : isMinimal
@@ -388,7 +391,10 @@ function Layout({
         {!hideFloatingAiButton ? <FloatingAiButton /> : null}
         {!isNoLayoutPage && showFooter ? (
           <footer>
-            {showNav && !isPetStoryDetailPage && !isKnowledgeDetailPage && !isVoteResultPage && <Nav />}
+            {showNav && !isPetStoryDetailPage && !isKnowledgeDetailPage && !isVoteResultPage && !isPetStoryWritePage && <Nav />}
+            {isPetStoryWritePage && (
+              <CommentInputForm addIcon={addIcon} emojiIcon={emojiIcon} />
+            )}
             <HomeIndicator />
           </footer>
         ) : null}
