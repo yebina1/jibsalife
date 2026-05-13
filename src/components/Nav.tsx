@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react'
+import './Nav.css'
 import { NavLink, useLocation, useNavigate } from 'react-router'
 import navCommunicateOffIcon from '../svg/nav communicate off.svg'
 import navHealthOffIcon from '../svg/nav health off.svg'
@@ -8,7 +9,7 @@ import navMypageIcon from '../svg/nav mypage.svg'
 import navMypageOffIcon from '../svg/nav mypage off.svg'
 
 const navItems = [
-  { path: '/health', label: '건강', icon: 'health' },
+  { path: '/health/cam', label: '건강', icon: 'health' },
   { path: '/community', label: '커뮤니티', icon: 'community' },
   { path: '/home', label: '홈', icon: 'home' },
   { path: '/place', label: '장소', icon: 'place' },
@@ -134,7 +135,9 @@ function Nav() {
               })
             }}
             className={({ isActive }) =>
-              isActive || (item.icon === 'community' && pathname.startsWith('/community'))
+              isActive ||
+              (item.icon === 'community' && pathname.startsWith('/community')) ||
+              (item.icon === 'health' && pathname.startsWith('/health'))
                 ? 'layout_nav_link active'
                 : 'layout_nav_link'
             }
@@ -143,7 +146,11 @@ function Nav() {
               <>
                 <NavIcon
                   type={item.icon}
-                  active={isActive || (item.icon === 'community' && pathname.startsWith('/community'))}
+                  active={
+                    isActive ||
+                    (item.icon === 'community' && pathname.startsWith('/community')) ||
+                    (item.icon === 'health' && pathname.startsWith('/health'))
+                  }
                 />
                 <span className="layout_nav_label">{item.label}</span>
               </>

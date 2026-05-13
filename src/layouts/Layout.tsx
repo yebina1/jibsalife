@@ -69,7 +69,7 @@ function Layout({
   const searchParams = new URLSearchParams(search)
   const communitySubParam = searchParams.get('sub')
   const communitySortParam = searchParams.get('sort') ?? 'latest'
-  const isCameraPage = pathname === '/health/camera/capture'
+  const isCameraPage = pathname === '/health/camera/capture' || pathname === '/health/cam'
   const isLoginPage = pathname === '/login'
   const isOnboardingPage = pathname === '/onboarding'
   const isCommunityPath = pathname.startsWith('/community')
@@ -103,6 +103,7 @@ function Layout({
     '/community',
     '/mission',
     '/health',
+    '/health/cam',
     '/health/camera',
     '/health/camera/capture',
     '/health/register',
@@ -172,7 +173,7 @@ function Layout({
       const statusBarHeight =
         headerEl.querySelector<HTMLElement>('.state_bar')?.getBoundingClientRect().height ?? 0
       const pageHeaderHeight =
-        headerEl.querySelector<HTMLElement>('.header')?.getBoundingClientRect().height ?? 56
+        headerEl.querySelector<HTMLElement>('.header')?.getBoundingClientRect().height ?? 0
       const minimumHeaderHeight = statusBarHeight + pageHeaderHeight
       const headerHeight = Math.max(headerEl.offsetHeight, minimumHeaderHeight)
 

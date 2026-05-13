@@ -212,12 +212,12 @@
 
 .health_cam_ui {
   display: grid;
-  grid-template-rows: 1fr auto auto;
-  width: calc(100% + 2 * var(--layout-inline-padding, 16px));
+  grid-template-rows: auto auto auto auto auto;
+  width: 100%;
   max-width: none;
-  height: calc(100dvh - var(--layout-header-height, 97px) - var(--layout-footer-height, 90px));
-  margin-top: calc(-1 * var(--layout-content-padding-block, 24px));
-  margin-left: calc(-1 * var(--layout-inline-padding, 16px));
+  height: 100dvh;
+  margin-top: 0;
+  margin-left: 0;
   gap: 0;
   padding: 0 0 12px;
   overflow: hidden;
@@ -230,9 +230,11 @@
 
 .health_cam_view {
   position: relative;
+  width: 100%;
+  height: 457px;
+  flex-shrink: 0;
   overflow: hidden;
   background: #000000;
-  min-height: 0;
 }
 
 .health_cam_img,
@@ -310,6 +312,10 @@
 }
 
 .health_cam_zoom_lg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
   width: 32px;
   height: 32px;
   font-size: 14px;
@@ -420,21 +426,32 @@
 
 /* 3. 최하단 탭바 */
 
+.health_cam_tabs_wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background: #ffffff;
+  padding: 8px 0;
+  box-sizing: border-box;
+}
+
 .health_cam_tabs {
   display: flex;
   gap: 4px;
-  margin: 0 20px;
+  width: 335px;
   padding: 3px;
   border-radius: 10px;
   background: #f1f1f5;
+  box-sizing: border-box;
 }
 
 .health_cam_tab {
   flex: 1;
-  padding: 9px 0;
+  padding: 14px 10px;
   border: 0;
   outline: none;
-  border-radius: 7px;
+  border-radius: 8px;
   background: transparent;
   color: #767676;
   font-size: 14px;
@@ -451,7 +468,7 @@
   background: #ffffff;
   color: #111111;
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.06);
 }
 
 /* 4. 반려동물 변경 바텀시트 모달 */
@@ -589,4 +606,225 @@
   font-family: inherit;
   cursor: pointer;
   flex-shrink: 0;
+}
+
+/* ── 메모 바텀시트 ──────────────────────────────────────── */
+
+.health_memo_overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+
+.health_memo_sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 101;
+  background: #ffffff;
+  border-radius: 20px 20px 0 0;
+  padding: 0 16px 16px;
+  font-family: Pretendard, 'SUIT', system-ui, sans-serif;
+  max-height: 85dvh;
+  overflow-y: auto;
+}
+
+.health_memo_handle {
+  width: 41px;
+  height: 4px;
+  background: #c8c8d3;
+  border-radius: 100px;
+  margin: 6px auto 20px;
+}
+
+/* rows */
+
+.health_memo_rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.health_memo_row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid #e5e5ec;
+  box-sizing: border-box;
+}
+
+.health_memo_row_category {
+  border-top: 1px solid #e5e5ec;
+}
+
+.health_memo_row_label {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+  color: #111111;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 140%;
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+}
+
+.health_memo_info {
+  display: inline-flex;
+  position: relative;
+  width: 17px;
+  height: 17px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #d9d9de;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.health_memo_row_value {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #505050;
+  font-size: 14px;
+  font-family: inherit;
+  font-weight: 400;
+  line-height: 145%;
+  letter-spacing: -0.025em;
+  text-align: right;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.health_memo_row_value .chevron_icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  --chevron-color: #656565;
+}
+
+.health_memo_category_dot {
+  flex: 0 0 auto;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+/* 내용입력 */
+
+.health_memo_content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 20px;
+  padding-bottom: 12px;
+}
+
+.health_memo_content h2 {
+  margin: 0;
+  color: #111111;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 140%;
+  letter-spacing: -0.025em;
+}
+
+.health_memo_quick_messages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 6px;
+}
+
+.health_memo_quick_message {
+  display: inline-flex;
+  min-height: 27px;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border: 1px solid #e5e5ec;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #505050;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 145%;
+  letter-spacing: -0.025em;
+  cursor: pointer;
+}
+
+.health_memo_textarea {
+  display: block;
+  width: 100%;
+  min-height: 80px;
+  padding: 16px;
+  border: 0;
+  border-radius: 8px;
+  background: #f2f2f6;
+  box-sizing: border-box;
+  color: #111111;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 145%;
+  letter-spacing: -0.025em;
+  outline: none;
+  resize: none;
+}
+
+.health_memo_textarea::placeholder {
+  color: #111111;
+  opacity: 1;
+}
+
+/* 버튼 */
+
+.health_memo_actions {
+  display: flex;
+  gap: 8px;
+  padding: 20px 0 6px;
+}
+
+.health_memo_save_btn,
+.health_memo_upload_btn {
+  flex: 1;
+  height: 54px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  letter-spacing: -0.025em;
+  cursor: pointer;
+  outline: none;
+}
+
+.health_memo_save_btn {
+  border: 1px solid #6d59f8;
+  background: #ffffff;
+  color: #6d59f8;
+}
+
+.health_memo_save_btn:disabled {
+  border-color: #c8c8d3;
+  color: #c8c8d3;
+  cursor: default;
+}
+
+.health_memo_upload_btn {
+  border: 0;
+  background: #6d59f8;
+  color: #ffffff;
 }

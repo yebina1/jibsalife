@@ -41,7 +41,7 @@ function HealthCheckAnalysis() {
     steps.forEach((_, index) => {
       const timer = setTimeout(() => {
         setCompletedCount(index + 1)
-      }, (index + 1) * 2500)
+      }, (index + 1) * 800)
       timers.push(timer)
     })
     return () => timers.forEach(clearTimeout)
@@ -50,7 +50,7 @@ function HealthCheckAnalysis() {
   useEffect(() => {
     const target = (completedCount / 4) * 100
     const start = displayProgressRef.current
-    const duration = 1200
+    const duration = 400
     const startTime = Date.now()
     let rafId: number
 
@@ -108,7 +108,7 @@ function HealthCheckAnalysis() {
                 strokeDasharray={CIRCUMFERENCE}
                 strokeDashoffset={CIRCUMFERENCE * (1 - progress / 100)}
                 transform="rotate(-90 35 35)"
-                style={{ transition: 'stroke-dashoffset 1.2s cubic-bezier(0.45,0,0.55,1)' }}
+                style={{ transition: 'stroke-dashoffset 0.4s cubic-bezier(0.45,0,0.55,1)' }}
               />
             </svg>
             <span className="health_check_analysis_progress_text">{displayProgress}%</span>

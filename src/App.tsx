@@ -54,12 +54,14 @@ function App() {
           <Route path="/health/qna" element={<HealthQna />} />
           <Route path="/health/vet-chat" element={<HealthVetChat />} />
         </Route>
+        <Route element={<Layout showHeader={false} />}>
+          <Route path="/health/cam" element={<Health />} />
+        </Route>
         <Route element={<Layout />}>
           <Route path="/" element={<Navigate to="/onboarding" replace />} />
           <Route path="/home" element={<Home />} />
           <Route path="/place" element={<Place />} />
           <Route path="/mission" element={<Mission />} />
-          <Route path="/health" element={<Health />} />
           <Route path="/health/check" element={<HealthCheckAnalysis />} />
           <Route path="/health/report" element={<HealthReport />} />
           <Route path="/health/hospital" element={<HealthHospitalRecommend />} />

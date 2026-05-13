@@ -1,0 +1,271 @@
+/* ── HealthEntry 전체 컨테이너 ──────────────────────────── */
+
+.health_entry {
+  position: relative;
+  height: 100dvh;
+  overflow: hidden;
+  background: #000;
+  font-family: Pretendard, 'SUIT', system-ui, sans-serif;
+}
+
+/* ── 이미지 영역 (absolute, 화면 최상단부터) ─────────────── */
+
+.health_entry_cam_view {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.health_entry_cam_img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.health_entry_cam_fallback {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  background: #2a2a2a;
+}
+
+.health_entry_cam_overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+/* ── 바텀시트 (이미지와 겹치며 아래까지 채움) ───────────── */
+
+.health_entry_sheet {
+  position: absolute;
+  top: 28%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  overflow-y: auto;
+  background: white;
+  border-radius: 20px 20px 0 0;
+  padding: 0 16px 16px;
+}
+
+/* 핸들 바 */
+
+.health_entry_handle {
+  width: 41px;
+  height: 4px;
+  background: #c8c8d3;
+  border-radius: 100px;
+  margin: 6px auto 20px;
+}
+
+/* ── 기간 / 자동등록 / 카테고리 rows ─────────────────── */
+
+.health_entry_rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.health_entry_row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid #e5e5ec;
+  box-sizing: border-box;
+}
+
+.health_entry_row_category {
+  border-top: 1px solid #e5e5ec;
+}
+
+.health_entry_row_label {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+  color: #111111;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 140%;
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+}
+
+/* ⓘ 아이콘 */
+
+.health_entry_info {
+  display: inline-flex;
+  position: relative;
+  width: 17px;
+  height: 17px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #d9d9de;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.health_entry_info::after {
+  position: absolute;
+  width: 6px;
+  height: 5px;
+  margin: 13px 0 0 -10px;
+  border-radius: 0 0 0 5px;
+  background: #d9d9de;
+  content: '';
+}
+
+.health_entry_row_value {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #505050;
+  font-size: 14px;
+  font-family: inherit;
+  font-weight: 400;
+  line-height: 145%;
+  letter-spacing: -0.025em;
+  text-align: right;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.health_entry_row_value .chevron_icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  --chevron-color: #656565;
+}
+
+.health_entry_category_dot {
+  flex: 0 0 auto;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+/* ── 내용입력 영역 ────────────────────────────────────── */
+
+.health_entry_content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 20px;
+  padding-bottom: 12px;
+}
+
+.health_entry_content h2 {
+  margin: 0;
+  color: #111111;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 140%;
+  letter-spacing: -0.025em;
+}
+
+.health_entry_quick_messages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 6px;
+}
+
+.health_entry_quick_message {
+  display: inline-flex;
+  min-height: 27px;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border: 1px solid #e5e5ec;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #505050;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 145%;
+  letter-spacing: -0.025em;
+  cursor: pointer;
+}
+
+.health_entry_textarea {
+  display: block;
+  width: 100%;
+  min-height: 80px;
+  padding: 16px;
+  border: 0;
+  border-radius: 8px;
+  background: #f2f2f6;
+  box-sizing: border-box;
+  color: #111111;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 145%;
+  letter-spacing: -0.025em;
+  outline: none;
+  resize: none;
+}
+
+.health_entry_textarea::placeholder {
+  color: #111111;
+  opacity: 1;
+}
+
+/* ── 저장하기 / 업로드 하기 버튼 ─────────────────────── */
+
+.health_entry_actions {
+  display: flex;
+  gap: 8px;
+  padding: 20px 0;
+  flex-shrink: 0;
+}
+
+.health_entry_save_btn,
+.health_entry_upload_btn {
+  flex: 1;
+  height: 54px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  letter-spacing: -0.025em;
+  cursor: pointer;
+  outline: none;
+}
+
+.health_entry_save_btn {
+  border: 1px solid #6d59f8;
+  background: #ffffff;
+  color: #6d59f8;
+}
+
+.health_entry_save_btn:disabled {
+  border-color: #c8c8d3;
+  color: #c8c8d3;
+  cursor: default;
+}
+
+.health_entry_upload_btn {
+  border: 0;
+  background: #6d59f8;
+  color: #ffffff;
+}

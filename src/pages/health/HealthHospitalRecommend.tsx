@@ -135,10 +135,10 @@ function HealthHospitalRecommend() {
                   </div>
 
                   <div className="health_hospital_recommend_rating">
-                    <Star size={16} color="#FACC15" fill="#FACC15" aria-hidden="true" />
+                    <Star size={16} color="#6d59f8" fill="#6d59f8" aria-hidden="true" />
                     <span>{hospital.rating}</span>
                     <span className="health_hospital_recommend_reviews">({hospital.reviews})</span>
-                    <span className="health_hospital_recommend_sep" aria-hidden="true">|</span>
+                    <span className="health_hospital_recommend_sep" aria-hidden="true" />
                     <span>{hospital.distance}</span>
                   </div>
 
@@ -151,11 +151,9 @@ function HealthHospitalRecommend() {
                     ))}
                   </div>
 
-                  <span
-                    className="health_hospital_recommend_status"
-                    style={{ color: status.color }}
-                  >
-                    {status.label} {status.timeText}
+                  <span className="health_hospital_recommend_status">
+                    <span style={{ color: status.color }}>{status.label}</span>
+                    <span style={{ color: '#505050' }}>{status.timeText}</span>
                   </span>
                 </div>
               </li>

@@ -89,7 +89,7 @@
   font-weight: 600;
   color: #111111;
   line-height: 1.4;
-  animation: health_check_fade_in 0.5s ease;
+  animation: health_check_fade_in 0.2s ease;
 }
 
 .health_check_analysis_card_label.is_lg {
@@ -102,7 +102,7 @@
   background: rgba(17, 17, 17, 0.5);
   border-radius: 12px;
   pointer-events: none;
-  transition: opacity 0.8s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
 }
 
 @keyframes health_check_fade_in {

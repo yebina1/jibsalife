@@ -6,6 +6,8 @@ import pungpungiImage from '../../img/pungpungi.png'
 import leeyoriImage from '../../img/leeyori.png'
 import galleryIcon from '../../img/gallery-icon.svg'
 import cameraFlipIcon from '../../img/camera-flip-icon.svg'
+import ChevronIcon from '../../components/ChevronIcon'
+import StateBar from '../../components/StateBar'
 import {
   readPetProfiles,
   readSelectedPetProfileId,
@@ -13,6 +15,39 @@ import {
   PET_PROFILES_CHANGE_EVENT,
   type PetProfileSummary,
 } from '../../utils/petProfiles'
+import {
+  readMissionHistoryRecordsWithDefaults,
+  writeStoredMissionHistoryRecords,
+  MISSION_HISTORY_RECORDS_CHANGE_EVENT,
+  type MissionHistoryRecord,
+} from '../../utils/missionHistoryRecords'
+
+const today = new Date()
+
+type CategoryOption = {
+  id: string
+  label: string
+  color: string
+}
+
+const categoryOptions: CategoryOption[] = [
+  { id: 'meal', label: '식사 기록', color: '#ffd1a8' },
+  { id: 'poop', label: '배변 기록', color: '#527ca3' },
+  { id: 'activity', label: '활동 기록', color: '#428fe6' },
+  { id: 'symptom', label: '증상', color: '#b9dfe3' },
+]
+
+const quickMessages = [
+  '사료 30g',
+  '사료 60g',
+  '사료 90g',
+  '사료 120g',
+  '사료 150g',
+]
+
+function getDateKey(year: number, month: number, day: number) {
+  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+}
 
 function getPetAge(birthDate: string): string {
   const parts = birthDate.split('.')
@@ -40,6 +75,12 @@ function Health() {
   const [showPetModal, setShowPetModal] = useState(false)
   const [pets, setPets] = useState<PetProfileSummary[]>(readPetProfiles)
   const [selectedPetId, setSelectedPetId] = useState<number>(readSelectedPetProfileId)
+
+  // 메모 바텀시트 state
+  const [showMemoSheet, setShowMemoSheet] = useState(false)
+  const [selectedCategoryId, setSelectedCategoryId] = useState(categoryOptions[0].id)
+  const [memoText, setMemoText] = useState('')
+  const [selectedAmount, setSelectedAmount] = useState('')
 
   useEffect(() => {
     const sync = () => {
@@ -113,10 +154,54 @@ function Health() {
     setShowPetModal(false)
   }
 
+  // 메모 저장 로직
+  const selectedCategory = categoryOptions.find((c) => c.id === selectedCategoryId) ?? categoryOptions[0]
+  const isActive = memoText.trim() !== '' || selectedAmount !== ''
+
+  const handleMemoSave = () => {
+    const title = (selectedAmount || memoText).trim()
+    if (!title) return
+
+    const now = new Date()
+    const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+    const recordTitle = selectedCategory.label === '증상' ? '증상 기록' : selectedCategory.label
+    const recordDate = getDateKey(today.getFullYear(), today.getMonth() + 1, today.getDate())
+
+    const newItem: MissionHistoryRecord = {
+      id: Date.now(),
+      title: recordTitle,
+      detail: title,
+      time,
+      color: selectedCategory.color,
+      date: recordDate,
+    }
+    const existing = readMissionHistoryRecordsWithDefaults()
+    writeStoredMissionHistoryRecords([newItem, ...existing])
+    window.dispatchEvent(new CustomEvent(MISSION_HISTORY_RECORDS_CHANGE_EVENT, { detail: newItem }))
+    setMemoText('')
+    setSelectedAmount('')
+  }
+
+  const handleMemoSaveOnly = () => {
+    handleMemoSave()
+    setShowMemoSheet(false)
+  }
+
+  const handleMemoUpload = () => {
+    handleMemoSave()
+    navigate('/health/check')
+  }
+
+  const handleCategoryClick = () => {
+    const idx = categoryOptions.findIndex((c) => c.id === selectedCategoryId)
+    setSelectedCategoryId(categoryOptions[(idx + 1) % categoryOptions.length].id)
+  }
+
   const selectedPetName = pets.find((p) => p.id === selectedPetId)?.name || ''
 
   return (
     <main className="health_cam_ui">
+      <StateBar />
       <section className="health_cam_view" aria-label="카메라 뷰">
         {capturedImage ? (
           <img className="health_cam_img" src={capturedImage} alt="촬영된 사진" />
@@ -146,7 +231,9 @@ function Health() {
 
         <div className="health_cam_zoom" aria-hidden="true">
           <span className="health_cam_zoom_btn">.5</span>
-          <span className="health_cam_zoom_btn health_cam_zoom_lg health_cam_zoom_on">1x</span>
+          <span className="health_cam_zoom_btn health_cam_zoom_lg health_cam_zoom_on">
+            <span>1</span><span>x</span>
+          </span>
           <span className="health_cam_zoom_btn">3</span>
         </div>
 
@@ -192,24 +279,40 @@ function Health() {
           </button>
         </div>
       ) : (
-        <div className="health_cam_tabs" role="tablist" aria-label="건강 체크 탭">
-          <button
-            type="button"
-            className={`health_cam_tab${activeTab === 'camera' ? ' is_active' : ''}`}
-            onClick={() => setActiveTab('camera')}
-          >
-            카메라
-          </button>
-          <button
-            type="button"
-            className={`health_cam_tab${activeTab === 'memo' ? ' is_active' : ''}`}
-            onClick={() => setActiveTab('memo')}
-          >
-            메모
-          </button>
+        <div className="health_cam_tabs_wrapper">
+          <div className="health_cam_tabs" role="tablist" aria-label="건강 체크 탭">
+            <button
+              type="button"
+              className={`health_cam_tab${activeTab === 'camera' ? ' is_active' : ''}`}
+              onClick={() => setActiveTab('camera')}
+            >
+              카메라
+            </button>
+            <button
+              type="button"
+              className={`health_cam_tab${activeTab === 'memo' ? ' is_active' : ''}`}
+              onClick={() => { setActiveTab('memo'); setShowMemoSheet(true) }}
+            >
+              메모
+            </button>
+          </div>
         </div>
       )}
 
+      <div style={{ backgroundColor: 'white', height: '34px', position: 'relative', width: '100%' }} aria-hidden="true">
+        <div style={{
+          position: 'absolute',
+          bottom: '8px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          backgroundColor: 'black',
+          height: '5px',
+          width: '134px',
+          borderRadius: '100px',
+        }} />
+      </div>
+
+      {/* 반려동물 변경 모달 */}
       {showPetModal && (
         <div className="health_pet_modal">
           <div
@@ -265,6 +368,99 @@ function Health() {
             </button>
           </div>
         </div>
+      )}
+
+      {/* 메모 바텀시트 */}
+      {showMemoSheet && (
+        <>
+          <div
+            className="health_memo_overlay"
+            onClick={() => setShowMemoSheet(false)}
+            aria-hidden="true"
+          />
+          <div className="health_memo_sheet" role="dialog" aria-label="건강 메모 입력">
+            <div className="health_memo_handle" aria-hidden="true" />
+
+            <div className="health_memo_rows">
+              <div className="health_memo_row">
+                <span className="health_memo_row_label">기간</span>
+                <button type="button" className="health_memo_row_value">
+                  {today.getMonth() + 1}월 {today.getDate()}일
+                  <ChevronIcon direction="right" size="md" />
+                </button>
+              </div>
+              <div className="health_memo_row">
+                <span className="health_memo_row_label">
+                  자동 등록
+                  <span className="health_memo_info" aria-hidden="true">i</span>
+                </span>
+                <button type="button" className="health_memo_row_value">
+                  매일
+                  <ChevronIcon direction="right" size="md" />
+                </button>
+              </div>
+              <div className="health_memo_row health_memo_row_category">
+                <span className="health_memo_row_label">카테고리</span>
+                <button type="button" className="health_memo_row_value" onClick={handleCategoryClick}>
+                  <span
+                    className="health_memo_category_dot"
+                    style={{ backgroundColor: selectedCategory.color }}
+                    aria-hidden="true"
+                  />
+                  {selectedCategory.label}
+                  <ChevronIcon direction="right" size="md" />
+                </button>
+              </div>
+            </div>
+
+            <section className="health_memo_content">
+              <h2>내용입력</h2>
+              <div className="health_memo_quick_messages" aria-label="빠른 입력">
+                {quickMessages.map((msg) => (
+                  <button
+                    key={msg}
+                    type="button"
+                    className={`health_memo_quick_message${selectedAmount === msg ? ' is_selected' : ''}`}
+                    onClick={() => { setSelectedAmount(msg); setMemoText('') }}
+                  >
+                    {msg}
+                  </button>
+                ))}
+              </div>
+              <textarea
+                className="health_memo_textarea"
+                placeholder="기타 입력사항을 자유롭게 작성해 주세요."
+                rows={4}
+                value={memoText}
+                onChange={(e) => { setMemoText(e.target.value); setSelectedAmount('') }}
+              />
+            </section>
+
+            <div className="health_memo_actions">
+              <button
+                type="button"
+                className="health_memo_save_btn"
+                disabled={!isActive}
+                onClick={handleMemoSaveOnly}
+              >
+                저장하기
+              </button>
+              <button
+                type="button"
+                className="health_memo_upload_btn"
+                disabled={!isActive}
+                style={{
+                  background: isActive ? '#6d59f8' : '#e5e5ec',
+                  color: isActive ? 'white' : '#aaaaaa',
+                  cursor: isActive ? 'pointer' : 'not-allowed',
+                }}
+                onClick={handleMemoUpload}
+              >
+                업로드 하기
+              </button>
+            </div>
+          </div>
+        </>
       )}
     </main>
   )
