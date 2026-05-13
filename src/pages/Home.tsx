@@ -26,6 +26,7 @@ import {
   writeSelectedPetProfileId,
   type PetProfileSummary,
 } from '../utils/petProfiles'
+import { voteDetails } from './community/CommunityVoteData'
 import knowledge1 from '../img/knowledge1.png'
 import knowledge2 from '../img/knowledge2.png'
 import knowledge3 from '../img/knowledge3.png'
@@ -33,16 +34,6 @@ import knowledge4 from '../img/knowledge4.png'
 import animalCardImage from '../img/animal_card.png'
 import bannerIconImage from '../img/banner_icon.png'
 import bannerIcon2Image from '../img/banner_icon2.png'
-import voteBbungImage from '../img/vote/vote_bbung.jpg'
-import voteBongImage from '../img/vote/vote_bong.jpg'
-import voteDoraImage from '../img/vote/vote_dora.jpg'
-import voteGongsimImage from '../img/vote/vote_gongsim.jpg'
-import voteHumninImage from '../img/vote/vote_humnin.jpg'
-import voteKongyiImage from '../img/vote/vote_kongyi.png'
-import voteLoyiImage from '../img/vote/vote_loyi.jpg'
-import voteMongImage from '../img/vote/vote_mong.jpg'
-import voteSeoljiImage from '../img/vote/vote_seolji.jpg'
-import voteSyusyuImage from '../img/vote/vote_syusyu.jpg'
 
 type PetIdCardForm = {
   name: string
@@ -64,18 +55,8 @@ const emptyPetIdForm: PetIdCardForm = {
   neutered: '',
 }
 
-const bestPoseVoteItems = [
-  { id: 1, name: '콩이', image: voteKongyiImage },
-  { id: 2, name: '공심이', image: voteGongsimImage },
-  { id: 3, name: '뿡뿡이', image: voteBbungImage },
-  { id: 4, name: '도라', image: voteDoraImage },
-  { id: 5, name: '준하', image: voteHumninImage },
-  { id: 6, name: '재석', image: voteLoyiImage },
-  { id: 7, name: '망수', image: voteBongImage },
-  { id: 8, name: '하하', image: voteSyusyuImage },
-  { id: 9, name: '형돈', image: voteMongImage },
-  { id: 10, name: '공냥이', image: voteSeoljiImage },
-] as const
+const bestPoseVoteItems = voteDetails.find((voteDetail) => voteDetail.id === 'best-pose')?.candidates ?? []
+const bestPoseVoteDetailPath = '/community/vote/detail?voteId=best-pose'
 
 const contentItems = [
   {
@@ -572,7 +553,11 @@ function Home() {
               return (
                 <article key={item.id} className="best_pose_vote_card">
                   <div className="best_pose_vote_card_media">
-                    <img src={item.image} alt={`${item.name} 포즈 사진`} />
+                    <img
+                      src={item.image}
+                      alt={`${item.name} 포즈 사진`}
+                      style={{ objectPosition: item.objectPosition }}
+                    />
                     <button
                       type="button"
                       className={`best_pose_vote_card_like${isLiked ? ' is_active' : ''}`}
@@ -592,7 +577,7 @@ function Home() {
           <Button
             type="button"
             className="white_radius_btn more_button"
-            onClick={() => navigate('/community/vote')}
+            onClick={() => navigate(bestPoseVoteDetailPath)}
           >
            투표하기
           </Button>

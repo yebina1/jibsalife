@@ -132,7 +132,12 @@ function CommunityVoteDetail() {
                   onClick={() => selectCandidate(item.id)}
                 >
                   <div className="cvd_candidate_img_wrap">
-                    <img src={item.image} alt={item.name} className="cvd_candidate_img" />
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="cvd_candidate_img"
+                      style={{ objectPosition: item.objectPosition }}
+                    />
                   </div>
                   <div className="cvd_candidate_footer">
                     <span className="cvd_candidate_name">{item.name}</span>
