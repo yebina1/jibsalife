@@ -97,6 +97,13 @@ function Onboarding() {
   const trimmedProfileName = profileName.trim()
 
   useEffect(() => {
+    document.documentElement.classList.add('onboarding-active')
+    return () => {
+      document.documentElement.classList.remove('onboarding-active')
+    }
+  }, [])
+
+  useEffect(() => {
     pageRef.current?.scrollTo({ top: 0 })
     pageRef.current?.querySelector('.onboarding_layout')?.scrollTo({ top: 0 })
     window.scrollTo({ top: 0 })

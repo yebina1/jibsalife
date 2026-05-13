@@ -5,11 +5,9 @@
     var(--onboarding-action-height) + var(--onboarding-action-bottom) + 40px
   );
   position: relative;
-  height: calc(100dvh - var(--layout-status-bar-height));
-  min-height: calc(100dvh - var(--layout-status-bar-height));
+  height: 100%;
   background: #ffffff;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .onboarding_skip_button {
@@ -163,3 +161,47 @@
   text-align: center;
 }
 
+@media (min-width: 768px) {
+  .onboarding_page .onboarding_layout_action {
+    left: 50%;
+    right: auto;
+    width: min(520px, calc(100vw - 64px));
+    transform: translateX(-50%);
+  }
+
+  .onboarding_visual_image_welcome {
+    width: 400px;
+    height: auto;
+  }
+
+  .onboarding_visual_image_pet {
+    width: 143px;
+    height: 220px;
+  }
+
+  .onboarding_visual_image_feature {
+    width: 317px;
+    height: 217px;
+  }
+
+  .onboarding_visual_image_complete {
+    height: 340px;
+  }
+
+  .onboarding_guardian_grid {
+    grid-template-columns: repeat(2, 225px);
+    gap: 16px;
+  }
+
+  .onboarding_guardian_card {
+    width: 225px;
+    height: 360px;
+    grid-template-rows: 240px auto auto;
+    padding: 24px;
+  }
+
+  .onboarding_guardian_card img {
+    width: 107px;
+    height: 240px;
+  }
+}
