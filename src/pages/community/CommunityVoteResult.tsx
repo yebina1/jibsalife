@@ -1,16 +1,17 @@
-﻿import './Community.css'
+import './Community.css'
 import './CommunityVoteResult.css'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'
 import BackButton from '../../components/html/BackButton'
 import Alert from '../../components/Alert'
-
 import Button from '../../components/html/Button'
 import ChevronIcon from '../../components/ChevronIcon'
 import ConfettiEffect from '../../components/effect/ConfettiEffect'
 import RewardHero from '../../components/RewardHero'
 import RewardPointCard from '../../components/RewardPointCard'
+import Title from '../../components/Title'
+import ProfileImage from '../../components/ProfileImage'
 import {
   COMMUNITY_VOTE_REWARD_POINTS,
   readCommunityVoteRewardClaimed,
@@ -18,23 +19,25 @@ import {
   writeCommunityVoteRewardClaimed,
   writeProfilePoints,
 } from '../../utils/profilePoints'
-import crownIcon from '../../svg/crown.svg'
 import instaIcon from '../../svg/Instagram icon.svg'
-import voting1 from '../../img/voting/voting1.jpg'
-import voting2 from '../../img/voting/voting2.jpg'
-import voting3 from '../../img/voting/voting3.jpg'
-import voting4 from '../../img/voting/voting4.jpg'
-import voting5 from '../../img/voting/voting5.jpg'
-import voting6 from '../../img/voting/voting6.jpg'
+import goldMedalImg from '../../img/vote/gold_medal.png'
+import silverMedalImg from '../../img/vote/silver_medal.png'
+import bronzeMedalImg from '../../img/vote/bronze_medal.png'
+import voting1 from '../../img/vote/vote_result/voting1.png'
+import voting2 from '../../img/vote/vote_result/voting2.jpg'
+import voting3 from '../../img/vote/vote_result/voting3.jpg'
+import voting4 from '../../img/vote/vote_result/voting4.jpg'
+import voting5 from '../../img/vote/vote_result/voting5.jpg'
+import voting6 from '../../img/vote/vote_result/voting6.jpg'
 
 const top2Rankings = [
-  { rank: 2, name: '콩냥이', image: voting2, votes: 842, percentage: 26.1 },
-  { rank: 3, name: '모카', image: voting3, votes: 615, percentage: 19.1 },
+  { rank: 2, name: '콩냥이', image: voting2, votes: 842, percentage: 26.1, medal: silverMedalImg },
+  { rank: 3, name: '모카', image: voting3, votes: 615, percentage: 19.1, medal: bronzeMedalImg },
 ]
 
 const otherRankings = [
   { rank: 4, image: voting4, name: '초코' },
-  { rank: 5, image: voting5, name: '망고' },
+  { rank: 5, image: voting5, name: '레오' },
   { rank: 6, image: voting6, name: '보리' },
 ]
 
@@ -51,7 +54,6 @@ function CommunityVoteResult() {
 
   const handleRewardClick = () => {
     if (isRewardClaimed) return
-
     setIsCompleteAlertOpen(true)
   }
 
@@ -60,7 +62,6 @@ function CommunityVoteResult() {
       setIsCompleteAlertOpen(false)
       return
     }
-
     const nextPoints = profilePoints + COMMUNITY_VOTE_REWARD_POINTS
     writeProfilePoints(nextPoints)
     writeCommunityVoteRewardClaimed()
@@ -71,75 +72,73 @@ function CommunityVoteResult() {
 
   return (
     <div className="cv_wrap">
-      <PageHeader
-        title="투표결과"
-        leftContent={<BackButton />}
-      />
-      {/* 제목 */}
-      <div className="cv_header">
-        <h2 className="cv_title">
-          밥 먹는 사진 중
-          <br /><span className="cv_title_highlight">BEST 10</span> 결과 발표
-        </h2>
-        <p className="cv_subtitle">당첨자는 한 달 후 포인트 지금 안내가 개별 전달됩니다.</p>
-      </div>
+      <PageHeader title="" leftContent={<BackButton />} />
 
-      {/* 1위 카드 */}
-      <div className="cv_first_card">
-        <span className="cv_sparkle cv_sparkle_tl" aria-hidden="true" />
-        <span className="cv_sparkle cv_sparkle_tr" aria-hidden="true" />
-        <span className="cv_sparkle cv_sparkle_bl" aria-hidden="true" />
-        <span className="cv_sparkle cv_sparkle_br" aria-hidden="true" />
+      {/* 1위 */}
+      <section className="cv_first_section">
+        <Title
+          as="h2"
+          className="cv_first_title_row"
+          beforeTitle={<img src={goldMedalImg} alt="금메달" className="cv_medal_title_icon" />}
+          title="콩이"
+        />
+        <div className="cv_first_img_wrap">
+          <img src={voting1} alt="1위 콩이" className="cv_first_img" />
+        </div>
+        <div className="cv_first_stats">
+          <div className="cv_stats_row">
+            <span className="cv_votes_label">득표수 <strong>1,248표</strong></span>
+            <span className="cv_percent_label">(88.7%)</span>
+          </div>
+          <div className="cv_progress_bar">
+            <div className="cv_progress_fill" style={{ width: '88.7%' }} />
+          </div>
+        </div>
+      </section>
 
-        <div className="cv_first_crown_row">
-          <img src={crownIcon} alt="" className="cv_crown_icon" />
-          <span className="cv_best_badge">BEST 1</span>
+      {/* SNS 프로필 카드 */}
+      <div className="cv_profile_card">
+        <div className="cv_profile_row">
+          <ProfileImage src={voting1} alt="콩이" className="cv_profile_avatar" />
+          <div className="cv_profile_right">
+            <div className="cv_profile_info">
+              <Title
+                as="h4"
+                title="@insta_wlqtk"
+                className="cv_profile_username_row"
+                beforeTitle={<img src={instaIcon} alt="" aria-hidden="true" className="cv_profile_insta_icon" />}
+              />
+              <p className="cv_profile_desc p_regular">콩이의 일상 보러가기 #멍팔</p>
+            </div>
+            <Button type="button" className="cv_follow_btn" disabled>팔로우</Button>
+          </div>
         </div>
 
-        <p className="cv_first_name">1위: 콩이</p>
-
-        <div className="cv_first_stats_row">
-          <span className="cv_first_votes">득표수 <strong>1,248표</strong></span>
-          <span className="cv_first_percent">(38.7%)</span>
-        </div>
-
-        <div className="cv_progress_bar">
-          <div className="cv_progress_fill" style={{ width: '38.7%' }} />
-        </div>
+        {/* 최근 게시물 미리보기 */}
+        <section className="cv_preview_section">
+          <Title as="h5" title="최근 게시물 미리보기" className="cv_preview_label" />
+          <div className="cv_preview_grid">
+            <img src={voting2} alt="" aria-hidden="true" className="cv_preview_img" />
+            <img src={voting3} alt="" aria-hidden="true" className="cv_preview_img" />
+            <img src={voting4} alt="" aria-hidden="true" className="cv_preview_img" />
+          </div>
+        </section>
       </div>
 
-      {/* 1위 원형 이미지 */}
-      <div className="cv_first_image_wrap">
-        <img src={voting1} alt="1위 쿵이" className="cv_first_image" />
-      </div>
-
-      {/* 인스타 버튼 */}
-      <Button type="button" className="white_btn cv_insta_btn">
-        <img src={instaIcon} alt="" className="cv_insta_icon" />
-        @insta_wlqtk
-        <svg className="cv_chevron" viewBox="0 0 8 14" fill="none" aria-hidden="true">
-          <path d="M1 1l6 6-6 6" stroke="#555" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      </Button>
-
-      {/* 2위, 3위 */}
-      <div className="cv_rankings">
+      {/* 다른순위 (2위~3위) */}
+      <section className="cv_other_ranks_section">
+        <div className="section_header">
+          <Title as="h4" title="다른순위 (2위~3위)" />
+        </div>
         {top2Rankings.map((item) => (
           <div key={item.rank} className="cv_rank_item">
-            <div className="cv_rank_image_wrap">
-              <img src={item.image} alt={`${item.rank}위 ${item.name}`} className="cv_rank_image" />
-              <span className="cv_rank_num">{item.rank}</span>
-            </div>
+            <img src={item.medal} alt={`${item.rank}위 메달`} className="cv_rank_medal" />
+            <img src={item.image} alt={item.name} className="cv_rank_photo" />
             <div className="cv_rank_body">
-              <div className="cv_rank_name_row">
-                <span className="cv_rank_name">
-                  {item.rank}위 {item.name}
-                </span>
-                <img src={instaIcon} alt="" className="cv_rank_insta_icon" />
-              </div>
-              <div className="cv_rank_stats_row">
-                <span className="cv_rank_votes">득표수 <strong>{item.votes.toLocaleString()}표</strong></span>
-                <span className="cv_rank_percent">({item.percentage}%)</span>
+              <span className="cv_rank_name">{item.rank}위 {item.name}</span>
+              <div className="cv_stats_row">
+                <span className="cv_votes_label">득표수 <strong>{item.votes.toLocaleString()}표</strong></span>
+                <span className="cv_percent_label">({item.percentage}%)</span>
               </div>
               <div className="cv_progress_bar">
                 <div className="cv_progress_fill" style={{ width: `${item.percentage}%` }} />
@@ -147,36 +146,36 @@ function CommunityVoteResult() {
             </div>
           </div>
         ))}
-      </div>
+      </section>
 
-      {/* 기타 순위 */}
-      <div className="cv_others">
-        <div className="cv_others_header">
-          <span className="cv_others_title">기타 순위 (4위~10위)</span>
-          <button type="button" className="cv_others_more" disabled>
-            모두 보기
+      {/* 기타 순위 (4위~10위) */}
+      <section className="cv_others_section">
+        <Title as="h4" title="기타 순위 (4위~10위)" className="section_header">
+          <Button type="button" className="cv_others_more_btn">
+            더보기
             <ChevronIcon direction="right" size="sm" />
-          </button>
-        </div>
-        <div className="cv_others_list">
+          </Button>
+        </Title>
+        <div className="cv_others_grid">
           {otherRankings.map((item) => (
             <div key={item.rank} className="cv_others_item">
-              <img src={item.image} alt={`${item.rank}위 ${item.name}`} className="cv_others_image" />
-              <span className="cv_others_label">{item.rank}위 {item.name}</span>
+              <img src={item.image} alt={`${item.rank}위 ${item.name}`} className="cv_others_img" />
+              <span className="cv_others_label p_regular">{item.rank}위 {item.name}</span>
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
-      {/* 하단 버튼 */}
-      <div className="cv_btn_wrap">
+      {/* 하단 */}
+      <div className="cv_bottom">
+        <p className="cv_share_hint">공유하면 포인트 <strong>+300P 적립</strong></p>
         <Button
           type="button"
           className="purple_btn"
           onClick={handleRewardClick}
           disabled={isRewardClaimed}
         >
-          공유하고 포인트 받기
+          결과 공유하기
         </Button>
       </div>
 

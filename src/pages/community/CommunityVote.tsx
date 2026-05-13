@@ -124,7 +124,6 @@ function CommunityVote() {
               </Title>
               {vote.buttonType === 'notify' ? (
                 <button type="button" className="cv2_outline_btn">
-                  <HeaderIcon type="notification" size={20} />
                   알림받기
                 </button>
               ) : (
