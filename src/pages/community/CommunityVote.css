@@ -1,9 +1,15 @@
+html:has(.cv2_page) {
+  overflow-anchor: none;
+}
+
+.layout_content:has(.cv2_page) {
+  padding-top: 10px;
+}
+
 .cv2_page {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding-top: 0;
-  padding-bottom: 32px;
 }
 
 .cv2_page .community_tab_bar,

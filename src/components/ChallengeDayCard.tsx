@@ -2,8 +2,9 @@ import { forwardRef, type ReactNode } from 'react'
 import { Lock } from 'lucide-react'
 import './ChallengeDayCard.css'
 import stampImg from '../img/challenge/stamp.png'
+import notCompletedStampImg from '../img/challenge/not_completed_stamp.png'
 
-type ChallengeStatus = 'completed' | 'current' | 'locked'
+type ChallengeStatus = 'completed' | 'missed' | 'current' | 'locked'
 
 type ChallengeDayCardProps = {
   day: number
@@ -15,7 +16,7 @@ type ChallengeDayCardProps = {
 const ChallengeDayCard = forwardRef<HTMLDivElement, ChallengeDayCardProps>(
 function ChallengeDayCard({ day, image, description, status }, ref) {
   return (
-    <div ref={ref} className={`cdc_card${status === 'current' ? ' cdc_card_current' : ''}${status === 'completed' ? ' cdc_card_completed' : ''}`}>
+    <div ref={ref} className={`cdc_card${status === 'current' ? ' cdc_card_current' : ''}${status === 'completed' || status === 'missed' ? ' cdc_card_completed' : ''}`}>
       <span className="cdc_day">Day {day}</span>
       <div className="cdc_img_wrapper">
         {image && <img src={image} alt="" className="cdc_img" />}
@@ -28,6 +29,9 @@ function ChallengeDayCard({ day, image, description, status }, ref) {
       <p className="p_regular cdc_desc">{description}</p>
       {status === 'completed' && (
         <img src={stampImg} alt="완료" className="cdc_stamp" />
+      )}
+      {status === 'missed' && (
+        <img src={notCompletedStampImg} alt="미완료" className="cdc_stamp" />
       )}
     </div>
   )

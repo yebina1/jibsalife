@@ -1,6 +1,6 @@
 import './Community.css'
 import './CommunityChallenge.css'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
@@ -63,30 +63,102 @@ export function CommunityChallengePreview({ onNavigate }: CommunityChallengePrev
 }
 
 const TOTAL_DAYS = 7
-const COMPLETED_DAYS = 3
+const MIN_COMPLETED = 2
 
 const challengeDays = [
-  { day: 1, image: day1Img, description: <>내 반려동물의<br />체중 측정하고 기록해요</>, status: 'completed' as const },
-  { day: 2, image: day2Img, description: <>내 반려동물의<br />체중 측정하고 기록해요</>, status: 'completed' as const },
-  { day: 3, image: day3Img, description: <>내 반려동물의<br />체중 측정하고 기록해요</>, status: 'current' as const },
-  { day: 4, image: day4Img, description: <>내 반려동물의<br />하루 음수량을 체크해요</>, status: 'locked' as const },
-  { day: 5, image: day5Img, description: <>내 반려동물의<br />발톱을 정리해요</>, status: 'locked' as const },
-  { day: 6, image: day6Img, description: <>털을<br />부드럽게 빗어줘요</>, status: 'locked' as const },
-  { day: 7, image: day7Img, description: <>내 반려동물에게<br />사랑한다고 해줘요</>, status: 'locked' as const },
+  { day: 1, image: day1Img, description: <>내 반려동물의<br />체중 측정하고 기록해요</> },
+  { day: 2, image: day2Img, description: <>내 반려동물의<br />체중 측정하고 기록해요</> },
+  { day: 3, image: day3Img, description: <>내 반려동물의<br />체중 측정하고 기록해요</> },
+  { day: 4, image: day4Img, description: <>내 반려동물의<br />하루 음수량을 체크해요</> },
+  { day: 5, image: day5Img, description: <>내 반려동물의<br />발톱을 정리해요</> },
+  { day: 6, image: day6Img, description: <>털을<br />부드럽게 빗어줘요</> },
+  { day: 7, image: day7Img, description: <>내 반려동물에게<br />사랑한다고 해줘요</> },
 ]
 
 function CommunityChallenge() {
   const navigate = useNavigate()
-  const scrollRef = useRef<HTMLDivElement>(null)
   const currentCardRef = useRef<HTMLDivElement>(null)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([])
+  const touchStartX = useRef(0)
+  const visibleIndexRef = useRef(3)
+  const [currentDay, setCurrentDay] = useState(3)
+  const [participatedDays, setParticipatedDays] = useState<Set<number>>(
+    new Set(Array.from({ length: MIN_COMPLETED }, (_, i) => i))
+  )
+
+  const scrollToCard = (index: number) => {
+    const clamped = Math.max(0, Math.min(index, TOTAL_DAYS - 1))
+    visibleIndexRef.current = clamped
+    const card = cardRefs.current[clamped]
+    const container = scrollContainerRef.current
+    if (!card || !container) return
+    const targetLeft = card.offsetLeft - (container.clientWidth - card.offsetWidth) / 2
+    container.scrollTo({ left: targetLeft, behavior: 'smooth' })
+  }
 
   useEffect(() => {
-    const scroll = scrollRef.current
-    const card = currentCardRef.current
-    if (!scroll || !card) return
-    const scrollLeft = card.offsetLeft - scroll.clientWidth / 2 + card.clientWidth / 2
-    scroll.scrollLeft = scrollLeft
+    scrollToCard(3)
   }, [])
+
+  useEffect(() => {
+    const el = scrollContainerRef.current
+    if (!el) return
+    const onTouchStart = (e: TouchEvent) => {
+      touchStartX.current = e.touches[0].clientX
+      e.preventDefault()
+    }
+    const onTouchEnd = (e: TouchEvent) => {
+      const diff = touchStartX.current - e.changedTouches[0].clientX
+      if (Math.abs(diff) > 30) {
+        scrollToCard(diff > 0 ? visibleIndexRef.current + 1 : visibleIndexRef.current - 1)
+      }
+    }
+    el.addEventListener('touchstart', onTouchStart, { passive: false })
+    el.addEventListener('touchend', onTouchEnd)
+    return () => {
+      el.removeEventListener('touchstart', onTouchStart)
+      el.removeEventListener('touchend', onTouchEnd)
+    }
+  }, [])
+
+  // 현재 날 직전까지 연속 성공 일수
+  let consecutive = 0
+  for (let i = currentDay - 1; i >= 0; i--) {
+    if (participatedDays.has(i)) consecutive++
+    else break
+  }
+
+  // 지나간 날 중 한 번이라도 미완료
+  const hasMissed =
+    currentDay > 0 &&
+    Array.from({ length: currentDay }, (_, i) => i).some((i) => !participatedDays.has(i))
+
+  const rewardTitle = hasMissed ? '집사 챌린지 다시 시작!' : `${consecutive}일 연속 성공 중!`
+
+  const rewardDesc =
+    consecutive === 2 ? (
+      <>오늘 완료하면 보상 <span className="cc_reward_point">+100P</span></>
+    ) : consecutive === 6 ? (
+      <>오늘 완료하면 보상 <span className="cc_reward_point">+300P</span></>
+    ) : consecutive >= 3 && consecutive <= 5 ? (
+      <>7일 연속 완료하면 보상 <span className="cc_reward_point">+300P</span></>
+    ) : (
+      <>3일 연속 보상에 도전해보세요!</>
+    )
+
+  const getStampClass = (i: number) => {
+    if (i >= currentDay) return ''
+    return participatedDays.has(i) ? 'cc_stamp_active' : 'cc_stamp_not_done'
+  }
+
+  const handleComplete = () => {
+    setParticipatedDays((prev) => new Set([...prev, currentDay]))
+  }
+
+  const handleDayEnd = () => {
+    setCurrentDay((prev) => Math.min(prev + 1, TOTAL_DAYS))
+  }
 
   return (
     <>
@@ -109,38 +181,53 @@ function CommunityChallenge() {
 
       <main className="page cc_page">
         <section className="cc_progress_section">
-          <strong className="cc_title">7일 챌린지 완주까지 D-4</strong>
+          <strong className="cc_title">7일 챌린지 완주까지 D-{TOTAL_DAYS - currentDay}</strong>
           <img src={cheerGroupImg} alt="" className="cc_cheer_img" />
           <div className="cc_stamp_row">
             {Array.from({ length: TOTAL_DAYS }).map((_, i) => (
-              <span key={i} className={`cc_stamp_item${i < COMPLETED_DAYS ? ' cc_stamp_active' : ' cc_stamp_inactive'}`}>
+              <span key={i} className={`cc_stamp_item ${getStampClass(i)}`}>
                 <img src={footprintsIcon} alt="" className="cc_stamp_icon" />
               </span>
             ))}
           </div>
           <div className="cc_reward_card">
-            <Title as="h5" title="3일 연속 성공 중!">
-              <p className="cc_reward_desc">오늘 완료하면 보상 <span className="cc_reward_point">+300P</span></p>
+            <Title as="h5" title={rewardTitle}>
+              <p className="cc_reward_desc">{rewardDesc}</p>
             </Title>
             <img src={pointIcon} alt="" className="cc_point_icon" />
           </div>
         </section>
-        <WeeklyChallengeCard />
+        <WeeklyChallengeCard
+          onComplete={handleComplete}
+          onDayEnd={handleDayEnd}
+          day={challengeDays[Math.min(currentDay, TOTAL_DAYS - 1)].day}
+          imageSrc={challengeDays[Math.min(currentDay, TOTAL_DAYS - 1)].image}
+          description={challengeDays[Math.min(currentDay, TOTAL_DAYS - 1)].description}
+        />
         <section className="cc_day_list_section">
           <Title as="h4" title="챌린지 목록">
             <p>Tip! 매일 자정에 새로운 챌린지가 열려요!</p>
           </Title>
-          <div className="cc_day_scroll" ref={scrollRef}>
-            {challengeDays.map((item) => (
-              <ChallengeDayCard
-                key={item.day}
-                ref={item.status === 'current' ? currentCardRef : undefined}
-                day={item.day}
-                image={'image' in item ? item.image : undefined}
-                description={item.description}
-                status={item.status}
-              />
-            ))}
+          <div className="cc_day_scroll" ref={scrollContainerRef}>
+            {challengeDays.map((item, i) => {
+              const status =
+                i < currentDay
+                  ? participatedDays.has(i) ? 'completed' : 'missed'
+                  : i === currentDay ? 'current' : 'locked'
+              return (
+                <ChallengeDayCard
+                  key={item.day}
+                  ref={(el) => {
+                    cardRefs.current[i] = el
+                    if (i === currentDay) currentCardRef.current = el
+                  }}
+                  day={item.day}
+                  image={item.image}
+                  description={item.description}
+                  status={status}
+                />
+              )
+            })}
           </div>
         </section>
       </main>

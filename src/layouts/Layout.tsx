@@ -189,32 +189,88 @@ function Layout({
       return
     }
 
-    const scrollEl: HTMLDivElement | Window = contentRef.current ?? window
-    let lastScrollY = contentRef.current ? contentRef.current.scrollTop : window.scrollY
     const resetTimerId = window.setTimeout(() => {
       setIsCommunityControlsVisible(true)
     }, 0)
 
-    const handleScroll = () => {
-      const currentScrollY = contentRef.current ? contentRef.current.scrollTop : window.scrollY
+    let scrollAccum = 0
+    let lastDir = 0
+    let isTransitioning = false
+    let transitionTimerId: number | undefined
 
-      if (currentScrollY <= 8) {
-        setIsCommunityControlsVisible(true)
-      } else if (currentScrollY > lastScrollY) {
-        setIsCommunityControlsVisible(false)
-        setIsCommunitySortOpen(false)
-      } else if (currentScrollY < lastScrollY) {
-        setIsCommunityControlsVisible(true)
-      }
-
-      lastScrollY = currentScrollY
+    const lockTransition = () => {
+      isTransitioning = true
+      window.clearTimeout(transitionTimerId)
+      transitionTimerId = window.setTimeout(() => {
+        isTransitioning = false
+      }, 220)
     }
 
-    scrollEl.addEventListener('scroll', handleScroll, { passive: true })
+    const getScrollY = () => {
+      const el = contentRef.current
+      if (el && el.scrollHeight > el.clientHeight) return el.scrollTop
+      return window.scrollY
+    }
+
+    const isNearBottom = () => {
+      const el = contentRef.current
+      if (el && el.scrollHeight > el.clientHeight) {
+        return el.scrollHeight - el.scrollTop - el.clientHeight < 80
+      }
+      return document.documentElement.scrollHeight - window.scrollY - window.innerHeight < 100
+    }
+
+    let lastScrollY = getScrollY()
+
+    const handleScroll = () => {
+      const currentScrollY = getScrollY()
+      const delta = currentScrollY - lastScrollY
+      lastScrollY = currentScrollY
+
+      if (currentScrollY <= 8) {
+        scrollAccum = 0
+        setIsCommunityControlsVisible(true)
+        return
+      }
+
+      if (isTransitioning) {
+        scrollAccum = 0
+        return
+      }
+
+      const dir = delta > 0 ? 1 : delta < 0 ? -1 : 0
+      if (dir !== 0 && dir !== lastDir) {
+        scrollAccum = 0
+        lastDir = dir
+      }
+      scrollAccum += delta
+
+      if (isNearBottom()) {
+        scrollAccum = 0
+        return
+      }
+
+      if (scrollAccum > 30) {
+        scrollAccum = 0
+        setIsCommunityControlsVisible(false)
+        setIsCommunitySortOpen(false)
+        lockTransition()
+      } else if (scrollAccum < -30) {
+        scrollAccum = 0
+        setIsCommunityControlsVisible(true)
+        lockTransition()
+      }
+    }
+
+    const el = contentRef.current
+    el?.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('scroll', handleScroll, { passive: true })
 
     return () => {
       window.clearTimeout(resetTimerId)
-      scrollEl.removeEventListener('scroll', handleScroll)
+      window.clearTimeout(transitionTimerId)
+      el?.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('scroll', handleScroll)
     }
   }, [communitySubTabs])
 

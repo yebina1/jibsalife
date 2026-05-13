@@ -6,6 +6,7 @@
   padding-inline: var(--layout-inline-padding);
   overflow-y: scroll;
   overscroll-behavior-y: none;
+  overflow-anchor: none;
 }
 
 /* 일상 뷰 */

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import Title from './Title'
 import Button from './html/Button'
 import './WeeklyChallengeCard.css'
@@ -23,16 +23,27 @@ function pad(n: number) {
 type WeeklyChallengeCardProps = {
   showTimer?: boolean
   showImage?: boolean
+  onComplete?: () => void
+  onDayEnd?: () => void
+  day?: number
+  imageSrc?: string
+  description?: ReactNode
 }
 
-function WeeklyChallengeCard({ showTimer = true, showImage = true }: WeeklyChallengeCardProps) {
+function WeeklyChallengeCard({ showTimer = true, showImage = true, onComplete, onDayEnd, day, imageSrc, description }: WeeklyChallengeCardProps) {
   const [timeLeft, setTimeLeft] = useState(getTimeUntilMidnight)
 
   useEffect(() => {
     if (!showTimer) return
-    const id = window.setInterval(() => setTimeLeft(getTimeUntilMidnight()), 1000)
+    const id = window.setInterval(() => {
+      const t = getTimeUntilMidnight()
+      setTimeLeft(t)
+      if (t.hours === 0 && t.minutes === 0 && t.seconds === 0) {
+        onDayEnd?.()
+      }
+    }, 1000)
     return () => window.clearInterval(id)
-  }, [showTimer])
+  }, [showTimer, onDayEnd])
 
   return (
     <section className="co_challenge_card co_challenge_card_first">
@@ -49,14 +60,14 @@ function WeeklyChallengeCard({ showTimer = true, showImage = true }: WeeklyChall
         )}
         <Title
           className="co_challenge_info"
-          beforeTitle={<span className="co_day_label">Day 3</span>}
+          beforeTitle={<span className="co_day_label">Day {day ?? 3}</span>}
         >
           <strong>이번주 집사 챌린지</strong>
         </Title>
       </div>
-      {showImage && <img src={challengeImg} alt="" className="wcc_challenge_img" />}
+      {showImage && <img src={imageSrc ?? challengeImg} alt="" className="wcc_challenge_img" />}
       <p className="co_challenge_desc">
-        내 반려동물의<br />발바닥 상태를 체크해줘요
+        {description ?? <>내 반려동물의<br />발바닥 상태를 체크해줘요</>}
       </p>
       <div className="co_challenge_meta">
         <p>
@@ -76,7 +87,7 @@ function WeeklyChallengeCard({ showTimer = true, showImage = true }: WeeklyChall
           <span>오늘 24:00 마감</span>
         </p>
       </div>
-      <Button type="button" className="purple_btn">참여하고 포인트 받기</Button>
+      <Button type="button" className="purple_btn" onClick={onComplete}>참여하고 포인트 받기</Button>
     </section>
   )
 }

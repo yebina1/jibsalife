@@ -73,6 +73,15 @@
   filter: brightness(0) invert(1);
 }
 
+.cc_stamp_not_done {
+  background: #7C7C7C;
+  border-color: #7C7C7C;
+}
+
+.cc_stamp_not_done .cc_stamp_icon {
+  filter: brightness(0) invert(1) opacity(0.9);
+}
+
 /* 보상 카드 */
 .cc_reward_card {
   display: flex;
@@ -115,6 +124,13 @@
   overflow-x: auto;
   scrollbar-width: none;
   padding-bottom: 4px;
+  scroll-snap-type: x mandatory;
+}
+
+.cc_day_scroll::before,
+.cc_day_scroll::after {
+  content: '';
+  flex: 0 0 calc(50% - 98px);
 }
 
 .cc_day_scroll::-webkit-scrollbar {
@@ -123,4 +139,6 @@
 
 .cc_day_scroll .cdc_card {
   flex: 0 0 auto;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
 }
