@@ -175,3 +175,54 @@
   font-weight: 500;
   line-height: 1.4;
 }
+
+/* ── 태블릿 (768px+) ─────────────────────────────────────── */
+
+@media (min-width: 768px) {
+  .health_hospital_recommend_page {
+    gap: 24px;
+    padding: 0 40px 56px;
+  }
+
+  .health_hospital_recommend_title {
+    font-size: 22px;
+  }
+
+  .health_hospital_recommend_list {
+    gap: 40px;
+  }
+
+  .health_hospital_recommend_item {
+    gap: 24px;
+    align-items: flex-start;
+  }
+
+  .health_hospital_recommend_img {
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+  }
+
+  .health_hospital_recommend_info {
+    gap: 8px;
+  }
+
+  .health_hospital_recommend_name {
+    font-size: 18px;
+  }
+
+  .health_hospital_recommend_rating {
+    font-size: 15px;
+    gap: 10px;
+  }
+
+  .health_hospital_recommend_tags {
+    font-size: 15px;
+  }
+
+  .health_hospital_recommend_status {
+    font-size: 15px;
+    padding: 6px 12px;
+    border-radius: 6px;
+  }
+}

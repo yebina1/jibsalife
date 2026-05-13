@@ -46,6 +46,8 @@ const quickMessages = [
   '사료 150g',
 ]
 
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+
 function getDateKey(year: number, month: number, day: number) {
   return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 }
@@ -68,6 +70,11 @@ function getPetAge(birthDate: string): string {
 function Health() {
   const navigate = useNavigate()
   const videoRef = useRef<HTMLVideoElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const recordingChunksRef = useRef<Blob[]>([])
+  const [isRecording, setIsRecording] = useState(false)
+  const [capturedVideo, setCapturedVideo] = useState<string | null>(null)
   const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment')
   const [isCameraAvailable, setIsCameraAvailable] = useState(true)
   const [cameraMode, setCameraMode] = useState<'photo' | 'video'>('photo')
@@ -120,27 +127,76 @@ function Health() {
   }
 
   const handleCapture = () => {
-    console.log('캡처 시도')
-    if (!isCameraAvailable || !videoRef.current) {
+    if (!isMobile) {
       setCapturedImage(pungpungiImage)
       return
     }
-    const video = videoRef.current
-    if (video.videoWidth === 0 || video.videoHeight === 0) {
-      console.error('비디오 스트림 준비 안됨')
-      setCapturedImage(pungpungiImage)
+
+    if (cameraMode === 'photo') {
+      const video = videoRef.current
+      if (!video || video.videoWidth === 0 || video.videoHeight === 0) {
+        console.error('비디오 스트림 준비 안됨')
+        setCapturedImage(pungpungiImage)
+        return
+      }
+      const canvas = document.createElement('canvas')
+      canvas.width = video.videoWidth
+      canvas.height = video.videoHeight
+      canvas.getContext('2d')!.drawImage(video, 0, 0)
+      setCapturedImage(canvas.toDataURL('image/jpeg'))
+      video.pause()
       return
     }
-    const canvas = document.createElement('canvas')
-    canvas.width = video.videoWidth
-    canvas.height = video.videoHeight
-    canvas.getContext('2d')!.drawImage(video, 0, 0)
-    setCapturedImage(canvas.toDataURL('image/jpeg'))
-    video.pause()
+
+    // VIDEO 모드
+    if (isRecording) {
+      mediaRecorderRef.current?.stop()
+      return
+    }
+
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        const recorder = new MediaRecorder(stream)
+        mediaRecorderRef.current = recorder
+        recordingChunksRef.current = []
+
+        recorder.ondataavailable = (e) => {
+          if (e.data.size > 0) recordingChunksRef.current.push(e.data)
+        }
+
+        recorder.onstop = () => {
+          const blob = new Blob(recordingChunksRef.current, { type: 'video/webm' })
+          setCapturedVideo(URL.createObjectURL(blob))
+          stream.getTracks().forEach((t) => t.stop())
+          setIsRecording(false)
+        }
+
+        recorder.start()
+        setIsRecording(true)
+      })
+      .catch((err) => {
+        console.error('카메라/마이크 접근 실패:', err)
+        alert('카메라 또는 마이크 권한이 필요합니다.')
+      })
+  }
+
+  const handleGalleryClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setCapturedImage(URL.createObjectURL(file))
+    e.target.value = ''
   }
 
   const handleRetake = () => {
+    if (capturedImage?.startsWith('blob:')) URL.revokeObjectURL(capturedImage)
+    if (capturedVideo) URL.revokeObjectURL(capturedVideo)
     setCapturedImage(null)
+    setCapturedVideo(null)
     videoRef.current?.play()
   }
 
@@ -204,7 +260,9 @@ function Health() {
     <main className="health_cam_ui">
       <StateBar />
       <section className="health_cam_view" aria-label="카메라 뷰">
-        {capturedImage ? (
+        {capturedVideo ? (
+          <video className="health_cam_img" src={capturedVideo} controls playsInline />
+        ) : capturedImage ? (
           <img className="health_cam_img" src={capturedImage} alt="촬영된 사진" />
         ) : isCameraAvailable ? (
           <video ref={videoRef} className="health_cam_video" autoPlay muted playsInline />
@@ -216,6 +274,7 @@ function Health() {
           bgColor="#505050"
           iconColor="#fff"
           size={36}
+          className="health_cam_close_btn"
           icon={
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <line x1="18" y1="6" x2="6" y2="18" />
@@ -280,9 +339,16 @@ function Health() {
         </div>
 
         <div className="health_cam_shutter_row">
-          <button type="button" className="health_cam_side" aria-label="갤러리">
+          <button type="button" className="health_cam_side" aria-label="갤러리" onClick={handleGalleryClick}>
             <img src={galleryIcon} width={24} height={24} aria-hidden="true" alt="" />
           </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            style={{ display: 'none' }}
+            onChange={handleFileChange}
+          />
           <button type="button" className="health_cam_shutter" aria-label="촬영" onClick={handleCapture}>
             <div style={{ width: 72, height: 72, borderRadius: '50%', border: '3px solid black', padding: 3, backgroundColor: 'white' }}>
               <div style={{ width: '100%', height: '100%', borderRadius: '50%', backgroundColor: 'black' }} />
@@ -294,7 +360,7 @@ function Health() {
         </div>
       </div>
 
-      {capturedImage ? (
+      {(capturedImage || capturedVideo) ? (
         <div className="health_cam_result_ctrl">
           <button type="button" className="health_cam_retake" onClick={handleRetake}>
             재촬영 하기

@@ -63,7 +63,7 @@ function HealthReport() {
               <p className="hr_pet_name">{pet.name}의 상태는</p>
               <p className="hr_pet_status" style={{ whiteSpace: 'nowrap' }}>
                 지켜보면 괜찮을 것 같아요.
-                <img src={checkIcon} alt="" aria-hidden="true" style={{ width: '24px', height: '24px' }} />
+                <img src={checkIcon} alt="" aria-hidden="true" className="hr_pet_check_icon" />
               </p>
             </div>
           </div>
@@ -79,7 +79,7 @@ function HealthReport() {
             <span className="hr_badge">정상</span>
           </div>
 
-          <div style={{ height: 157, position: 'relative', marginTop: 16, overflow: 'visible' }}>
+          <div className="hr_chart_inner">
             {/* Y축 레이블 */}
             <span className="hr_y_label" style={{ top: 0 }}>60분</span>
             <span className="hr_y_label" style={{ top: 40 }}>40분</span>
@@ -115,13 +115,8 @@ function HealthReport() {
         {/* ── 카드 3: 식욕 / 배변 상태 ── */}
         <div className="hr_card hr_card_appetite">
           <div className="hr_appetite_col">
-            <div style={{ position: 'relative', width: 42, height: 42, flexShrink: 0 }}>
-              <img
-                src={iconMeal}
-                alt=""
-                aria-hidden="true"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
+            <div className="hr_appetite_icon_wrap">
+              <img src={iconMeal} alt="" aria-hidden="true" style={{ objectFit: 'cover' }} />
             </div>
             <div className="hr_appetite_label_row">
               <span className="hr_appetite_label">식욕</span>
@@ -130,13 +125,8 @@ function HealthReport() {
           </div>
           <div className="hr_appetite_divider" aria-hidden="true" />
           <div className="hr_appetite_col">
-            <div style={{ position: 'relative', width: 42, height: 42, flexShrink: 0 }}>
-              <img
-                src={iconPoop}
-                alt=""
-                aria-hidden="true"
-                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-              />
+            <div className="hr_appetite_icon_wrap">
+              <img src={iconPoop} alt="" aria-hidden="true" style={{ objectFit: 'contain' }} />
             </div>
             <div className="hr_appetite_label_row">
               <span className="hr_appetite_label">배변</span>
@@ -148,13 +138,8 @@ function HealthReport() {
         {/* ── 카드 4: 병원 방문 권장 기준 ── */}
         <div className="hr_card hr_card_criteria">
           <div className="hr_criteria_header">
-            <div style={{ position: 'relative', width: 30, height: 30, flexShrink: 0 }}>
-              <img
-                src={healthShield}
-                alt=""
-                aria-hidden="true"
-                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-              />
+            <div className="hr_criteria_shield_wrap">
+              <img src={healthShield} alt="" aria-hidden="true" />
             </div>
             <span className="hr_criteria_title">병원 방문 권장 기준</span>
           </div>
@@ -162,7 +147,7 @@ function HealthReport() {
             <div className="hr_criteria_col">
               {criteriaLeft.map((text) => (
                 <div key={text} className="hr_criteria_item">
-                  <img src={blueCheckIcon} alt="" aria-hidden="true" style={{ width: '16px', height: '16px', flexShrink: 0 }} />
+                  <img src={blueCheckIcon} alt="" aria-hidden="true" className="hr_criteria_check" />
                   <span className="hr_criteria_text">{text}</span>
                 </div>
               ))}
@@ -170,7 +155,7 @@ function HealthReport() {
             <div className="hr_criteria_col">
               {criteriaRight.map((text) => (
                 <div key={text} className="hr_criteria_item">
-                  <img src={blueCheckIcon} alt="" aria-hidden="true" style={{ width: '16px', height: '16px', flexShrink: 0 }} />
+                  <img src={blueCheckIcon} alt="" aria-hidden="true" className="hr_criteria_check" />
                   <span className="hr_criteria_text">{text}</span>
                 </div>
               ))}
@@ -179,33 +164,27 @@ function HealthReport() {
         </div>
 
         {/* ── 카드 5: 병원찾기 / 수의사상담 ── */}
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', width: '343px' }}>
+        <div className="hr_actions">
           <button
             type="button"
+            className="hr_action_card hr_action_hospital"
             onClick={() => navigate('/health/hospital')}
-            style={{ background: '#ffebe0', flex: '1 0 0', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '20px 0', borderRadius: '12px', minWidth: 0, border: 0, outline: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
           >
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', width: '165px' }}>
-              <img src={hospitalImage} alt="" aria-hidden="true" style={{ width: '60px', height: '60px', objectFit: 'cover', flexShrink: 0 }} />
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-start' }}>
-                <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#111', letterSpacing: '-0.35px', lineHeight: 1.4, whiteSpace: 'nowrap' }}>병원 찾기</p>
-                <p style={{ margin: 0, fontSize: '12px', color: '#505050', letterSpacing: '-0.3px', lineHeight: 1.45, whiteSpace: 'nowrap' }}>내 주변 병원 검색</p>
-                <p style={{ margin: 0, fontSize: '12px', color: '#505050', letterSpacing: '-0.3px', lineHeight: 1.45, whiteSpace: 'nowrap' }}>및 정보 확인</p>
-              </div>
+            <img src={hospitalImage} alt="" aria-hidden="true" className="hr_action_img" />
+            <div className="hr_action_text">
+              <p className="hr_action_title">병원 찾기</p>
+              <p className="hr_action_desc">{'내 주변 병원 검색\n및 정보 확인'}</p>
             </div>
           </button>
           <button
             type="button"
             aria-disabled="true"
-            style={{ background: '#E5E5EC', flex: '1 0 0', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '20px 0', borderRadius: '12px', minWidth: 0, border: 0, outline: 'none', cursor: 'not-allowed', fontFamily: 'inherit' }}
+            className="hr_action_card hr_action_consult"
           >
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-              <img src={consultImage} alt="" aria-hidden="true" style={{ width: '60px', height: '60px', objectFit: 'cover', flexShrink: 0, filter: 'grayscale(100%)', opacity: 0.45 }} />
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '93px', alignItems: 'flex-start' }}>
-                <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#ABABAB', letterSpacing: '-0.35px', lineHeight: 1.4 }}>수의사 상담</p>
-                <p style={{ margin: 0, fontSize: '12px', color: '#ABABAB', letterSpacing: '-0.3px', lineHeight: 1.45 }}>실시간 상담으로</p>
-                <p style={{ margin: 0, fontSize: '12px', color: '#ABABAB', letterSpacing: '-0.3px', lineHeight: 1.45 }}>전문가와 대화</p>
-              </div>
+            <img src={consultImage} alt="" aria-hidden="true" className="hr_action_img hr_action_img_disabled" />
+            <div className="hr_action_text">
+              <p className="hr_action_title hr_action_title_disabled">수의사 상담</p>
+              <p className="hr_action_desc hr_action_desc_disabled">{'실시간 상담으로\n전문가와 대화'}</p>
             </div>
           </button>
         </div>

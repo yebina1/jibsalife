@@ -513,8 +513,29 @@ button.layout_nav_link {
 }
 
 @media (min-width: 768px) {
-  .layout {
+  /* layout_camera는 카메라 전용 레이아웃 — footer 여백 변경 제외 */
+  .layout:not(.layout_camera) {
+    --layout-footer-height: 100px;
     padding-bottom: var(--layout-footer-height);
+  }
+
+  .layout_nav_inner {
+    height: 72px;
+  }
+
+  .layout_nav_link {
+    height: 72px;
+    gap: 6px;
+  }
+
+  .layout_nav_icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .layout_nav_label {
+    width: 56px;
+    font-size: 12px;
   }
 }
 
