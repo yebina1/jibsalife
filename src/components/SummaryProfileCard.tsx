@@ -38,10 +38,6 @@ function ProfileEditIcon() {
   )
 }
 
-function StatEditIcon() {
-  return <i className="bx bx-edit" aria-hidden="true" />
-}
-
 function splitStatValue(value: string) {
   const match = value.match(/^(\d+(?:\.\d+)?)(.*)$/)
 
@@ -87,7 +83,6 @@ function SummaryProfileCard({
   imageAlt,
   className,
   onEdit,
-  onStatEdit,
   onCareGuideClick,
 }: SummaryProfileCardProps) {
   const classNames = className
@@ -139,16 +134,6 @@ function SummaryProfileCard({
               <div className="summary_profile_card_stat_item" role="listitem">
                 <div className="summary_profile_card_stat_label_group">
                   <span className="p_medium">{stat.label}</span>
-                  {onStatEdit ? (
-                  <button
-                    type="button"
-                    className="summary_profile_card_stat_edit"
-                    aria-label={`${stat.label} 기록 수정`}
-                    onClick={() => onStatEdit(stat.label)}
-                  >
-                    <StatEditIcon />
-                  </button>
-                  ) : null}
                 </div>
                 <strong className="summary_profile_card_stat_value">
                   <span>{amount}</span>

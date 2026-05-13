@@ -232,7 +232,7 @@ function HealthQna() {
     }
 
     if (chip === '주변병원') {
-      navigate('/health/hospitals')
+      navigate('/place')
     }
   }
 
