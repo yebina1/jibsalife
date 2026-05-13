@@ -8,6 +8,7 @@ import BackButton from '../components/html/BackButton'
 import DatePicker from '../components/html/DatePicker'
 import Button from '../components/html/Button'
 import AddSheet from '../components/AddSheet'
+import MissionRecordSheet from '../components/MissionRecordSheet'
 import {
   PET_PROFILES_CHANGE_EVENT,
   readPetProfiles,
@@ -33,6 +34,7 @@ const today = new Date()
 const CALENDAR_YEAR = today.getFullYear()
 const CALENDAR_MONTH = today.getMonth() + 1
 const CALENDAR_DAY = today.getDate()
+const DEFAULT_FEED_AMOUNT_STORAGE_KEY = 'missionDefaultFeedAmount'
 
 type CalendarDay = {
   id: string
@@ -41,6 +43,25 @@ type CalendarDay = {
   year: number
   muted?: boolean
 }
+
+type PeriodDateTime = {
+  year: number
+  month: number
+  day: number
+  period: 'AM' | 'PM'
+  hour: number
+  minute: number
+}
+
+type PeriodField = 'start' | 'end'
+
+const periodWeekLabels = ['일', '월', '화', '수', '목', '금', '토']
+const periodOptions: Array<{ value: PeriodDateTime['period']; label: string }> = [
+  { value: 'AM', label: '오전' },
+  { value: 'PM', label: '오후' },
+]
+const periodHourOptions = Array.from({ length: 12 }, (_, index) => index + 1)
+const periodMinuteOptions = Array.from({ length: 12 }, (_, index) => index * 5)
 
 function createCalendarDays(year: number, month: number): CalendarDay[] {
   const firstDayIndex = new Date(year, month - 1, 1).getDay()
@@ -87,6 +108,145 @@ function getDateKey(year: number, month: number, day: number) {
   return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 }
 
+function createRepeatDateKeys(
+  repeatId: string,
+  date: { year: number; month: number; day: number },
+  endDateValue?: { year: number; month: number; day: number },
+) {
+  const startDate = new Date(date.year, date.month - 1, date.day)
+  const selectedEndDate = endDateValue
+    ? new Date(endDateValue.year, endDateValue.month - 1, endDateValue.day)
+    : new Date(date.year, date.month, 0)
+  const endDate = selectedEndDate < startDate ? startDate : selectedEndDate
+  const dateKeys: string[] = []
+
+  for (
+    const currentDate = new Date(startDate);
+    currentDate <= endDate;
+    currentDate.setDate(currentDate.getDate() + 1)
+  ) {
+    const dayOfWeek = currentDate.getDay()
+    const shouldInclude =
+      repeatId === 'daily' ||
+      (repeatId === 'weekdays' && dayOfWeek >= 1 && dayOfWeek <= 5) ||
+      (repeatId === 'weekly' && dayOfWeek === startDate.getDay()) ||
+      (repeatId === 'none' && currentDate.getTime() === startDate.getTime())
+
+    if (shouldInclude) {
+      dateKeys.push(
+        getDateKey(
+          currentDate.getFullYear(),
+          currentDate.getMonth() + 1,
+          currentDate.getDate(),
+        ),
+      )
+    }
+  }
+
+  return dateKeys.length > 0 ? dateKeys : [getDateKey(date.year, date.month, date.day)]
+}
+
+function createPeriodDateTime(
+  year: number,
+  month: number,
+  day: number,
+  hour24 = 16,
+  minute = 0,
+): PeriodDateTime {
+  const period = hour24 >= 12 ? 'PM' : 'AM'
+  const hour = hour24 % 12 === 0 ? 12 : hour24 % 12
+
+  return { year, month, day, period, hour, minute }
+}
+
+function getHour24(dateTime: PeriodDateTime) {
+  if (dateTime.period === 'AM') return dateTime.hour === 12 ? 0 : dateTime.hour
+  return dateTime.hour === 12 ? 12 : dateTime.hour + 12
+}
+
+function getPeriodTimeLabel(dateTime: PeriodDateTime) {
+  return `${String(getHour24(dateTime)).padStart(2, '0')}:${String(dateTime.minute).padStart(2, '0')}`
+}
+
+function getPeriodDateLabel(dateTime: PeriodDateTime) {
+  const date = new Date(dateTime.year, dateTime.month - 1, dateTime.day)
+
+  return `${dateTime.year}년 ${dateTime.month}월 ${dateTime.day}일 ${periodWeekLabels[date.getDay()]}요일 ${getPeriodTimeLabel(dateTime)}`
+}
+
+function getPeriodOptionKey(dateTime: Pick<PeriodDateTime, 'year' | 'month' | 'day'>) {
+  return getDateKey(dateTime.year, dateTime.month, dateTime.day)
+}
+
+function createPeriodDateOptions(centerDateTime: PeriodDateTime) {
+  const centerDate = new Date(centerDateTime.year, centerDateTime.month - 1, centerDateTime.day)
+
+  return Array.from({ length: 5 }, (_, index) => {
+    const date = new Date(centerDate)
+    date.setDate(centerDate.getDate() - 2 + index)
+
+    return {
+      year: date.getFullYear(),
+      month: date.getMonth() + 1,
+      day: date.getDate(),
+      label: `${date.getMonth() + 1}월 ${date.getDate()}일 ${periodWeekLabels[date.getDay()]}`,
+    }
+  })
+}
+
+function createCenteredNumberOptions(
+  value: number,
+  options: number[],
+) {
+  const activeIndex = Math.max(0, options.indexOf(value))
+
+  return Array.from({ length: 5 }, (_, index) => {
+    const nextIndex = Math.max(0, Math.min(activeIndex - 2 + index, options.length - 1))
+    return options[nextIndex]
+  }).filter((option, index, list) => list.indexOf(option) === index)
+}
+
+function parseTimeToPeriodDateTime(
+  date: { year: number; month: number; day: number },
+  time: string,
+) {
+  const [hourValue = '16', minuteValue = '00'] = time.split(':')
+  const hour24 = Number(hourValue)
+  const minute = Number(minuteValue)
+
+  return createPeriodDateTime(
+    date.year,
+    date.month,
+    date.day,
+    Number.isFinite(hour24) ? hour24 : 16,
+    Number.isFinite(minute) ? minute : 0,
+  )
+}
+
+function readDefaultFeedAmount() {
+  if (typeof window === 'undefined') return 0
+
+  const storedAmount = Number(window.localStorage.getItem(DEFAULT_FEED_AMOUNT_STORAGE_KEY))
+  return Number.isFinite(storedAmount) && storedAmount >= 0 ? storedAmount : 0
+}
+
+function writeDefaultFeedAmount(amount: number) {
+  if (typeof window === 'undefined') return
+
+  window.localStorage.setItem(
+    DEFAULT_FEED_AMOUNT_STORAGE_KEY,
+    String(Math.max(0, Math.round(amount)))
+  )
+}
+
+function getFeedAmountFromText(text: string) {
+  const match = text.match(/(\d+)\s*g/i)
+  if (!match) return null
+
+  const amount = Number(match[1])
+  return Number.isFinite(amount) ? amount : null
+}
+
 function getPetAgeLabel(birthDate: string) {
   const [birthYear, birthMonth, birthDay] = birthDate.split('.').map(Number)
   if (!birthYear || !birthMonth || !birthDay) return '-'
@@ -108,23 +268,55 @@ type CategoryOption = {
   color: string
 }
 
+type RepeatOption = {
+  id: string
+  label: string
+}
+
 const initialCategoryOptions: CategoryOption[] = [
-  { id: 'meal', label: '식사 기록', color: '#ffd1a8' },
-  { id: 'poop', label: '배변 기록', color: '#527ca3' },
-  { id: 'activity', label: '활동 기록', color: '#428fe6' },
-  { id: 'symptom', label: '증상', color: '#b9dfe3' },
+  { id: 'meal', label: '식사 기록', color: '#F2B472' },
+  { id: 'poop', label: '배변 · 배뇨 기록', color: '#BEE3F8' },
+  { id: 'activity', label: '활동 기록', color: '#162447' },
+  { id: 'symptom', label: '증상 기록', color: '#A28BFA' },
+  { id: 'walk', label: '산책 기록', color: '#A4CE95' },
+]
+
+const fixedCategoryIds = new Set(initialCategoryOptions.map((category) => category.id))
+const categoryDisplayOrder = ['meal', 'poop', 'activity', 'symptom', 'walk']
+
+const repeatOptions: RepeatOption[] = [
+  { id: 'none', label: '반복 안 함' },
+  { id: 'daily', label: '매일' },
+  { id: 'weekdays', label: '주중만' },
+  { id: 'weekly', label: '매주' },
 ]
 
 const categoryColorOptions = [
-  '#16233d',
-  '#527ca3',
-  '#428fe6',
-  '#b9dfe3',
-  '#6d9460',
-  '#f4ddb2',
-  '#ffa51e',
-  '#d43c48',
+  '#162447',
+  '#BEE3F8',
+  '#DDEEEC',
+  '#A28BFA',
+  '#E8CEA0',
+  '#A4CE95',
+  '#F2B472',
+  '#D93A47',
 ]
+
+function getCategoryColorForTitle(
+  title: string,
+  categories: CategoryOption[],
+) {
+  const normalizedTitle = title.replace(/\s+/g, '')
+
+  return categories.find((category) => {
+    const normalizedLabel = category.label.replace(/\s+/g, '')
+    return (
+      normalizedTitle.includes(normalizedLabel) ||
+      normalizedLabel.includes(normalizedTitle.replace(/기록$/, '')) ||
+      (normalizedTitle.includes('배변') && normalizedLabel.includes('배변'))
+    )
+  })?.color
+}
 
 const quickMessageOptions = [
   '사료 30g',
@@ -138,22 +330,32 @@ const quickMessageOptions = [
   '수익률',
 ]
 
+const categoryQuickMessageOptions: Record<string, string[]> = {
+  meal: quickMessageOptions,
+  activity: ['활발함', '보통', '활동 적음', '무기력', '평소와 다름'],
+  poop: ['정상 변', '묽은 변', '딱딱한 변', '배변 못함', '소변 잦음', '실수 배뇨', '평소와 다름'],
+  symptom: ['기침', '재채기', '구토', '설사', '헐떡', '무기력', '긁음'],
+}
+
 function Mission() {
   const [calendarYear, setCalendarYear] = useState(CALENDAR_YEAR)
   const [calendarMonth, setCalendarMonth] = useState(CALENDAR_MONTH)
   const [selectedDayId, setSelectedDayId] = useState(`c-${CALENDAR_DAY}`)
   const [monthSlideDirection, setMonthSlideDirection] = useState<'prev' | 'next'>('next')
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
-  const [pickerTop, setPickerTop] = useState(0)
+  const [isCalendarCondensed, setIsCalendarCondensed] = useState(false)
   const [isFabOpen, setIsFabOpen] = useState(false)
   const [isFabClosing, setIsFabClosing] = useState(false)
   const [isCategoryPickerOpen, setIsCategoryPickerOpen] = useState(false)
   const [isCategoryAddOpen, setIsCategoryAddOpen] = useState(false)
   const [isCategoryEditOpen, setIsCategoryEditOpen] = useState(false)
+  const [isRepeatPickerOpen, setIsRepeatPickerOpen] = useState(false)
   const [isPetSwitchOpen, setIsPetSwitchOpen] = useState(false)
   const [isPeriodPickerOpen, setIsPeriodPickerOpen] = useState(false)
   const [isPeriodDatePickerOpen, setIsPeriodDatePickerOpen] = useState(false)
   const [addTitle, setAddTitle] = useState('')
+  const [selectedQuickMessage, setSelectedQuickMessage] = useState('')
+  const [feedAmount, setFeedAmount] = useState(readDefaultFeedAmount)
   const [editingHistoryId, setEditingHistoryId] = useState<number | null>(null)
   const [historyItems, setHistoryItems] = useState<MissionHistoryRecord[]>(() => [
     ...readMissionActivityRecords().map(toMissionHistoryRecord),
@@ -164,6 +366,8 @@ function Mission() {
   const [categories, setCategories] = useState<CategoryOption[]>(initialCategoryOptions)
   const [selectedCategoryId, setSelectedCategoryId] = useState(initialCategoryOptions[0].id)
   const [draftCategoryId, setDraftCategoryId] = useState(initialCategoryOptions[0].id)
+  const [selectedRepeatId, setSelectedRepeatId] = useState('none')
+  const [draftRepeatId, setDraftRepeatId] = useState('none')
   const [newCategoryName, setNewCategoryName] = useState('')
   const [newCategoryColor, setNewCategoryColor] = useState('')
   const [editCategoryName, setEditCategoryName] = useState('')
@@ -174,9 +378,19 @@ function Mission() {
     day: CALENDAR_DAY,
   })
   const [draftAddDate, setDraftAddDate] = useState(addDate)
+  const [periodStart, setPeriodStart] = useState(() =>
+    createPeriodDateTime(CALENDAR_YEAR, CALENDAR_MONTH, CALENDAR_DAY)
+  )
+  const [periodEnd, setPeriodEnd] = useState(() =>
+    createPeriodDateTime(CALENDAR_YEAR, CALENDAR_MONTH, CALENDAR_DAY)
+  )
+  const [draftPeriodStart, setDraftPeriodStart] = useState(periodStart)
+  const [draftPeriodEnd, setDraftPeriodEnd] = useState(periodEnd)
+  const [periodEditingField, setPeriodEditingField] = useState<PeriodField>('start')
   const calendarRef = useRef<HTMLElement>(null)
   const monthBarRef = useRef<HTMLDivElement>(null)
   const weekdaysRef = useRef<HTMLDivElement>(null)
+  const historyListRef = useRef<HTMLDivElement>(null)
   const calendarDays = useMemo(
     () => createCalendarDays(calendarYear, calendarMonth),
     [calendarMonth, calendarYear]
@@ -192,13 +406,14 @@ function Mission() {
       if (!item.date) return
 
       const colors = colorsByDate.get(item.date) ?? []
-      if (!colors.includes(item.color)) {
-        colorsByDate.set(item.date, [...colors, item.color])
+      const recordColor = getCategoryColorForTitle(item.title, categories) ?? item.color
+      if (!colors.includes(recordColor)) {
+        colorsByDate.set(item.date, [...colors, recordColor])
       }
     })
 
     return colorsByDate
-  }, [historyItems])
+  }, [categories, historyItems])
 
   useEffect(() => {
     const currentSelected = calendarDays.find((day) => day.id === selectedDayId)
@@ -265,18 +480,52 @@ function Mission() {
     () => historyItems.filter((item) => item.date === selectedDateKey),
     [historyItems, selectedDateKey]
   )
-  const usedCategoryColors = useMemo(
-    () => new Set(categories.map((category) => category.color.toLowerCase())),
-    [categories]
-  )
-  const firstAvailableCategoryColor = categoryColorOptions.find(
-    (color) => !usedCategoryColors.has(color.toLowerCase())
-  ) ?? ''
+  const canCondenseCalendar = selectedHistoryItems.length > 1
+  const isWeeklyCalendar = isCalendarCondensed
+  const selectedWeekIndex = useMemo(() => {
+    const selectedIndex = calendarDays.findIndex(
+      (day) =>
+        day.year === selectedDay.year &&
+        day.month === selectedDay.month &&
+        day.label === selectedDay.label
+    )
+
+    return Math.floor(Math.max(selectedIndex, 0) / 7)
+  }, [calendarDays, selectedDay])
+  const visibleCalendarDays = useMemo(() => {
+    if (!isWeeklyCalendar) return calendarDays
+
+    const weekStartIndex = selectedWeekIndex * 7
+    return calendarDays.slice(weekStartIndex, weekStartIndex + 7)
+  }, [calendarDays, isWeeklyCalendar, selectedWeekIndex])
+  const firstAvailableCategoryColor = categoryColorOptions[0] ?? ''
   const selectedCategory =
     categories.find((category) => category.id === selectedCategoryId) ?? categories[0]
+  const orderedCategories = useMemo(
+    () =>
+      [...categories].sort((firstCategory, secondCategory) => {
+        const firstOrder = categoryDisplayOrder.indexOf(firstCategory.id)
+        const secondOrder = categoryDisplayOrder.indexOf(secondCategory.id)
+
+        if (firstOrder === -1 && secondOrder === -1) return 0
+        if (firstOrder === -1) return 1
+        if (secondOrder === -1) return -1
+
+        return firstOrder - secondOrder
+      }),
+    [categories],
+  )
+  const selectedQuickMessageOptions = categoryQuickMessageOptions[selectedCategory.id] ?? []
   const draftCategory =
     categories.find((category) => category.id === draftCategoryId) ?? selectedCategory
+  const isFixedDraftCategory = fixedCategoryIds.has(draftCategory.id)
+  const selectedRepeat =
+    repeatOptions.find((option) => option.id === selectedRepeatId) ?? repeatOptions[0]
+  const draftRepeat =
+    repeatOptions.find((option) => option.id === draftRepeatId) ?? selectedRepeat
   const getHistoryColor = (title: string, color?: string) => {
+    const matchedColor = getCategoryColorForTitle(title, categories)
+    if (matchedColor) return matchedColor
     if (color) return color
 
     return (
@@ -284,32 +533,47 @@ function Mission() {
       '#A08DFF'
     )
   }
-  const canSaveMission = addTitle.trim().length > 0
+  const canSaveMission =
+    selectedCategory.id === 'meal' ||
+    selectedCategory.id === 'walk' ||
+    addTitle.trim().length > 0 ||
+    selectedQuickMessage !== ''
   const isEditingHistory = editingHistoryId !== null
   const canAddCategory =
     newCategoryName.trim().length > 0 &&
-    newCategoryColor !== '' &&
-    !usedCategoryColors.has(newCategoryColor.toLowerCase())
+    newCategoryColor !== ''
   const canEditCategory =
     editCategoryName.trim().length > 0 &&
-    editCategoryColor !== '' &&
-    !categories.some(
-      (category) =>
-        category.id !== draftCategoryId &&
-        category.color.toLowerCase() === editCategoryColor.toLowerCase()
-    )
+    editCategoryColor !== ''
   const addCalendarDays = useMemo(
     () => createCalendarDays(draftAddDate.year, draftAddDate.month),
     [draftAddDate.month, draftAddDate.year]
   )
-  const openDatePicker = () => {
-    if (isDatePickerOpen) {
-      setIsDatePickerOpen(false)
+  const activeDraftPeriod = periodEditingField === 'start' ? draftPeriodStart : draftPeriodEnd
+  const periodDateOptions = useMemo(
+    () => createPeriodDateOptions(activeDraftPeriod),
+    [activeDraftPeriod],
+  )
+  const visiblePeriodHourOptions = useMemo(
+    () => createCenteredNumberOptions(activeDraftPeriod.hour, periodHourOptions),
+    [activeDraftPeriod.hour],
+  )
+  const visiblePeriodMinuteOptions = useMemo(
+    () => createCenteredNumberOptions(activeDraftPeriod.minute, periodMinuteOptions),
+    [activeDraftPeriod.minute],
+  )
+  const updateDraftPeriod = (nextValue: Partial<PeriodDateTime>) => {
+    const updater = (prev: PeriodDateTime) => ({ ...prev, ...nextValue })
+
+    if (periodEditingField === 'start') {
+      setDraftPeriodStart(updater)
       return
     }
-    const rect = weekdaysRef.current?.getBoundingClientRect()
-    setPickerTop(rect ? rect.top : 0)
-    setIsDatePickerOpen(true)
+
+    setDraftPeriodEnd(updater)
+  }
+  const openDatePicker = () => {
+    setIsDatePickerOpen((prev) => !prev)
   }
 
   const togglePeriodDatePicker = () => {
@@ -322,9 +586,12 @@ function Mission() {
     setIsCategoryPickerOpen(false)
     setIsCategoryAddOpen(false)
     setIsCategoryEditOpen(false)
+    setIsRepeatPickerOpen(false)
     setIsPeriodPickerOpen(false)
     setIsPeriodDatePickerOpen(false)
     setAddTitle('')
+    setSelectedQuickMessage('')
+    setFeedAmount(readDefaultFeedAmount())
     setEditingHistoryId(null)
   }
 
@@ -333,19 +600,113 @@ function Mission() {
   }
 
   const openMissionSheet = () => {
-    setAddDate({
+    const nextAddDate = {
       year: selectedDay.year,
       month: selectedDay.month,
       day: Number(selectedDay.label),
-    })
-    setDraftAddDate({
-      year: selectedDay.year,
-      month: selectedDay.month,
-      day: Number(selectedDay.label),
-    })
+    }
+    const nextPeriod = createPeriodDateTime(
+      nextAddDate.year,
+      nextAddDate.month,
+      nextAddDate.day,
+    )
+
+    setAddDate(nextAddDate)
+    setDraftAddDate(nextAddDate)
+    setPeriodStart(nextPeriod)
+    setPeriodEnd(nextPeriod)
+    setDraftPeriodStart(nextPeriod)
+    setDraftPeriodEnd(nextPeriod)
+    setPeriodEditingField('start')
+    setIsPeriodDatePickerOpen(false)
+    setFeedAmount(readDefaultFeedAmount())
+    setAddTitle('')
+    setSelectedQuickMessage('')
+    setSelectedRepeatId('none')
+    setDraftRepeatId('none')
     setIsFabClosing(false)
     setIsFabOpen(true)
   }
+
+  useEffect(() => {
+    const scrollContainer = document.querySelector('.layout_content') as HTMLElement | null
+    const pageContainer = document.querySelector('.mission_page') as HTMLElement | null
+    const resetScrollTop = () => {
+      if (scrollContainer) scrollContainer.scrollTop = 0
+      if (pageContainer) pageContainer.scrollTop = 0
+      window.scrollTo({ top: 0 })
+    }
+    const getScrollTop = () =>
+      Math.max(
+        scrollContainer?.scrollTop ?? 0,
+        pageContainer?.scrollTop ?? 0,
+        window.scrollY,
+        document.documentElement.scrollTop,
+      )
+    const showWeeklyCalendar = () => {
+      if (!canCondenseCalendar) return
+      setIsCalendarCondensed(true)
+    }
+    const showMonthlyCalendar = () => {
+      setIsCalendarCondensed(false)
+      resetScrollTop()
+    }
+    const isHistoryListAtTop = () => (historyListRef.current?.scrollTop ?? 0) <= 0
+    const syncCalendarMode = () => {
+      if (!canCondenseCalendar) {
+        setIsCalendarCondensed(false)
+        resetScrollTop()
+        return
+      }
+
+      const shouldShowWeeklyCalendar = getScrollTop() > 4
+      setIsCalendarCondensed((prev) => (
+        prev === shouldShowWeeklyCalendar ? prev : shouldShowWeeklyCalendar
+      ))
+    }
+    const handleWheel = (event: WheelEvent) => {
+      if (event.deltaY > 0) {
+        showWeeklyCalendar()
+        return
+      }
+
+      if (event.deltaY < 0 && isHistoryListAtTop()) {
+        showMonthlyCalendar()
+      }
+    }
+    let touchStartY = 0
+    const handleTouchStart = (event: TouchEvent) => {
+      touchStartY = event.touches[0]?.clientY ?? 0
+    }
+    const handleTouchMove = (event: TouchEvent) => {
+      const nextY = event.touches[0]?.clientY ?? touchStartY
+      if (touchStartY - nextY > 0) {
+        showWeeklyCalendar()
+        return
+      }
+
+      if (touchStartY - nextY < 0 && isHistoryListAtTop()) {
+        showMonthlyCalendar()
+      }
+    }
+
+    syncCalendarMode()
+    scrollContainer?.addEventListener('scroll', syncCalendarMode, { passive: true })
+    pageContainer?.addEventListener('scroll', syncCalendarMode, { passive: true })
+    window.addEventListener('scroll', syncCalendarMode, { passive: true })
+    window.addEventListener('wheel', handleWheel, { passive: true })
+    window.addEventListener('touchstart', handleTouchStart, { passive: true })
+    window.addEventListener('touchmove', handleTouchMove, { passive: true })
+
+    return () => {
+      scrollContainer?.removeEventListener('scroll', syncCalendarMode)
+      pageContainer?.removeEventListener('scroll', syncCalendarMode)
+      window.removeEventListener('scroll', syncCalendarMode)
+      window.removeEventListener('wheel', handleWheel)
+      window.removeEventListener('touchstart', handleTouchStart)
+      window.removeEventListener('touchmove', handleTouchMove)
+    }
+  }, [canCondenseCalendar])
 
   useEffect(() => {
     if (!isDatePickerOpen && !isPeriodDatePickerOpen) return
@@ -372,13 +733,24 @@ function Mission() {
   }, [isDatePickerOpen, isPeriodDatePickerOpen])
 
   const saveMission = () => {
-    const title = addTitle.trim()
-    if (!title) return
+    const memo = addTitle.trim()
+    const primaryDetail =
+      selectedCategory.id === 'meal'
+        ? `사료 ${feedAmount}g`
+        : selectedCategory.id === 'walk'
+          ? '산책 30분'
+          : selectedQuickMessage
+    const detail = [primaryDetail, memo].filter(Boolean).join('\n')
 
-    const now = new Date()
-    const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+    if (!detail) return
+    if (selectedCategory.id === 'meal') {
+      writeDefaultFeedAmount(feedAmount)
+    }
+
+    const time = getPeriodTimeLabel(periodStart)
     const recordTitle = selectedCategory.label === '증상' ? '증상 기록' : selectedCategory.label
     const recordDate = getDateKey(addDate.year, addDate.month, addDate.day)
+    const repeatDateKeys = createRepeatDateKeys(selectedRepeatId, addDate, periodEnd)
 
     if (editingHistoryId !== null) {
       setHistoryItems((prev) =>
@@ -387,7 +759,7 @@ function Mission() {
             ? {
                 ...item,
                 title: recordTitle,
-                detail: title,
+                detail,
                 color: selectedCategory.color,
                 date: recordDate,
               }
@@ -398,17 +770,24 @@ function Mission() {
       return
     }
 
-    setHistoryItems((prev) => [
-      {
-        id: Date.now(),
-        title: recordTitle,
-        detail: title,
-        time,
-        color: selectedCategory.color,
-        date: recordDate,
-      },
-      ...prev,
-    ])
+    const baseId = Date.now()
+    const nextRecords = repeatDateKeys.map((dateKey, index) => ({
+      id: baseId + index,
+      title: recordTitle,
+      detail,
+      time,
+      color: selectedCategory.color,
+      date: dateKey,
+    }))
+
+    setHistoryItems((prev) => [...nextRecords.reverse(), ...prev])
+    requestCloseMissionSheet()
+  }
+
+  const deleteMission = () => {
+    if (editingHistoryId === null) return
+
+    setHistoryItems((prev) => prev.filter((item) => item.id !== editingHistoryId))
     requestCloseMissionSheet()
   }
 
@@ -425,16 +804,27 @@ function Mission() {
         category.label.includes(item.title.replace(/\s*기록$/, '')) ||
         category.color.toLowerCase() === item.color.toLowerCase()
       )) ?? selectedCategory
+    const [primaryDetail = '', ...memoDetailParts] = item.detail.split('\n')
+    const isAmountRecord = nextCategory.id === 'meal' || nextCategory.id === 'walk'
+    const nextPeriod = parseTimeToPeriodDateTime(nextDate, item.time)
 
     setEditingHistoryId(item.id)
-    setAddTitle(item.detail)
+    setSelectedQuickMessage(isAmountRecord ? '' : primaryDetail)
+    setAddTitle(memoDetailParts.join('\n'))
+    setFeedAmount(getFeedAmountFromText(item.detail) ?? readDefaultFeedAmount())
     setSelectedCategoryId(nextCategory.id)
     setDraftCategoryId(nextCategory.id)
     setAddDate(nextDate)
     setDraftAddDate(nextDate)
+    setPeriodStart(nextPeriod)
+    setPeriodEnd(nextPeriod)
+    setDraftPeriodStart(nextPeriod)
+    setDraftPeriodEnd(nextPeriod)
+    setPeriodEditingField('start')
     setIsCategoryPickerOpen(false)
     setIsCategoryAddOpen(false)
     setIsCategoryEditOpen(false)
+    setIsRepeatPickerOpen(false)
     setIsPeriodPickerOpen(false)
     setIsPeriodDatePickerOpen(false)
     setIsFabOpen(true)
@@ -449,11 +839,16 @@ function Mission() {
 
   const saveCategoryEdit = () => {
     if (!canEditCategory) return
+    const isFixedCategory = fixedCategoryIds.has(draftCategoryId)
 
     setCategories((prev) =>
       prev.map((category) =>
         category.id === draftCategoryId
-          ? { ...category, label: editCategoryName.trim(), color: editCategoryColor }
+          ? {
+              ...category,
+              label: isFixedCategory ? category.label : editCategoryName.trim(),
+              color: editCategoryColor,
+            }
           : category
       )
     )
@@ -466,6 +861,13 @@ function Mission() {
     setSelectedPetProfileId(profileId)
     writeSelectedPetProfileId(profileId)
     setIsPetSwitchOpen(false)
+  }
+
+  const goToToday = () => {
+    setMonthSlideDirection(calendarYear > CALENDAR_YEAR || (calendarYear === CALENDAR_YEAR && calendarMonth > CALENDAR_MONTH) ? 'prev' : 'next')
+    setCalendarYear(CALENDAR_YEAR)
+    setCalendarMonth(CALENDAR_MONTH)
+    setSelectedDayId(`c-${CALENDAR_DAY}`)
   }
 
   const moveMonth = (direction: 'prev' | 'next') => {
@@ -525,7 +927,7 @@ function Mission() {
           </>
         )}
       />
-      <main className="page mission_page">
+      <main className={`page mission_page${isWeeklyCalendar ? ' is_condensed' : ''}`}>
         <section className="mission_profile_header">
           <h2>{petName}의 히스토리</h2>
           <Button type="button" className="mission_pet_switch_button" onClick={() => setIsPetSwitchOpen(true)}>
@@ -534,13 +936,19 @@ function Mission() {
           </Button>
         </section>
 
-        <section className="mission_calendar_section" ref={calendarRef}>
+        <section
+          className={`mission_calendar_section${isWeeklyCalendar ? ' is_condensed' : ''}`}
+          ref={calendarRef}
+        >
           <div className="mission_calendar_card">
             <div className="mission_month_bar" ref={monthBarRef}>
               <button type="button" className="mission_month_title" onClick={openDatePicker}>
                 {calendarYear}년 {calendarMonth}월
                 <i className={`bx bx-chevron-${isDatePickerOpen ? 'up' : 'down'}`} aria-hidden="true" />
               </button>
+              <Button type="button" className="s_white_radius_btn mission_today_chip" onClick={goToToday}>
+                오늘
+              </Button>
             </div>
 
             <div className="mission_weekdays" ref={weekdaysRef} aria-hidden="true">
@@ -549,13 +957,13 @@ function Mission() {
               ))}
             </div>
 
-            <div className="mission_calendar_viewport">
+            <div className={`mission_calendar_viewport${isWeeklyCalendar ? ' is_weekly' : ''}`}>
               <div
                 key={`${calendarYear}-${calendarMonth}`}
-                className={`mission_calendar_grid slide_${monthSlideDirection}`}
+                className={`mission_calendar_grid${isWeeklyCalendar ? ' is_weekly' : ''} slide_${monthSlideDirection}`}
                 aria-label={`${calendarYear}년 ${calendarMonth}월 달력`}
               >
-                {calendarDays.map((day) => (
+                {visibleCalendarDays.map((day) => (
                   (() => {
                     const dayDateKey = getDateKey(day.year, day.month, Number(day.label))
                     const dayRecordColors = recordedDateColors.get(dayDateKey) ?? []
@@ -591,9 +999,9 @@ function Mission() {
           </div>
         </section>
 
-        <section className="mission_history_section">
+        <section className={`mission_history_section${isWeeklyCalendar ? ' is_condensed' : ''}`}>
           <h2>{selectedDateLabel}</h2>
-          <div className="mission_history_list">
+          <div className="mission_history_list" ref={historyListRef}>
             {selectedHistoryItems.map((item) => (
               <button
                 key={item.id}
@@ -634,19 +1042,24 @@ function Mission() {
       </main>
 
       {isDatePickerOpen && (
-        <DatePicker
-          year={calendarYear}
-          month={calendarMonth}
-          day={Number(selectedDay.label)}
-          dropdownTop={pickerTop}
-          onConfirm={(y, m, d) => {
-            setCalendarYear(y)
-            setCalendarMonth(m)
-            setSelectedDayId(`c-${d}`)
-            setIsDatePickerOpen(false)
-          }}
-          onCancel={() => setIsDatePickerOpen(false)}
-        />
+        <AddSheet onClose={() => setIsDatePickerOpen(false)}>
+          <div className="mission_date_picker_sheet">
+            <DatePicker
+              year={calendarYear}
+              month={calendarMonth}
+              day={Number(selectedDay.label)}
+              inline
+              flat
+              onConfirm={(y, m, d) => {
+                setCalendarYear(y)
+                setCalendarMonth(m)
+                setSelectedDayId(`c-${d}`)
+                setIsDatePickerOpen(false)
+              }}
+              onCancel={() => setIsDatePickerOpen(false)}
+            />
+          </div>
+        </AddSheet>
       )}
 
       {isPetSwitchOpen && (
@@ -689,27 +1102,158 @@ function Mission() {
           isClosing={isFabClosing}
           onScrollCapture={(event) => {
             if (!isPeriodDatePickerOpen) return
-            if ((event.target as HTMLElement).closest('.date_picker_column')) return
+            if ((event.target as HTMLElement).closest('.date_picker_column, .mission_period_wheel')) return
             setIsPeriodDatePickerOpen(false)
           }}
           onWheelCapture={(event) => {
             if (!isPeriodDatePickerOpen) return
-            if ((event.target as HTMLElement).closest('.date_picker_column')) return
+            if ((event.target as HTMLElement).closest('.date_picker_column, .mission_period_wheel')) return
             setIsPeriodDatePickerOpen(false)
           }}
           onTouchMoveCapture={(event) => {
             if (!isPeriodDatePickerOpen) return
-            if ((event.target as HTMLElement).closest('.date_picker_column')) return
+            if ((event.target as HTMLElement).closest('.date_picker_column, .mission_period_wheel')) return
             setIsPeriodDatePickerOpen(false)
           }}
           onMouseDownCapture={(event) => {
             if (!isPeriodDatePickerOpen) return
-            if ((event.target as HTMLElement).closest('.date_picker')) return
+            if ((event.target as HTMLElement).closest('.date_picker, .mission_period_wheel, .mission_period_row')) return
             setIsPeriodDatePickerOpen(false)
           }}
         >
-            {isPeriodPickerOpen ? (
+            {false && isPeriodPickerOpen ? (
               <div className="mission_period_picker">
+                <div className="mission_period_rows">
+                  <button
+                    type="button"
+                    className={`mission_period_row${periodEditingField === 'start' ? ' active' : ''}`}
+                    onClick={() => {
+                      setPeriodEditingField('start')
+                      setIsPeriodDatePickerOpen(true)
+                    }}
+                  >
+                    <span className="mission_period_row_label">시작일</span>
+                    <span className="mission_period_row_value">
+                      {getPeriodDateLabel(draftPeriodStart)}
+                      <ChevronIcon direction="right" size="sm" />
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`mission_period_row${periodEditingField === 'end' ? ' active' : ''}`}
+                    onClick={() => {
+                      setPeriodEditingField('end')
+                      setIsPeriodDatePickerOpen(true)
+                    }}
+                  >
+                    <span className="mission_period_row_label">종료일</span>
+                    <span className="mission_period_row_value">
+                      {getPeriodDateLabel(draftPeriodEnd)}
+                      <ChevronIcon direction="right" size="sm" />
+                    </span>
+                  </button>
+                </div>
+
+                {isPeriodDatePickerOpen && (
+                  <div className="mission_period_wheel" aria-label="기간 날짜와 시간 선택">
+                    <div className="mission_period_wheel_selector" aria-hidden="true" />
+                    <div className="mission_period_wheel_column date">
+                      {periodDateOptions.map((option) => {
+                        const isSelected =
+                          getPeriodOptionKey(option) === getPeriodOptionKey(activeDraftPeriod)
+
+                        return (
+                          <button
+                            key={getPeriodOptionKey(option)}
+                            type="button"
+                            className={isSelected ? 'active' : ''}
+                            onClick={() => updateDraftPeriod({
+                              year: option.year,
+                              month: option.month,
+                              day: option.day,
+                            })}
+                          >
+                            {option.label}
+                          </button>
+                        )
+                      })}
+                    </div>
+                    <div className="mission_period_wheel_column period">
+                      {periodOptions.map((option) => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          className={activeDraftPeriod.period === option.value ? 'active' : ''}
+                          onClick={() => updateDraftPeriod({ period: option.value })}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="mission_period_wheel_column">
+                      {visiblePeriodHourOptions.map((hour) => (
+                        <button
+                          key={hour}
+                          type="button"
+                          className={activeDraftPeriod.hour === hour ? 'active' : ''}
+                          onClick={() => updateDraftPeriod({ hour })}
+                        >
+                          {hour}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="mission_period_wheel_column">
+                      {visiblePeriodMinuteOptions.map((minute) => (
+                        <button
+                          key={minute}
+                          type="button"
+                          className={activeDraftPeriod.minute === minute ? 'active' : ''}
+                          onClick={() => updateDraftPeriod({ minute })}
+                        >
+                          {String(minute).padStart(2, '0')}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="mission_category_actions mission_period_actions mission_period_new_actions">
+                  <button
+                    type="button"
+                    className="mission_category_prev white_btn"
+                    onClick={() => {
+                      setDraftAddDate(addDate)
+                      setDraftPeriodStart(periodStart)
+                      setDraftPeriodEnd(periodEnd)
+                      setIsPeriodPickerOpen(false)
+                      setIsPeriodDatePickerOpen(false)
+                    }}
+                  >
+                    이전
+                  </button>
+                  <button
+                    type="button"
+                    className="mission_category_confirm"
+                    onClick={() => {
+                      setAddDate({
+                        year: draftPeriodStart.year,
+                        month: draftPeriodStart.month,
+                        day: draftPeriodStart.day,
+                      })
+                      setDraftAddDate({
+                        year: draftPeriodStart.year,
+                        month: draftPeriodStart.month,
+                        day: draftPeriodStart.day,
+                      })
+                      setPeriodStart(draftPeriodStart)
+                      setPeriodEnd(draftPeriodEnd)
+                      setIsPeriodPickerOpen(false)
+                      setIsPeriodDatePickerOpen(false)
+                    }}
+                  >
+                    저장하기
+                  </button>
+                </div>
                 <div className="mission_period_tabs" role="tablist" aria-label="기간 선택 방식">
                   <button type="button" className="active">일반</button>
                   <button type="button">기간</button>
@@ -812,15 +1356,11 @@ function Mission() {
                   onChange={(e) => setEditCategoryName(e.target.value)}
                   placeholder="카테고리를 입력하세요."
                   maxLength={12}
-                  autoFocus
+                  disabled={isFixedDraftCategory}
+                  autoFocus={!isFixedDraftCategory}
                 />
                 <div className="mission_category_color_grid">
                   {categoryColorOptions.map((color) => {
-                    const isUsed = categories.some(
-                      (category) =>
-                        category.id !== draftCategoryId &&
-                        category.color.toLowerCase() === color.toLowerCase()
-                    )
                     const isSelected = color === editCategoryColor
 
                     return (
@@ -828,18 +1368,15 @@ function Mission() {
                         key={color}
                         type="button"
                         className={
-                          isUsed
-                            ? 'mission_category_color used'
-                            : isSelected
+                          isSelected
                               ? 'mission_category_color selected'
                               : 'mission_category_color'
                         }
                         style={{ backgroundColor: color }}
-                        disabled={isUsed}
                         aria-label={`${color} 색상`}
                         onClick={() => setEditCategoryColor(color)}
                       >
-                        {(isUsed || isSelected) && <i className="bx bx-check" aria-hidden="true" />}
+                        {isSelected && <i className="bx bx-check" aria-hidden="true" />}
                       </button>
                     )
                   })}
@@ -879,7 +1416,6 @@ function Mission() {
                 />
                 <div className="mission_category_color_grid">
                   {categoryColorOptions.map((color) => {
-                    const isUsed = usedCategoryColors.has(color.toLowerCase())
                     const isSelected = color === newCategoryColor
 
                     return (
@@ -887,18 +1423,15 @@ function Mission() {
                         key={color}
                         type="button"
                         className={
-                          isUsed
-                            ? 'mission_category_color used'
-                            : isSelected
+                          isSelected
                               ? 'mission_category_color selected'
                               : 'mission_category_color'
                         }
                         style={{ backgroundColor: color }}
-                        disabled={isUsed}
                         aria-label={`${color} 색상`}
                         onClick={() => setNewCategoryColor(color)}
                       >
-                        {(isUsed || isSelected) && <i className="bx bx-check" aria-hidden="true" />}
+                        {isSelected && <i className="bx bx-check" aria-hidden="true" />}
                       </button>
                     )
                   })}
@@ -939,14 +1472,57 @@ function Mission() {
                   </button>
                 </div>
               </div>
+            ) : isRepeatPickerOpen ? (
+              <div className="mission_repeat_picker">
+                <h2>반복 설정</h2>
+                <div className="mission_repeat_grid">
+                  {repeatOptions.map((option) => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      className={
+                        option.id === draftRepeat.id
+                          ? 'mission_repeat_option active'
+                          : 'mission_repeat_option'
+                      }
+                      onClick={() => setDraftRepeatId(option.id)}
+                    >
+                      <span>{option.label}</span>
+                    </button>
+                  ))}
+                </div>
+                <div className="mission_category_actions mission_repeat_actions">
+                  <button
+                    type="button"
+                    className="mission_category_prev white_btn"
+                    onClick={() => {
+                      setDraftRepeatId(selectedRepeatId)
+                      setIsRepeatPickerOpen(false)
+                    }}
+                  >
+                    이전
+                  </button>
+                  <button
+                    type="button"
+                    className="mission_category_confirm"
+                    onClick={() => {
+                      setSelectedRepeatId(draftRepeatId)
+                      setIsRepeatPickerOpen(false)
+                    }}
+                  >
+                    확인
+                  </button>
+                </div>
+              </div>
             ) : isCategoryPickerOpen ? (
               <div className="mission_category_picker">
                 <div className="mission_category_picker_top">
                   <span aria-hidden="true" />
+                  <h2>카테고리 선택</h2>
                   <button type="button" onClick={openCategoryEdit}>수정</button>
                 </div>
                 <div className="mission_category_grid">
-                  {categories.map((category) => (
+                  {orderedCategories.map((category) => (
                     <button
                       key={category.id}
                       type="button"
@@ -993,6 +1569,10 @@ function Mission() {
                     type="button"
                     className="mission_category_confirm"
                     onClick={() => {
+                      if (draftCategoryId !== selectedCategoryId) {
+                        setSelectedQuickMessage('')
+                        setAddTitle('')
+                      }
                       setSelectedCategoryId(draftCategoryId)
                       setIsCategoryPickerOpen(false)
                     }}
@@ -1002,87 +1582,210 @@ function Mission() {
                 </div>
               </div>
             ) : (
-              <>
-                <div className="mission_add_rows">
-                  <div className="mission_add_row">
-                    <span className="mission_add_row_label">기간</span>
-                    <button
-                      type="button"
-                      className="mission_add_row_value"
-                      onClick={() => {
-                        setDraftAddDate(addDate)
-                        setIsPeriodPickerOpen(true)
-                      }}
-                    >
-                      {addDate.month}월 {addDate.day}일
-                      <ChevronIcon direction="right" size="md" />
-                    </button>
-                  </div>
-                  <div className="mission_add_row">
-                    <span className="mission_add_row_label">
-                      반복
-                      <span className="mission_add_info" aria-hidden="true">i</span>
-                    </span>
-                    <button type="button" className="mission_add_row_value">
-                      매일
-                      <ChevronIcon direction="right" size="md" />
-                    </button>
-                  </div>
-                  <div className="mission_add_row">
-                    <span className="mission_add_row_label">카테고리</span>
-                    <button
-                      type="button"
-                      className="mission_add_row_value"
-                      onClick={() => {
-                        setDraftCategoryId(selectedCategoryId)
-                        setIsCategoryEditOpen(false)
-                        setIsCategoryPickerOpen(true)
-                      }}
-                    >
-                      <span
-                        className="mission_add_category_dot"
-                        style={{ backgroundColor: selectedCategory.color }}
-                        aria-hidden="true"
-                      />
-                      {selectedCategory.label}
-                      <ChevronIcon direction="right" size="md" />
-                    </button>
-                  </div>
-                </div>
-                <section className="mission_add_content">
-                  <h2>내용입력</h2>
-                  <div className="mission_quick_messages" aria-label="빠른 입력">
-                    {quickMessageOptions.map((option) => (
-                      <button
-                        key={option}
-                        type="button"
-                        className="mission_quick_message"
-                        onClick={() => setAddTitle(option)}
-                      >
-                        {option}
-                      </button>
-                    ))}
-                  </div>
-                  <textarea
-                    className="mission_add_title"
-                    placeholder="기타 입력사항을 자유롭게 작성해 주세요."
-                    rows={4}
-                    value={addTitle}
-                    onChange={(e) => setAddTitle(e.target.value)}
-                  />
-                </section>
-                <div className="mission_add_save_wrap">
-                  <Button
-                    type="button"
-                    className="purple_btn"
-                    disabled={!canSaveMission}
-                    onClick={saveMission}
-                  >
-                    {isEditingHistory ? '수정하기' : '저장하기'}
-                  </Button>
-                </div>
-              </>
+              <MissionRecordSheet
+                addDate={addDate}
+                selectedCategory={selectedCategory}
+                repeatLabel={selectedRepeat.label}
+                addTitle={addTitle}
+                feedAmount={feedAmount}
+                canSave={canSaveMission}
+                isEditing={isEditingHistory}
+                quickMessageOptions={selectedQuickMessageOptions}
+                selectedQuickMessage={selectedQuickMessage}
+                onOpenPeriodPicker={() => {
+                  setDraftAddDate(addDate)
+                  setDraftPeriodStart(periodStart)
+                  setDraftPeriodEnd(periodEnd)
+                  setPeriodEditingField('end')
+                  setIsPeriodDatePickerOpen(false)
+                  setIsRepeatPickerOpen(false)
+                  setIsPeriodPickerOpen(true)
+                }}
+                onOpenRepeatPicker={() => {
+                  setDraftRepeatId(selectedRepeatId)
+                  setIsPeriodPickerOpen(false)
+                  setIsPeriodDatePickerOpen(false)
+                  setIsCategoryPickerOpen(false)
+                  setIsCategoryAddOpen(false)
+                  setIsCategoryEditOpen(false)
+                  setIsRepeatPickerOpen(true)
+                }}
+                onOpenCategoryPicker={() => {
+                  setDraftCategoryId(selectedCategoryId)
+                  setIsRepeatPickerOpen(false)
+                  setIsCategoryEditOpen(false)
+                  setIsCategoryPickerOpen(true)
+                }}
+                onQuickMessageSelect={setSelectedQuickMessage}
+                onTitleChange={setAddTitle}
+                onFeedAmountChange={setFeedAmount}
+                onDelete={deleteMission}
+                onSave={saveMission}
+              />
             )}
+        </AddSheet>
+      )}
+
+      {isFabOpen && isPeriodPickerOpen && (
+        <AddSheet
+          onClose={() => {
+            setIsPeriodPickerOpen(false)
+            setIsPeriodDatePickerOpen(false)
+          }}
+          onScrollCapture={(event) => {
+            if (!isPeriodDatePickerOpen) return
+            if ((event.target as HTMLElement).closest('.mission_period_wheel')) return
+            setIsPeriodDatePickerOpen(false)
+          }}
+          onWheelCapture={(event) => {
+            if (!isPeriodDatePickerOpen) return
+            if ((event.target as HTMLElement).closest('.mission_period_wheel')) return
+            setIsPeriodDatePickerOpen(false)
+          }}
+          onTouchMoveCapture={(event) => {
+            if (!isPeriodDatePickerOpen) return
+            if ((event.target as HTMLElement).closest('.mission_period_wheel')) return
+            setIsPeriodDatePickerOpen(false)
+          }}
+          onMouseDownCapture={(event) => {
+            if (!isPeriodDatePickerOpen) return
+            if ((event.target as HTMLElement).closest('.mission_period_wheel, .mission_period_row')) return
+            setIsPeriodDatePickerOpen(false)
+          }}
+        >
+          <div className="mission_period_picker">
+            <div className="mission_period_rows">
+              <button
+                type="button"
+                className={`mission_period_row${periodEditingField === 'start' ? ' active' : ''}`}
+                onClick={() => {
+                  setPeriodEditingField('start')
+                  setIsPeriodDatePickerOpen(true)
+                }}
+              >
+                <span className="mission_period_row_label">시작일</span>
+                <span className="mission_period_row_value">
+                  {getPeriodDateLabel(draftPeriodStart)}
+                  <ChevronIcon direction="right" size="sm" />
+                </span>
+              </button>
+              <button
+                type="button"
+                className={`mission_period_row${periodEditingField === 'end' ? ' active' : ''}`}
+                onClick={() => {
+                  setPeriodEditingField('end')
+                  setIsPeriodDatePickerOpen(true)
+                }}
+              >
+                <span className="mission_period_row_label">종료일</span>
+                <span className="mission_period_row_value">
+                  {getPeriodDateLabel(draftPeriodEnd)}
+                  <ChevronIcon direction="right" size="sm" />
+                </span>
+              </button>
+            </div>
+
+            {isPeriodDatePickerOpen && (
+              <div className="mission_period_wheel" aria-label="기간 날짜와 시간 선택">
+                <div className="mission_period_wheel_selector" aria-hidden="true" />
+                <div className="mission_period_wheel_column date">
+                  {periodDateOptions.map((option) => {
+                    const isSelected =
+                      getPeriodOptionKey(option) === getPeriodOptionKey(activeDraftPeriod)
+
+                    return (
+                      <button
+                        key={getPeriodOptionKey(option)}
+                        type="button"
+                        className={isSelected ? 'active' : ''}
+                        onClick={() => updateDraftPeriod({
+                          year: option.year,
+                          month: option.month,
+                          day: option.day,
+                        })}
+                      >
+                        {option.label}
+                      </button>
+                    )
+                  })}
+                </div>
+                <div className="mission_period_wheel_column period">
+                  {periodOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      className={activeDraftPeriod.period === option.value ? 'active' : ''}
+                      onClick={() => updateDraftPeriod({ period: option.value })}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="mission_period_wheel_column">
+                  {visiblePeriodHourOptions.map((hour) => (
+                    <button
+                      key={hour}
+                      type="button"
+                      className={activeDraftPeriod.hour === hour ? 'active' : ''}
+                      onClick={() => updateDraftPeriod({ hour })}
+                    >
+                      {hour}
+                    </button>
+                  ))}
+                </div>
+                <div className="mission_period_wheel_column">
+                  {visiblePeriodMinuteOptions.map((minute) => (
+                    <button
+                      key={minute}
+                      type="button"
+                      className={activeDraftPeriod.minute === minute ? 'active' : ''}
+                      onClick={() => updateDraftPeriod({ minute })}
+                    >
+                      {String(minute).padStart(2, '0')}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="mission_category_actions mission_period_actions mission_period_new_actions">
+              <button
+                type="button"
+                className="mission_category_prev white_btn"
+                onClick={() => {
+                  setDraftAddDate(addDate)
+                  setDraftPeriodStart(periodStart)
+                  setDraftPeriodEnd(periodEnd)
+                  setIsPeriodPickerOpen(false)
+                  setIsPeriodDatePickerOpen(false)
+                }}
+              >
+                이전
+              </button>
+              <button
+                type="button"
+                className="mission_category_confirm"
+                onClick={() => {
+                  setAddDate({
+                    year: draftPeriodStart.year,
+                    month: draftPeriodStart.month,
+                    day: draftPeriodStart.day,
+                  })
+                  setDraftAddDate({
+                    year: draftPeriodStart.year,
+                    month: draftPeriodStart.month,
+                    day: draftPeriodStart.day,
+                  })
+                  setPeriodStart(draftPeriodStart)
+                  setPeriodEnd(draftPeriodEnd)
+                  setIsPeriodPickerOpen(false)
+                  setIsPeriodDatePickerOpen(false)
+                }}
+              >
+                저장하기
+              </button>
+            </div>
+          </div>
         </AddSheet>
       )}
 

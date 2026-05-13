@@ -513,6 +513,7 @@ function Home() {
                     stats={todaySummaryStats}
                     onEdit={() => openPetIdModal(slide)}
                     onStatEdit={() => navigate('/mission')}
+                    onCareGuideClick={() => navigate('/health/report')}
                   />
                 ),
               )}
@@ -688,7 +689,7 @@ function Home() {
                       </div>
                       <div className="pet_id_card_field pet_id_card_weight_field">
                         <span>몸무게 :</span>
-                        <div className="pet_id_card_weight_input">
+                        <div className={`pet_id_card_weight_input${petIdForm.weight ? '' : ' is_empty'}`}>
                           <input
                             value={petIdForm.weight}
                             onChange={(event) => handlePetIdInputChange('weight', event.target.value)}

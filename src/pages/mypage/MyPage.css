@@ -26,9 +26,10 @@
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 12px 20px;
-  border-radius: 8px;
+  margin-inline: calc(var(--layout-inline-padding, 16px) * -1);
+  padding: 12px calc(var(--layout-inline-padding, 16px) + 20px);
   background: #8B6EFF;
+  box-sizing: border-box;
 }
 
 .mypage_location_card p {
@@ -53,6 +54,9 @@
 
 .mypage_location_card .s_white_radius_btn {
   color: #111111;
+  font-size: var(--font-point-sm);
+  font-weight: var(--font-weight-sb);
+  line-height: var(--line-height-sm);
 }
 
 .mypage_location_card .s_white_radius_btn svg {

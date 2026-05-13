@@ -19,6 +19,7 @@
   width: 100%;
   max-width: 1440px;
   max-height: calc(100dvh - 16px);
+  box-sizing: border-box;
   background: #ffffff;
   border-radius: 12px 12px 0 0;
   overflow: hidden;
@@ -33,13 +34,13 @@
 
 .add_sheet_handle {
   position: relative;
-  height: 26px;
+  height: 32px;
 }
 
 .add_sheet_handle::after {
   content: '';
   position: absolute;
-  top: 6px;
+  top: 8px;
   left: 50%;
   transform: translateX(-50%);
   width: 41px;

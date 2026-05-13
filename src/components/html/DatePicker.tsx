@@ -186,7 +186,7 @@ function DatePicker({ year, month, day, dropdownTop, inline = false, flat = fals
         <div className="date_picker_selector" />
       </div>
       <div className="date_picker_actions">
-        <button type="button" onClick={onCancel}>취소</button>
+        <button type="button" onClick={onCancel}>이전</button>
         <span className="date_picker_divider" />
         <button type="button" onClick={() => onConfirm(tempYear, tempMonth, clampedDay)}>완료</button>
       </div>
@@ -216,7 +216,7 @@ function DatePicker({ year, month, day, dropdownTop, inline = false, flat = fals
           <div className="date_picker_selector" />
         </div>
         <div className="date_picker_actions">
-          <button type="button" onClick={onCancel}>취소</button>
+          <button type="button" onClick={onCancel}>이전</button>
           <span className="date_picker_divider" />
           <button type="button" onClick={() => onConfirm(tempYear, tempMonth, clampedDay)}>완료</button>
         </div>

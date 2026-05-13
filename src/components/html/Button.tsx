@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { isValidElement, useEffect, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router'
 import './Button.css'
 import {
@@ -12,6 +12,20 @@ type Buttonprops = React.ComponentPropsWithRef<'button'> & {
   iconPosition?: 'left' | 'right'
   iconWrapper?: boolean
   buttonVariant?: 'default' | 'icon' | 'challenge'
+}
+
+function hasNotificationIcon(node: ReactNode): boolean {
+  if (Array.isArray(node)) {
+    return node.some(hasNotificationIcon)
+  }
+
+  if (!isValidElement(node)) {
+    return false
+  }
+
+  const props = node.props as { type?: unknown; children?: ReactNode }
+
+  return props.type === 'notification' || hasNotificationIcon(props.children)
 }
 
 export default function Button(props: Buttonprops) {
@@ -36,12 +50,15 @@ export default function Button(props: Buttonprops) {
     notificationSignature.includes('알림') ||
     notificationSignature.includes('알림')
 
+  const isNotificationIconButton =
+    isNotificationButton || hasNotificationIcon(children) || hasNotificationIcon(icon)
+
   const [shouldShowNotification, setShouldShowNotification] = useState(
-    () => (isNotificationButton ? shouldShowNotificationDot() : false),
+    () => (isNotificationIconButton ? shouldShowNotificationDot() : false),
   )
 
   useEffect(() => {
-    if (!isNotificationButton) return
+    if (!isNotificationIconButton) return
 
     const syncNotificationState = () => {
       setShouldShowNotification(shouldShowNotificationDot())
@@ -56,12 +73,12 @@ export default function Button(props: Buttonprops) {
       window.removeEventListener(MISSION_HISTORY_RECORDS_CHANGE_EVENT, syncNotificationState)
       window.removeEventListener('storage', syncNotificationState)
     }
-  }, [isNotificationButton])
+  }, [isNotificationIconButton])
 
   const classNames = [
     className,
-    isNotificationButton ? 'header_notification_button' : null,
-    isNotificationButton && shouldShowNotification ? 'is_active' : null,
+    isNotificationIconButton ? 'header_notification_button' : null,
+    isNotificationIconButton && shouldShowNotification ? 'is_active' : null,
     disabled && buttonVariant !== 'icon' ? 'is_disabled' : null,
     buttonVariant === 'icon' ? 'button_icon' : null,
     buttonVariant === 'challenge' ? 'button_challenge' : null,
@@ -90,7 +107,7 @@ export default function Button(props: Buttonprops) {
       className={classNames}
       onClick={(event) => {
         onClick?.(event)
-        if (!event.defaultPrevented && isNotificationButton && !onClick) {
+        if (!event.defaultPrevented && isNotificationIconButton && !onClick) {
           navigate('/mission')
         }
       }}

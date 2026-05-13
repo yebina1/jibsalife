@@ -101,29 +101,32 @@
 .date_picker_actions {
   display: flex;
   align-items: center;
-  border-top: 1px solid #ececf1;
+  gap: 16px;
+  padding: 24px 16px 10px;
 }
 
 .date_picker_actions button {
   flex: 1;
-  height: 56px;
-  background: transparent;
-  border: none;
+  min-width: 0;
+  height: 54px;
+  border-radius: 12px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
 }
 
 .date_picker_actions button:first-child {
-  color: #9090a8;
+  border: 1px solid #E5E5EC;
+  background: #ffffff;
+  color: #111111;
 }
 
 .date_picker_actions button:last-child {
-  color: #6D59F8;
+  border: 0;
+  background: #6D59F8;
+  color: #ffffff;
 }
 
 .date_picker_divider {
-  width: 1px;
-  height: 24px;
-  background: #ececf1;
+  display: none;
 }

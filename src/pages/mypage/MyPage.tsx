@@ -11,9 +11,12 @@ import Button from '../../components/html/Button'
 import { readProfilePoints } from '../../utils/profilePoints'
 import {
   MY_PROFILE_CHANGE_EVENT,
-  MY_PROFILE_IMAGE,
   readMyProfileName,
 } from '../../utils/myProfile'
+import {
+  PET_PROFILES_CHANGE_EVENT,
+  readSelectedPetProfile,
+} from '../../utils/petProfiles'
 import dogBadgeImage from '../../img/badge/dogbadge2.png'
 
 const activityItems = [
@@ -204,6 +207,7 @@ function MyPage() {
   const [isLocating, setIsLocating] = useState(false)
   const [profilePoints, setProfilePoints] = useState(() => readProfilePoints())
   const [profileName, setProfileName] = useState(() => readMyProfileName())
+  const [profileImage, setProfileImage] = useState(() => readSelectedPetProfile().image)
 
   useEffect(() => {
     const savedValue = window.localStorage.getItem(LOCATION_STORAGE_KEY)
@@ -248,6 +252,20 @@ function MyPage() {
     return () => {
       window.removeEventListener(MY_PROFILE_CHANGE_EVENT, handleMyProfileChange)
       window.removeEventListener('storage', handleMyProfileChange)
+    }
+  }, [])
+
+  useEffect(() => {
+    const handlePetProfileChange = () => {
+      setProfileImage(readSelectedPetProfile().image)
+    }
+
+    window.addEventListener(PET_PROFILES_CHANGE_EVENT, handlePetProfileChange)
+    window.addEventListener('storage', handlePetProfileChange)
+
+    return () => {
+      window.removeEventListener(PET_PROFILES_CHANGE_EVENT, handlePetProfileChange)
+      window.removeEventListener('storage', handlePetProfileChange)
     }
   }, [])
 
@@ -346,7 +364,7 @@ function MyPage() {
 
           <div className="mypage_profile_card_wrap">
             <SummaryProfileCard
-              image={MY_PROFILE_IMAGE}
+              image={profileImage}
               imageAlt="프로필 이미지"
               name={profileName}
               breed=""

@@ -760,6 +760,11 @@
   letter-spacing: -0.025em;
 }
 
+.pet_id_card_weight_input.is_empty input::placeholder,
+.pet_id_card_weight_input.is_empty > span {
+  color: #999999;
+}
+
 .pet_id_card_copy input::placeholder,
 .pet_id_card_copy select:invalid {
   color: #767676;
