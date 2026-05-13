@@ -1,6 +1,7 @@
 import './Community.css'
 import './CommunityChallenge.css'
 import { useEffect, useRef, useState } from 'react'
+import { checkChallengeDayDone, CHALLENGE_STATUS_CHANGED_EVENT } from '../../utils/challengeStatus'
 import { useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
@@ -66,13 +67,13 @@ const TOTAL_DAYS = 7
 const MIN_COMPLETED = 2
 
 const challengeDays = [
-  { day: 1, image: day1Img, description: <>내 반려동물의<br />체중 측정하고 기록해요</> },
-  { day: 2, image: day2Img, description: <>내 반려동물의<br />체중 측정하고 기록해요</> },
-  { day: 3, image: day3Img, description: <>내 반려동물의<br />체중 측정하고 기록해요</> },
-  { day: 4, image: day4Img, description: <>내 반려동물의<br />하루 음수량을 체크해요</> },
-  { day: 5, image: day5Img, description: <>내 반려동물의<br />발톱을 정리해요</> },
-  { day: 6, image: day6Img, description: <>털을<br />부드럽게 빗어줘요</> },
-  { day: 7, image: day7Img, description: <>내 반려동물에게<br />사랑한다고 해줘요</> },
+  { day: 1, image: day1Img, description: <>내 반려동물의<br />산책을 기록해주세요</> },
+  { day: 2, image: day2Img, description: <>커뮤니티에 댓글을<br />3회 이상 남겨주세요</> },
+  { day: 3, image: day3Img, description: <>투표에 참여해보세요</> },
+  { day: 4, image: day4Img, description: <>내 반려동물의<br />건강 리포트를 확인해주세요</> },
+  { day: 5, image: day5Img, description: <>반려상식에<br />좋아요를 남겨주세요</> },
+  { day: 6, image: day6Img, description: <>내 반려동물의<br />체중을 기록해주세요</> },
+  { day: 7, image: day7Img, description: <>커뮤니티에 <br />게시글을 작성해주세요</> },
 ]
 
 function CommunityChallenge() {
@@ -82,14 +83,17 @@ function CommunityChallenge() {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([])
   const touchStartX = useRef(0)
   const visibleIndexRef = useRef(3)
+  const [visibleIndex, setVisibleIndex] = useState(3)
   const [currentDay, setCurrentDay] = useState(3)
   const [participatedDays, setParticipatedDays] = useState<Set<number>>(
     new Set(Array.from({ length: MIN_COMPLETED }, (_, i) => i))
   )
+  const [missionDone, setMissionDone] = useState(() => checkChallengeDayDone(3))
 
   const scrollToCard = (index: number) => {
     const clamped = Math.max(0, Math.min(index, TOTAL_DAYS - 1))
     visibleIndexRef.current = clamped
+    setVisibleIndex(clamped)
     const card = cardRefs.current[clamped]
     const container = scrollContainerRef.current
     if (!card || !container) return
@@ -97,8 +101,11 @@ function CommunityChallenge() {
     container.scrollTo({ left: targetLeft, behavior: 'smooth' })
   }
 
+  const scrollToCardRef = useRef(scrollToCard)
+  scrollToCardRef.current = scrollToCard
+
   useEffect(() => {
-    scrollToCard(3)
+    scrollToCardRef.current(3)
   }, [])
 
   useEffect(() => {
@@ -111,7 +118,7 @@ function CommunityChallenge() {
     const onTouchEnd = (e: TouchEvent) => {
       const diff = touchStartX.current - e.changedTouches[0].clientX
       if (Math.abs(diff) > 30) {
-        scrollToCard(diff > 0 ? visibleIndexRef.current + 1 : visibleIndexRef.current - 1)
+        scrollToCardRef.current(diff > 0 ? visibleIndexRef.current + 1 : visibleIndexRef.current - 1)
       }
     }
     el.addEventListener('touchstart', onTouchStart, { passive: false })
@@ -152,8 +159,27 @@ function CommunityChallenge() {
     return participatedDays.has(i) ? 'cc_stamp_active' : 'cc_stamp_not_done'
   }
 
+  // currentDay 바뀔 때마다 해당 날 완료 여부 재계산
+  useEffect(() => {
+    setMissionDone(checkChallengeDayDone(currentDay))
+  }, [currentDay])
+
+  // 다른 페이지에서 미션 완료 시 storage 이벤트 또는 커스텀 이벤트로 감지
+  useEffect(() => {
+    const refresh = () => setMissionDone(checkChallengeDayDone(currentDay))
+    window.addEventListener(CHALLENGE_STATUS_CHANGED_EVENT, refresh)
+    window.addEventListener('storage', refresh)
+    window.addEventListener('focus', refresh)
+    return () => {
+      window.removeEventListener(CHALLENGE_STATUS_CHANGED_EVENT, refresh)
+      window.removeEventListener('storage', refresh)
+      window.removeEventListener('focus', refresh)
+    }
+  }, [currentDay])
+
   const handleComplete = () => {
     setParticipatedDays((prev) => new Set([...prev, currentDay]))
+    navigate('/community/challenge/reward')
   }
 
   const handleDayEnd = () => {
@@ -203,11 +229,13 @@ function CommunityChallenge() {
           day={challengeDays[Math.min(currentDay, TOTAL_DAYS - 1)].day}
           imageSrc={challengeDays[Math.min(currentDay, TOTAL_DAYS - 1)].image}
           description={challengeDays[Math.min(currentDay, TOTAL_DAYS - 1)].description}
+          missionDone={missionDone}
         />
         <section className="cc_day_list_section">
           <Title as="h4" title="챌린지 목록">
             <p>Tip! 매일 자정에 새로운 챌린지가 열려요!</p>
           </Title>
+          <div className="cc_day_scroll_wrapper">
           <div className="cc_day_scroll" ref={scrollContainerRef}>
             {challengeDays.map((item, i) => {
               const status =
@@ -228,6 +256,12 @@ function CommunityChallenge() {
                 />
               )
             })}
+          </div>
+          <div className="cc_day_dots">
+            {Array.from({ length: TOTAL_DAYS }).map((_, i) => (
+              <span key={i} className={`cc_day_dot${i === visibleIndex ? ' cc_day_dot_active' : ''}`} />
+            ))}
+          </div>
           </div>
         </section>
       </main>

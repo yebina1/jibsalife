@@ -1,5 +1,6 @@
 import './CommunityPetStoryComments.css'
 import { useState } from 'react'
+import { incrementChallengeCommentCount } from '../../utils/challengeStatus'
 import { useLocation, useParams } from 'react-router'
 import PageHeader from '../../components/PageHeader'
 import Title from '../../components/Title'
@@ -188,6 +189,7 @@ function CommunityPetStoryComments() {
     if (nextStorageKey) {
       window.localStorage.setItem(nextStorageKey, JSON.stringify(nextComments))
     }
+    incrementChallengeCommentCount()
   }
 
   const startReply = (comment: DetailComment) => {

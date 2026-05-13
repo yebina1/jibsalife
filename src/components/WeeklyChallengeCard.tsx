@@ -28,9 +28,10 @@ type WeeklyChallengeCardProps = {
   day?: number
   imageSrc?: string
   description?: ReactNode
+  missionDone?: boolean
 }
 
-function WeeklyChallengeCard({ showTimer = true, showImage = true, onComplete, onDayEnd, day, imageSrc, description }: WeeklyChallengeCardProps) {
+function WeeklyChallengeCard({ showTimer = true, showImage = true, onComplete, onDayEnd, day, imageSrc, description, missionDone = false }: WeeklyChallengeCardProps) {
   const [timeLeft, setTimeLeft] = useState(getTimeUntilMidnight)
 
   useEffect(() => {
@@ -87,7 +88,7 @@ function WeeklyChallengeCard({ showTimer = true, showImage = true, onComplete, o
           <span>오늘 24:00 마감</span>
         </p>
       </div>
-      <Button type="button" className="purple_btn" onClick={onComplete}>참여하고 포인트 받기</Button>
+      <Button type="button" className="purple_btn" onClick={onComplete} disabled={!missionDone}>참여하고 포인트 받기</Button>
     </section>
   )
 }

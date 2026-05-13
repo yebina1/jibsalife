@@ -9,6 +9,21 @@
   overflow-anchor: none;
 }
 
+/* 멍스타 모델 도전 배너 */
+.cps_vote_banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-inline: -16px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+.cps_vote_banner .vote_mission_banner_img {
+  height: 132px;
+  width: auto;
+}
+
 /* 일상 뷰 */
 .cpsd_page {
   display: flex;

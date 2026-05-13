@@ -22,6 +22,7 @@ import commentIcon from '../../svg/nav communicate.svg'
 import sharingIcon from '../../svg/sharing.svg'
 import { MY_PROFILE_NAME } from '../../utils/myProfile'
 import { petStoryDetailCommentCount } from './CommunityPetStoryDetailData'
+import VoteMissionBanner from '../../components/VoteMissionBanner'
 
 export const dailyPosts = [
   { id: 1, tag: '일상', title: '강아지 산책하러 나가면 자는척 해요', author: '탬블러', createdAt: '2026-05-11T09:00:00', likes: 20, comments: 16, image: null as null | string },
@@ -416,6 +417,14 @@ function CommunityPetStory() {
       />
 
       <main className={isDaily ? 'page cpsd_page' : 'page community_page community_page_petstory'}>
+        <VoteMissionBanner
+          className="cps_vote_banner"
+          backgroundColor="#FFD6D9"
+          timerColor="#E03C3C"
+          timeText="02:18:35 남음"
+          title={<>멍스타 모델 도전</>}
+          description="내 반려동물을 스타로!"
+        />
         {isDaily ? (
           <div className="cpsd_feed">
             {dailyFeedPosts.map((post) => (

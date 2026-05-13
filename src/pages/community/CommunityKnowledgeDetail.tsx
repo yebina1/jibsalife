@@ -1,5 +1,6 @@
 import './CommunityKnowledgeDetail.css'
 import { type ReactNode, useEffect, useRef, useState } from 'react'
+import { markKnowledgeLiked } from '../../utils/challengeStatus'
 import { useLocation, useNavigate, useParams } from 'react-router'
 import PageHeader from '../../components/PageHeader'
 import Title from '../../components/Title'
@@ -660,7 +661,7 @@ function CommunityKnowledgeDetail() {
         />
         <div className="community_knowledge_detail_actions">
           <div className="community_knowledge_detail_reactions">
-            <button type="button" aria-label="좋아요">
+            <button type="button" aria-label="좋아요" onClick={markKnowledgeLiked}>
               <HeartIcon />
               {item?.likes ?? 128}
             </button>

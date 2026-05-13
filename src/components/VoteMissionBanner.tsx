@@ -9,6 +9,8 @@ type VoteMissionBannerProps = {
   description?: string
   backgroundColor?: string
   imageSrc?: string
+  className?: string
+  timerColor?: string
 }
 
 function VoteMissionBanner({
@@ -23,14 +25,22 @@ function VoteMissionBanner({
   description = '밥 먹는 사진 중 BEST를 골라주세요!',
   backgroundColor,
   imageSrc = defaultBannerImage,
+  className,
+  timerColor,
 }: VoteMissionBannerProps) {
   return (
-    <section className="vote_mission_banner" style={backgroundColor ? { backgroundColor } : undefined}>
+    <section
+      className={`vote_mission_banner${className ? ` ${className}` : ''}`}
+      style={backgroundColor ? { backgroundColor } : undefined}
+    >
       <Title
         as="h2"
         className="vote_mission_banner_title"
         beforeTitle={
-          <span className="vote_mission_banner_timer">
+          <span
+            className="vote_mission_banner_timer"
+            style={timerColor ? { color: timerColor } : undefined}
+          >
             <img src={timerIcon} alt="" aria-hidden="true" />
             {timeText}
           </span>

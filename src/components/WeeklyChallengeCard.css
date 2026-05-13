@@ -49,3 +49,60 @@
   max-width: 200px;
   object-fit: contain;
 }
+
+.wcc_mission_check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  height: 44px;
+  border: 1.5px dashed #C4B8FF;
+  border-radius: 12px;
+  background: transparent;
+  color: #A89EF0;
+  font-family: var(--app-font-family);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.wcc_mission_check_done {
+  border-style: solid;
+  border-color: #6D59F8;
+  background: #F5F3FF;
+  color: #6D59F8;
+  cursor: default;
+}
+
+.wcc_like_btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: auto;
+  padding: 0 24px;
+  height: 44px;
+  border: 1.5px solid #E5E5EC;
+  border-radius: 999px;
+  background: transparent;
+  color: #9CA3AF;
+  font-family: var(--app-font-family);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.wcc_like_btn_active {
+  border-color: #F43F5E;
+  color: #F43F5E;
+  background: #FFF1F2;
+}
+
+.wcc_like_btn svg {
+  flex-shrink: 0;
+}
+
+.wcc_like_btn_active svg {
+  fill: #F43F5E;
+}

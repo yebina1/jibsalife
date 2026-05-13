@@ -5,10 +5,6 @@ import dogStarVote3 from '../../img/2026_05_3weeks_vote/2026_05_3weeks_vote_3.jp
 import dogStarVote4 from '../../img/2026_05_3weeks_vote/2026_05_3weeks_vote_4.jpg'
 import dogStarVote5 from '../../img/2026_05_3weeks_vote/2026_05_3weeks_vote_5.jpg'
 import dogStarVote6 from '../../img/2026_05_3weeks_vote/2026_05_3weeks_vote_6.jpg'
-import dogStarVote7 from '../../img/2026_05_3weeks_vote/2026_05_3weeks_vote_7.jpg'
-import dogStarVote8 from '../../img/2026_05_3weeks_vote/2026_05_3weeks_vote_8.jpg'
-import dogStarVote9 from '../../img/2026_05_3weeks_vote/2026_05_3weeks_vote_9.jpg'
-import dogStarVote10 from '../../img/2026_05_3weeks_vote/2026_05_3weeks_vote_10.jpg'
 import bestPoseBanner from '../../img/pose_vote/best_pose_vote.png'
 import poseVote1 from '../../img/pose_vote/pose_vote1.png'
 import poseVote2 from '../../img/pose_vote/pose_vote2.png'
@@ -16,10 +12,6 @@ import poseVote3 from '../../img/pose_vote/pose_vote3.png'
 import poseVote4 from '../../img/pose_vote/pose_vote4.png'
 import poseVote5 from '../../img/pose_vote/pose_vote5.png'
 import poseVote6 from '../../img/pose_vote/pose_vote6.png'
-import poseVote7 from '../../img/pose_vote/pose_vote7.png'
-import poseVote8 from '../../img/pose_vote/pose_vote8.png'
-import poseVote9 from '../../img/pose_vote/pose_vote9.png'
-import poseVote10 from '../../img/pose_vote/pose_vote10.png'
 
 export type CommunityVoteId = 'mission' | 'subscriber' | 'best-pose'
 
@@ -117,10 +109,6 @@ const dogStarCandidates = [
   { id: 4, name: '도라', image: dogStarVote4 },
   { id: 5, name: '봉이', image: dogStarVote5 },
   { id: 6, name: '바둑이', image: dogStarVote6 },
-  { id: 7, name: '몽이', image: dogStarVote7 },
-  { id: 8, name: '로이', image: dogStarVote8 },
-  { id: 9, name: '설기', image: dogStarVote9 },
-  { id: 10, name: '슈슈', image: dogStarVote10 },
 ] as const
 
 const poseCandidates = [
@@ -130,10 +118,6 @@ const poseCandidates = [
   { id: 4, name: '라운이', image: poseVote4 },
   { id: 5, name: '봄이', image: poseVote5 },
   { id: 6, name: '바둑이', image: poseVote6 },
-  { id: 7, name: '창순이', image: poseVote7 },
-  { id: 8, name: '두릅이', image: poseVote8 },
-  { id: 9, name: '보리', image: poseVote9, objectPosition: 'center top' },
-  { id: 10, name: '찹쌀이', image: poseVote10 },
 ] as const
 
 export const voteDetails: VoteDetail[] = [

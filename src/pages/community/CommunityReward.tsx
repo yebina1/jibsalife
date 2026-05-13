@@ -143,14 +143,7 @@ function CommunityReward() {
             onClick={confirmReward}
           >
             확인
-          </Button>
-          <Button
-            type="button"
-            className="white_btn community_reward_secondary"
-            onClick={() => navigate('/community/challenge')}
-          >
-            더 많은 챌린지 참여하기
-          </Button>
+          </Button> 
         </div>
       </main>
     </>
