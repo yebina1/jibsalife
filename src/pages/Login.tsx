@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router'
 import Button from '../components/html/Button'
 import Input from '../components/html/Input'
 import Title from '../components/Title'
-import loginPetImg from '../img/illust_login_pet.jpg'
+import loginPetImg from '../img/illust_login_pet.png'
 import helloIcon from '../svg/hello icon.svg'
 import './Login.css'
 
@@ -132,7 +132,7 @@ function Login() {
           <span>|</span>
           <Link to="#">비밀번호 찾기</Link>
           <span>|</span>
-          <Link to="#">회원가입</Link>
+          <Link to="/signup">회원가입</Link>
         </div>
         <p className="login_promo">
           <span>지금 가입하면, </span>

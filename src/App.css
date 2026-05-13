@@ -80,6 +80,17 @@
   padding-top: 32px;
 }
 
+.layout_signup > header {
+  min-height: unset;
+}
+
+.layout_signup .layout_content {
+  padding-top: 0;
+  padding-bottom: var(--layout-content-padding-block);
+  padding-left: var(--layout-inline-padding);
+  padding-right: var(--layout-inline-padding);
+}
+
 .layout_no_footer {
   --layout-footer-height: 0px;
   padding-bottom: 0;

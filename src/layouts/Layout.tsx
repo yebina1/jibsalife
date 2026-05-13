@@ -71,6 +71,7 @@ function Layout({
   const communitySortParam = searchParams.get('sort') ?? 'latest'
   const isCameraPage = pathname === '/health/camera/capture' || pathname === '/health/cam'
   const isNoLayoutPage = isCameraPage || pathname === '/health/check'
+  const isSignupPage = pathname === '/signup'  // ← 추가
   const isLoginPage = pathname === '/login'
   const isOnboardingPage = pathname === '/onboarding'
   const isCommunityPath = pathname.startsWith('/community')
@@ -100,6 +101,7 @@ function Layout({
   const hideFloatingAiButtonPaths = [
     '/onboarding',
     '/login',
+    '/signup',
     '/mypage',
     '/community',
     '/mission',
@@ -151,7 +153,7 @@ function Layout({
   const layoutClassName = isCameraPage
     ? 'layout layout_camera'
     : isMinimal
-      ? `layout layout_minimal ${isLoginPage ? 'layout_login' : ''} ${
+      ? `layout layout_minimal ${isLoginPage ? 'layout_login' : ''} ${isSignupPage ? 'layout_signup' : ''} ${
           isOnboardingPage && !hasContentPadding ? 'layout_minimal_no_header_space' : ''
         }`
       : showCommunityChrome
@@ -282,7 +284,8 @@ function Layout({
         {!isNoLayoutPage ? (
           <header ref={headerRef}>
             <StateBar />
-            {showHeader && header && <Header {...header} />}
+            {/* 회원가입 페이지는 StateBar만, Header(집사인생 타이틀)는 표시 안 함 */}
+            {!isSignupPage && showHeader && header && <Header {...header} />}
             {showCommunityChrome ? (
               <>
                 <nav className="layout_community_tabs" aria-label="커뮤니티 카테고리">

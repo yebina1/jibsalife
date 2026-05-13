@@ -1,0 +1,232 @@
+.signup_page {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  padding-top: 0;
+  padding: 24px 16px 48px;
+}
+
+/* ── Hero ─────────────────────────────────────────────── */
+
+.signup_hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  width: 343px;
+}
+
+.signup_hero_copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.signup_hero_copy h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #111111;
+  letter-spacing: -0.6px;
+  line-height: 1.4;
+}
+
+.signup_hello_icon {
+  vertical-align: -3px;
+}
+
+.signup_hero_sub {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: #505050;
+  line-height: 1.45;
+}
+
+.signup_hero_img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* ── Form ─────────────────────────────────────────────── */
+
+.signup_form {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+/* ── Section ──────────────────────────────────────────── */
+
+.signup_section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.signup_label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111111;
+  line-height: 1.4;
+}
+
+.signup_label_opt {
+  font-size: 14px;
+  font-weight: 400;
+  color: #767676;
+}
+
+/* ── Input override ────────────────────────────────────── */
+
+.signup_input.input_field {
+  height: 44px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* ── Email row ─────────────────────────────────────────── */
+
+.signup_email_row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.signup_email_row .signup_input {
+  flex: 1;
+  min-width: 0;
+}
+
+.signup_check_btn {
+  flex-shrink: 0;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid rgba(80, 80, 80, 0.28);
+  border-radius: 8px;
+  background: transparent;
+  color: #6d59f8;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  letter-spacing: var(--app-letter-spacing);
+}
+
+/* ── Password stack ───────────────────────────────────── */
+
+.signup_inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Pet type ─────────────────────────────────────────── */
+
+.signup_pet_type_row {
+  display: flex;
+  gap: 8px;
+}
+
+.signup_pet_type_btn {
+  flex: 1;
+  height: 44px;
+  border: 1px solid #e5e5ec;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #111111;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: inherit;
+  letter-spacing: var(--app-letter-spacing);
+  cursor: pointer;
+}
+
+.signup_pet_type_btn.is_active {
+  border-color: #6d59f8;
+  color: #6d59f8;
+  font-weight: 600;
+}
+
+/* ── Terms ────────────────────────────────────────────── */
+
+.signup_terms_card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e5e5ec;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.signup_terms_row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.signup_terms_all {
+  /* same base as other rows */
+}
+
+.signup_terms_divider {
+  height: 1px;
+  background: #e5e5ec;
+  flex-shrink: 0;
+}
+
+.signup_terms_check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid #d0d0d0;
+  color: transparent;
+}
+
+.signup_terms_check i {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.signup_terms_check.is_active {
+  border-color: #6d59f8;
+  background: #6d59f8;
+  color: #ffffff;
+}
+
+.signup_terms_text {
+  flex: 1;
+  font-size: 14px;
+  color: #111111;
+  line-height: 1.4;
+  letter-spacing: var(--app-letter-spacing);
+}
+
+.signup_terms_text_bold {
+  font-weight: 600;
+}
+
+.signup_terms_required {
+  color: #a10803;
+}
+
+.signup_terms_optional {
+  color: #767676;
+}
+
+.signup_terms_chevron {
+  flex-shrink: 0;
+  font-size: 20px;
+  color: #767676;
+}

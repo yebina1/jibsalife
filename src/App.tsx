@@ -36,6 +36,7 @@ import Mission from './pages/Mission'
 import MyPage from './pages/mypage/MyPage'
 import Onboarding from './pages/onboarding'
 import Place from './pages/Place'
+import Signup from './pages/Signup'
 import SubscriptionPage from './pages/mypage/SubscriptionPage'
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
         </Route>
         <Route element={<Layout showHeader={false} showNav={false} showFooter={false} />}>
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/mypage/subscription" element={<SubscriptionPage />} />
         </Route>
         <Route element={<Layout showNav={false} />}>
