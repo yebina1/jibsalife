@@ -50,7 +50,7 @@ function AnalysisCard({
         width={64}
         height={64}
         style={{ objectFit: 'cover' }}
-        alt=""
+        alt={`${label} 이미지`}
         aria-hidden="true"
       />
       <p className="hca_card_label">

@@ -66,7 +66,7 @@ function WeeklyChallengeCard({ showTimer = true, showImage = true, onComplete, o
           <strong>이번주 집사 챌린지</strong>
         </Title>
       </div>
-      {showImage && <img src={imageSrc ?? challengeImg} alt="" className="wcc_challenge_img" />}
+      {showImage && <img src={imageSrc ?? challengeImg} alt="주간 챌린지 이미지" className="wcc_challenge_img" />}
       <p className="co_challenge_desc">
         {description ?? <>내 반려동물의<br />발바닥 상태를 체크해줘요</>}
       </p>

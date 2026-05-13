@@ -260,7 +260,7 @@ function CommunityWrite() {
               ) : null}
               {photos.map((src, i) => (
                 <div key={i} className="cw_media_slot cw_media_filled">
-                  <img src={src} alt="" />
+                  <img src={src} alt={`업로드한 사진 ${i + 1}`} />
                   <button type="button" className="cw_media_remove" onClick={() => removePhoto(i)} aria-label="사진 제거">×</button>
                 </div>
               ))}

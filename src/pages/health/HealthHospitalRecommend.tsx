@@ -113,7 +113,7 @@ function HealthHospitalRecommend() {
             return (
               <li key={hospital.name} className="health_hospital_recommend_item">
                 <div className="health_hospital_recommend_img" aria-hidden="true">
-                  <img src={hospitalImage} alt="" />
+                  <img src={hospitalImage} alt={`${hospital.name} 이미지`} />
                 </div>
 
                 <div className="health_hospital_recommend_info">

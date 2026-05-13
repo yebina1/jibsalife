@@ -303,7 +303,7 @@ function CommentText({ text }: { text: string }) {
 function AvatarIcon() {
   return (
     <span className="cpsdetail_avatar_box" aria-hidden="true">
-      <img src={MY_PROFILE_IMAGE} alt="" />
+      <img src={MY_PROFILE_IMAGE} alt={`${MY_PROFILE_NAME} 프로필 이미지`} />
     </span>
   )
 }

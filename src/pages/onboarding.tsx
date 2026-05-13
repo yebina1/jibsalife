@@ -171,7 +171,7 @@ function Onboarding() {
                     className={`onboarding_guardian_card${isSelected ? ' is_selected' : ''}`}
                     onClick={() => setGuardianType(option.type)}
                   >
-                    <img src={option.image} alt="" aria-hidden="true" />
+                    <img src={option.image} alt={option.label} aria-hidden="true" />
                     <strong className="title_h4_semibold">{option.label}</strong>
                     <span className="onboarding_guardian_card_check" aria-hidden="true">
                       <i className="bx bx-check" />
@@ -201,7 +201,7 @@ function Onboarding() {
             <img
               className="onboarding_visual_image onboarding_visual_image_pet"
               src={selectedType === 'dog' ? onboardingDogNameImage : onboardingCatNameImage}
-              alt=""
+              alt="반려동물 이름 입력 안내 일러스트"
               aria-hidden="true"
             />
           )}
@@ -250,7 +250,7 @@ function Onboarding() {
             <img
               className="onboarding_visual_image onboarding_visual_image_feature"
               src={selectedType === 'dog' ? slide.dogImage : slide.catImage}
-              alt=""
+              alt={slide.title.replaceAll('\n', ' ')}
               aria-hidden="true"
             />
           )}

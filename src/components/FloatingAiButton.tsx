@@ -13,7 +13,7 @@ export default function FloatingAiButton() {
       onClick={() => navigate('/health/qna')}
     >
       <span className="floating_button_icon_frame" aria-hidden="true">
-        <img src={aiChatIcon} alt="" />
+        <img src={aiChatIcon} alt="AI 챗봇 아이콘" />
       </span>
     </FloatingButton>
   )

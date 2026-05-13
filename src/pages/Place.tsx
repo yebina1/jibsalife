@@ -47,7 +47,7 @@ function Place() {
               return (
                 <li key={item.name}>
                   <article className="place_hospital_item">
-                    <img src={item.image} alt="" aria-hidden="true" />
+                    <img src={item.image} alt={`${item.name} 이미지`} aria-hidden="true" />
 
                     <div className="place_hospital_body">
                       <strong>{item.name}</strong>

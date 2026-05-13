@@ -52,7 +52,7 @@ function HealthHospitalList() {
               return (
                 <li key={item.name}>
                   <div className="health_hospital_list_item">
-                    <img src={item.image} alt="" aria-hidden="true" />
+                    <img src={item.image} alt={`${item.name} 이미지`} aria-hidden="true" />
                     <div className="health_hospital_list_item_body">
                       <div className="health_hospital_list_item_top">
                         <strong>{item.name}</strong>

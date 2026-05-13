@@ -69,7 +69,7 @@ function HealthHospitalSearch() {
           <div className="health_hospital_search_service_grid">
             {serviceCards.map((item) => (
               <Link key={item.title} className="health_hospital_search_service_card" to={item.to}>
-                <img src={item.image} alt="" aria-hidden="true" />
+                <img src={item.image} alt={`${item.title} 이미지`} aria-hidden="true" />
                 <strong>{item.title}</strong>
                 <p>{item.description}</p>
               </Link>
@@ -96,7 +96,7 @@ function HealthHospitalSearch() {
               return (
                 <li key={item.name}>
                   <div className="health_hospital_search_item">
-                    <img src={item.image} alt="" aria-hidden="true" />
+                    <img src={item.image} alt={`${item.name} 이미지`} aria-hidden="true" />
                     <div className="health_hospital_search_item_body">
                       <div className="health_hospital_search_item_top">
                         <strong>{item.name}</strong>

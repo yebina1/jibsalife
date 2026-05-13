@@ -434,7 +434,7 @@ function CommunityPetStory() {
                 onClick={() => openPostDetail(post)}
               >
                 {post.image != null && (
-                  <img src={post.image} alt="" className="cpsd_thumb" />
+                  <img src={post.image} alt={post.title} className="cpsd_thumb" />
                 )}
                 <Title
                   as="h5"
@@ -531,7 +531,7 @@ function CommunityPetStory() {
                 }}
               >
                 {post.image != null && (
-                  <img src={post.image} alt="" className="cpsd_thumb" />
+                  <img src={post.image} alt={post.title} className="cpsd_thumb" />
                 )}
                 <Title
                   as="h5"

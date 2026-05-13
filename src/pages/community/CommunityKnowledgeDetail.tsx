@@ -337,7 +337,7 @@ function MoreIcon() {
 function AvatarIcon() {
   return (
     <span className="cpsdetail_avatar_box" aria-hidden="true">
-      <img src={profileImage} alt="" />
+      <img src={profileImage} alt="프로필 이미지" />
     </span>
   )
 }
@@ -604,7 +604,7 @@ function CommunityKnowledgeDetail() {
           {activeDetailItems.map((item) => (
             <article key={item.id} className="community_knowledge_detail_card">
               <div className="community_knowledge_detail_card_icon" aria-hidden="true">
-                <img src={item.image} alt="" />
+                <img src={item.image} alt={`${item.title} 일러스트`} />
               </div>
               <Title
                 as="h5"

@@ -43,7 +43,7 @@ function HomeSummaryBanner({
       <img
         className={`home_summary_banner_image ${rotateImage ? 'is_rotated' : ''}`}
         src={imageSrc}
-        alt=""
+        alt={`${ariaLabel} 이미지`}
         aria-hidden="true"
         style={{
           width: `${imageWidth}px`,

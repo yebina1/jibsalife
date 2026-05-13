@@ -14,7 +14,7 @@ function RewardPointCard({ currentPoints, rewardAmount, onClick }: RewardPointCa
   return (
     <button type="button" className="community_reward_point_card" onClick={onClick}>
       <div className="community_reward_point_icon" aria-hidden="true">
-        <img src={pointIcon} alt="" />
+        <img src={pointIcon} alt="포인트 아이콘" />
       </div>
       <Title
         as="h3"

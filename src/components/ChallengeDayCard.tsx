@@ -19,7 +19,7 @@ function ChallengeDayCard({ day, image, description, status }, ref) {
     <div ref={ref} className={`cdc_card${status === 'current' ? ' cdc_card_current' : ''}${status === 'completed' || status === 'missed' ? ' cdc_card_completed' : ''}`}>
       <span className="cdc_day">Day {day}</span>
       <div className="cdc_img_wrapper">
-        {image && <img src={image} alt="" className="cdc_img" />}
+        {image && <img src={image} alt={`Day ${day} 챌린지 이미지`} className="cdc_img" />}
         {status === 'locked' && (
           <div className="cdc_lock_wrapper">
             <Lock size={32} />
@@ -28,10 +28,10 @@ function ChallengeDayCard({ day, image, description, status }, ref) {
       </div>
       <p className="p_regular cdc_desc">{description}</p>
       {status === 'completed' && (
-        <img src={stampImg} alt="완료" className="cdc_stamp" />
+        <img src={stampImg} alt="완료 스탬프" className="cdc_stamp" />
       )}
       {status === 'missed' && (
-        <img src={notCompletedStampImg} alt="미완료" className="cdc_stamp" />
+        <img src={notCompletedStampImg} alt="미완료 스탬프" className="cdc_stamp" />
       )}
     </div>
   )

@@ -206,7 +206,7 @@ function ChatRoom({
             {chatMessage.sender === 'bot' ? (
               <div className="chat_message_avatar" aria-hidden="true">
                 {botAvatarSrc ? (
-                  <img src={botAvatarSrc} alt="" />
+                  <img src={botAvatarSrc} alt={`${botName} 프로필 이미지`} />
                 ) : (
                   <span>AI</span>
                 )}
@@ -318,7 +318,7 @@ function ChatRoom({
           <div className="chat_message chat_message_bot">
             <div className="chat_message_avatar" aria-hidden="true">
               {botAvatarSrc ? (
-                <img src={botAvatarSrc} alt="" />
+                <img src={botAvatarSrc} alt={`${botName} 프로필 이미지`} />
               ) : (
                 <span>AI</span>
               )}

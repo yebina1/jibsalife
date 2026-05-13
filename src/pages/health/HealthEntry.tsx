@@ -97,7 +97,7 @@ function HealthEntry() {
       {/* 이미지 영역 (일반 흐름, height: 457px) */}
       <section className="health_entry_cam_view" aria-hidden="true">
         {pet.image ? (
-          <img className="health_entry_cam_img" src={pet.image} alt="" />
+          <img className="health_entry_cam_img" src={pet.image} alt={`${pet.name} 프로필 이미지`} />
         ) : (
           <div className="health_entry_cam_fallback">
             <Dog size={64} color="#ffffff" />
