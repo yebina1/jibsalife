@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Button from './html/Button'
 import ChevronIcon from './ChevronIcon'
 import ConfirmDialog from './ConfirmDialog'
+import { showStateBarMessage } from '../utils/stateBarMessage'
 import whatIcon from '../svg/what.svg'
 import './MissionRecordSheet.css'
 
@@ -68,6 +69,11 @@ function MissionRecordSheet({
   secondaryActionLabel,
 }: Props) {
   const [confirmAction, setConfirmAction] = useState<'edit' | 'delete' | null>(null)
+  const handleRepeatInfoClick = () => {
+    showStateBarMessage('설정한 주기에 맞춰 기록이 자동 등록돼요.\n(ex. 매일, 매주)', 3000, {
+      placement: 'sheet',
+    })
+  }
   const isAmountInputCategory =
     selectedCategory.id === 'meal' || selectedCategory.id === 'walk'
   const amountInputLabel = selectedCategory.id === 'walk' ? '산책 시간' : '사료량'
@@ -113,7 +119,14 @@ function MissionRecordSheet({
         <div className="mission_add_row">
           <span className="mission_add_row_label">
             반복설정
-            <img className="mission_add_info_icon" src={whatIcon} alt="" aria-hidden="true" />
+            <button
+              type="button"
+              className="mission_add_info_button"
+              aria-label="반복 설정 안내"
+              onClick={handleRepeatInfoClick}
+            >
+              <img className="mission_add_info_icon" src={whatIcon} alt="" aria-hidden="true" />
+            </button>
           </span>
           <button
             type="button"

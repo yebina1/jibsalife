@@ -1194,6 +1194,29 @@
   object-fit: cover;
 }
 
+.content_card_chip {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-height: 24px;
+  padding: 2px 8px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  background: #f4f1ff;
+  color: #6d59f8;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+  font-size: 12px;
+}
+
 .content_overlay {
   position: absolute;
   right: 0;

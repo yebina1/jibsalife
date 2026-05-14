@@ -24,6 +24,7 @@ import {
   MISSION_HISTORY_RECORDS_CHANGE_EVENT,
   type MissionHistoryRecord,
 } from '../../utils/missionHistoryRecords'
+import { showStateBarMessage } from '../../utils/stateBarMessage'
 
 const today = new Date()
 
@@ -736,6 +737,7 @@ function Health() {
 
   const handleMemoSaveOnly = () => {
     if (!handleCalendarMemoSave()) return
+    showStateBarMessage('우리 아이의 기록이 저장되었어요.')
     setShowMemoSheet(false)
     setShowCalendarMemoSheet(false)
     setIsPeriodPickerOpen(false)

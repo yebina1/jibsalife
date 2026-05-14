@@ -45,6 +45,51 @@ type MyPostCard = MyPost & {
   commentCount: number
 }
 
+const dummyPosts: MyPost[] = [
+  {
+    id: 900001,
+    tag: '일상',
+    title: '오늘 산책하다가 웃는 표정이 너무 귀여워서 기록해봤어요.',
+    content: '날씨가 좋아서 공원 한 바퀴 돌았는데 표정이 정말 밝았어요. 다음에도 같은 코스로 가보려고요.',
+    author: '',
+    date: '2026.05.15',
+    likes: 14,
+    comments: 3,
+    shares: 1,
+    createdAt: '2026-05-15T10:20:00',
+    image: null,
+    tags: ['산책', '일상'],
+  },
+  {
+    id: 900002,
+    tag: '일상',
+    title: '식사량이 줄어들 때 먼저 확인해본 것들 정리',
+    content: '사료 종류, 급여 시간, 간식량부터 하나씩 체크해보니 원인을 조금 더 빨리 찾을 수 있었어요.',
+    author: '',
+    date: '2026.05.13',
+    likes: 22,
+    comments: 5,
+    shares: 4,
+    createdAt: '2026-05-13T18:05:00',
+    image: null,
+    tags: ['식사', '건강'],
+  },
+  {
+    id: 900003,
+    tag: '일상',
+    title: '배변 기록 남기기 시작하고 나서 달라진 점',
+    content: '패턴이 보여서 상태 변화를 훨씬 빨리 알아차릴 수 있었고 병원 상담할 때도 도움이 됐어요.',
+    author: '',
+    date: '2026.05.11',
+    likes: 9,
+    comments: 2,
+    shares: 0,
+    createdAt: '2026-05-11T08:40:00',
+    image: null,
+    tags: ['배변', '기록'],
+  },
+]
+
 function readMyPosts(): MyPost[] {
   if (typeof window === 'undefined') return []
 
@@ -56,15 +101,27 @@ function readMyPosts(): MyPost[] {
 
     const profileName = readMyProfileName()
 
-    return parsed
+    const normalizedPosts = parsed
       .filter((post): post is MyPost => typeof post?.id === 'number' && typeof post?.title === 'string')
       .map((post) => ({
         ...post,
         author: typeof post.author === 'string' && post.author.trim() ? post.author : profileName,
       }))
       .sort((a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime())
+
+    if (normalizedPosts.length > 0) {
+      return normalizedPosts
+    }
+
+    return dummyPosts.map((post) => ({
+      ...post,
+      author: profileName,
+    }))
   } catch {
-    return []
+    return dummyPosts.map((post) => ({
+      ...post,
+      author: readMyProfileName(),
+    }))
   }
 }
 

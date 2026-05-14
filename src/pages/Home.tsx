@@ -551,6 +551,7 @@ function Home() {
             : profile,
         ),
       )
+      showStateBarMessage('프로필이 수정되었습니다.', 3000)
     } else {
       const nextProfile: ProfileSummarySlide = {
         id: Date.now(),
@@ -851,10 +852,10 @@ function Home() {
           backgroundColor="#EDE9FE"
           ariaLabel="수의사 상담 배너"
           rotateImage={false}
-          imageWidth={132}
-          imageHeight={124}
-          imageBottom={0}
-          imageRight={28.35}
+          imageWidth={148}
+          imageHeight={140}
+          imageBottom={-10}
+          imageRight={20}
         />
 
         <ContentSection className="home_section home_content_section" title="펫스토리">
@@ -867,6 +868,7 @@ function Home() {
                 onClick={() => navigate(item.path)}
               >
                 <img src={item.image} alt={item.title} style={{ objectPosition: item.objectPosition }} />
+                <span className="content_card_chip">일상</span>
                 <div className="content_overlay">
                   <p className="p_semibold">{item.title}</p>
                 </div>

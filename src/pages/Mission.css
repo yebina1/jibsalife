@@ -2,8 +2,13 @@
   --mission-fixed-calendar-height: 174px;
   --mission-fixed-title-height: 62px;
   min-height: auto;
+  overflow: visible;
   background: #ffffff;
   color: #171717;
+}
+
+.layout_content > .mission_page {
+  min-height: auto;
 }
 
 .layout:has(.mission_page) .header_right > button:first-child {
@@ -384,11 +389,12 @@
 
 .mission_history_list {
   display: grid;
-  height: auto;
+  min-height: auto;
   align-self: start;
   align-content: start;
   gap: 20px;
   grid-auto-rows: max-content;
+  padding-bottom: 24px;
 }
 
 .mission_history_section.is_condensed .mission_history_list {

@@ -115,6 +115,15 @@
   content: '';
 }
 
+.health_entry_info_button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
 .health_entry_row_value {
   display: flex;
   min-width: 0;

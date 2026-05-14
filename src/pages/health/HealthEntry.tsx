@@ -62,6 +62,11 @@ function HealthEntry() {
   const amountInputLabel = selectedCategory.id === 'walk' ? '산책 시간' : '사료량'
   const amountUnit = selectedCategory.id === 'walk' ? '분' : 'g'
   const canSave = isAmountInputCategory || addTitle.trim().length > 0 || selectedQuickMessage !== ''
+  const handleRepeatInfoClick = () => {
+    showStateBarMessage('설정한 주기에 맞춰 기록이 자동 등록돼요.\n(ex. 매일, 매주)', 3000, {
+      placement: 'sheet',
+    })
+  }
   const addContentLabel =
     selectedCategory.id === 'poop'
       ? '배변·배뇨 기록'
@@ -163,9 +168,16 @@ function HealthEntry() {
           <div className="health_entry_row">
             <span className="health_entry_row_label">
               반복
-              <span className="health_entry_info" aria-hidden="true">
-                i
-              </span>
+              <button
+                type="button"
+                className="health_entry_info_button"
+                aria-label="반복 설정 안내"
+                onClick={handleRepeatInfoClick}
+              >
+                <span className="health_entry_info" aria-hidden="true">
+                  i
+                </span>
+              </button>
             </span>
             <button type="button" className="health_entry_row_value">
               반복 안 함

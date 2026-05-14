@@ -7,6 +7,7 @@ import HomeIndicator from '../components/HomeIndicator'
 import Nav from '../components/Nav'
 import CommentInputForm from '../components/html/CommentInputForm'
 import StateBar from '../components/StateBar'
+import StatusMessageBar from '../components/StatusMessageBar'
 import addIcon from '../svg/add icon.svg'
 import emojiIcon from '../svg/emoji.svg'
 import { HeaderContext, type HeaderConfig } from '../contexts/HeaderContext'
@@ -391,6 +392,7 @@ function Layout({
         <div className={contentClassName} ref={contentRef}>
           <Outlet />
         </div>
+        {!isNoLayoutPage ? <StatusMessageBar /> : null}
         {!hideFloatingAiButton ? <FloatingAiButton /> : null}
         {!isNoLayoutPage && showFooter ? (
           <footer>

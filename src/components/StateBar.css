@@ -14,33 +14,6 @@
   background-color: #ffffff;
 }
 
-.state_bar_message {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding: env(safe-area-inset-top, 0px)
-    max(24px, calc(var(--layout-inline-padding, 16px) + env(safe-area-inset-right, 0px)))
-    0
-    max(24px, calc(var(--layout-inline-padding, 16px) + env(safe-area-inset-left, 0px)));
-  box-sizing: border-box;
-  background: #ffffff;
-  color: #111111;
-  font-family: var(--app-font-family);
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.4;
-  letter-spacing: -0.025em;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-}
-
-.state_bar_message.is_visible {
-  opacity: 1;
-}
-
 .state_bar_time {
   color: #000000;
   font-family: "SF Pro Text", "SF Pro Display", -apple-system,

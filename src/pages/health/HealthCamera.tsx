@@ -24,6 +24,7 @@ import {
   type MissionHistoryRecord,
   writeStoredMissionHistoryRecords,
 } from '../../utils/missionHistoryRecords'
+import { showStateBarMessage } from '../../utils/stateBarMessage'
 
 type GuideMode = 'photo' | 'audio' | 'video' | 'memo'
 type GuideIconType =
@@ -599,6 +600,7 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
   const handleMemoSaveComplete = () => {
     if (!saveMemoToCalendar()) return
 
+    showStateBarMessage('우리 아이의 기록이 저장되었어요.')
     resetMemoSheet()
     closeMemoSheet()
     setIsSaveCompleteDialogOpen(true)

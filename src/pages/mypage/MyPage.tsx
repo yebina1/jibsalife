@@ -20,6 +20,7 @@ import {
 import dogBadgeImage from '../../img/badge/dogbadge2.png'
 
 const createdPostsStorageKey = 'jibsalife.community.createdPosts'
+const defaultCreatedPostCount = 3
 const activityItems = [
   { label: '활동 내역', icon: 'activity' },
   { label: '저장한 장소', icon: 'pin' },
@@ -74,9 +75,13 @@ function readCreatedPostCount() {
   try {
     const saved = window.localStorage.getItem(createdPostsStorageKey)
     const parsed = saved ? JSON.parse(saved) : []
-    return Array.isArray(parsed) ? parsed.length : 0
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed.length
+    }
+
+    return defaultCreatedPostCount
   } catch {
-    return 0
+    return defaultCreatedPostCount
   }
 }
 
