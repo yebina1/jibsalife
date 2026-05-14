@@ -1,5 +1,6 @@
 import './App.css'
 import { Navigate, Route, Routes } from 'react-router'
+import type { ReactNode } from 'react'
 import Layout from './layouts/Layout'
 import ScrollToTop from './components/ScrollToTop'
 import CommunityChallenge from './pages/community/CommunityChallenge'
@@ -41,16 +42,36 @@ import SubscriptionPage from './pages/mypage/SubscriptionPage'
 import TermsDetail from './pages/TermsDetail'
 import PrivacyDetail from './pages/PrivacyDetail'
 
+const ONBOARDING_DONE_KEY = 'jibsalife.onboarding.done'
+const AUTH_LOGGED_IN_KEY = 'jibsalife.auth.loggedIn'
+
+function RootRedirect() {
+  if (localStorage.getItem(AUTH_LOGGED_IN_KEY) === 'true') return <Navigate to="/home" replace />
+  if (localStorage.getItem(ONBOARDING_DONE_KEY) === 'true') return <Navigate to="/login" replace />
+  return <Navigate to="/onboarding" replace />
+}
+
+function OnboardingGuard({ children }: { children: ReactNode }) {
+  if (localStorage.getItem(AUTH_LOGGED_IN_KEY) === 'true') return <Navigate to="/home" replace />
+  if (localStorage.getItem(ONBOARDING_DONE_KEY) === 'true') return <Navigate to="/login" replace />
+  return <>{children}</>
+}
+
+function LoginGuard({ children }: { children: ReactNode }) {
+  if (localStorage.getItem(AUTH_LOGGED_IN_KEY) === 'true') return <Navigate to="/home" replace />
+  return <>{children}</>
+}
+
 function App() {
   return (
     <div className="app">
       <ScrollToTop />
       <Routes>
         <Route element={<Layout showHeader={false} showNav={false} showFooter={false} hasContentPadding={false} />}>
-          <Route path="/onboarding" element={<Onboarding />} />
+          <Route path="/onboarding" element={<OnboardingGuard><Onboarding /></OnboardingGuard>} />
         </Route>
         <Route element={<Layout showHeader={false} showNav={false} showFooter={false} />}>
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<LoginGuard><Login /></LoginGuard>} />
           <Route path="/signup" element={<Signup />} />
         </Route>
         <Route element={<Layout showHeader={false} showNav={false} />}>
@@ -68,7 +89,7 @@ function App() {
           <Route path="/health/cam" element={<Health />} />
         </Route>
         <Route element={<Layout />}>
-          <Route path="/" element={<Navigate to="/onboarding" replace />} />
+          <Route path="/" element={<RootRedirect />} />
           <Route path="/home" element={<Home />} />
           <Route path="/place" element={<Place />} />
           <Route path="/mission" element={<Mission />} />

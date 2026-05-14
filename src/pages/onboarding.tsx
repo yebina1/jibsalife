@@ -279,7 +279,10 @@ function Onboarding() {
         )}
         actionLabel="집사인생 시작하기"
         actionClassName="purple_btn onboarding_action_primary"
-        onAction={() => navigate('/login')}
+        onAction={() => {
+          localStorage.setItem('jibsalife.onboarding.done', 'true')
+          navigate('/login')
+        }}
       />
     )
   }

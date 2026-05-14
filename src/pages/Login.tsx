@@ -22,6 +22,7 @@ function Login() {
     }
     if (id === 'hello@jipsa.app' && password === '123456') {
       setError('')
+      localStorage.setItem('jibsalife.auth.loggedIn', 'true')
       navigate('/home')
     } else {
       setError('아이디 또는 비밀번호가 잘못 입력되었습니다.')
