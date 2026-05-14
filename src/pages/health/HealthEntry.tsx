@@ -11,6 +11,7 @@ import {
   readMissionHistoryRecordsWithDefaults,
   writeStoredMissionHistoryRecords,
 } from '../../utils/missionHistoryRecords'
+import { showStateBarMessage } from '../../utils/stateBarMessage'
 
 const today = new Date()
 
@@ -25,6 +26,7 @@ const categoryOptions: CategoryOption[] = [
   { id: 'poop', label: '배변 기록', color: '#527ca3' },
   { id: 'activity', label: '활동 기록', color: '#428fe6' },
   { id: 'symptom', label: '증상', color: '#b9dfe3' },
+  { id: 'walk', label: '산책 기록', color: '#a4ce95' },
 ]
 
 const categoryQuickMessageOptions: Record<string, string[]> = {
@@ -46,6 +48,7 @@ function HealthEntry() {
   const [isCategoryPickerOpen, setIsCategoryPickerOpen] = useState(false)
   const [selectedQuickMessage, setSelectedQuickMessage] = useState('')
   const [addTitle, setAddTitle] = useState('')
+  const [feedAmount, setFeedAmount] = useState(0)
 
   const addDate = {
     year: today.getFullYear(),
@@ -55,7 +58,10 @@ function HealthEntry() {
 
   const selectedCategory = categoryOptions.find((c) => c.id === selectedCategoryId) ?? categoryOptions[0]
   const selectedQuickMessages = categoryQuickMessageOptions[selectedCategory.id] ?? []
-  const canSave = addTitle.trim().length > 0 || selectedQuickMessage !== ''
+  const isAmountInputCategory = selectedCategory.id === 'meal' || selectedCategory.id === 'walk'
+  const amountInputLabel = selectedCategory.id === 'walk' ? '산책 시간' : '사료량'
+  const amountUnit = selectedCategory.id === 'walk' ? '분' : 'g'
+  const canSave = isAmountInputCategory || addTitle.trim().length > 0 || selectedQuickMessage !== ''
   const addContentLabel =
     selectedCategory.id === 'poop'
       ? '배변·배뇨 기록'
@@ -65,7 +71,13 @@ function HealthEntry() {
 
   const handleSave = () => {
     const memo = addTitle.trim()
-    const detail = [selectedQuickMessage, memo].filter(Boolean).join('\n')
+    const primaryDetail =
+      selectedCategory.id === 'meal'
+        ? `사료 ${feedAmount}g`
+        : selectedCategory.id === 'walk'
+          ? `산책 ${feedAmount}분`
+          : selectedQuickMessage
+    const detail = [primaryDetail, memo].filter(Boolean).join('\n')
     if (!detail) return
 
     const now = new Date()
@@ -85,8 +97,14 @@ function HealthEntry() {
     const existing = readMissionHistoryRecordsWithDefaults()
     writeStoredMissionHistoryRecords([newItem, ...existing])
     window.dispatchEvent(new CustomEvent(MISSION_HISTORY_RECORDS_CHANGE_EVENT, { detail: newItem }))
+    showStateBarMessage('우리 아이의 기록이 저장되었어요.')
     setSelectedQuickMessage('')
     setAddTitle('')
+    if (selectedCategory.id === 'walk') {
+      setFeedAmount(30)
+    } else if (selectedCategory.id === 'meal') {
+      setFeedAmount(0)
+    }
   }
 
   const handleSaveOnly = () => {
@@ -108,6 +126,11 @@ function HealthEntry() {
     if (draftCategoryId !== selectedCategoryId) {
       setSelectedQuickMessage('')
       setAddTitle('')
+      if (draftCategoryId === 'walk') {
+        setFeedAmount(30)
+      } else if (draftCategoryId === 'meal') {
+        setFeedAmount(0)
+      }
     }
     setSelectedCategoryId(draftCategoryId)
     setIsCategoryPickerOpen(false)
@@ -133,7 +156,7 @@ function HealthEntry() {
           <div className="health_entry_row">
             <span className="health_entry_row_label">기간</span>
             <button type="button" className="health_entry_row_value">
-              {addDate.month}월 {addDate.day}일
+              <span>{`${addDate.month}월 ${addDate.day}일`}</span>
               <ChevronIcon direction="right" size="md" />
             </button>
           </div>
@@ -145,7 +168,7 @@ function HealthEntry() {
               </span>
             </span>
             <button type="button" className="health_entry_row_value">
-              매일
+              반복 안 함
               <ChevronIcon direction="right" size="md" />
             </button>
           </div>
@@ -163,20 +186,54 @@ function HealthEntry() {
           </div>
         </div>
 
-        <section className="health_entry_content">
-          <h2>{addContentLabel}</h2>
-          <div className="health_entry_quick_messages" aria-label="빠른 입력">
-            {selectedQuickMessages.map((msg) => (
+        <section className={`health_entry_content${isAmountInputCategory ? ' has_amount' : ''}`}>
+          <h2>{isAmountInputCategory ? amountInputLabel : addContentLabel}</h2>
+          {isAmountInputCategory ? (
+            <div className="health_entry_amount_control" aria-label={amountInputLabel}>
               <button
-                key={msg}
                 type="button"
-                className={`health_entry_quick_message${selectedQuickMessage === msg ? ' active' : ''}`}
-                onClick={() => setSelectedQuickMessage(msg)}
+                aria-label={`${amountInputLabel} ${selectedCategory.id === 'walk' ? '5분' : '5g'} 줄이기`}
+                onClick={() => setFeedAmount(Math.max(0, feedAmount - 5))}
               >
-                {msg}
+                -
               </button>
-            ))}
-          </div>
+              <span className={`health_entry_amount_value${feedAmount === 0 ? ' is_zero' : ''}`}>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min="0"
+                  step="5"
+                  value={feedAmount}
+                  onChange={(event) => {
+                    const nextAmount = Number(event.target.value)
+                    setFeedAmount(Number.isFinite(nextAmount) ? Math.max(0, nextAmount) : 0)
+                  }}
+                  aria-label={amountInputLabel}
+                />
+                <span>{amountUnit}</span>
+              </span>
+              <button
+                type="button"
+                aria-label={`${amountInputLabel} ${selectedCategory.id === 'walk' ? '5분' : '5g'} 늘리기`}
+                onClick={() => setFeedAmount(feedAmount + 5)}
+              >
+                +
+              </button>
+            </div>
+          ) : (
+            <div className="health_entry_quick_messages" aria-label="빠른 입력">
+              {selectedQuickMessages.map((msg) => (
+                <button
+                  key={msg}
+                  type="button"
+                  className={`health_entry_quick_message${selectedQuickMessage === msg ? ' active' : ''}`}
+                  onClick={() => setSelectedQuickMessage(msg)}
+                >
+                  {msg}
+                </button>
+              ))}
+            </div>
+          )}
           <textarea
             className="health_entry_textarea"
             placeholder="추가로 기록할 내용을 입력해 주세요."

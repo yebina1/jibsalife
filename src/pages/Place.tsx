@@ -59,7 +59,7 @@ const placeHospitals: PlaceHospital[] = [
     distance: '1.8 KM',
     tags: ['생활케어', '건강검진', '스케일링'],
     openTime: '11:00',
-    closeTime: '20:00',
+    closeTime: '14:30',
   },
   {
     name: '24시 행복 동물병원',
@@ -68,7 +68,7 @@ const placeHospitals: PlaceHospital[] = [
     distance: '3.2 KM',
     tags: ['생활케어', '건강검진', '스케일링'],
     openTime: '09:00',
-    closeTime: '17:30',
+    closeTime: '13:00',
   },
 ]
 

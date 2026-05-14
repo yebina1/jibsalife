@@ -19,6 +19,7 @@ import {
 } from '../../utils/petProfiles'
 import dogBadgeImage from '../../img/badge/dogbadge2.png'
 
+const createdPostsStorageKey = 'jibsalife.community.createdPosts'
 const activityItems = [
   { label: '활동 내역', icon: 'activity' },
   { label: '저장한 장소', icon: 'pin' },
@@ -35,12 +36,15 @@ const supportItems = [
   { label: '앱 설정', icon: 'gear' },
 ] as const
 
-const myProfileStats = [
-  { label: '게시글', value: '12' },
+const myProfileStatTemplate = [
+  { label: '게시글' },
   { label: '댓글', value: '23' },
   { label: '뱃지', value: '8' },
   { label: '쿠폰', value: '1장' },
 ] as const
+
+const clickableMyProfileStatLabels = ['게시글'] as const
+const disabledMyProfileStatLabels = ['댓글', '뱃지', '쿠폰'] as const
 
 const LOCATION_STORAGE_KEY = 'mypage-location'
 const DEFAULT_LOCATION_MESSAGE = '위치 정보를 등록하고\n맞춤 서비스를 받아 보세요.'
@@ -62,6 +66,18 @@ function formatAddressLocation(address: string) {
 
 function pickAddressPart(...values: Array<string | undefined>) {
   return values.find((value) => typeof value === 'string' && value.trim().length > 0)?.trim()
+}
+
+function readCreatedPostCount() {
+  if (typeof window === 'undefined') return 0
+
+  try {
+    const saved = window.localStorage.getItem(createdPostsStorageKey)
+    const parsed = saved ? JSON.parse(saved) : []
+    return Array.isArray(parsed) ? parsed.length : 0
+  } catch {
+    return 0
+  }
 }
 
 async function reverseGeocodeLocation(latitude: number, longitude: number) {
@@ -208,6 +224,7 @@ function MyPage() {
   const [profilePoints, setProfilePoints] = useState(() => readProfilePoints())
   const [profileName, setProfileName] = useState(() => readMyProfileName())
   const [profileImage, setProfileImage] = useState(() => readSelectedPetProfile().image)
+  const [createdPostCount, setCreatedPostCount] = useState(readCreatedPostCount)
 
   useEffect(() => {
     const savedValue = window.localStorage.getItem(LOCATION_STORAGE_KEY)
@@ -268,6 +285,26 @@ function MyPage() {
       window.removeEventListener('storage', handlePetProfileChange)
     }
   }, [])
+
+  useEffect(() => {
+    const syncCreatedPostCount = () => {
+      setCreatedPostCount(readCreatedPostCount())
+    }
+
+    window.addEventListener('focus', syncCreatedPostCount)
+    window.addEventListener('pageshow', syncCreatedPostCount)
+    window.addEventListener('storage', syncCreatedPostCount)
+
+    return () => {
+      window.removeEventListener('focus', syncCreatedPostCount)
+      window.removeEventListener('pageshow', syncCreatedPostCount)
+      window.removeEventListener('storage', syncCreatedPostCount)
+    }
+  }, [])
+
+  const myProfileStats = myProfileStatTemplate.map((stat) =>
+    stat.label === '게시글' ? { label: stat.label, value: String(createdPostCount) } : stat,
+  )
 
   const handleLocationSetting = () => {
     if (!navigator.geolocation) {
@@ -376,6 +413,13 @@ function MyPage() {
                 </span>
               }
               stats={myProfileStats}
+              clickableStatLabels={clickableMyProfileStatLabels}
+              disabledStatLabels={disabledMyProfileStatLabels}
+              onStatClick={(label) => {
+                if (label === '게시글') {
+                  navigate('/mypage/posts')
+                }
+              }}
             />
           </div>
         </section>

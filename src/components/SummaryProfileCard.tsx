@@ -14,11 +14,14 @@ type SummaryProfileCardProps = {
   breed: string
   details: string
   stats: readonly SummaryProfileStat[]
+  disabledStatLabels?: readonly string[]
+  clickableStatLabels?: readonly string[]
   careGuideLabel?: ReactNode
   imageAlt?: string
   className?: string
   onEdit?: () => void
   onStatEdit?: (label: string) => void
+  onStatClick?: (label: string) => void
   onCareGuideClick?: () => void
 }
 
@@ -79,10 +82,13 @@ function SummaryProfileCard({
   breed,
   details,
   stats,
+  disabledStatLabels = [],
+  clickableStatLabels = [],
   careGuideLabel = '건강 리포트',
   imageAlt,
   className,
   onEdit,
+  onStatClick,
   onCareGuideClick,
 }: SummaryProfileCardProps) {
   const classNames = className
@@ -128,18 +134,41 @@ function SummaryProfileCard({
       <div className="summary_profile_card_stats" aria-label={`${name} 활동 요약`} role="list">
         {stats.map((stat, index) => {
           const { amount, unit } = splitStatValue(stat.value)
+          const isDisabled = disabledStatLabels.includes(stat.label)
+          const isClickable = !isDisabled && clickableStatLabels.includes(stat.label) && typeof onStatClick === 'function'
 
           return (
             <Fragment key={stat.label}>
-              <div className="summary_profile_card_stat_item" role="listitem">
-                <div className="summary_profile_card_stat_label_group">
-                  <span className="p_medium">{stat.label}</span>
+              {isClickable ? (
+                <button
+                  type="button"
+                  className="summary_profile_card_stat_item is_clickable"
+                  role="listitem"
+                  onClick={() => onStatClick(stat.label)}
+                >
+                  <div className="summary_profile_card_stat_label_group">
+                    <span className="p_medium">{stat.label}</span>
+                  </div>
+                  <strong className="summary_profile_card_stat_value">
+                    <span>{amount}</span>
+                    {unit ? <span>{unit}</span> : null}
+                  </strong>
+                </button>
+              ) : (
+                <div
+                  className={`summary_profile_card_stat_item${isDisabled ? ' is_disabled' : ''}`}
+                  role="listitem"
+                  aria-disabled={isDisabled}
+                >
+                  <div className="summary_profile_card_stat_label_group">
+                    <span className="p_medium">{stat.label}</span>
+                  </div>
+                  <strong className="summary_profile_card_stat_value">
+                    <span>{amount}</span>
+                    {unit ? <span>{unit}</span> : null}
+                  </strong>
                 </div>
-                <strong className="summary_profile_card_stat_value">
-                  <span>{amount}</span>
-                  {unit ? <span>{unit}</span> : null}
-                </strong>
-              </div>
+              )}
               {index < stats.length - 1 ? (
                 <div className="summary_profile_card_stat_divider" aria-hidden="true">
                   <span className="summary_profile_card_stat_dot" />

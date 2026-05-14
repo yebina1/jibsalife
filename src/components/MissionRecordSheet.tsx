@@ -71,6 +71,7 @@ function MissionRecordSheet({
   const isAmountInputCategory =
     selectedCategory.id === 'meal' || selectedCategory.id === 'walk'
   const amountInputLabel = selectedCategory.id === 'walk' ? '산책 시간' : '사료량'
+  const amountUnit = selectedCategory.id === 'walk' ? '분' : 'g'
   const addContentLabel = selectedCategory.id === 'poop'
     ? '배변·배뇨 기록'
     : selectedCategory.id === 'activity'
@@ -78,6 +79,7 @@ function MissionRecordSheet({
       : selectedCategory.label
 
   const shouldShowSecondaryAction = isEditing || Boolean(secondaryActionLabel && onSecondaryAction)
+
   const handleConfirm = () => {
     if (confirmAction === 'delete') {
       onDelete()
@@ -146,57 +148,35 @@ function MissionRecordSheet({
           <div className="mission_amount_frame">
             <h2>{amountInputLabel}</h2>
             <div className="mission_amount_control" aria-label={amountInputLabel}>
-              {selectedCategory.id === 'meal' ? (
-                <>
-                  <button
-                    type="button"
-                    aria-label={`${amountInputLabel} 5g 줄이기`}
-                    onClick={() => onFeedAmountChange(Math.max(0, feedAmount - 5))}
-                  >
-                    -
-                  </button>
-                  <span className={`mission_amount_value${feedAmount === 0 ? ' is_zero' : ''}`}>
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      min="0"
-                      step="5"
-                      value={feedAmount}
-                      onChange={(event) => {
-                        const nextAmount = Number(event.target.value)
-                        onFeedAmountChange(Number.isFinite(nextAmount) ? Math.max(0, nextAmount) : 0)
-                      }}
-                      aria-label={amountInputLabel}
-                    />
-                    <span>g</span>
-                  </span>
-                  <button
-                    type="button"
-                    aria-label={`${amountInputLabel} 5g 올리기`}
-                    onClick={() => onFeedAmountChange(feedAmount + 5)}
-                  >
-                    +
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    type="button"
-                    aria-label={`${amountInputLabel} 5분 줄이기`}
-                    onClick={() => onFeedAmountChange(Math.max(0, feedAmount - 5))}
-                  >
-                    -
-                  </button>
-                  <strong>{feedAmount}분</strong>
-                  <button
-                    type="button"
-                    aria-label={`${amountInputLabel} 5분 올리기`}
-                    onClick={() => onFeedAmountChange(feedAmount + 5)}
-                  >
-                    +
-                  </button>
-                </>
-              )}
+              <button
+                type="button"
+                aria-label={`${amountInputLabel} ${selectedCategory.id === 'walk' ? '5분' : '5g'} 줄이기`}
+                onClick={() => onFeedAmountChange(Math.max(0, feedAmount - 5))}
+              >
+                -
+              </button>
+              <span className={`mission_amount_value${feedAmount === 0 ? ' is_zero' : ''}`}>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min="0"
+                  step="5"
+                  value={feedAmount}
+                  onChange={(event) => {
+                    const nextAmount = Number(event.target.value)
+                    onFeedAmountChange(Number.isFinite(nextAmount) ? Math.max(0, nextAmount) : 0)
+                  }}
+                  aria-label={amountInputLabel}
+                />
+                <span>{amountUnit}</span>
+              </span>
+              <button
+                type="button"
+                aria-label={`${amountInputLabel} ${selectedCategory.id === 'walk' ? '5분' : '5g'} 늘리기`}
+                onClick={() => onFeedAmountChange(feedAmount + 5)}
+              >
+                +
+              </button>
             </div>
           </div>
         ) : (
@@ -257,5 +237,3 @@ function MissionRecordSheet({
 }
 
 export default MissionRecordSheet
-
-

@@ -1,6 +1,8 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
+import { Star } from 'lucide-react'
 import './Health.css'
 import './HealthHospitalList.css'
+import './HealthHospitalRecommend.css'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
 import ContentSection from '../../components/ContentSection'
@@ -8,7 +10,27 @@ import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
 import LikeButton from '../../components/LikeButton'
 import calendarIcon from '../../svg/calendar.svg'
-import { getOperatingState, hospitalSearchItems } from './HealthHospitalData'
+import { hospitalSearchItems } from './HealthHospitalData'
+
+function toMinutes(time: string) {
+  const [hours, minutes] = time.split(':').map(Number)
+  return hours * 60 + minutes
+}
+
+function getClinicStatus(openTime: string, closeTime: string) {
+  const now = new Date()
+  const currentMinutes = now.getHours() * 60 + now.getMinutes()
+  const openMinutes = toMinutes(openTime)
+  const closeMinutes = toMinutes(closeTime)
+  const isOpen = currentMinutes >= openMinutes && currentMinutes < closeMinutes
+
+  return {
+    isOpen,
+    label: isOpen ? '진료 중' : '진료 종료',
+    timeText: `${openTime} ~ ${closeTime}`,
+    color: isOpen ? '#22C55E' : '#767676',
+  }
+}
 
 function HealthHospitalList() {
   const [favoriteNames, setFavoriteNames] = useState<string[]>([])
@@ -46,38 +68,50 @@ function HealthHospitalList() {
         >
           <ul className="health_hospital_list">
             {hospitalSearchItems.map((item) => {
-              const operatingState = getOperatingState(item.open, item.close)
+              const status = getClinicStatus(item.open, item.close)
               const isFavorite = favoriteNames.includes(item.name)
 
               return (
-                <li key={item.name}>
-                  <div className="health_hospital_list_item">
-                    <img src={item.image} alt={`${item.name} 이미지`} aria-hidden="true" />
-                    <div className="health_hospital_list_item_body">
-                      <div className="health_hospital_list_item_top">
-                        <strong>{item.name}</strong>
+                <li key={item.name} className="health_hospital_recommend_item">
+                  <div className="health_hospital_recommend_img" aria-hidden="true">
+                    <img src={item.image} alt="" />
+                  </div>
+
+                  <div className="health_hospital_recommend_info">
+                    <div className="health_hospital_recommend_text">
+                      <div className="health_hospital_recommend_row">
+                        <span className="health_hospital_recommend_name">{item.name}</span>
+                        <LikeButton
+                          type="button"
+                          liked={isFavorite}
+                          className="health_hospital_recommend_like"
+                          aria-label={isFavorite ? `${item.name} 찜 해제` : `${item.name} 찜`}
+                          onClick={() => handleFavoriteToggle(item.name)}
+                        />
                       </div>
 
-                      <p className="health_hospital_list_rating">
-                        <i className="bx bxs-star" aria-hidden="true"></i>
-                        {item.rating} ({item.reviewCount})
+                      <div className="health_hospital_recommend_rating">
+                        <Star size={16} color="#6D59F8" fill="#6D59F8" aria-hidden="true" />
+                        <span>{item.rating}</span>
+                        <span className="health_hospital_recommend_reviews">({item.reviewCount})</span>
+                        <span className="health_hospital_recommend_sep" aria-hidden="true" />
                         <span>{item.distanceKm.toFixed(1)} KM</span>
-                      </p>
+                      </div>
 
-                      <p className="health_hospital_list_tags">{item.tags.join(' · ')}</p>
-
-                      <span className={`health_hospital_list_hours ${operatingState.isOpen ? 'is_open' : ''}`}>
-                        {operatingState.isOpen ? '진료중' : '진료 마감'} {item.open} ~ {item.close}
-                      </span>
+                      <div className="health_hospital_recommend_tags">
+                        {item.tags.map((tag, index) => (
+                          <span key={`${item.name}-${tag}`} className="health_hospital_recommend_tag_wrap">
+                            {index > 0 && <span className="health_hospital_recommend_dot" aria-hidden="true" />}
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
                     </div>
 
-                    <LikeButton
-                      type="button"
-                      liked={isFavorite}
-                      className="health_hospital_list_favorite"
-                      aria-label={isFavorite ? `${item.name} 찜 해제` : `${item.name} 찜`}
-                      onClick={() => handleFavoriteToggle(item.name)}
-                    />
+                    <span className="health_hospital_recommend_status">
+                      <span style={{ color: status.color }}>{status.label}</span>
+                      <span style={{ color: '#505050' }}>{status.timeText}</span>
+                    </span>
                   </div>
                 </li>
               )

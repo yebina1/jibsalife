@@ -33,6 +33,7 @@ import {
 import { voteDetails } from './community/CommunityVoteData'
 import { hasVotedMission, readVotedCandidate, writeVotedCandidate, writeVotedMissionId } from '../utils/communityVoteStatus'
 import { readProfilePoints } from '../utils/profilePoints'
+import { showStateBarMessage } from '../utils/stateBarMessage'
 import knowledge1 from '../img/Knowledge/knowledge1.png'
 import knowledge2 from '../img/Knowledge/knowledge2.png'
 import knowledge3 from '../img/Knowledge/knowledge3.png'
@@ -617,6 +618,7 @@ function Home() {
     if (selectedBestPoseId === null) return
     writeVotedMissionId(BEST_POSE_VOTE_ID)
     writeVotedCandidate(BEST_POSE_VOTE_ID, selectedBestPoseId)
+    showStateBarMessage('투표가 수정되었습니다.', 3000)
   }
 
   const handleConfirmAction = () => {
@@ -855,7 +857,7 @@ function Home() {
           imageRight={28.35}
         />
 
-        <ContentSection className="home_section home_content_section" title="반려상식">
+        <ContentSection className="home_section home_content_section" title="펫스토리">
           <div className="content_grid">
             {contentItems.map((item) => (
               <button

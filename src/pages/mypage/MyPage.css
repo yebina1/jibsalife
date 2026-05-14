@@ -106,12 +106,13 @@
   display: none;
 }
 
-.mypage_profile_card_wrap .summary_profile_card_stats {
-  pointer-events: none;
-}
-
 .mypage_profile_card_wrap .summary_profile_card_stat_item {
   cursor: default;
+}
+
+.mypage_profile_card_wrap .summary_profile_card_stat_item.is_clickable {
+  color: inherit;
+  cursor: pointer;
 }
 
 .mypage_profile_card_wrap .summary_profile_card_details {

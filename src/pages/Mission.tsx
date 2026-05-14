@@ -29,6 +29,7 @@ import {
   writeStoredMissionHistoryRecords,
   type MissionHistoryRecord,
 } from '../utils/missionHistoryRecords'
+import { showStateBarMessage } from '../utils/stateBarMessage'
 
 const weekLabels = ['일', '월', '화', '수', '목', '금', '토']
 const today = new Date()
@@ -130,7 +131,10 @@ function createRepeatDateKeys(
     currentDate.setDate(currentDate.getDate() + 1)
   ) {
     const dayOfWeek = currentDate.getDay()
+    const hasDateRangeOnly =
+      repeatId === 'none' && endDate.getTime() > startDate.getTime()
     const shouldInclude =
+      hasDateRangeOnly ||
       repeatId === 'daily' ||
       (repeatId === 'weekdays' && dayOfWeek >= 1 && dayOfWeek <= 5) ||
       (repeatId === 'weekly' && dayOfWeek === startDate.getDay()) ||
@@ -887,6 +891,7 @@ function Mission() {
             : item
         )
       )
+      showStateBarMessage('기록이 수정되었습니다.', 3000)
       requestCloseMissionSheet()
       return
     }
@@ -907,6 +912,7 @@ function Mission() {
     writeStoredMissionHistoryRecords(nextHistory)
     setHistoryItems(nextHistory)
     window.dispatchEvent(new CustomEvent(MISSION_HISTORY_RECORDS_CHANGE_EVENT, { detail: nextRecords[0] }))
+    showStateBarMessage('우리 아이의 기록이 저장되었어요.')
     requestCloseMissionSheet()
   }
 

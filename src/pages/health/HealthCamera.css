@@ -11,6 +11,41 @@
   overflow: hidden;
 }
 
+.health_camera_period_inline {
+  gap: 14px;
+}
+
+.health_camera_period_editor {
+  display: grid;
+  gap: 12px;
+  padding: 4px 0 0;
+}
+
+.health_camera_period_field {
+  display: grid;
+  gap: 8px;
+}
+
+.health_camera_period_field span {
+  color: #767676;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.health_camera_period_field input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid #e5e5ec;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #111111;
+  font-size: 16px;
+  font-weight: 600;
+  box-sizing: border-box;
+}
+
 .health_camera_page_guide {
   display: flex;
   height: auto;

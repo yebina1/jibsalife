@@ -35,6 +35,7 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import Mission from './pages/Mission'
 import MyPage from './pages/mypage/MyPage'
+import MyPostsPage from './pages/mypage/MyPostsPage'
 import Onboarding from './pages/onboarding'
 import Place from './pages/Place'
 import Signup from './pages/Signup'
@@ -76,6 +77,9 @@ function App() {
         </Route>
         <Route element={<Layout showHeader={false} showNav={false} />}>
           <Route path="/mypage/subscription" element={<SubscriptionPage />} />
+        </Route>
+        <Route element={<Layout />}>
+          <Route path="/mypage/posts" element={<MyPostsPage />} />
         </Route>
         <Route element={<Layout showHeader={false} showNav={false} showFooter={false} hasContentPadding={false} />}>
           <Route path="/signup/terms/service" element={<TermsDetail />} />
