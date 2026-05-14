@@ -38,6 +38,8 @@ import Onboarding from './pages/onboarding'
 import Place from './pages/Place'
 import Signup from './pages/Signup'
 import SubscriptionPage from './pages/mypage/SubscriptionPage'
+import TermsDetail from './pages/TermsDetail'
+import PrivacyDetail from './pages/PrivacyDetail'
 
 function App() {
   return (
@@ -51,6 +53,10 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/mypage/subscription" element={<SubscriptionPage />} />
+        </Route>
+        <Route element={<Layout showHeader={false} showNav={false} showFooter={false} hasContentPadding={false} />}>
+          <Route path="/signup/terms/service" element={<TermsDetail />} />
+          <Route path="/signup/terms/privacy" element={<PrivacyDetail />} />
         </Route>
         <Route element={<Layout showNav={false} />}>
           <Route path="/health/qna" element={<HealthQna />} />

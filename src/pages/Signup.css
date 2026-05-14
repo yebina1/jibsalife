@@ -1,9 +1,46 @@
+/* ── Back header ──────────────────────────────────────── */
+
+.signup_wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.signup_header {
+  padding: 12px 0;
+}
+
+.signup_header_back {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.signup_header_back_icon {
+  font-size: 28px;
+  color: #111111;
+  line-height: 1;
+}
+
+.signup_header_title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111111;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+/* ── Page ─────────────────────────────────────────────── */
+
 .signup_page {
   display: flex;
   flex-direction: column;
   gap: 48px;
-  padding-top: 0;
-  padding: 24px 16px 48px;
+  padding: 24px 0 48px;
 }
 
 /* ── Hero ─────────────────────────────────────────────── */
@@ -12,8 +49,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
-  width: 343px;
+  gap: 32px;
+  width: 100%;
 }
 
 .signup_hero_copy {
@@ -83,6 +120,11 @@
   height: 44px;
   border-radius: 8px;
   font-size: 14px;
+  font-weight: 400;
+}
+
+.signup_input_filled.input_field {
+  font-weight: 600;
 }
 
 /* ── Email row ─────────────────────────────────────────── */
@@ -96,6 +138,22 @@
 .signup_email_row .signup_input {
   flex: 1;
   min-width: 0;
+}
+
+.signup_email_field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.signup_email_error {
+  font-size: 12px;
+  color: #a10803;
+}
+
+.signup_email_success {
+  font-size: 12px;
+  color: #006ae6;
 }
 
 .signup_check_btn {
@@ -114,12 +172,66 @@
   letter-spacing: var(--app-letter-spacing);
 }
 
+.signup_check_btn.is_checked {
+  background: #6d59f8;
+  color: #ffffff;
+  border: none;
+}
+
+.signup_check_btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 /* ── Password stack ───────────────────────────────────── */
 
 .signup_inputs {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.signup_pw_field_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.signup_pw_field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.signup_pw_field .signup_input.input_field {
+  padding-right: 60px;
+}
+
+.signup_pw_icons {
+  position: absolute;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.signup_pw_icon_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.signup_pw_icon_btn img {
+  flex-shrink: 0;
+}
+
+.signup_pw_error {
+  font-size: 12px;
+  color: #a10803;
 }
 
 /* ── Pet type ─────────────────────────────────────────── */
@@ -132,10 +244,11 @@
 .signup_pet_type_btn {
   flex: 1;
   height: 44px;
+  padding: 10px 16px;
   border: 1px solid #e5e5ec;
   border-radius: 8px;
   background: #ffffff;
-  color: #111111;
+  color: #505050;
   font-size: 15px;
   font-weight: 500;
   font-family: inherit;
@@ -144,9 +257,34 @@
 }
 
 .signup_pet_type_btn.is_active {
-  border-color: #6d59f8;
-  color: #6d59f8;
+  border: 1px solid #6d59f8;
+  background: #6d59f8;
+  color: #ffffff;
   font-weight: 600;
+}
+
+/* ── Pet name field ───────────────────────────────────── */
+
+.signup_name_field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.signup_name_field .signup_input.input_field {
+  padding-right: 40px;
+}
+
+.signup_name_clear_btn {
+  position: absolute;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
 }
 
 /* ── Terms ────────────────────────────────────────────── */
@@ -183,27 +321,41 @@
 }
 
 .signup_terms_check {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   width: 24px;
   height: 24px;
-  border-radius: 50%;
-  border: 1.5px solid #d0d0d0;
-  color: transparent;
+  min-width: 24px;
+  min-height: 24px;
+  overflow: hidden;
 }
 
-.signup_terms_check i {
-  font-size: 18px;
-  line-height: 1;
+.signup_terms_icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.15s ease;
 }
 
-.signup_terms_check.is_active {
-  border-color: #6d59f8;
-  background: #6d59f8;
-  color: #ffffff;
+/* gray-check.png(96×96)는 투명 여백이 많아 시각적 아이콘이 작음 → 크게 표시해 보정 */
+.signup_terms_icon_gray {
+  width: 24px;
+  height: 24px;
+  opacity: 1;
 }
+
+.signup_terms_icon_blue {
+  width: 24px;
+  height: 24px;
+  opacity: 0;
+}
+
+.signup_terms_check.is_active .signup_terms_icon_gray { opacity: 0; }
+.signup_terms_check.is_active .signup_terms_icon_blue { opacity: 1; }
 
 .signup_terms_text {
   flex: 1;
@@ -223,6 +375,17 @@
 
 .signup_terms_optional {
   color: #767676;
+}
+
+.signup_terms_chevron_btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
 .signup_terms_chevron {

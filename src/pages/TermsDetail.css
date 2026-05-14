@@ -1,0 +1,163 @@
+/* ── Layout header override ───────────────────────────── */
+/* .layout > header 는 기본 min-height: StateBar+헤더바(97px)를 강제함.
+   Terms 페이지는 StateBar(41px)만 사용하므로 min-height를 재정의해
+   JS useLayoutEffect가 정확한 41px을 측정하도록 함. */
+.layout:has(.terms_wrapper) > header {
+  min-height: var(--layout-status-bar-height);
+}
+
+/* ── Wrapper ──────────────────────────────────────────── */
+
+.terms_wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100vh;
+}
+
+/* ── Header ───────────────────────────────────────────── */
+
+.terms_header {
+  flex-shrink: 0;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e5ec;
+}
+
+.terms_header_inner {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+}
+
+.terms_back_btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.terms_back_icon {
+  font-size: 28px;
+  color: #111111;
+  line-height: 1;
+}
+
+.terms_header_title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111111;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+/* ── Body ─────────────────────────────────────────────── */
+
+.terms_body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 16px 10px;
+}
+
+.terms_main_title {
+  margin: 0 0 6px;
+  font-size: 24px;
+  font-weight: 600;
+  color: #111111;
+  letter-spacing: -0.5px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.terms_effective_date {
+  margin: 0 0 32px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #505050;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* ── Articles ─────────────────────────────────────────── */
+
+.terms_articles {
+  display: flex;
+  flex-direction: column;
+}
+
+.terms_article {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e5e5ec;
+}
+
+.terms_article + .terms_article {
+  padding-top: 24px;
+}
+
+.terms_article:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.terms_article_title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #111111;
+  letter-spacing: -0.4px;
+  line-height: 1.4;
+}
+
+.terms_article_body {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  color: #767676;
+  line-height: 1.65;
+  white-space: pre-line;
+}
+
+.terms_article_list {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  list-style: decimal;
+}
+
+.terms_article_list_item {
+  font-size: 14px;
+  font-weight: 400;
+  color: #767676;
+  line-height: 1.65;
+}
+
+/* ── Footer ───────────────────────────────────────────── */
+
+.terms_footer {
+  margin-top: 48px;
+  padding: 0 16px;
+  flex-shrink: 0;
+  background: #ffffff;
+}
+
+.terms_confirm_btn {
+  width: 100%;
+  height: 54px;
+  border: none;
+  border-radius: 12px;
+  background: #6d59f8;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: inherit;
+  letter-spacing: var(--app-letter-spacing, -0.3px);
+  cursor: pointer;
+}

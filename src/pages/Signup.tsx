@@ -1,11 +1,18 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import Input from '../components/html/Input'
 import Button from '../components/html/Button'
 import Title from '../components/Title'
 import helloIcon from '../svg/hello icon.svg'
 import loginPetImg from '../img/illust_login_pet.png'
+import xIcon from '../img/x-icon.png'
+import eyeIcon from '../img/eye-icon.png'
+import grayCheckIcon from '../img/gray-check.png'
+import blueCheckIcon from '../img/blue-check.png'
 import './Signup.css'
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const PASSWORD_REGEX = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/
 
 type PetType = 'dog' | 'cat'
 
@@ -20,17 +27,68 @@ type Terms = {
 function Signup() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
+  const [emailError, setEmailError] = useState('')
+  const [emailChecked, setEmailChecked] = useState(false)
   const [password, setPassword] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [passwordConfirm, setPasswordConfirm] = useState('')
+  const [passwordConfirmError, setPasswordConfirmError] = useState('')
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false)
   const [petType, setPetType] = useState<PetType | null>(null)
   const [petName, setPetName] = useState('')
-  const [terms, setTerms] = useState<Terms>({
-    all: false,
-    age: false,
-    service: false,
-    privacy: false,
-    marketing: false,
+  const [terms, setTerms] = useState<Terms>(() => {
+    try {
+      const saved = sessionStorage.getItem('signup_terms')
+      if (saved) return JSON.parse(saved) as Terms
+    } catch { /* */ }
+    return { all: false, age: false, service: false, privacy: false, marketing: false }
   })
+
+  useEffect(() => {
+    sessionStorage.setItem('signup_terms', JSON.stringify(terms))
+  }, [terms])
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value)
+    setEmailError('')
+    setEmailChecked(false)
+  }
+
+  const handleEmailBlur = () => {
+    if (email.trim() === '') return
+    if (!EMAIL_REGEX.test(email)) {
+      setEmailError('올바른 이메일을 입력해 주세요.')
+    }
+  }
+
+  const handleEmailCheck = () => {
+    setEmailChecked(true)
+  }
+
+  const handlePasswordChange = (value: string) => {
+    setPassword(value)
+    setPasswordError('')
+  }
+
+  const handlePasswordBlur = () => {
+    if (password === '') return
+    if (!PASSWORD_REGEX.test(password)) {
+      setPasswordError('숫자, 영문, 특수문자 조합 최소 8자를 입력해 주세요.')
+    }
+  }
+
+  const handlePasswordConfirmChange = (value: string) => {
+    setPasswordConfirm(value)
+    setPasswordConfirmError('')
+  }
+
+  const handlePasswordConfirmBlur = () => {
+    if (passwordConfirm === '') return
+    if (password !== passwordConfirm) {
+      setPasswordConfirmError('비밀번호가 일치하지 않습니다.')
+    }
+  }
 
   const allRequiredChecked = terms.age && terms.service && terms.privacy
   const isFormValid =
@@ -53,14 +111,27 @@ function Signup() {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: { preventDefault(): void }) => {
     e.preventDefault()
     if (!isFormValid) return
+    sessionStorage.removeItem('signup_terms')
     navigate('/login')
   }
 
   return (
-    <div className="signup_page">
+    <div className="signup_wrapper">
+      <header className="signup_header">
+        <button
+          type="button"
+          className="signup_header_back"
+          onClick={() => navigate('/login')}
+          aria-label="로그인으로 돌아가기"
+        >
+          <i className="bx bx-chevron-left signup_header_back_icon" aria-hidden="true" />
+          <span className="signup_header_title">회원가입</span>
+        </button>
+      </header>
+      <div className="signup_page">
       <div className="signup_hero">
         <Title
           as="h2"
@@ -83,18 +154,28 @@ function Signup() {
         {/* 이메일 */}
         <div className="signup_section">
           <span className="signup_label">이메일</span>
-          <div className="signup_email_row">
-            <Input
-              value={email}
-              type="email"
-              placeholder="이메일을 입력해 주세요"
-              ariaLabel="이메일"
-              className="signup_input"
-              onChange={setEmail}
-            />
-            <button type="button" className="signup_check_btn">
-              중복확인
-            </button>
+          <div className="signup_email_field">
+            <div className="signup_email_row">
+              <Input
+                value={email}
+                type="email"
+                placeholder="이메일을 입력해 주세요"
+                ariaLabel="이메일"
+                className={`signup_input${email ? ' signup_input_filled' : ''}`}
+                onChange={handleEmailChange}
+                onBlur={handleEmailBlur}
+              />
+              <button
+                type="button"
+                className={`signup_check_btn${emailChecked ? ' is_checked' : ''}`}
+                onClick={handleEmailCheck}
+                disabled={emailError !== '' || email.trim() === ''}
+              >
+                중복확인
+              </button>
+            </div>
+            {emailError && <span className="signup_email_error">{emailError}</span>}
+            {emailChecked && <span className="signup_email_success">사용 가능한 이메일입니다.</span>}
           </div>
         </div>
 
@@ -102,22 +183,75 @@ function Signup() {
         <div className="signup_section">
           <span className="signup_label">비밀번호</span>
           <div className="signup_inputs">
-            <Input
-              value={password}
-              type="password"
-              placeholder="숫자, 영문, 특수문자 조합 최소 8자"
-              ariaLabel="비밀번호"
-              className="signup_input"
-              onChange={setPassword}
-            />
-            <Input
-              value={passwordConfirm}
-              type="password"
-              placeholder="비밀번호 재입력"
-              ariaLabel="비밀번호 재입력"
-              className="signup_input"
-              onChange={setPasswordConfirm}
-            />
+            <div className="signup_pw_field_wrap">
+              <div className="signup_pw_field">
+                <Input
+                  value={password}
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="숫자, 영문, 특수문자 조합 최소 8자"
+                  ariaLabel="비밀번호"
+                  className="signup_input"
+                  onChange={handlePasswordChange}
+                  onBlur={handlePasswordBlur}
+                />
+                {password && (
+                  <div className="signup_pw_icons">
+                    <button
+                      type="button"
+                      className="signup_pw_icon_btn"
+                      onClick={() => setPassword('')}
+                      aria-label="비밀번호 지우기"
+                    >
+                      <img src={xIcon} alt="" width={12} height={12} />
+                    </button>
+                    <button
+                      type="button"
+                      className="signup_pw_icon_btn"
+                      onClick={() => setShowPassword((v) => !v)}
+                      aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
+                    >
+                      <img src={eyeIcon} alt="" width={16} height={16} />
+                    </button>
+                  </div>
+                )}
+              </div>
+              {passwordError && <span className="signup_pw_error">{passwordError}</span>}
+            </div>
+
+            <div className="signup_pw_field_wrap">
+              <div className="signup_pw_field">
+                <Input
+                  value={passwordConfirm}
+                  type={showPasswordConfirm ? 'text' : 'password'}
+                  placeholder="비밀번호 재입력"
+                  ariaLabel="비밀번호 재입력"
+                  className="signup_input"
+                  onChange={handlePasswordConfirmChange}
+                  onBlur={handlePasswordConfirmBlur}
+                />
+                {passwordConfirm && (
+                  <div className="signup_pw_icons">
+                    <button
+                      type="button"
+                      className="signup_pw_icon_btn"
+                      onClick={() => setPasswordConfirm('')}
+                      aria-label="비밀번호 재입력 지우기"
+                    >
+                      <img src={xIcon} alt="" width={12} height={12} />
+                    </button>
+                    <button
+                      type="button"
+                      className="signup_pw_icon_btn"
+                      onClick={() => setShowPasswordConfirm((v) => !v)}
+                      aria-label={showPasswordConfirm ? '비밀번호 재입력 숨기기' : '비밀번호 재입력 보기'}
+                    >
+                      <img src={eyeIcon} alt="" width={16} height={16} />
+                    </button>
+                  </div>
+                )}
+              </div>
+              {passwordConfirmError && <span className="signup_pw_error">{passwordConfirmError}</span>}
+            </div>
           </div>
         </div>
 
@@ -148,13 +282,25 @@ function Signup() {
             반려동물 이름{' '}
             <span className="signup_label_opt">(선택)</span>
           </span>
-          <Input
-            value={petName}
-            placeholder="반려동물 이름을 입력하세요."
-            ariaLabel="반려동물 이름"
-            className="signup_input"
-            onChange={setPetName}
-          />
+          <div className="signup_name_field">
+            <Input
+              value={petName}
+              placeholder="반려동물 이름을 입력하세요."
+              ariaLabel="반려동물 이름"
+              className={`signup_input${petName ? ' signup_input_filled' : ''}`}
+              onChange={setPetName}
+            />
+            {petName && (
+              <button
+                type="button"
+                className="signup_name_clear_btn"
+                onClick={() => setPetName('')}
+                aria-label="반려동물 이름 지우기"
+              >
+                <img src={xIcon} alt="" width={12} height={12} />
+              </button>
+            )}
+          </div>
         </div>
 
         {/* 약관동의 */}
@@ -167,7 +313,8 @@ function Signup() {
               onClick={() => handleTermToggle('all')}
             >
               <span className={`signup_terms_check${terms.all ? ' is_active' : ''}`} aria-hidden="true">
-                <i className="bx bx-check" />
+                <img src={grayCheckIcon} className="signup_terms_icon signup_terms_icon_gray" alt="" width={32} height={32} />
+                <img src={blueCheckIcon} className="signup_terms_icon signup_terms_icon_blue" alt="" width={32} height={32} />
               </span>
               <span className="signup_terms_text signup_terms_text_bold">모두 동의합니다.</span>
             </button>
@@ -180,7 +327,8 @@ function Signup() {
               onClick={() => handleTermToggle('age')}
             >
               <span className={`signup_terms_check${terms.age ? ' is_active' : ''}`} aria-hidden="true">
-                <i className="bx bx-check" />
+                <img src={grayCheckIcon} className="signup_terms_icon signup_terms_icon_gray" alt="" width={32} height={32} />
+                <img src={blueCheckIcon} className="signup_terms_icon signup_terms_icon_blue" alt="" width={32} height={32} />
               </span>
               <span className="signup_terms_text">
                 만 14세 이상입니다.{' '}
@@ -194,13 +342,21 @@ function Signup() {
               onClick={() => handleTermToggle('service')}
             >
               <span className={`signup_terms_check${terms.service ? ' is_active' : ''}`} aria-hidden="true">
-                <i className="bx bx-check" />
+                <img src={grayCheckIcon} className="signup_terms_icon signup_terms_icon_gray" alt="" width={32} height={32} />
+                <img src={blueCheckIcon} className="signup_terms_icon signup_terms_icon_blue" alt="" width={32} height={32} />
               </span>
               <span className="signup_terms_text">
                 서비스 이용약관에 동의합니다.{' '}
                 <span className="signup_terms_required">(필수)</span>
               </span>
-              <i className="bx bx-chevron-right signup_terms_chevron" aria-hidden="true" />
+              <button
+                type="button"
+                className="signup_terms_chevron_btn"
+                onClick={(e) => { e.stopPropagation(); navigate('/signup/terms/service') }}
+                aria-label="서비스 이용약관 상세 보기"
+              >
+                <i className="bx bx-chevron-right signup_terms_chevron" aria-hidden="true" />
+              </button>
             </button>
 
             <button
@@ -209,13 +365,21 @@ function Signup() {
               onClick={() => handleTermToggle('privacy')}
             >
               <span className={`signup_terms_check${terms.privacy ? ' is_active' : ''}`} aria-hidden="true">
-                <i className="bx bx-check" />
+                <img src={grayCheckIcon} className="signup_terms_icon signup_terms_icon_gray" alt="" width={32} height={32} />
+                <img src={blueCheckIcon} className="signup_terms_icon signup_terms_icon_blue" alt="" width={32} height={32} />
               </span>
               <span className="signup_terms_text">
                 개인정보 수집 이용에 동의합니다.{' '}
                 <span className="signup_terms_required">(필수)</span>
               </span>
-              <i className="bx bx-chevron-right signup_terms_chevron" aria-hidden="true" />
+              <button
+                type="button"
+                className="signup_terms_chevron_btn"
+                onClick={(e) => { e.stopPropagation(); navigate('/signup/terms/privacy') }}
+                aria-label="개인정보 수집 이용 상세 보기"
+              >
+                <i className="bx bx-chevron-right signup_terms_chevron" aria-hidden="true" />
+              </button>
             </button>
 
             <button
@@ -224,7 +388,8 @@ function Signup() {
               onClick={() => handleTermToggle('marketing')}
             >
               <span className={`signup_terms_check${terms.marketing ? ' is_active' : ''}`} aria-hidden="true">
-                <i className="bx bx-check" />
+                <img src={grayCheckIcon} className="signup_terms_icon signup_terms_icon_gray" alt="" width={32} height={32} />
+                <img src={blueCheckIcon} className="signup_terms_icon signup_terms_icon_blue" alt="" width={32} height={32} />
               </span>
               <span className="signup_terms_text">
                 이벤트 할인 혜택 알림 수신에 동의합니다.{' '}
@@ -242,6 +407,7 @@ function Signup() {
           회원가입 하기
         </Button>
       </form>
+    </div>
     </div>
   )
 }

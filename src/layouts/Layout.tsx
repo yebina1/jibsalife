@@ -119,6 +119,8 @@ function Layout({
     '/health/report',
     '/health/hospital',
     '/mypage/subscription',
+    '/signup/terms/service',
+    '/signup/terms/privacy',
   ]
   const hideFloatingAiButton = hideFloatingAiButtonPaths.includes(pathname) || isCommunityPath
 
