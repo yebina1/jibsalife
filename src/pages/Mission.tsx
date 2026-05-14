@@ -21,7 +21,7 @@ import {
   MISSION_ACTIVITY_RECORDS_CHANGE_EVENT,
   readMissionActivityRecords,
 } from '../utils/missionActivityRecords'
-import { markWalkRecorded } from '../utils/challengeStatus'
+import { markWalkRecorded, markMealRecorded } from '../utils/challengeStatus'
 import {
   MISSION_HISTORY_RECORDS_CHANGE_EVENT,
   readMissionHistoryRecordsWithDefaults,
@@ -903,6 +903,7 @@ function Mission() {
     }))
 
     if (selectedCategory.id === 'walk') markWalkRecorded()
+    if (selectedCategory.id === 'meal') markMealRecorded()
     setHistoryItems((prev) => [...nextRecords.reverse(), ...prev])
     requestCloseMissionSheet()
   }

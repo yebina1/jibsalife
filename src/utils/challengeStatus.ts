@@ -86,18 +86,18 @@ function checkDay4(): boolean {
   return window.localStorage.getItem(KNOWLEDGE_LIKED_KEY) === 'true'
 }
 
-// Day 6 (index 5): 체중 기록 — HealthRegister.tsx 작업 완료 후 markWeightRecorded() 연결 예정
-const WEIGHT_RECORDED_KEY = 'jibsalife.challenge.weightRecorded'
+// Day 6 (index 5): 식사량 기록
+const MEAL_RECORDED_KEY = 'jibsalife.challenge.mealRecorded'
 
-export function markWeightRecorded() {
+export function markMealRecorded() {
   if (typeof window === 'undefined') return
-  window.localStorage.setItem(WEIGHT_RECORDED_KEY, todayKey())
+  window.localStorage.setItem(MEAL_RECORDED_KEY, 'true')
   dispatch()
 }
 
 function checkDay5(): boolean {
   if (typeof window === 'undefined') return false
-  return window.localStorage.getItem(WEIGHT_RECORDED_KEY) === todayKey()
+  return window.localStorage.getItem(MEAL_RECORDED_KEY) === 'true'
 }
 
 // Day 7 (index 6): 게시글 작성 — createdPosts 존재
@@ -150,7 +150,7 @@ export function getCurrentChallengeDay(): number {
       if (!claimed.has(i)) return i
     }
   } catch { /* noop */ }
-  return checks.length - 1
+  return checks.length
 }
 
 export function checkChallengeDayDone(dayIndex: number): boolean {

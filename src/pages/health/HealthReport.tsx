@@ -1,6 +1,8 @@
+import { useEffect } from 'react'
 import { Dog } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import './HealthReport.css'
+import { markHealthReportViewed } from '../../utils/challengeStatus'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
 import BackButton from '../../components/html/BackButton'
@@ -30,6 +32,10 @@ const criteriaRight = ['활동량 급감', '구토,설사 반복'] as const
 function HealthReport() {
   const navigate = useNavigate()
   const pet = readSelectedPetProfile()
+
+  useEffect(() => {
+    markHealthReportViewed()
+  }, [])
 
   return (
     <>

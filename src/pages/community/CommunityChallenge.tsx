@@ -87,7 +87,7 @@ const challengeDays = [
   { day: 3, image: day3Img, description: <>투표에 참여해보세요</> },
   { day: 4, image: day4Img, description: <>내 반려동물의<br />건강 리포트를 확인해주세요</> },
   { day: 5, image: day5Img, description: <>반려상식에<br />좋아요를 남겨주세요</> },
-  { day: 6, image: day6Img, description: <>내 반려동물의<br />체중을 기록해주세요</> },
+  { day: 6, image: day6Img, description: <>내 반려동물의<br />식사량을 기록해주세요</> },
   { day: 7, image: day7Img, description: <>커뮤니티에 <br />게시글을 작성해주세요</> },
 ]
 
@@ -104,7 +104,7 @@ function CommunityChallenge() {
     for (let i = 0; i < TOTAL_DAYS; i++) {
       if (!claimed.has(i)) return i
     }
-    return TOTAL_DAYS - 1
+    return TOTAL_DAYS
   })
   const visibleIndexRef = useRef(currentDay)
   const [visibleIndex, setVisibleIndex] = useState(currentDay)

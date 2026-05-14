@@ -5,8 +5,8 @@ import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
 import Title from '../../components/Title'
 import BackButton from '../../components/html/BackButton'
-import Alert from '../../components/Alert'
-import AddSheet from '../../components/AddSheet'
+import ConfirmDialog from '../../components/ConfirmDialog'
+import PostMoreSheet from '../../components/PostMoreSheet'
 import Button from '../../components/html/Button'
 import CommentInputForm from '../../components/html/CommentInputForm'
 import LikeButton from '../../components/LikeButton'
@@ -786,69 +786,44 @@ function CommunityPetStoryDetails() {
       </footer>
 
       {editAlertOpen && (
-        <Alert onClose={() => { setEditAlertOpen(false); setEditCommentId(null); setEditMentionAuthor(null); setEditCommentInitialText(undefined) }}>
-          <p className="cpsdetail_delete_alert_msg">수정하시겠습니까?</p>
-          <div className="cpsdetail_delete_alert_btns">
-            <Button type="button" className="white_btn" onClick={() => { setEditAlertOpen(false); setEditCommentId(null); setEditMentionAuthor(null); setEditCommentInitialText(undefined) }}>아니요</Button>
-            <Button type="button" className="purple_btn" onClick={handleEditConfirm}>네</Button>
-          </div>
-        </Alert>
+        <ConfirmDialog
+          message="수정하시겠습니까?"
+          onCancel={() => { setEditAlertOpen(false); setEditCommentId(null); setEditMentionAuthor(null); setEditCommentInitialText(undefined) }}
+          onConfirm={handleEditConfirm}
+        />
       )}
 
       {deleteAlertOpen && (
-        <Alert onClose={() => setDeleteAlertOpen(false)}>
-          <p className="cpsdetail_delete_alert_msg">삭제하시겠습니까?</p>
-          <div className="cpsdetail_delete_alert_btns">
-            <Button type="button" className="white_btn" onClick={() => setDeleteAlertOpen(false)}>아니요</Button>
-            <Button type="button" className="purple_btn" onClick={handleDelete}>네</Button>
-          </div>
-        </Alert>
+        <ConfirmDialog
+          message="삭제하시겠습니까?"
+          onCancel={() => setDeleteAlertOpen(false)}
+          onConfirm={handleDelete}
+        />
       )}
 
       {moreSheetOpen && (
-        <AddSheet onClose={() => setMoreSheetOpen(false)}>
-          <ul className="cpsdetail_more_sheet_list">
-            {moreSheetOpen === 'own' ? (
-              <>
-                <li><button type="button" onClick={() => { setMoreSheetOpen(false); setDeleteAlertOpen(true) }}>삭제하기</button></li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMoreSheetOpen(false)
-                      if (moreTarget === 'post') {
-                        navigate('/community/petstory/write', {
-                          state: { editPost: post },
-                        })
-                      } else if (moreTarget && typeof moreTarget === 'object') {
-                        const editingComment = visibleComments.find((c) => c.id === moreTarget.commentId)
-                        const mentionMatch = editingComment?.parentId ? editingComment.text.match(/^@(\S+)\s*/) : null
-                        const mentionAuthor = mentionMatch ? mentionMatch[1] : null
-                        const initialText = mentionAuthor
-                          ? (editingComment?.text.replace(/^@\S+\s*/, '') ?? '')
-                          : (editingComment?.text ?? '')
-                        setEditMentionAuthor(mentionAuthor)
-                        setEditCommentInitialText(initialText)
-                        setReplyTo(null)
-                        setEditCommentId(moreTarget.commentId)
-                      }
-                    }}
-                  >
-                    수정하기
-                  </button>
-                </li>
-              </>
-            ) : (
-              <>
-                <li><button type="button" className="cpsdetail_more_sheet_disabled" disabled>차단하기</button></li>
-                <li><button type="button" className="cpsdetail_more_sheet_disabled" disabled>신고하기</button></li>
-              </>
-            )}
-          </ul>
-          <Button type="button" className="purple_btn cpsdetail_more_sheet_close" onClick={() => setMoreSheetOpen(false)}>
-            닫기
-          </Button>
-        </AddSheet>
+        <PostMoreSheet
+          type={moreSheetOpen}
+          onClose={() => setMoreSheetOpen(false)}
+          onDelete={() => { setMoreSheetOpen(false); setDeleteAlertOpen(true) }}
+          onEdit={() => {
+            setMoreSheetOpen(false)
+            if (moreTarget === 'post') {
+              navigate('/community/petstory/write', { state: { editPost: post } })
+            } else if (moreTarget && typeof moreTarget === 'object') {
+              const editingComment = visibleComments.find((c) => c.id === moreTarget.commentId)
+              const mentionMatch = editingComment?.parentId ? editingComment.text.match(/^@(\S+)\s*/) : null
+              const mentionAuthor = mentionMatch ? mentionMatch[1] : null
+              const initialText = mentionAuthor
+                ? (editingComment?.text.replace(/^@\S+\s*/, '') ?? '')
+                : (editingComment?.text ?? '')
+              setEditMentionAuthor(mentionAuthor)
+              setEditCommentInitialText(initialText)
+              setReplyTo(null)
+              setEditCommentId(moreTarget.commentId)
+            }
+          }}
+        />
       )}
     </>
   )
