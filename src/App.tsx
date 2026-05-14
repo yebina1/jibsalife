@@ -52,6 +52,8 @@ function App() {
         <Route element={<Layout showHeader={false} showNav={false} showFooter={false} />}>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+        </Route>
+        <Route element={<Layout showHeader={false} showNav={false} />}>
           <Route path="/mypage/subscription" element={<SubscriptionPage />} />
         </Route>
         <Route element={<Layout showHeader={false} showNav={false} showFooter={false} hasContentPadding={false} />}>

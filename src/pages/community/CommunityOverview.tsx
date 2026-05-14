@@ -1,6 +1,8 @@
 import './Community.css'
 import './CommunityOverview.css'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
+import { checkChallengeDayDone, CHALLENGE_STATUS_CHANGED_EVENT } from '../../utils/challengeStatus'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
 import Button from '../../components/html/Button'
@@ -14,6 +16,19 @@ import bannerImg from '../../img/Community_Overview_banner_img.png'
 
 function CommunityOverview() {
   const navigate = useNavigate()
+  const [missionDone, setMissionDone] = useState(() => checkChallengeDayDone(3))
+
+  useEffect(() => {
+    const refresh = () => setMissionDone(checkChallengeDayDone(3))
+    window.addEventListener(CHALLENGE_STATUS_CHANGED_EVENT, refresh)
+    window.addEventListener('storage', refresh)
+    window.addEventListener('focus', refresh)
+    return () => {
+      window.removeEventListener(CHALLENGE_STATUS_CHANGED_EVENT, refresh)
+      window.removeEventListener('storage', refresh)
+      window.removeEventListener('focus', refresh)
+    }
+  }, [])
 
   return (
     <>
@@ -41,7 +56,7 @@ function CommunityOverview() {
           backgroundColor="#FFE27A"
           imageSrc={bannerImg}
         />
-        <WeeklyChallengeCard showTimer={false} showImage={false} />
+        <WeeklyChallengeCard showTimer={false} showImage={false} missionDone={missionDone} />
         <section className="co_challenge_card">
           <div className="co_vote_header">
             <Title as="h4" title="투표">

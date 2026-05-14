@@ -47,7 +47,7 @@ function WeeklyChallengeCard({ showTimer = true, showImage = true, onComplete, o
   }, [showTimer, onDayEnd])
 
   return (
-    <section className="co_challenge_card co_challenge_card_first">
+    <section className={`co_challenge_card co_challenge_card_first${missionDone ? ' wcc_completed' : ''}`}>
       <div className="wcc_header">
         {showTimer && (
           <p className="wcc_timer">

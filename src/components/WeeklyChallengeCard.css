@@ -8,6 +8,16 @@
   align-items: center;
   padding: 20px;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.co_challenge_card_first.wcc_completed::after {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.5);
+  content: '';
+  z-index: 1;
 }
 
 .wcc_header {

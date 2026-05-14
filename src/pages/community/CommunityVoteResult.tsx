@@ -73,7 +73,7 @@ function CommunityVoteResult() {
 
   return (
     <div className="cv_wrap">
-      <PageHeader title="" leftContent={<BackButton />} />
+      <PageHeader title="투표 결과" leftContent={<BackButton />} />
 
       {/* 1위 */}
       <section className="cv_first_section">

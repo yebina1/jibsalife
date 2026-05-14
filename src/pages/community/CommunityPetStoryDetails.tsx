@@ -348,7 +348,7 @@ function CommunityPetStoryDetails() {
   const pageRef = useRef<HTMLElement>(null)
   const viewIncrementedForRef = useRef<number | null>(null)
   const lastScrollTopRef = useRef(0)
-  const content = post.content?.trim() || '함께 나누고 싶은 반려 생활 이야기를 남겼어요.'
+  const content = post.content?.trim() || fallbackPost.content || '함께 나누고 싶은 반려 생활 이야기를 남겼어요.'
   const isLiked = likedPostIds.includes(post.id)
   const likeCount = post.likes + (isLiked ? 1 : 0)
   const commentCount = visibleComments.length
