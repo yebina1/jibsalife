@@ -37,6 +37,10 @@
   transform: translateX(-50%);
 }
 
+.layout_minimal_no_header_space > header {
+  min-height: 0;
+}
+
 .layout > footer {
   position: fixed;
   bottom: 0;

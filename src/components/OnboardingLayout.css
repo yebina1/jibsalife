@@ -16,6 +16,10 @@
   box-sizing: border-box;
 }
 
+.onboarding_layout:not(.has_top_action) {
+  justify-content: center;
+}
+
 .onboarding_layout.has_top_action {
   gap: 32px;
 }
