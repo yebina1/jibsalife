@@ -1,22 +1,99 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
+import { Heart, Star } from 'lucide-react'
 import './Place.css'
+import './health/HealthHospitalRecommend.css'
 import PageHeader from '../components/PageHeader'
 import HeaderIcon from '../components/HeaderIcon'
 import BackButton from '../components/html/BackButton'
 import Button from '../components/html/Button'
-import LikeButton from '../components/LikeButton'
-import { getOperatingState, hospitalSearchItems } from './health/HealthHospitalData'
+import hospitalImage from '../img/24h_animal.png'
+
+type PlaceHospital = {
+  name: string
+  rating: number
+  reviews: number
+  distance: string
+  tags: readonly string[]
+  openTime: string
+  closeTime: string
+}
+
+const placeHospitals: PlaceHospital[] = [
+  {
+    name: '24시 행복 동물병원',
+    rating: 4.8,
+    reviews: 120,
+    distance: '1.2 KM',
+    tags: ['고양이친화', '건강검진', '스케일링'],
+    openTime: '09:00',
+    closeTime: '21:00',
+  },
+  {
+    name: '우리반려 동물병원',
+    rating: 4.5,
+    reviews: 680,
+    distance: '0.7 KM',
+    tags: ['중성화수술', '건강검진', '스케일링'],
+    openTime: '10:00',
+    closeTime: '19:00',
+  },
+  {
+    name: '사랑 동물병원',
+    rating: 4.3,
+    reviews: 420,
+    distance: '2.1 KM',
+    tags: ['슬개골탈구', '강아지친화', '스케일링'],
+    openTime: '09:00',
+    closeTime: '18:00',
+  },
+  {
+    name: '우리 동물병원',
+    rating: 4.6,
+    reviews: 198,
+    distance: '1.8 KM',
+    tags: ['고양이친화', '건강검진', '스케일링'],
+    openTime: '11:00',
+    closeTime: '20:00',
+  },
+  {
+    name: '행복 동물병원',
+    rating: 4.4,
+    reviews: 310,
+    distance: '3.2 KM',
+    tags: ['고양이친화', '건강검진', '스케일링'],
+    openTime: '09:00',
+    closeTime: '17:30',
+  },
+]
+
+function toMinutes(time: string) {
+  const [hours, minutes] = time.split(':').map(Number)
+  return hours * 60 + minutes
+}
+
+function getClinicStatus(openTime: string, closeTime: string) {
+  const now = new Date()
+  const currentMinutes = now.getHours() * 60 + now.getMinutes()
+  const openMinutes = toMinutes(openTime)
+  const closeMinutes = toMinutes(closeTime)
+  const isOpen = currentMinutes >= openMinutes && currentMinutes < closeMinutes
+
+  return {
+    isOpen,
+    label: isOpen ? '진료 중' : '진료 종료',
+    timeText: `${openTime} ~ ${closeTime}`,
+    color: isOpen ? '#22C55E' : '#767676',
+  }
+}
 
 function Place() {
   const navigate = useNavigate()
-  const [favoriteNames, setFavoriteNames] = useState<string[]>([])
+  const [likedNames, setLikedNames] = useState<string[]>([])
 
-  const handleFavoriteToggle = (hospitalName: string) => {
-    setFavoriteNames((current) =>
-      current.includes(hospitalName)
-        ? current.filter((name) => name !== hospitalName)
-        : [...current, hospitalName],
+  const toggleLike = (name: string) => {
+    setLikedNames((prev) =>
+      prev.includes(name) ? prev.filter((likedName) => likedName !== name) : [...prev, name],
     )
   }
 
@@ -24,8 +101,8 @@ function Place() {
     <>
       <PageHeader
         title="내 주변 병원 목록"
-        leftContent={<BackButton to="/home" />}
-        rightContent={(
+        leftContent={<BackButton />}
+        rightContent={
           <>
             <Button type="button" aria-label="캘린더" onClick={() => navigate('/mission')}>
               <HeaderIcon type="calendar" />
@@ -34,49 +111,67 @@ function Place() {
               <HeaderIcon type="notification" />
             </Button>
           </>
-        )}
+        }
       />
 
-      <main className="page place_page">
-        <section className="place_section" aria-label="병원 목록">
-          <ul className="place_hospital_list">
-            {hospitalSearchItems.map((item) => {
-              const operatingState = getOperatingState(item.open, item.close)
-              const isFavorite = favoriteNames.includes(item.name)
+      <main className="page place_page health_hospital_recommend_page">
 
-              return (
-                <li key={item.name}>
-                  <article className="place_hospital_item">
-                    <img src={item.image} alt={`${item.name} 이미지`} aria-hidden="true" />
+        <ul className="health_hospital_recommend_list">
+          {placeHospitals.map((hospital) => {
+            const status = getClinicStatus(hospital.openTime, hospital.closeTime)
+            const isLiked = likedNames.includes(hospital.name)
 
-                    <div className="place_hospital_body">
-                      <strong>{item.name}</strong>
+            return (
+              <li key={hospital.name} className="health_hospital_recommend_item">
+                <div className="health_hospital_recommend_img" aria-hidden="true">
+                  <img src={hospitalImage} alt="" />
+                </div>
 
-                      <p className="place_hospital_rating">
-                        {item.rating} ({item.reviewCount})
-                        <span>{item.distanceKm.toFixed(1)} KM</span>
-                      </p>
-
-                      <p className="place_hospital_tags">{item.tags.join(' · ')}</p>
-
-                      <span className={`place_hospital_hours ${operatingState.isOpen ? 'is_open' : ''}`}>
-                        진료 마감 {item.open} ~ {item.close}
-                      </span>
-                    </div>
-
-                    <LikeButton
+                <div className="health_hospital_recommend_info">
+                  <div className="health_hospital_recommend_row">
+                    <span className="health_hospital_recommend_name">{hospital.name}</span>
+                    <button
                       type="button"
-                      liked={isFavorite}
-                      className="place_hospital_favorite"
-                      aria-label={isFavorite ? `${item.name} 찜 해제` : `${item.name} 찜`}
-                      onClick={() => handleFavoriteToggle(item.name)}
-                    />
-                  </article>
-                </li>
-              )
-            })}
-          </ul>
-        </section>
+                      className={`health_hospital_recommend_like${isLiked ? ' is_liked' : ''}`}
+                      aria-label={isLiked ? `${hospital.name} 찜 해제` : `${hospital.name} 찜하기`}
+                      aria-pressed={isLiked}
+                      onClick={() => toggleLike(hospital.name)}
+                    >
+                      <Heart
+                        size={24}
+                        color={isLiked ? '#EF4444' : '#767676'}
+                        fill={isLiked ? '#EF4444' : 'none'}
+                        aria-hidden="true"
+                      />
+                    </button>
+                  </div>
+
+                  <div className="health_hospital_recommend_rating">
+                    <Star size={16} color="#6D59F8" fill="#6D59F8" aria-hidden="true" />
+                    <span>{hospital.rating}</span>
+                    <span className="health_hospital_recommend_reviews">({hospital.reviews})</span>
+                    <span className="health_hospital_recommend_sep" aria-hidden="true" />
+                    <span>{hospital.distance}</span>
+                  </div>
+
+                  <div className="health_hospital_recommend_tags">
+                    {hospital.tags.map((tag, index) => (
+                      <span key={tag} className="health_hospital_recommend_tag_wrap">
+                        {index > 0 && <span className="health_hospital_recommend_dot" aria-hidden="true" />}
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <span className="health_hospital_recommend_status">
+                    <span style={{ color: status.color }}>{status.label}</span>
+                    <span style={{ color: '#505050' }}>{status.timeText}</span>
+                  </span>
+                </div>
+              </li>
+            )
+          })}
+        </ul>
       </main>
     </>
   )

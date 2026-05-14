@@ -1,5 +1,5 @@
 ﻿import './Home.css'
-import { useEffect, useRef, useState, type ChangeEvent } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type ChangeEvent } from 'react'
 import { useNavigate } from 'react-router'
 import ChevronIcon from '../components/ChevronIcon'
 import PageHeader from '../components/PageHeader'
@@ -9,6 +9,9 @@ import HomeSummaryBanner from '../components/HomeSummaryBanner'
 import SummaryProfileCard, { SummaryProfileAddCard } from '../components/SummaryProfileCard'
 import Button from '../components/html/Button'
 import Alert from '../components/Alert'
+import ConfettiEffect from '../components/effect/ConfettiEffect'
+import RewardHero from '../components/RewardHero'
+import RewardPointCard from '../components/RewardPointCard'
 import {
   MISSION_ACTIVITY_RECORDS_CHANGE_EVENT,
   readMissionActivityRecords,
@@ -27,15 +30,17 @@ import {
   type PetProfileSummary,
 } from '../utils/petProfiles'
 import { voteDetails } from './community/CommunityVoteData'
+import { hasVotedMission, readVotedCandidate, writeVotedCandidate, writeVotedMissionId } from '../utils/communityVoteStatus'
+import { readProfilePoints } from '../utils/profilePoints'
 import knowledge1 from '../img/knowledge1.png'
 import knowledge2 from '../img/knowledge2.png'
 import knowledge3 from '../img/knowledge3.png'
 import knowledge4 from '../img/knowledge4.png'
 import animalCardImage from '../img/animal_card.png'
 import bannerIcon2Image from '../img/banner_icon2.png'
-import weeklyRankFirstImage from '../img/vote/vote_result/voting1.png'
-import weeklyRankSecondImage from '../img/vote/pose_vote/pose_vote2.png'
-import weeklyRankThirdImage from '../img/vote1/vote_bbung.jpg'
+import weeklyRankFirstImage from '../img/home_lanking/lank1.png'
+import weeklyRankSecondImage from '../img/home_lanking/lank2.png'
+import weeklyRankThirdImage from '../img/home_lanking/lank3.png'
 
 type PetIdCardForm = {
   name: string
@@ -58,7 +63,8 @@ const emptyPetIdForm: PetIdCardForm = {
 }
 
 const bestPoseVoteItems = voteDetails.find((voteDetail) => voteDetail.id === 'best-pose')?.candidates ?? []
-const bestPoseVoteDetailPath = '/community/vote/detail?voteId=best-pose'
+const BEST_POSE_VOTE_ID = 'best-pose'
+const VOTE_REWARD_AMOUNT = 60
 
 const weeklyRankingItems = [
   {
@@ -90,28 +96,28 @@ const contentItems = [
     title: '강아지 산책 안 하면\n생기는 문제점',
     image: knowledge1,
     objectPosition: '61% center',
-    path: '/community/petstory/knowledge/walk-problems',
+    path: '/community/petstory/knowledge/walkproblems',
   },
   {
     id: 2,
     title: '고양이 점프의 숨겨진 비밀',
     image: knowledge2,
     objectPosition: '64% center',
-    path: '/community/petstory/knowledge/walk-problems',
+    path: '/community/petstory/knowledge/catjumpsecret',
   },
   {
     id: 3,
     title: '강아지에게 절대 주면\n안되는 음식 7가지',
     image: knowledge3,
     objectPosition: '43% center',
-    path: '/community/petstory/knowledge/walk-problems',
+    path: '/community/petstory/knowledge/forbiddenfoods',
   },
   {
     id: 4,
     title: '봄청 강아지\n알레르기 증상과 관리법',
     image: knowledge4,
     objectPosition: '48% center',
-    path: '/community/petstory/knowledge/walk-problems',
+    path: '/community/petstory/knowledge/springallergy',
   },
 ] as const
 
@@ -259,7 +265,13 @@ function Home() {
   const [summarySlideIndex, setSummarySlideIndex] = useState(getInitialSummarySlideIndex)
   const [dragOffset, setDragOffset] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
-  const [likedBestPoseIds, setLikedBestPoseIds] = useState<number[]>([])
+  const [selectedBestPoseId, setSelectedBestPoseId] = useState<number | null>(() =>
+    readVotedCandidate(BEST_POSE_VOTE_ID),
+  )
+  const [hasSubmittedBestPoseVote, setHasSubmittedBestPoseVote] = useState(() =>
+    hasVotedMission(BEST_POSE_VOTE_ID),
+  )
+  const [isVoteRewardOpen, setIsVoteRewardOpen] = useState(false)
   const [isPetIdModalOpen, setIsPetIdModalOpen] = useState(false)
   const [editingProfileId, setEditingProfileId] = useState<number | null>(null)
   const [petIdPhoto, setPetIdPhoto] = useState<string | null>(null)
@@ -276,6 +288,8 @@ function Home() {
 
   const todaySummaryDate = formatTodaySummaryDate()
   const todaySummaryStats = createSummaryStats(calendarRecords)
+  const weeklyRankingLoopItems = [...weeklyRankingItems, ...weeklyRankingItems]
+  const currentPoints = readProfilePoints()
 
   useEffect(() => {
     return () => {
@@ -344,7 +358,17 @@ function Home() {
 
   const handleDragMove = (clientX: number) => {
     if (!isDragging) return
-    setDragOffset(clientX - dragStateRef.current.startX)
+    const nextOffset = clientX - dragStateRef.current.startX
+
+    if (
+      (summarySlideIndex === 0 && nextOffset > 0) ||
+      (summarySlideIndex === summarySlides.length - 1 && nextOffset < 0)
+    ) {
+      setDragOffset(0)
+      return
+    }
+
+    setDragOffset(nextOffset)
   }
 
   const handleDragEnd = () => {
@@ -470,10 +494,27 @@ function Home() {
     closePetIdModal()
   }
 
-  const toggleBestPoseLike = (id: number) => {
-    setLikedBestPoseIds((current) =>
-      current.includes(id) ? current.filter((itemId) => itemId !== id) : [...current, id],
-    )
+  const selectBestPoseVote = (id: number) => {
+    setSelectedBestPoseId(id)
+  }
+
+  const openBestPoseVoteReward = () => {
+    if (selectedBestPoseId === null) return
+    if (hasSubmittedBestPoseVote) {
+      writeVotedMissionId(BEST_POSE_VOTE_ID)
+      writeVotedCandidate(BEST_POSE_VOTE_ID, selectedBestPoseId)
+      return
+    }
+
+    setIsVoteRewardOpen(true)
+  }
+
+  const confirmBestPoseVote = () => {
+    if (selectedBestPoseId === null) return
+    writeVotedMissionId(BEST_POSE_VOTE_ID)
+    writeVotedCandidate(BEST_POSE_VOTE_ID, selectedBestPoseId)
+    setHasSubmittedBestPoseVote(true)
+    setIsVoteRewardOpen(false)
   }
 
   return (
@@ -572,21 +613,24 @@ function Home() {
         >
           <div className="home_weekly_ranking_body">
             <div className="home_weekly_ranking_gallery" aria-label="주간 인기 반려동물 랭킹">
-              {weeklyRankingItems.map((item) => (
+              <div className="home_weekly_ranking_track">
+                {weeklyRankingLoopItems.map((item, index) => (
                 <article
-                  key={item.id}
+                  key={`${item.id}-${index}`}
                   className={`home_weekly_ranking_card rank_${item.rank}`}
                   aria-label={`${item.rank}위`}
+                  style={{ '--ranking-image': `url(${item.image})` } as CSSProperties}
                 >
                   <img src={item.image} alt={item.alt} style={{ objectPosition: item.objectPosition }} />
                   <strong>{item.rank}</strong>
                 </article>
-              ))}
+                ))}
+              </div>
             </div>
 
             <Button
               type="button"
-              className="white_radius_btn home_weekly_ranking_button"
+              className="white_radius_btn more_button"
               onClick={() => navigate('/community/vote/result')}
             >
               랭킹 보기
@@ -601,7 +645,7 @@ function Home() {
         >
           <div className="best_pose_vote_strip" aria-label="오늘의 베스트 포즈 투표 목록">
             {bestPoseVoteItems.map((item) => {
-              const isLiked = likedBestPoseIds.includes(item.id)
+              const isLiked = selectedBestPoseId === item.id
 
               return (
                 <article key={item.id} className="best_pose_vote_card">
@@ -614,9 +658,9 @@ function Home() {
                     <button
                       type="button"
                       className={`best_pose_vote_card_like${isLiked ? ' is_active' : ''}`}
-                      aria-label={isLiked ? `${item.name} 좋아요 취소` : `${item.name} 좋아요`}
+                      aria-label={`${item.name} 선택`}
                       aria-pressed={isLiked}
-                      onClick={() => toggleBestPoseLike(item.id)}
+                      onClick={() => selectBestPoseVote(item.id)}
                     >
                       <VoteHeartIcon active={isLiked} />
                     </button>
@@ -630,9 +674,10 @@ function Home() {
           <Button
             type="button"
             className="white_radius_btn more_button"
-            onClick={() => navigate(bestPoseVoteDetailPath)}
+            disabled={selectedBestPoseId === null}
+            onClick={openBestPoseVoteReward}
           >
-           투표하기
+            {hasSubmittedBestPoseVote ? '수정하기' : '투표하기'}
           </Button>
         </ContentSection>
 
@@ -642,20 +687,26 @@ function Home() {
           backgroundColor="#EDE9FE"
           ariaLabel="수의사 상담 배너"
           rotateImage={false}
-          imageWidth={112}
-          imageHeight={105}
-          imageTop={-20}
+          imageWidth={132}
+          imageHeight={124}
+          imageBottom={0}
+          imageRight={28.35}
         />
 
         <ContentSection className="home_section home_content_section" title="반려상식">
           <div className="content_grid">
             {contentItems.map((item) => (
-              <article key={item.id} className="content_card">
+              <button
+                key={item.id}
+                type="button"
+                className="content_card"
+                onClick={() => navigate(item.path)}
+              >
                 <img src={item.image} alt={item.title} style={{ objectPosition: item.objectPosition }} />
                 <div className="content_overlay">
                   <p className="p_semibold">{item.title}</p>
                 </div>
-              </article>
+              </button>
             ))}
           </div>
 
@@ -831,6 +882,27 @@ function Home() {
                   </div>
                 </form>
               </div>
+            </div>
+          </Alert>
+        ) : null}
+
+        {isVoteRewardOpen ? (
+          <Alert onClose={() => setIsVoteRewardOpen(false)}>
+            <ConfettiEffect contained />
+            <div className="cvd_reward_alert">
+              <RewardHero rewardAmount={VOTE_REWARD_AMOUNT} />
+              <RewardPointCard
+                currentPoints={currentPoints}
+                rewardAmount={VOTE_REWARD_AMOUNT}
+                onClick={() => {}}
+              />
+              <Button
+                type="button"
+                className="purple_btn cvd_reward_confirm"
+                onClick={confirmBestPoseVote}
+              >
+                확인
+              </Button>
             </div>
           </Alert>
         ) : null}

@@ -5,6 +5,10 @@
   color: #171717;
 }
 
+.layout:has(.mission_page) .header_right > button:first-child {
+  display: none;
+}
+
 .mission_page.is_condensed {
   height: calc(100dvh - var(--layout-header-height) - var(--layout-footer-height));
   overflow: hidden;
@@ -948,6 +952,7 @@
   line-height: 44px;
   scroll-snap-align: center;
   text-align: center;
+  transition: color 80ms linear, font-size 80ms linear, font-weight 80ms linear;
 }
 
 .mission_period_wheel_column.date button {

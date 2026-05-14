@@ -165,15 +165,10 @@ export function SummaryProfileAddCard({
     : 'summary_profile_card summary_profile_card_add'
 
   return (
-    <article className={classNames} aria-label={label}>
-      <button
-        type="button"
-        className="summary_profile_card_add_button"
-        aria-label={label}
-        onClick={onClick}
-      >
+    <button type="button" className={classNames} aria-label={label} onClick={onClick}>
+      <span className="summary_profile_card_add_button" aria-hidden="true">
         <i />
-      </button>
-    </article>
+      </span>
+    </button>
   )
 }

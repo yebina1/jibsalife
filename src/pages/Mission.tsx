@@ -459,7 +459,7 @@ function Mission() {
   const monthBarRef = useRef<HTMLDivElement>(null)
   const weekdaysRef = useRef<HTMLDivElement>(null)
   const historyListRef = useRef<HTMLDivElement>(null)
-  const periodWheelScrollTimers = useRef<Record<string, number | undefined>>({})
+  const periodWheelScrollFrames = useRef<Record<string, number | undefined>>({})
   const calendarDays = useMemo(
     () => createCalendarDays(calendarYear, calendarMonth),
     [calendarMonth, calendarYear]
@@ -1063,16 +1063,16 @@ function Mission() {
     type: 'date' | 'period' | 'hour' | 'minute',
   ) => {
     const column = event.currentTarget
-    const timerKey = `${periodEditingField}-${type}`
+    const frameKey = `${periodEditingField}-${type}`
 
-    if (periodWheelScrollTimers.current[timerKey]) {
-      window.clearTimeout(periodWheelScrollTimers.current[timerKey])
+    if (periodWheelScrollFrames.current[frameKey]) {
+      window.cancelAnimationFrame(periodWheelScrollFrames.current[frameKey])
     }
 
-    periodWheelScrollTimers.current[timerKey] = window.setTimeout(() => {
+    periodWheelScrollFrames.current[frameKey] = window.requestAnimationFrame(() => {
       applyCenteredPeriodValue(column, type)
-      periodWheelScrollTimers.current[timerKey] = undefined
-    }, 120)
+      periodWheelScrollFrames.current[frameKey] = undefined
+    })
   }
 
   const applyCenteredPeriodValue = (

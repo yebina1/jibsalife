@@ -10,6 +10,7 @@ type HomeSummaryBannerProps = {
   imageWidth?: number
   imageHeight?: number
   imageTop?: number
+  imageBottom?: number
   imageRight?: number
 }
 
@@ -22,6 +23,7 @@ function HomeSummaryBanner({
   imageWidth = 76,
   imageHeight = 90,
   imageTop = -24,
+  imageBottom,
   imageRight = 48,
 }: HomeSummaryBannerProps) {
   const lines = text.split('\n')
@@ -48,7 +50,8 @@ function HomeSummaryBanner({
         style={{
           width: `${imageWidth}px`,
           height: `${imageHeight}px`,
-          top: `${imageTop}px`,
+          top: imageBottom === undefined ? `${imageTop}px` : undefined,
+          bottom: imageBottom === undefined ? undefined : `${imageBottom}px`,
           right: `${imageRight}px`,
         }}
       />

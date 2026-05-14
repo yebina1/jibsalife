@@ -161,6 +161,7 @@
 
 .mypage_profile_card_wrap .summary_profile_card_guide .chevron_icon {
   color: #999999;
+  transform: translateX(2px);
 }
 
 .mypage_profile_badges img {
