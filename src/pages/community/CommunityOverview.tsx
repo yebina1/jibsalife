@@ -2,7 +2,8 @@ import './Community.css'
 import './CommunityOverview.css'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
-import { checkChallengeDayDone, getCurrentChallengeDay, claimChallengeDay, calculateChallengeRewardPoints, CHALLENGE_STATUS_CHANGED_EVENT } from '../../utils/challengeStatus'
+import { checkChallengeDayDone, readCurrentDay, saveCurrentDay, claimChallengeDay, calculateChallengeRewardPoints, isChallengeDayClaimed, CHALLENGE_STATUS_CHANGED_EVENT } from '../../utils/challengeStatus'
+import { challengeDays } from './CommunityChallenge'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
 import Button from '../../components/html/Button'
@@ -14,12 +15,19 @@ import PetStoryPreviewSection from '../../components/PetStoryPreviewSection'
 import FloatingWriteButton from '../../components/FloatingWriteButton'
 import bannerImg from '../../img/Community_Overview_banner_img.png'
 
+
 function CommunityOverview() {
   const navigate = useNavigate()
-  const [missionDone, setMissionDone] = useState(() => checkChallengeDayDone(getCurrentChallengeDay()))
+  const [currentDay, setCurrentDay] = useState(() => readCurrentDay())
+  const [missionDone, setMissionDone] = useState(() => checkChallengeDayDone(readCurrentDay()))
+  const [completed, setCompleted] = useState(() => isChallengeDayClaimed(readCurrentDay()))
 
   useEffect(() => {
-    const refresh = () => setMissionDone(checkChallengeDayDone(getCurrentChallengeDay()))
+    // currentDay는 자정(onDayEnd)에만 진행 — 완료 시에는 같은 날 유지해서 스탬프 표시
+    const refresh = () => {
+      setMissionDone(checkChallengeDayDone(currentDay))
+      setCompleted(isChallengeDayClaimed(currentDay))
+    }
     window.addEventListener(CHALLENGE_STATUS_CHANGED_EVENT, refresh)
     window.addEventListener('storage', refresh)
     window.addEventListener('focus', refresh)
@@ -28,7 +36,7 @@ function CommunityOverview() {
       window.removeEventListener('storage', refresh)
       window.removeEventListener('focus', refresh)
     }
-  }, [])
+  }, [currentDay])
 
   return (
     <>
@@ -59,10 +67,20 @@ function CommunityOverview() {
         <WeeklyChallengeCard
           showTimer={false}
           showImage={false}
+          day={challengeDays[Math.min(currentDay, challengeDays.length - 1)].day}
+          description={challengeDays[Math.min(currentDay, challengeDays.length - 1)].description}
           missionDone={missionDone}
+          completed={completed}
+          onDayEnd={() => {
+            setCurrentDay(prev => {
+              const next = Math.min(prev + 1, challengeDays.length - 1)
+              saveCurrentDay(next)
+              return next
+            })
+          }}
           onComplete={() => {
             const points = calculateChallengeRewardPoints()
-            claimChallengeDay(getCurrentChallengeDay())
+            claimChallengeDay(currentDay)
             navigate(`/community/challenge/reward?amount=${points}`)
           }}
         />

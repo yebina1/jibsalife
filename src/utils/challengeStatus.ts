@@ -2,6 +2,25 @@ import { readVotedMissionIds } from './communityVoteStatus'
 
 export const CHALLENGE_STATUS_CHANGED_EVENT = 'challenge-status-changed'
 
+export const CURRENT_DAY_KEY = 'jibsalife.challenge.currentDay'
+const TOTAL_DAYS = 7
+
+export function readCurrentDay(): number {
+  try {
+    const stored = typeof window !== 'undefined' ? window.localStorage.getItem(CURRENT_DAY_KEY) : null
+    if (stored !== null) {
+      const parsed = parseInt(stored, 10)
+      if (Number.isFinite(parsed) && parsed >= 2 && parsed <= TOTAL_DAYS) return parsed
+    }
+  } catch { /* noop */ }
+  return 2
+}
+
+export function saveCurrentDay(day: number) {
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(CURRENT_DAY_KEY, String(day))
+}
+
 function todayKey() {
   const now = new Date()
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
@@ -121,7 +140,7 @@ export function calculateChallengeRewardPoints(): number {
     const claimed: Set<number> = stored ? new Set(JSON.parse(stored)) : new Set()
     let consecutive = 0
     for (let i = currentDay - 1; i >= 0; i--) {
-      if (claimed.has(i)) consecutive++
+      if (i < 2 || claimed.has(i)) consecutive++ // index 0,1은 항상 완료로 간주
       else break
     }
     const completingDay = consecutive + 1
@@ -146,7 +165,7 @@ export function getCurrentChallengeDay(): number {
   try {
     const stored = typeof window !== 'undefined' ? window.localStorage.getItem(PARTICIPATED_DAYS_KEY) : null
     const claimed: Set<number> = stored ? new Set(JSON.parse(stored)) : new Set()
-    for (let i = 0; i < checks.length; i++) {
+    for (let i = 2; i < checks.length; i++) { // index 0,1은 항상 완료 — Day 3부터 시작
       if (!claimed.has(i)) return i
     }
   } catch { /* noop */ }
@@ -155,4 +174,12 @@ export function getCurrentChallengeDay(): number {
 
 export function checkChallengeDayDone(dayIndex: number): boolean {
   return checks[dayIndex]?.() ?? false
+}
+
+export function isChallengeDayClaimed(dayIndex: number): boolean {
+  try {
+    const stored = typeof window !== 'undefined' ? window.localStorage.getItem(PARTICIPATED_DAYS_KEY) : null
+    const claimed: Set<number> = stored ? new Set(JSON.parse(stored)) : new Set()
+    return claimed.has(dayIndex)
+  } catch { return false }
 }

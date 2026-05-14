@@ -377,13 +377,29 @@ function getRelativeTimeText(createdAt: string) {
   return `${Math.max(1, diffYears)}년 전`
 }
 
-function formatViewsText(viewsText?: string) {
-  if (!viewsText) return '1,240'
-  if (!viewsText.toLowerCase().endsWith('k')) return viewsText
+function parseInitialViews(viewsText?: string): number {
+  if (!viewsText) return 1240
+  if (viewsText.toLowerCase().endsWith('k')) {
+    const n = Number(viewsText.slice(0, -1))
+    if (!Number.isNaN(n)) return Math.round(n * 1000)
+  }
+  const n = parseInt(viewsText.replace(/,/g, ''), 10)
+  return Number.isNaN(n) ? 1240 : n
+}
 
-  const numberValue = Number(viewsText.slice(0, -1))
-  if (Number.isNaN(numberValue)) return viewsText
-  return Math.round(numberValue * 1000).toLocaleString('ko-KR')
+function getViewsStorageKey(id: string) {
+  return `jibsalife.community.knowledge.${id}.views`
+}
+
+function readStoredViewCount(knowledgeId: string, fallback: number): number {
+  try {
+    const stored = window.localStorage.getItem(getViewsStorageKey(knowledgeId))
+    if (stored !== null) {
+      const parsed = parseInt(stored, 10)
+      if (Number.isFinite(parsed)) return parsed
+    }
+  } catch { /* noop */ }
+  return fallback
 }
 
 function CommunityKnowledgeDetail() {
@@ -416,7 +432,9 @@ function CommunityKnowledgeDetail() {
         ? springAllergyItems
         : detailItems
   const postedTimeText = getRelativeTimeText(item?.createdAt ?? '2026-05-02T09:00:00')
-  const viewsText = formatViewsText(item?.viewsText)
+  const [viewCount, setViewCount] = useState<number>(() =>
+    readStoredViewCount(knowledgeId, parseInitialViews(item?.viewsText))
+  )
   const commentCount = visibleComments.length
   const isKnowledgeLiked = likedKnowledgeKeys.includes(knowledgeLikeKey)
   const knowledgeLikeCount = (item?.likes ?? 128) + (isKnowledgeLiked ? 1 : 0)
@@ -478,6 +496,15 @@ function CommunityKnowledgeDetail() {
     })
     scrollToCommentBottom()
   }
+
+  useEffect(() => {
+    setViewCount((prev) => {
+      const next = prev + 1
+      window.localStorage.setItem(getViewsStorageKey(knowledgeId), String(next))
+      return next
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     setVisibleComments(readKnowledgeComments(knowledgeCommentsStorageKey))
@@ -562,7 +589,7 @@ function CommunityKnowledgeDetail() {
         >
           <div className="community_knowledge_detail_meta">
             <span>{postedTimeText}</span>
-            <span>조회수 {viewsText}</span>
+            <span>조회수 {viewCount.toLocaleString('ko-KR')}</span>
           </div>
         </Title>
 

@@ -45,6 +45,19 @@
   gap: 6px;
 }
 
+.cc_stamp_wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.cc_stamp_today_arrow {
+  width: 9px;
+  height: 9px;
+  display: block;
+}
+
 .cc_stamp_item {
   display: flex;
   align-items: center;
@@ -73,13 +86,8 @@
   filter: brightness(0) invert(1);
 }
 
-.cc_stamp_not_done {
-  background: #7C7C7C;
-  border-color: #7C7C7C;
-}
-
-.cc_stamp_not_done .cc_stamp_icon {
-  filter: brightness(0) invert(1) opacity(0.9);
+.cc_stamp_today {
+  border-color: #6C59F7;
 }
 
 /* 보상 카드 */
@@ -152,8 +160,10 @@
   overflow-x: auto;
   scrollbar-width: none;
   padding-bottom: 4px;
-  scroll-snap-type: x mandatory;
+  scroll-snap-type: x proximity;
   margin-inline: -16px;
+  cursor: grab;
+  user-select: none;
 }
 
 .cc_day_scroll::before,

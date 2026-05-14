@@ -3,6 +3,7 @@ import Title from './Title'
 import Button from './html/Button'
 import './WeeklyChallengeCard.css'
 import challengeImg from '../img/challenge/challenge_3.png'
+import stampImg from '../img/challenge/stamp.png'
 
 function getTimeUntilMidnight() {
   const now = new Date()
@@ -29,16 +30,16 @@ type WeeklyChallengeCardProps = {
   imageSrc?: string
   description?: ReactNode
   missionDone?: boolean
+  completed?: boolean
 }
 
-function WeeklyChallengeCard({ showTimer = true, showImage = true, onComplete, onDayEnd, day, imageSrc, description, missionDone = false }: WeeklyChallengeCardProps) {
+function WeeklyChallengeCard({ showTimer = true, showImage = true, onComplete, onDayEnd, day, imageSrc, description, missionDone = false, completed = false }: WeeklyChallengeCardProps) {
   const [timeLeft, setTimeLeft] = useState(getTimeUntilMidnight)
 
   useEffect(() => {
-    if (!showTimer) return
     const id = window.setInterval(() => {
       const t = getTimeUntilMidnight()
-      setTimeLeft(t)
+      if (showTimer) setTimeLeft(t)
       if (t.hours === 0 && t.minutes === 0 && t.seconds === 0) {
         onDayEnd?.()
       }
@@ -48,6 +49,12 @@ function WeeklyChallengeCard({ showTimer = true, showImage = true, onComplete, o
 
   return (
     <section className="co_challenge_card co_challenge_card_first">
+      {/* CommunityOverview: 이미지 없을 때 카드 전체에 흰 반투명 + 스탬프 */}
+      {completed && !showImage && (
+        <div className="wcc_card_overlay">
+          <img src={stampImg} alt="참여완료" className="wcc_complete_stamp" />
+        </div>
+      )}
       <div className="wcc_header">
         {showTimer && (
           <p className="wcc_timer">
@@ -66,7 +73,17 @@ function WeeklyChallengeCard({ showTimer = true, showImage = true, onComplete, o
           <strong>이번주 집사 챌린지</strong>
         </Title>
       </div>
-      {showImage && <img src={imageSrc ?? challengeImg} alt="주간 챌린지 이미지" className="wcc_challenge_img" />}
+      {showImage && (
+        <div className="wcc_img_wrapper">
+          <img src={imageSrc ?? challengeImg} alt="주간 챌린지 이미지" className="wcc_challenge_img" />
+          {completed && (
+            <>
+              <div className="wcc_img_overlay" />
+              <img src={stampImg} alt="참여완료" className="wcc_complete_stamp" />
+            </>
+          )}
+        </div>
+      )}
       <p className="co_challenge_desc">
         {description ?? <>내 반려동물의<br />발바닥 상태를 체크해줘요</>}
       </p>
@@ -88,7 +105,9 @@ function WeeklyChallengeCard({ showTimer = true, showImage = true, onComplete, o
           <span>오늘 24:00 마감</span>
         </p>
       </div>
-      <Button type="button" className="purple_btn" onClick={onComplete} disabled={!missionDone}>참여하고 포인트 받기</Button>
+      <Button type="button" className="purple_btn" onClick={onComplete} disabled={!missionDone || completed}>
+        {completed ? '오늘 챌린지 완료!' : '참여하고 포인트 받기'}
+      </Button>
     </section>
   )
 }

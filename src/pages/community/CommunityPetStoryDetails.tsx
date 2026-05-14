@@ -26,12 +26,12 @@ const createdPostsStorageKey = 'jibsalife.community.createdPosts'
 const likedPostsStorageKey = 'jibsalife.community.likedPostIds'
 const likedCommentIdsStorageKey = 'jibsalife.community.likedCommentIds'
 
-function readViewCount(postId: number): number {
+function readViewCount(postId: number, initialViews = 0): number {
   try {
     const saved = window.localStorage.getItem(`jibsalife.community.views.${postId}`)
-    return saved ? Math.max(0, parseInt(saved, 10)) : 0
+    return saved ? Math.max(0, parseInt(saved, 10)) : initialViews
   } catch {
-    return 0
+    return initialViews
   }
 }
 type DetailPost = {
@@ -48,6 +48,7 @@ type DetailPost = {
   likes: number
   comments: number
   shares?: number
+  views?: number
   createdAt?: string
   place?: {
     name: string
@@ -336,7 +337,7 @@ function CommunityPetStoryDetails() {
   const [moreSheetOpen, setMoreSheetOpen] = useState<'own' | 'other' | false>(false)
   const [moreTarget, setMoreTarget] = useState<'post' | { commentId: number } | null>(null)
   const [deleteAlertOpen, setDeleteAlertOpen] = useState(false)
-  const [viewCount, setViewCount] = useState(() => readViewCount(post.id))
+  const [viewCount, setViewCount] = useState(() => readViewCount(post.id, post.views ?? 0))
   const [editAlertOpen, setEditAlertOpen] = useState(false)
   const [pendingEditText, setPendingEditText] = useState('')
   const [editCommentId, setEditCommentId] = useState<number | null>(null)

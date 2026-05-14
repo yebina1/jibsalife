@@ -1,7 +1,7 @@
 import './Community.css'
 import './CommunityChallenge.css'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { checkChallengeDayDone, CHALLENGE_STATUS_CHANGED_EVENT } from '../../utils/challengeStatus'
+import { useEffect, useRef, useState } from 'react'
+import { checkChallengeDayDone, CHALLENGE_STATUS_CHANGED_EVENT, readCurrentDay, saveCurrentDay } from '../../utils/challengeStatus'
 import { useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
@@ -18,7 +18,9 @@ import day5Img from '../../img/challenge/challenge_5.jpg'
 import day6Img from '../../img/challenge/challenge_6.jpg'
 import day7Img from '../../img/challenge/challenge_7.jpg'
 import cheerGroupImg from '../../img/challenge/challenge_cheer_group.png'
+import arrowIcon from '../../svg/arrow.svg'
 import footprintsIcon from '../../svg/footprints.svg'
+import lockIcon from '../../svg/lock.svg'
 import pointIcon from '../../svg/point.svg'
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -81,10 +83,11 @@ function saveParticipatedDays(days: Set<number>) {
   localStorage.setItem(PARTICIPATED_DAYS_KEY, JSON.stringify([...days]))
 }
 
-const challengeDays = [
+// eslint-disable-next-line react-refresh/only-export-components
+export const challengeDays = [
   { day: 1, image: day1Img, description: <>내 반려동물의<br />산책을 기록해주세요</> },
   { day: 2, image: day2Img, description: <>커뮤니티에 댓글을<br />3회 이상 남겨주세요</> },
-  { day: 3, image: day3Img, description: <>투표에 참여해보세요</> },
+  { day: 3, image: day3Img, description: <>1회 이상 <br/>투표에 참여해보세요</> },
   { day: 4, image: day4Img, description: <>내 반려동물의<br />건강 리포트를 확인해주세요</> },
   { day: 5, image: day5Img, description: <>반려상식에<br />좋아요를 남겨주세요</> },
   { day: 6, image: day6Img, description: <>내 반려동물의<br />식사량을 기록해주세요</> },
@@ -93,93 +96,143 @@ const challengeDays = [
 
 function CommunityChallenge() {
   const navigate = useNavigate()
-  const currentCardRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const cardRefs = useRef<(HTMLDivElement | null)[]>([])
-  const pointerStartX = useRef(0)
-  const isDragging = useRef(false)
   const [participatedDays, setParticipatedDays] = useState<Set<number>>(() => readParticipatedDays())
-  const [currentDay, setCurrentDay] = useState<number>(() => {
-    const claimed = readParticipatedDays()
-    for (let i = 0; i < TOTAL_DAYS; i++) {
-      if (!claimed.has(i)) return i
-    }
-    return TOTAL_DAYS
-  })
+  // currentDay는 자정(handleDayEnd)에만 진행 — 완료 후 리마운트해도 같은 날 유지
+  const [currentDay, setCurrentDay] = useState<number>(() => readCurrentDay())
   const visibleIndexRef = useRef(currentDay)
   const [visibleIndex, setVisibleIndex] = useState(currentDay)
   const [missionDone, setMissionDone] = useState(() => checkChallengeDayDone(currentDay))
 
-  const scrollToCard = useCallback((index: number) => {
-    const clamped = Math.max(0, Math.min(index, TOTAL_DAYS - 1))
-    visibleIndexRef.current = clamped
-    setVisibleIndex(clamped)
-    const card = cardRefs.current[clamped]
+  // 초기 마운트 시 currentDay 카드로 즉시 이동
+  useEffect(() => {
+    const card = cardRefs.current[currentDay]
     const container = scrollContainerRef.current
     if (!card || !container) return
     const targetLeft = card.offsetLeft - (container.clientWidth - card.offsetWidth) / 2
-    container.scrollTo({ left: targetLeft, behavior: 'smooth' })
+    container.scrollTo({ left: targetLeft, behavior: 'instant' })
+    visibleIndexRef.current = currentDay
+    setVisibleIndex(currentDay)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  useEffect(() => {
-    scrollToCard(currentDay)
-  }, [currentDay, scrollToCard])
-
+  // 스크롤 시 중앙에 가장 가까운 카드로 dot 업데이트
   useEffect(() => {
     const el = scrollContainerRef.current
     if (!el) return
-    const onPointerDown = (e: PointerEvent) => {
-      pointerStartX.current = e.clientX
-      isDragging.current = true
-      el.setPointerCapture(e.pointerId)
-      e.preventDefault()
-    }
-    const onPointerUp = (e: PointerEvent) => {
-      if (!isDragging.current) return
-      isDragging.current = false
-      const diff = pointerStartX.current - e.clientX
-      if (Math.abs(diff) > 30) {
-        scrollToCard(diff > 0 ? visibleIndexRef.current + 1 : visibleIndexRef.current - 1)
+    const onScroll = () => {
+      const center = el.scrollLeft + el.clientWidth / 2
+      let closestIdx = 0
+      let minDist = Infinity
+      cardRefs.current.forEach((card, i) => {
+        if (!card) return
+        const dist = Math.abs(card.offsetLeft + card.offsetWidth / 2 - center)
+        if (dist < minDist) { minDist = dist; closestIdx = i }
+      })
+      if (closestIdx !== visibleIndexRef.current) {
+        visibleIndexRef.current = closestIdx
+        setVisibleIndex(closestIdx)
       }
     }
+    el.addEventListener('scroll', onScroll, { passive: true })
+    return () => el.removeEventListener('scroll', onScroll)
+  }, [])
+
+  // 마우스 드래그 스크롤 (터치는 CSS snap이 처리)
+  useEffect(() => {
+    const el = scrollContainerRef.current
+    if (!el) return
+    let startX = 0
+    let startScrollLeft = 0
+    let dragging = false
+
+    const snapToNearest = () => {
+      const center = el.scrollLeft + el.clientWidth / 2
+      let closestIdx = 0
+      let minDist = Infinity
+      cardRefs.current.forEach((card, i) => {
+        if (!card) return
+        const dist = Math.abs(card.offsetLeft + card.offsetWidth / 2 - center)
+        if (dist < minDist) { minDist = dist; closestIdx = i }
+      })
+      const target = cardRefs.current[closestIdx]
+      if (!target) return
+      // smooth scroll 완료 후 CSS snap 복원 (scrollend 미지원 브라우저는 500ms 후 fallback)
+      const restore = () => {
+        el.style.scrollSnapType = ''
+        el.removeEventListener('scrollend', restore)
+        clearTimeout(timer)
+      }
+      el.addEventListener('scrollend', restore, { once: true })
+      const timer = window.setTimeout(restore, 500)
+      el.scrollTo({ left: target.offsetLeft - (el.clientWidth - target.offsetWidth) / 2, behavior: 'smooth' })
+    }
+
+    const onPointerDown = (e: PointerEvent) => {
+      if (e.pointerType === 'touch') return
+      dragging = true
+      startX = e.clientX
+      startScrollLeft = el.scrollLeft
+      el.style.scrollSnapType = 'none'
+      el.style.cursor = 'grabbing'
+    }
+    const onPointerMove = (e: PointerEvent) => {
+      if (!dragging) return
+      el.scrollLeft = startScrollLeft + (startX - e.clientX)
+    }
+    const onPointerUp = () => {
+      if (!dragging) return
+      dragging = false
+      el.style.cursor = ''
+      snapToNearest()
+    }
+
     el.addEventListener('pointerdown', onPointerDown)
-    el.addEventListener('pointerup', onPointerUp)
-    el.addEventListener('pointercancel', onPointerUp)
+    window.addEventListener('pointermove', onPointerMove)
+    window.addEventListener('pointerup', onPointerUp)
+    window.addEventListener('pointercancel', onPointerUp)
     return () => {
       el.removeEventListener('pointerdown', onPointerDown)
-      el.removeEventListener('pointerup', onPointerUp)
-      el.removeEventListener('pointercancel', onPointerUp)
+      window.removeEventListener('pointermove', onPointerMove)
+      window.removeEventListener('pointerup', onPointerUp)
+      window.removeEventListener('pointercancel', onPointerUp)
     }
-  }, [scrollToCard])
+  }, [])
 
-  // 현재 날 직전까지 연속 성공 일수
+  // 포인트 계산용 streak (handleComplete에서 사용)
   let consecutive = 0
   for (let i = currentDay - 1; i >= 0; i--) {
-    if (participatedDays.has(i)) consecutive++
+    if (i < 2 || participatedDays.has(i)) consecutive++
     else break
   }
 
-  // 지나간 날 중 한 번이라도 미완료
-  const hasMissed =
-    currentDay > 0 &&
-    Array.from({ length: currentDay }, (_, i) => i).some((i) => !participatedDays.has(i))
+  // 활성화된 stamp 수 (index 0,1 항상 + participatedDays)
+  const activeStampCount = 2 + [...participatedDays].filter(d => d >= 2).length
 
-  const rewardTitle = hasMissed ? '집사 챌린지 다시 시작!' : `${consecutive}일 연속 성공 중!`
+  // index 2 이후만 미완료 체크 (0,1은 항상 완료)
+  const hasMissed =
+    currentDay > 2 &&
+    Array.from({ length: currentDay - 2 }, (_, i) => i + 2).some((i) => !participatedDays.has(i))
+
+  const rewardTitle = hasMissed ? '집사 챌린지 다시 시작!' : `${activeStampCount}일 연속 성공 중!`
 
   const rewardDesc =
-    consecutive === 2 ? (
-      <>오늘 완료하면 보상 <span className="cc_reward_point">+100P</span></>
-    ) : consecutive === 6 ? (
-      <>오늘 완료하면 보상 <span className="cc_reward_point">+300P</span></>
-    ) : consecutive >= 3 && consecutive <= 5 ? (
-      <>7일 연속 완료하면 보상 <span className="cc_reward_point">+300P</span></>
+    activeStampCount === 2 ? (
+      <>오늘 완료시 보상 <span className="cc_reward_point">+100P</span></>
+    ) : activeStampCount === 6 ? (
+      <>오늘 완료시 보상 <span className="cc_reward_point">+300P</span></>
+    ) : activeStampCount >= 3 && activeStampCount <= 5 ? (
+      <>7일 연속 완료시 보상 <span className="cc_reward_point">+300P</span></>
     ) : (
       <>3일 연속 보상에 도전해보세요!</>
     )
 
   const getStampClass = (i: number) => {
-    if (i >= currentDay) return ''
-    return participatedDays.has(i) ? 'cc_stamp_active' : 'cc_stamp_not_done'
+    if (i < 2) return 'cc_stamp_active'
+    if (participatedDays.has(i)) return 'cc_stamp_active'
+    if (i === currentDay) return 'cc_stamp_today'
+    return ''
   }
 
   // currentDay 바뀔 때마다 해당 날 완료 여부 재계산
@@ -210,7 +263,11 @@ function CommunityChallenge() {
   }
 
   const handleDayEnd = () => {
-    setCurrentDay((prev) => Math.min(prev + 1, TOTAL_DAYS))
+    setCurrentDay((prev) => {
+      const next = Math.min(prev + 1, TOTAL_DAYS)
+      saveCurrentDay(next)
+      return next
+    })
   }
 
   return (
@@ -234,13 +291,16 @@ function CommunityChallenge() {
 
       <main className="page cc_page">
         <section className="cc_progress_section">
-          <strong className="cc_title">7일 챌린지 완주까지 D-{TOTAL_DAYS - currentDay}</strong>
+          <strong className="cc_title">7일 챌린지 완주까지 D-{Math.max(1, 7 - [...participatedDays].filter(d => d >= 2).length)}</strong>
           <img src={cheerGroupImg} alt="" className="cc_cheer_img" />
           <div className="cc_stamp_row">
             {Array.from({ length: TOTAL_DAYS }).map((_, i) => (
-              <span key={i} className={`cc_stamp_item ${getStampClass(i)}`}>
-                <img src={footprintsIcon} alt="" className="cc_stamp_icon" />
-              </span>
+              <div key={i} className="cc_stamp_wrapper">
+                <span className={`cc_stamp_item ${getStampClass(i)}`}>
+                  <img src={i > currentDay ? lockIcon : footprintsIcon} alt="" className="cc_stamp_icon" />
+                </span>
+                {i === currentDay && <img src={arrowIcon} alt="" className="cc_stamp_today_arrow" />}
+              </div>
             ))}
           </div>
           <div className="cc_reward_card">
@@ -257,6 +317,7 @@ function CommunityChallenge() {
           imageSrc={challengeDays[Math.min(currentDay, TOTAL_DAYS - 1)].image}
           description={challengeDays[Math.min(currentDay, TOTAL_DAYS - 1)].description}
           missionDone={missionDone}
+          completed={participatedDays.has(currentDay)}
         />
         <section className="cc_day_list_section">
           <Title as="h4" title="챌린지 목록">
@@ -266,20 +327,24 @@ function CommunityChallenge() {
           <div className="cc_day_scroll" ref={scrollContainerRef}>
             {challengeDays.map((item, i) => {
               const status =
-                i < currentDay
-                  ? participatedDays.has(i) ? 'completed' : 'missed'
-                  : i === currentDay ? 'current' : 'locked'
+                i < 2
+                  ? 'completed'
+                  : participatedDays.has(i)
+                    ? 'completed'
+                    : i < currentDay
+                      ? 'missed'
+                      : i === currentDay ? 'current' : 'locked'
               return (
                 <ChallengeDayCard
                   key={item.day}
                   ref={(el) => {
                     cardRefs.current[i] = el
-                    if (i === currentDay) currentCardRef.current = el
                   }}
                   day={item.day}
                   image={item.image}
                   description={item.description}
                   status={status}
+                  isCurrent={i === currentDay}
                 />
               )
             })}

@@ -11,12 +11,13 @@ type ChallengeDayCardProps = {
   image?: string
   description: ReactNode
   status: ChallengeStatus
+  isCurrent?: boolean
 }
 
 const ChallengeDayCard = forwardRef<HTMLDivElement, ChallengeDayCardProps>(
-function ChallengeDayCard({ day, image, description, status }, ref) {
+function ChallengeDayCard({ day, image, description, status, isCurrent = false }, ref) {
   return (
-    <div ref={ref} className={`cdc_card${status === 'current' ? ' cdc_card_current' : ''}${status === 'completed' || status === 'missed' ? ' cdc_card_completed' : ''}`}>
+    <div ref={ref} className={`cdc_card${(status === 'current' || isCurrent) ? ' cdc_card_current' : ''}${status === 'completed' || status === 'missed' ? ' cdc_card_completed' : ''}`}>
       <span className="cdc_day">Day {day}</span>
       <div className="cdc_img_wrapper">
         {image && <img src={image} alt={`Day ${day} 챌린지 이미지`} className="cdc_img" />}

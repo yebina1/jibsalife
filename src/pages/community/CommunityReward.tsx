@@ -70,6 +70,16 @@ function CommunityReward() {
   }
 
   const applyReward = () => {
+    // 챌린지 보상: rewardEventId 없이 claimed 키로 중복 방지
+    if (isChallengeRewardClaim) {
+      const alreadyClaimed = window.localStorage.getItem(CHALLENGE_REWARD_CLAIMED_STORAGE_KEY) === 'true'
+      if (alreadyClaimed) return readProfilePoints()
+      const nextPoints = readProfilePoints() + Math.max(0, rewardAmount)
+      writeProfilePoints(nextPoints)
+      return nextPoints
+    }
+
+    // 투표/기타 보상: rewardEventId로 중복 방지
     if (!rewardEventId) return readProfilePoints()
 
     const appliedRewardEvents = readAppliedRewardEvents()

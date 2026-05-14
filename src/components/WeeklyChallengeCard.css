@@ -81,10 +81,46 @@
   color: #505050;
 }
 
+.wcc_img_wrapper {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+}
+
 .wcc_challenge_img {
   width: 100%;
   max-width: 200px;
   object-fit: contain;
+}
+
+/* 이미지 위 흰 반투명 배경 (CommunityChallenge) */
+.wcc_img_overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+}
+
+/* 카드 전체 흰 반투명 오버레이 (CommunityOverview) */
+.wcc_card_overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.wcc_complete_stamp {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
 }
 
 .wcc_mission_check {
