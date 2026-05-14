@@ -471,6 +471,7 @@
     width: 100%;
     max-width: 520px;
     height: auto;
+    max-height: 315px;
   }
 
   .onboarding_page .onboarding_layout:has(.onboarding_layout_indicators) .onboarding_layout_indicators {
