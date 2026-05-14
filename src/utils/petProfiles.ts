@@ -69,7 +69,7 @@ export function readPetProfiles() {
     }
 
     return parsedValue.map((profile, index) =>
-      normalizePetProfile(profile, defaultPetProfiles[index] ?? defaultPetProfiles[1]),
+      normalizePetProfile(profile, defaultPetProfiles[index] ?? defaultPetProfiles[0]),
     )
   } catch {
     return defaultPetProfiles
@@ -87,16 +87,16 @@ export function writePetProfiles(nextProfiles: PetProfileSummary[]) {
 
 export function readSelectedPetProfileId() {
   const profiles = readPetProfiles()
-  const fallbackProfile = profiles.find((profile) => profile.id === defaultPetProfiles[1].id) ?? profiles[0]
+  const fallbackProfile = profiles[0] ?? defaultPetProfiles[0]
 
   if (typeof window === 'undefined') {
-    return fallbackProfile?.id ?? defaultPetProfiles[1].id
+    return fallbackProfile.id
   }
 
   const savedValue = Number(window.localStorage.getItem(SELECTED_PET_PROFILE_ID_STORAGE_KEY))
   return Number.isFinite(savedValue) && profiles.some((profile) => profile.id === savedValue)
     ? savedValue
-    : fallbackProfile?.id ?? defaultPetProfiles[1].id
+    : fallbackProfile.id
 }
 
 export function writeSelectedPetProfileId(profileId: number) {
@@ -111,7 +111,7 @@ export function writeSelectedPetProfileId(profileId: number) {
 export function readSelectedPetProfile() {
   const profiles = readPetProfiles()
   const selectedId = readSelectedPetProfileId()
-  return profiles.find((profile) => profile.id === selectedId) ?? profiles[0] ?? defaultPetProfiles[1]
+  return profiles.find((profile) => profile.id === selectedId) ?? profiles[0] ?? defaultPetProfiles[0]
 }
 
 export function readSelectedPetProfileName() {

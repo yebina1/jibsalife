@@ -13,7 +13,6 @@ import MissionRecordSheet from '../../components/MissionRecordSheet'
 import StateBar from '../../components/StateBar'
 import {
   readPetProfiles,
-  readSelectedPetProfileId,
   writeSelectedPetProfileId,
   PET_PROFILES_CHANGE_EVENT,
   type PetProfileSummary,
@@ -265,6 +264,7 @@ function Health() {
   }
 
   const selectedPetName = pets.find((p) => p.id === selectedPetId)?.name || ''
+  const effectiveSelectedPetId = selectedPetId ?? pets[0]?.id ?? null
 
   return (
     <main className="health_cam_ui">
@@ -323,7 +323,10 @@ function Health() {
               </span>
             </>
           ) : (
+            <>
+            <span>반려동물 선택하기</span>
             <span>반려동물 변경하기</span>
+            </>
           )}
           <ChevronRight size={16} color="#505050" aria-hidden="true" />
         </button>
@@ -427,7 +430,7 @@ function Health() {
                 <button
                   key={pet.id}
                   type="button"
-                  className={`mission_pet_switch_option${pet.id === selectedPetId ? ' is_selected' : ''}`}
+                  className={`mission_pet_switch_option${pet.id === effectiveSelectedPetId ? ' is_selected' : ''}`}
                   onClick={() => handleSelectPet(pet)}
                 >
                   {pet.image ? (
@@ -474,7 +477,7 @@ function Health() {
               {pets.map((pet) => {
                 const age = getPetAge(pet.birthDate)
                 const sexLabel = pet.sex === '남' ? '남아' : pet.sex === '여' ? '여아' : pet.sex
-                const isSelected = pet.id === selectedPetId
+                const isSelected = pet.id === effectiveSelectedPetId
                 return (
                   <li key={pet.id}>
                     <button

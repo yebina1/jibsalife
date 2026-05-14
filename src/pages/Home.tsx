@@ -22,7 +22,6 @@ import {
 import {
   defaultPetProfiles,
   readPetProfiles,
-  readSelectedPetProfileId,
   writePetProfiles,
   writeSelectedPetProfileId,
   type PetProfileSummary,
@@ -33,8 +32,10 @@ import knowledge2 from '../img/knowledge2.png'
 import knowledge3 from '../img/knowledge3.png'
 import knowledge4 from '../img/knowledge4.png'
 import animalCardImage from '../img/animal_card.png'
-import bannerIconImage from '../img/banner_icon.png'
 import bannerIcon2Image from '../img/banner_icon2.png'
+import weeklyRankFirstImage from '../img/vote/vote_result/voting1.png'
+import weeklyRankSecondImage from '../img/vote/pose_vote/pose_vote2.png'
+import weeklyRankThirdImage from '../img/vote1/vote_bbung.jpg'
 
 type PetIdCardForm = {
   name: string
@@ -58,6 +59,30 @@ const emptyPetIdForm: PetIdCardForm = {
 
 const bestPoseVoteItems = voteDetails.find((voteDetail) => voteDetail.id === 'best-pose')?.candidates ?? []
 const bestPoseVoteDetailPath = '/community/vote/detail?voteId=best-pose'
+
+const weeklyRankingItems = [
+  {
+    id: 3,
+    rank: 3,
+    image: weeklyRankThirdImage,
+    alt: '3위 반려동물 사진',
+    objectPosition: 'center center',
+  },
+  {
+    id: 1,
+    rank: 1,
+    image: weeklyRankFirstImage,
+    alt: '1위 반려동물 사진',
+    objectPosition: 'center center',
+  },
+  {
+    id: 2,
+    rank: 2,
+    image: weeklyRankSecondImage,
+    alt: '2위 반려동물 사진',
+    objectPosition: 'center center',
+  },
+] as const
 
 const contentItems = [
   {
@@ -103,11 +128,7 @@ type AddSummarySlide = {
 }
 
 function getInitialSummarySlideIndex() {
-  const profiles = readPetProfiles()
-  const selectedProfileIndex = profiles.findIndex((profile) => profile.id === readSelectedPetProfileId())
-
-  if (selectedProfileIndex >= 0) return selectedProfileIndex
-  return profiles.length > 1 ? 1 : 0
+  return 0
 }
 
 function getTodayDateKey() {
@@ -544,16 +565,38 @@ function Home() {
 
         </ContentSection>
 
-        <HomeSummaryBanner
-          text={`AI로 우리 아이\n건강 상태를 확인해 보세요.`}
-          imageSrc={bannerIconImage}
-          backgroundColor="#43779E"
-          ariaLabel="AI 건강 배너"
-        />
+        <ContentSection
+          className="home_section home_weekly_ranking_section"
+          title="이번주 주인공은 나야 나!"
+          subtitle="지난주 가장 많은 사랑을 받은 아이들을 만나보세요."
+        >
+          <div className="home_weekly_ranking_body">
+            <div className="home_weekly_ranking_gallery" aria-label="주간 인기 반려동물 랭킹">
+              {weeklyRankingItems.map((item) => (
+                <article
+                  key={item.id}
+                  className={`home_weekly_ranking_card rank_${item.rank}`}
+                  aria-label={`${item.rank}위`}
+                >
+                  <img src={item.image} alt={item.alt} style={{ objectPosition: item.objectPosition }} />
+                  <strong>{item.rank}</strong>
+                </article>
+              ))}
+            </div>
+
+            <Button
+              type="button"
+              className="white_radius_btn home_weekly_ranking_button"
+              onClick={() => navigate('/community/vote/result')}
+            >
+              랭킹 보기
+            </Button>
+          </div>
+        </ContentSection>
 
         <ContentSection
           className="home_section"
-          title="오늘의 BEST 포즈는?!"
+          title="사진찍냥? BEST 포즈 투표하개!"
           subtitle="투표 기간에는 결과는 비공개 처리돼요. "
         >
           <div className="best_pose_vote_strip" aria-label="오늘의 베스트 포즈 투표 목록">
@@ -596,12 +639,12 @@ function Home() {
         <HomeSummaryBanner
           text={`궁금한 점이 있다면\n수의사와 상담해 보세요.`}
           imageSrc={bannerIcon2Image}
-          backgroundColor="#599C64"
+          backgroundColor="#EDE9FE"
           ariaLabel="수의사 상담 배너"
           rotateImage={false}
-          imageWidth={95.49}
-          imageHeight={89.5}
-          imageTop={-16}
+          imageWidth={112}
+          imageHeight={105}
+          imageTop={-20}
         />
 
         <ContentSection className="home_section home_content_section" title="반려상식">

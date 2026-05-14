@@ -6,6 +6,10 @@
   color: #111111;
 }
 
+.home_page .chevron_icon {
+  --chevron-stroke-width: 2.2;
+}
+
 .home_header_notification {
   position: relative;
   color: #111111;
@@ -41,6 +45,29 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 16px;
+}
+
+.home_summary_section {
+  position: relative;
+  margin-inline: calc(var(--layout-inline-padding) * -1);
+  padding: 24px var(--layout-inline-padding);
+  background: transparent;
+}
+
+.home_summary_section::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 0;
+  height: 178px;
+  background: #C4B5FD;
+  content: '';
+}
+
+.home_summary_section > * {
+  position: relative;
+  z-index: 1;
 }
 
 .home_summary_header .content_section_title,
@@ -357,15 +384,135 @@
 
 .best_pose_vote_strip {
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 108px;
-  grid-template-rows: repeat(2, minmax(0, auto));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px 8px;
   margin-inline: -16px;
   padding-inline: 16px;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
+}
+
+.home_weekly_ranking_section {
+  gap: 16px;
+  overflow: hidden;
+}
+
+.home_weekly_ranking_section .content_section_header {
+  margin-bottom: 0;
+}
+
+.home_weekly_ranking_section .content_section_copy {
+  gap: 2px;
+}
+
+.home_weekly_ranking_section .content_section_title {
+  color: #111111;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+}
+
+.home_weekly_ranking_section .content_section_subtitle {
+  margin-top: 0;
+  color: #505050;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.025em;
+}
+
+.home_weekly_ranking_body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  align-self: stretch;
+}
+
+.home_weekly_ranking_gallery {
+  display: flex;
+  width: calc(100% + 32px);
+  height: 340px;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-inline: -16px;
+  overflow: hidden;
+}
+
+.home_weekly_ranking_card {
+  position: relative;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #f1f1f5;
+}
+
+.home_weekly_ranking_card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.home_weekly_ranking_card strong {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  z-index: 1;
+  color: #09E998;
+  font-size: 100px;
+  font-weight: 700;
+  line-height: 100px;
+  letter-spacing: -2.5px;
+  transform: rotate(-10deg);
+  transform-origin: left top;
+}
+
+.home_weekly_ranking_card.rank_1 {
+  width: 250px;
+  height: 340px;
+}
+
+.home_weekly_ranking_card.rank_1 strong {
+  top: 18px;
+  left: 20px;
+}
+
+.home_weekly_ranking_card.rank_2,
+.home_weekly_ranking_card.rank_3 {
+  width: 196px;
+  height: 300px;
+}
+
+.home_weekly_ranking_card.rank_2 strong {
+  top: 8px;
+  left: 10px;
+}
+
+.home_weekly_ranking_card.rank_3 strong {
+  top: 8px;
+  left: 10px;
+}
+
+.home_weekly_ranking_button.white_radius_btn {
+  width: 160px;
+  height: 54px;
+  align-self: center;
+  margin: 0 auto;
+  border: 1px solid rgba(109, 89, 248, 1);
+  border-radius: 999px;
+  color: rgba(109, 89, 248, 1);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+}
+
+.home_weekly_ranking_button.white_radius_btn .button_label {
+  color: inherit;
 }
 
 .best_pose_vote_strip::-webkit-scrollbar {
@@ -380,7 +527,7 @@
 
 .best_pose_vote_card_media {
   position: relative;
-  width: 108px;
+  width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
   border-radius: 12px;
@@ -465,7 +612,7 @@
 .more_button .chevron_icon {
   width: 20px;
   height: 20px;
-  color: #111111;
+  color: #6D59F8;
 }
 
 .more_button .chevron_icon_svg {

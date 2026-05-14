@@ -89,6 +89,8 @@
   cursor: not-allowed;
 }
 
+
+/* 프라이머리 퍼플 원형 버튼 */
 .white_radius_btn {
   height: 46px;
   min-width: max-content;
@@ -99,13 +101,13 @@
   white-space: nowrap;
   flex-shrink: 0;
   background: #fff;
-  color: #111111;
+  color: #6D59F8;
   font-size: 14px;
   font-weight: 600;
   line-height: 1.4;
   letter-spacing: -0.025em;
   border-radius: 999px;
-  border: 1px solid #E5E5EC;
+  border: 1px solid #6D59F8;
 }
 
 .white_radius_btn .button_label {

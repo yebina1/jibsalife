@@ -1014,3 +1014,13 @@
     height: 24px !important;
   }
 }
+
+.health_cam_pet_link > span:nth-of-type(2),
+.health_cam_pet_legacy_label {
+  display: none;
+}
+
+.health_cam_pet_name {
+  color: #111111;
+  font-weight: 700;
+}
