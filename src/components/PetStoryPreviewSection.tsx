@@ -17,6 +17,21 @@ type CreatedPost = {
   createdAt: string
   likes: number
   comments: number
+  shares?: number
+  views?: number
+  image: string | null
+}
+
+type PreviewPost = {
+  id: number
+  tag: string
+  title: string
+  author: string
+  createdAt: string
+  likes: number
+  comments: number
+  shares?: number
+  views?: number
   image: string | null
 }
 
@@ -71,7 +86,7 @@ function PetStoryPreviewSection() {
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 4)
 
-  const handleClick = (post: (typeof dailyPosts)[number]) => {
+  const handleClick = (post: PreviewPost) => {
     navigate(`/community/petstory/detail/${post.id}`, {
       state: {
         post: {
@@ -83,7 +98,8 @@ function PetStoryPreviewSection() {
           image: post.image,
           likes: post.likes,
           comments: post.comments,
-          shares: 10,
+          shares: post.shares ?? 10,
+          views: post.views ?? 0,
           createdAt: post.createdAt,
         },
       },
