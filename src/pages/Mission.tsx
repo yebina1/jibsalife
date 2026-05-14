@@ -542,9 +542,9 @@ function Mission() {
     [calendarDays, selectedDayId]
   )
 
-  const petName =
-    petProfiles.find((profile) => profile.id === selectedPetProfileId)?.name ??
-    readSelectedPetProfileName()
+  const selectedPetProfile = petProfiles.find((profile) => profile.id === selectedPetProfileId)
+  const effectiveSelectedPetProfileId = selectedPetProfile?.id ?? petProfiles[0]?.id ?? selectedPetProfileId
+  const petName = selectedPetProfile?.name ?? readSelectedPetProfileName()
   const selectedDate = new Date(selectedDay.year, selectedDay.month - 1, Number(selectedDay.label))
   const selectedDateKey = getDateKey(selectedDay.year, selectedDay.month, Number(selectedDay.label))
   const isTodaySelected =
@@ -1219,7 +1219,9 @@ function Mission() {
       />
       <main className={`page mission_page${isWeeklyCalendar ? ' is_condensed' : ''}`}>
         <section className="mission_profile_header">
+          <h2>{petName}의 히스토리</h2>
           <Button type="button" className="mission_pet_switch_button" onClick={() => setIsPetSwitchOpen(true)}>
+            <span>반려동물 선택하기</span>
             <span>
               현재 반려동물 · <strong>{petName}</strong>
             </span>
@@ -1366,7 +1368,7 @@ function Mission() {
                   key={profile.id}
                   type="button"
                   className={`mission_pet_switch_option${
-                    profile.id === selectedPetProfileId ? ' is_selected' : ''
+                    profile.id === effectiveSelectedPetProfileId ? ' is_selected' : ''
                   }`}
                   onClick={() => selectPetProfile(profile.id)}
                 >

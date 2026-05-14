@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import './Health.css'
 import './HealthQna.css'
@@ -27,7 +27,7 @@ import {
   writeMissionPoopRecord,
   writeMissionSymptomRecord,
 } from '../../utils/missionActivityRecords'
-import { MY_PROFILE_NAME } from '../../utils/myProfile'
+import { MY_PROFILE_CHANGE_EVENT, readMyProfileName } from '../../utils/myProfile'
 
 type RecordKind = 'meal' | 'poop' | 'symptom' | 'activity'
 
@@ -82,18 +82,20 @@ const calendarQuickMessageOptions: Record<RecordKind, string[]> = {
   activity: ['활발함', '보통', '활동 적음', '무기력', '평소와 다름', '기타'],
 }
 
-const introMessages: ChatMessage[] = [
-  {
-    id: 1,
-    sender: 'bot',
-    text:
-      `${MY_PROFILE_NAME}님 안녕하세요, 집사님 🐾\n` +
-      `오늘 우리 아이 상태를 함께 확인해볼까요?\n\n` +
-      `식사·산책·배변 기록을 기반으로\n` +
-      `변화를 정리해드릴게요.`,
-    chips: [...DEFAULT_CHIPS],
-  },
-]
+function createIntroMessages(profileName: string): ChatMessage[] {
+  return [
+    {
+      id: 1,
+      sender: 'bot',
+      text:
+        `${profileName}님 안녕하세요, 집사님 🐾\n` +
+        `오늘 우리 아이 상태를 함께 확인해볼까요?\n\n` +
+        `식사·산책·배변 기록을 기반으로\n` +
+        `변화를 정리해드릴게요.`,
+      chips: [...DEFAULT_CHIPS],
+    },
+  ]
+}
 
 function buildMessageId() {
   return Date.now() + Math.floor(Math.random() * 1000)
@@ -123,10 +125,10 @@ function saveRecordDraft(draft: RecordDraft) {
   })
 }
 
-function buildConfirmMessage(draft: RecordDraft, preface?: string): ChatMessage {
+function buildConfirmMessage(draft: RecordDraft, profileName: string, preface?: string): ChatMessage {
   const confirmText = preface
-    ? `${preface}\n\n캘린더에\n${MY_PROFILE_NAME}의 ${draft.calendarDetail}을 등록할까요?`
-    : `캘린더에\n${MY_PROFILE_NAME}의 ${draft.calendarDetail}을 등록할까요?`
+    ? `${preface}\n\n캘린더에\n${profileName}의 ${draft.calendarDetail}을 등록할까요?`
+    : `캘린더에\n${profileName}의 ${draft.calendarDetail}을 등록할까요?`
 
   return {
     id: buildMessageId(),
@@ -206,8 +208,24 @@ function buildFeedbackSelections() {
 
 function HealthQna() {
   const navigate = useNavigate()
+  const [profileName, setProfileName] = useState(() => readMyProfileName())
   const [feedbackSelections, setFeedbackSelections] = useState(buildFeedbackSelections)
   const [pendingOtherRecord, setPendingOtherRecord] = useState<PendingOtherRecord | null>(null)
+  const introMessages = useMemo(() => createIntroMessages(profileName), [profileName])
+
+  useEffect(() => {
+    const syncProfileName = () => {
+      setProfileName(readMyProfileName())
+    }
+
+    window.addEventListener(MY_PROFILE_CHANGE_EVENT, syncProfileName)
+    window.addEventListener('storage', syncProfileName)
+
+    return () => {
+      window.removeEventListener(MY_PROFILE_CHANGE_EVENT, syncProfileName)
+      window.removeEventListener('storage', syncProfileName)
+    }
+  }, [])
 
   const handleChipSelect = (chip: string) => {
     setPendingOtherRecord(null)
@@ -248,7 +266,7 @@ function HealthQna() {
       setPendingOtherRecord(null)
       saveRecordDraft(draft)
 
-      return buildConfirmMessage(draft)
+      return buildConfirmMessage(draft, profileName)
     }
 
     const walkActivityDetail = parseWalkActivityDetail(message)
@@ -262,7 +280,7 @@ function HealthQna() {
         calendarDetail: walkActivityDetail,
       }
       saveRecordDraft(draft)
-      return buildConfirmMessage(draft, '활동 기록을 저장했어요.')
+      return buildConfirmMessage(draft, profileName, '활동 기록을 저장했어요.')
     }
 
     const mealRecordDetail = parseMealRecordDetail(message)
@@ -274,7 +292,7 @@ function HealthQna() {
         calendarDetail: mealRecordDetail,
       }
       saveRecordDraft(draft)
-      return buildConfirmMessage(draft, '식사 기록을 저장했어요.')
+      return buildConfirmMessage(draft, profileName, '식사 기록을 저장했어요.')
     }
 
     const poopRecordDetail = parsePoopRecordDetail(message)
@@ -286,7 +304,7 @@ function HealthQna() {
         calendarDetail: poopRecordDetail,
       }
       saveRecordDraft(draft)
-      return buildConfirmMessage(draft, '배변 기록을 저장했어요.')
+      return buildConfirmMessage(draft, profileName, '배변 기록을 저장했어요.')
     }
 
     const symptomRecordDetail = parseSymptomRecordDetail(message)
@@ -298,7 +316,7 @@ function HealthQna() {
         calendarDetail: symptomRecordDetail,
       }
       saveRecordDraft(draft)
-      return buildConfirmMessage(draft, '증상 기록을 저장했어요.')
+      return buildConfirmMessage(draft, profileName, '증상 기록을 저장했어요.')
     }
 
     const chatbotAnswer = createLocalChatbotAnswer(message)
@@ -363,7 +381,7 @@ function HealthQna() {
 
       saveRecordDraft(draft)
 
-      return buildConfirmMessage(draft)
+      return buildConfirmMessage(draft, profileName)
     }
 
     if (action.value === 'select-walk-time') {
@@ -383,6 +401,7 @@ function HealthQna() {
 
       return buildConfirmMessage(
         draft,
+        profileName,
         `활동은 ${value},\n산책 시간은 ${walkTime}으로\n저장했어요.`,
       )
     }
@@ -421,6 +440,7 @@ function HealthQna() {
       />
       <main className="page health_page health_qna_page">
         <ChatRoom
+          key={profileName}
           initialMessages={introMessages}
           bottomPromptMessage={introMessages[0]}
           storageKey={HEALTH_QNA_STORAGE_KEY}

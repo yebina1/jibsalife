@@ -85,7 +85,7 @@ function Health() {
   const [showPetModal, setShowPetModal] = useState(false)
   const [showCalendarPetSwitch, setShowCalendarPetSwitch] = useState(false)
   const [pets, setPets] = useState<PetProfileSummary[]>(readPetProfiles)
-  const [selectedPetId, setSelectedPetId] = useState<number>(readSelectedPetProfileId)
+  const [selectedPetId, setSelectedPetId] = useState<number | null>(null)
 
   // 메모 바텀시트 state
   const [showMemoSheet, setShowMemoSheet] = useState(false)
@@ -98,7 +98,6 @@ function Health() {
   useEffect(() => {
     const sync = () => {
       setPets(readPetProfiles())
-      setSelectedPetId(readSelectedPetProfileId())
     }
     window.addEventListener(PET_PROFILES_CHANGE_EVENT, sync)
     return () => window.removeEventListener(PET_PROFILES_CHANGE_EVENT, sync)
@@ -315,9 +314,14 @@ function Health() {
           onClick={() => setShowCalendarPetSwitch(true)}
         >
           {selectedPetName ? (
-            <span>
+            <>
+              <span>
+                현재 반려동물 · <span className="health_cam_pet_name">{selectedPetName}</span>
+              </span>
+              <span className="health_cam_pet_legacy_label" aria-hidden="true">
               현재 반려동물 · <span style={{ fontWeight: 700 }}>{selectedPetName}</span>
-            </span>
+              </span>
+            </>
           ) : (
             <span>반려동물 변경하기</span>
           )}

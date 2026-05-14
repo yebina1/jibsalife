@@ -22,6 +22,7 @@ import {
 import {
   defaultPetProfiles,
   readPetProfiles,
+  readSelectedPetProfileId,
   writePetProfiles,
   writeSelectedPetProfileId,
   type PetProfileSummary,
@@ -99,6 +100,14 @@ type ProfileSummarySlide = PetProfileSummary
 type AddSummarySlide = {
   id: number
   type: 'add'
+}
+
+function getInitialSummarySlideIndex() {
+  const profiles = readPetProfiles()
+  const selectedProfileIndex = profiles.findIndex((profile) => profile.id === readSelectedPetProfileId())
+
+  if (selectedProfileIndex >= 0) return selectedProfileIndex
+  return profiles.length > 1 ? 1 : 0
 }
 
 function getTodayDateKey() {
@@ -205,7 +214,7 @@ function calculateAgeFromBirthDate(birthDate: string) {
 
 function createProfileDetails(profile: ProfileSummarySlide) {
   const age = calculateAgeFromBirthDate(profile.birthDate)
-  const sexLabel = profile.sex === '여' ? '여아' : profile.sex === '남' ? '남아' : profile.sex
+  const sexLabel = profile.sex
   const weightLabel = profile.weight ? `${profile.weight} kg` : '-'
 
   return `나이: ${age || '-'} · 몸무게: ${weightLabel} · 성별: ${sexLabel || '-'}`
@@ -225,7 +234,8 @@ function VoteHeartIcon({ active }: { active: boolean }) {
 
 function Home() {
   const navigate = useNavigate()
-  const [summarySlideIndex, setSummarySlideIndex] = useState(1)
+  const [profileSlides, setProfileSlides] = useState<ProfileSummarySlide[]>(readPetProfiles)
+  const [summarySlideIndex, setSummarySlideIndex] = useState(getInitialSummarySlideIndex)
   const [dragOffset, setDragOffset] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [likedBestPoseIds, setLikedBestPoseIds] = useState<number[]>([])
@@ -235,7 +245,6 @@ function Home() {
   const [petIdForm, setPetIdForm] = useState<PetIdCardForm>(emptyPetIdForm)
   const [calendarRecords, setCalendarRecords] = useState<MissionHistoryRecord[]>(readCalendarRecords)
   const dragStateRef = useRef({ startX: 0 })
-  const [profileSlides, setProfileSlides] = useState<ProfileSummarySlide[]>(readPetProfiles)
   const summarySlides = [
     ...profileSlides,
     {

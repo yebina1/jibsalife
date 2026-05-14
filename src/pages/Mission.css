@@ -13,8 +13,22 @@
 .mission_profile_header {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 16px;
   margin-bottom: 16px;
+}
+
+.mission_profile_header h2 {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: #111111;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 25.2px;
+  letter-spacing: -0.025em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .mission_pet_switch_button {
@@ -28,7 +42,12 @@
   font-size: 14px;
   font-weight: 400;
   line-height: 20px;
+  letter-spacing: -0.025em;
   white-space: nowrap;
+}
+
+.mission_pet_switch_button .button_label > span:nth-of-type(2) {
+  display: none;
 }
 
 .mission_pet_switch_button .button_label {
@@ -155,7 +174,7 @@
 }
 
 .mission_today_chip.is_active {
-  background: #f5f3ff;
+  background: transparent;
 }
 
 .mission_today_chip .button_label {

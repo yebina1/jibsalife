@@ -86,12 +86,17 @@ export function writePetProfiles(nextProfiles: PetProfileSummary[]) {
 }
 
 export function readSelectedPetProfileId() {
+  const profiles = readPetProfiles()
+  const fallbackProfile = profiles.find((profile) => profile.id === defaultPetProfiles[1].id) ?? profiles[0]
+
   if (typeof window === 'undefined') {
-    return defaultPetProfiles[1].id
+    return fallbackProfile?.id ?? defaultPetProfiles[1].id
   }
 
   const savedValue = Number(window.localStorage.getItem(SELECTED_PET_PROFILE_ID_STORAGE_KEY))
-  return Number.isFinite(savedValue) && savedValue > 0 ? savedValue : defaultPetProfiles[1].id
+  return Number.isFinite(savedValue) && profiles.some((profile) => profile.id === savedValue)
+    ? savedValue
+    : fallbackProfile?.id ?? defaultPetProfiles[1].id
 }
 
 export function writeSelectedPetProfileId(profileId: number) {
