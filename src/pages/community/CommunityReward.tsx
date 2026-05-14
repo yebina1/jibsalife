@@ -49,7 +49,7 @@ function CommunityReward() {
   const location = useLocation()
   const [searchParams] = useSearchParams()
   const rewardAmount = Number(searchParams.get('amount') ?? '60')
-  const isChallengeRewardClaim = rewardAmount === 60
+  const isChallengeRewardClaim = [60, 160, 360].includes(rewardAmount)
   const rewardEventId =
     typeof location.state === 'object' && location.state && 'rewardEventId' in location.state
       ? String(location.state.rewardEventId)

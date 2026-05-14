@@ -1,4 +1,3 @@
-import { readMissionActivityRecords } from './missionActivityRecords'
 import { readVotedMissionIds } from './communityVoteStatus'
 
 export const CHALLENGE_STATUS_CHANGED_EVENT = 'challenge-status-changed'
@@ -12,10 +11,18 @@ function dispatch() {
   window.dispatchEvent(new CustomEvent(CHALLENGE_STATUS_CHANGED_EVENT))
 }
 
-// Day 1 (index 0): 산책 기록 — activityRecords에 오늘 '활동 기록' 존재
+// Day 1 (index 0): 산책 기록
+const WALK_RECORDED_KEY = 'jibsalife.challenge.walkRecorded'
+
+export function markWalkRecorded() {
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(WALK_RECORDED_KEY, 'true')
+  dispatch()
+}
+
 function checkDay0(): boolean {
-  const t = todayKey()
-  return readMissionActivityRecords().some((r) => r.title === '활동 기록' && r.date === t)
+  if (typeof window === 'undefined') return false
+  return window.localStorage.getItem(WALK_RECORDED_KEY) === 'true'
 }
 
 // Day 2 (index 1): 댓글 3회 이상 — comment count 별도 키로 추적
@@ -105,6 +112,46 @@ function checkDay6(): boolean {
 }
 
 const checks = [checkDay0, checkDay1, checkDay2, checkDay3, checkDay4, checkDay5, checkDay6]
+const PARTICIPATED_DAYS_KEY = 'jibsalife.challenge.participatedDays'
+
+export function calculateChallengeRewardPoints(): number {
+  const currentDay = getCurrentChallengeDay()
+  try {
+    const stored = typeof window !== 'undefined' ? window.localStorage.getItem(PARTICIPATED_DAYS_KEY) : null
+    const claimed: Set<number> = stored ? new Set(JSON.parse(stored)) : new Set()
+    let consecutive = 0
+    for (let i = currentDay - 1; i >= 0; i--) {
+      if (claimed.has(i)) consecutive++
+      else break
+    }
+    const completingDay = consecutive + 1
+    if (completingDay === 7) return 360
+    if (completingDay === 3) return 160
+  } catch { /* noop */ }
+  return 60
+}
+
+export function claimChallengeDay(day: number) {
+  if (typeof window === 'undefined') return
+  try {
+    const stored = window.localStorage.getItem(PARTICIPATED_DAYS_KEY)
+    const claimed: number[] = stored ? JSON.parse(stored) : []
+    if (!claimed.includes(day)) {
+      window.localStorage.setItem(PARTICIPATED_DAYS_KEY, JSON.stringify([...claimed, day]))
+    }
+  } catch { /* noop */ }
+}
+
+export function getCurrentChallengeDay(): number {
+  try {
+    const stored = typeof window !== 'undefined' ? window.localStorage.getItem(PARTICIPATED_DAYS_KEY) : null
+    const claimed: Set<number> = stored ? new Set(JSON.parse(stored)) : new Set()
+    for (let i = 0; i < checks.length; i++) {
+      if (!claimed.has(i)) return i
+    }
+  } catch { /* noop */ }
+  return checks.length - 1
+}
 
 export function checkChallengeDayDone(dayIndex: number): boolean {
   return checks[dayIndex]?.() ?? false

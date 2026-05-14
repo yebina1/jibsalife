@@ -64,7 +64,21 @@ export function CommunityChallengePreview({ onNavigate }: CommunityChallengePrev
 }
 
 const TOTAL_DAYS = 7
-const MIN_COMPLETED = 2
+const PARTICIPATED_DAYS_KEY = 'jibsalife.challenge.participatedDays'
+
+function readParticipatedDays(): Set<number> {
+  try {
+    const stored = localStorage.getItem(PARTICIPATED_DAYS_KEY)
+    if (!stored) return new Set()
+    const parsed = JSON.parse(stored)
+    if (Array.isArray(parsed)) return new Set(parsed.filter((n): n is number => typeof n === 'number'))
+    return new Set()
+  } catch { return new Set() }
+}
+
+function saveParticipatedDays(days: Set<number>) {
+  localStorage.setItem(PARTICIPATED_DAYS_KEY, JSON.stringify([...days]))
+}
 
 const challengeDays = [
   { day: 1, image: day1Img, description: <>내 반려동물의<br />산책을 기록해주세요</> },
@@ -82,13 +96,17 @@ function CommunityChallenge() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const cardRefs = useRef<(HTMLDivElement | null)[]>([])
   const touchStartX = useRef(0)
-  const visibleIndexRef = useRef(3)
-  const [visibleIndex, setVisibleIndex] = useState(3)
-  const [currentDay, setCurrentDay] = useState(3)
-  const [participatedDays, setParticipatedDays] = useState<Set<number>>(
-    new Set(Array.from({ length: MIN_COMPLETED }, (_, i) => i))
-  )
-  const [missionDone, setMissionDone] = useState(() => checkChallengeDayDone(3))
+  const [participatedDays, setParticipatedDays] = useState<Set<number>>(() => readParticipatedDays())
+  const [currentDay, setCurrentDay] = useState<number>(() => {
+    const claimed = readParticipatedDays()
+    for (let i = 0; i < TOTAL_DAYS; i++) {
+      if (!claimed.has(i)) return i
+    }
+    return TOTAL_DAYS - 1
+  })
+  const visibleIndexRef = useRef(currentDay)
+  const [visibleIndex, setVisibleIndex] = useState(currentDay)
+  const [missionDone, setMissionDone] = useState(() => checkChallengeDayDone(currentDay))
 
   const scrollToCard = (index: number) => {
     const clamped = Math.max(0, Math.min(index, TOTAL_DAYS - 1))
@@ -105,7 +123,8 @@ function CommunityChallenge() {
   scrollToCardRef.current = scrollToCard
 
   useEffect(() => {
-    scrollToCardRef.current(3)
+    scrollToCardRef.current(currentDay)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -178,8 +197,12 @@ function CommunityChallenge() {
   }, [currentDay])
 
   const handleComplete = () => {
-    setParticipatedDays((prev) => new Set([...prev, currentDay]))
-    navigate('/community/challenge/reward')
+    const completingDay = consecutive + 1
+    const points = completingDay === 7 ? 360 : completingDay === 3 ? 160 : 60
+    const next = new Set([...participatedDays, currentDay])
+    setParticipatedDays(next)
+    saveParticipatedDays(next)
+    navigate(`/community/challenge/reward?amount=${points}`)
   }
 
   const handleDayEnd = () => {

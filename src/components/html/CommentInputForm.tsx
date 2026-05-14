@@ -106,7 +106,7 @@ function CommentInputForm({
           />
         </div>
         <button type="submit" aria-label="댓글 등록" className="comment_input_form_submit">
-          <i className="bx bx-arrow-up-stroke" aria-hidden="true" />
+          <i className="bx bx-up-arrow-alt" aria-hidden="true" />
         </button>
       </label>
 
