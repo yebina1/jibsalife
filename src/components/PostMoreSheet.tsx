@@ -2,14 +2,12 @@ import './PostMoreSheet.css'
 import AddSheet from './AddSheet'
 import Button from './html/Button'
 
-type PostMoreSheetProps = {
-  type: 'own' | 'other'
-  onClose: () => void
-  onDelete: () => void
-  onEdit: () => void
-}
+type PostMoreSheetProps =
+  | { type: 'own';   onClose: () => void; onDelete: () => void; onEdit: () => void; onCamera?: never; onAlbum?: never }
+  | { type: 'other'; onClose: () => void; onDelete?: never; onEdit?: never; onCamera?: never; onAlbum?: never }
+  | { type: 'photo'; onClose: () => void; onCamera: () => void; onAlbum: () => void; onDelete?: never; onEdit?: never }
 
-function PostMoreSheet({ type, onClose, onDelete, onEdit }: PostMoreSheetProps) {
+function PostMoreSheet({ type, onClose, onDelete, onEdit, onCamera, onAlbum }: PostMoreSheetProps) {
   return (
     <AddSheet onClose={onClose}>
       <ul className="post_more_sheet_list">
@@ -17,6 +15,11 @@ function PostMoreSheet({ type, onClose, onDelete, onEdit }: PostMoreSheetProps) 
           <>
             <li><button type="button" onClick={onDelete}>삭제하기</button></li>
             <li><button type="button" onClick={onEdit}>수정하기</button></li>
+          </>
+        ) : type === 'photo' ? (
+          <>
+            <li><button type="button" onClick={onCamera}>촬영하기</button></li>
+            <li><button type="button" onClick={onAlbum}>앨범</button></li>
           </>
         ) : (
           <>

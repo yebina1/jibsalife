@@ -1,13 +1,15 @@
 import './CommunityWrite.css'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'
-import Title from '../../components/Title'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
 import Input from '../../components/html/Input'
 import { MY_PROFILE_NAME } from '../../utils/myProfile'
 import communityWriteBg from '../../svg/community_write_bg.svg'
+import imageIcon from '../../svg/Image.svg'
+import tagsIcon from '../../svg/tags.svg'
+import PostMoreSheet from '../../components/PostMoreSheet'
 
 const createdPostsStorageKey = 'jibsalife.community.createdPosts'
 
@@ -31,13 +33,6 @@ type EditPost = {
   place?: { name: string; address: string }
 }
 
-const allTags = [
-  '#포메라니안', '#생후4개월', '#일상', '#입양',
-  '#성장', '#집사소통', '#생일', '#선물',
-]
-
-const MAX_TAGS = 4
-
 function CommunityWrite() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -49,17 +44,30 @@ function CommunityWrite() {
   const [isBoardOpen, setIsBoardOpen] = useState(false)
   const [title, setTitle] = useState(editPost?.title ?? '')
   const [content, setContent] = useState(editPost?.content ?? '')
-  const [selectedTags, setSelectedTags] = useState<string[]>(editPost?.tags ?? [])
 
-  const toggleTag = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag)
-        ? prev.filter((t) => t !== tag)
-        : prev.length < MAX_TAGS
-          ? [...prev, tag]
-          : prev
-    )
+  const [images, setImages] = useState<string[]>(editPost?.images ?? [])
+  const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const cameraInputRef = useRef<HTMLInputElement>(null)
+
+  const handleAlbum = () => {
+    setIsPhotoSheetOpen(false)
+    fileInputRef.current?.click()
   }
+
+  const handleCamera = () => {
+    setIsPhotoSheetOpen(false)
+    cameraInputRef.current?.click()
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? [])
+    const urls = files.map((f) => URL.createObjectURL(f))
+    setImages((prev) => [...prev, ...urls])
+    e.target.value = ''
+  }
+
+  const handleAddTag = () => setContent((c) => c ? `${c} #` : '#')
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -73,9 +81,9 @@ function CommunityWrite() {
         tag: board,
         title: trimmedTitle,
         content: trimmedContent,
-        image: null,
-        images: [],
-        tags: selectedTags,
+        image: images[0] ?? null,
+        images,
+        tags: [],
       }
       try {
         const saved = window.localStorage.getItem(createdPostsStorageKey)
@@ -107,9 +115,9 @@ function CommunityWrite() {
       comments: 0,
       shares: 0,
       createdAt: now.toISOString(),
-      image: null,
-      images: [],
-      tags: selectedTags,
+      image: images[0] ?? null,
+      images,
+      tags: [],
     }
 
     try {
@@ -182,7 +190,7 @@ function CommunityWrite() {
               className="cw_title_input"
               value={title}
               onChange={setTitle}
-              placeholder="제목"
+              placeholder="제목을 입력해주세요"
               maxLength={40}
             />
           </div>
@@ -202,38 +210,46 @@ function CommunityWrite() {
             />
           </div>
 
-          {/* 장소 선택 */}
-          <div className="cw_section">
-            <Title as="h5" title="장소선택" className="cw_media_header" />
-            <button type="button" className="cw_place_btn">
-              <i className="bx bx-map-pin cw_place_icon" aria-hidden="true" />
-              <span>현재 위치를 설정해보세요</span>
-              <i className="bx bx-chevron-right" aria-hidden="true" />
-            </button>
-          </div>
-
-          {/* 태그 선택 */}
-          <div className="cw_section">
-            <Title as="h5" className="cw_media_header" title="#태그 선택">
-              <p>최대 {selectedTags.length}/{MAX_TAGS}</p>
-            </Title>
-            <div className="cw_tags_grid">
-              {allTags.map((tag) => (
-                <button
-                  key={tag}
-                  type="button"
-                  className={`cw_tag_btn${selectedTags.includes(tag) ? ' active' : ''}`}
-                  onClick={() => toggleTag(tag)}
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
-          </div>
-
         </form>
       </main>
+      <footer>
+        <div className="cw_action_row">
+          <button type="button" className="p_regular" onClick={() => setIsPhotoSheetOpen(true)}>
+            <img src={imageIcon} className="cw_action_icon" alt="" />
+            사진
+          </button>
+          <button type="button" className="p_regular" onClick={handleAddTag}>
+            <img src={tagsIcon} className="cw_action_icon" alt="" />
+            태그
+          </button>
+        </div>
+      </footer>
 
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        className="cw_hidden_input"
+        onChange={handleFileChange}
+      />
+      <input
+        ref={cameraInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="cw_hidden_input"
+        onChange={handleFileChange}
+      />
+
+      {isPhotoSheetOpen && (
+        <PostMoreSheet
+          type="photo"
+          onClose={() => setIsPhotoSheetOpen(false)}
+          onCamera={handleCamera}
+          onAlbum={handleAlbum}
+        />
+      )}
     </>
   )
 }
