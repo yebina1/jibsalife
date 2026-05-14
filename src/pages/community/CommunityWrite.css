@@ -1,10 +1,12 @@
 .layout_content:has(.cw_page) {
   background: #ffffff;
+  /* padding-bottom: 0; */
 }
 
-.cw_page {
-  padding-bottom: 32px;
+.page.cw_page {
+  padding-block: 20px;
 }
+
 
 .cw_form {
   display: flex;
@@ -13,9 +15,9 @@
   gap: 20px;
   width: 100%;
   margin: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
+  padding-block: 20px;
+  border: 1px solid #BCBCBC;
+  border-radius: 12px;
   background: transparent;
   box-shadow: none;
   outline: 0;
@@ -23,7 +25,6 @@
 }
 
 .cw_form:focus-within {
-  border: 0;
   box-shadow: none;
   outline: 0;
 }
@@ -376,5 +377,25 @@
   font-size: 20px;
   color: #6D59F8;
   flex-shrink: 0;
+}
+
+.cw_hidden_input {
+  display: none;
+}
+
+.cw_action_row {
+  display: flex;
+  padding-block: 20px;
+  gap: 12px;
+}
+
+.cw_action_row .p_regular{
+  display: flex;
+  align-items: center;
+}
+
+.cw_action_icon {
+  width: 22px;
+  height: 22px;
 }
 
