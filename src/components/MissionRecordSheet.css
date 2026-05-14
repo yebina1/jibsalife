@@ -55,6 +55,13 @@
   content: '';
 }
 
+.mission_add_info_icon {
+  display: block;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
 .mission_add_row_value {
   display: flex;
   min-width: 0;
@@ -263,7 +270,8 @@
   padding: 20px 0 20px;
 }
 
-.mission_add_save_wrap.is_editing {
+.mission_add_save_wrap.is_editing,
+.mission_add_save_wrap.is_split {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
@@ -294,6 +302,12 @@
   font-weight: 600;
   line-height: 140%;
   letter-spacing: -0.025em;
+}
+
+.mission_add_delete_btn:disabled {
+  border-color: #c9ced8;
+  color: #a5adba;
+  cursor: default;
 }
 
 .mission_add_save_wrap .purple_btn:disabled,

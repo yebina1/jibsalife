@@ -395,11 +395,13 @@
 
 .home_weekly_ranking_section {
   gap: 16px;
+  margin-inline: calc(var(--layout-inline-padding) * -1);
   overflow: hidden;
 }
 
 .home_weekly_ranking_section .content_section_header {
   margin-bottom: 0;
+  padding-inline: var(--layout-inline-padding);
 }
 
 .home_weekly_ranking_section .content_section_copy {
@@ -428,27 +430,55 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 343px;
+  max-width: none;
   margin-inline: auto;
   align-self: stretch;
+  overflow: hidden;
 }
 
 .home_weekly_ranking_gallery {
   width: 100%;
-  height: 340px;
+  height: 354px;
   overflow: hidden;
+  scrollbar-width: none;
+  touch-action: pan-y;
+}
+
+.home_weekly_ranking_gallery::-webkit-scrollbar {
+  display: none;
 }
 
 .home_weekly_ranking_track {
   position: relative;
-  left: 50%;
   display: flex;
-  width: max-content;
+  width: fit-content;
   height: 100%;
   align-items: center;
   gap: 32px;
-  animation: weeklyRankingSlide 18s linear infinite;
+  padding-inline: calc((100% - 196px) / 2);
+  transition: transform 560ms cubic-bezier(0.22, 0.61, 0.36, 1);
   will-change: transform;
+}
+
+.home_weekly_ranking_gallery.is_auto .home_weekly_ranking_track {
+  padding-inline: calc((100% - 196px) / 2);
+}
+
+.home_weekly_ranking_gallery.is_dragging .home_weekly_ranking_track {
+  transition: none;
+}
+
+.home_weekly_ranking_gallery.is_resetting .home_weekly_ranking_track {
+  transition: none;
+}
+
+.home_weekly_ranking_gallery.is_resetting .home_weekly_ranking_card {
+  transition: none;
+}
+
+.home_weekly_ranking_gallery.is_manual .home_weekly_ranking_track {
+  gap: 32px;
+  padding-inline: calc((100% - 196px) / 2);
 }
 
 .home_weekly_ranking_card {
@@ -461,7 +491,15 @@
   background: #ffffff;
   transform: scaleX(1) scaleY(1);
   transform-origin: center;
+  transition: transform 560ms cubic-bezier(0.22, 0.61, 0.36, 1);
   will-change: transform;
+  cursor: pointer;
+  scroll-snap-align: center;
+}
+
+.home_weekly_ranking_card.is_active {
+  z-index: 2;
+  transform: scaleX(1.2755) scaleY(1.1333);
 }
 
 .home_weekly_ranking_card::before {
@@ -497,76 +535,6 @@
   letter-spacing: -2.5%;
   transform: rotate(8deg);
   transform-origin: left top;
-}
-
-.home_weekly_ranking_card:nth-child(3n + 1) {
-  animation: weeklyRankingCardFocusFirst 18s linear infinite;
-}
-
-.home_weekly_ranking_card:nth-child(3n + 2) {
-  animation: weeklyRankingCardFocusSecond 18s linear infinite;
-}
-
-.home_weekly_ranking_card:nth-child(3n) {
-  animation: weeklyRankingCardFocusThird 18s linear infinite;
-}
-
-@keyframes weeklyRankingSlide {
-  0% {
-    transform: translateX(-326px);
-  }
-
-  100% {
-    transform: translateX(-1010px);
-  }
-}
-
-@keyframes weeklyRankingCardFocusFirst {
-  0%,
-  60.667%,
-  72.667%,
-  100% {
-    z-index: 1;
-    transform: scaleX(1) scaleY(1);
-  }
-
-  64.667%,
-  68.667% {
-    z-index: 2;
-    transform: scaleX(1.2755) scaleY(1.1333);
-  }
-}
-
-@keyframes weeklyRankingCardFocusSecond {
-  6%,
-  94% {
-    z-index: 1;
-    transform: scaleX(1) scaleY(1);
-  }
-
-  0%,
-  2%,
-  98%,
-  100% {
-    z-index: 2;
-    transform: scaleX(1.2755) scaleY(1.1333);
-  }
-}
-
-@keyframes weeklyRankingCardFocusThird {
-  0%,
-  27.333%,
-  39.333%,
-  100% {
-    z-index: 1;
-    transform: scaleX(1) scaleY(1);
-  }
-
-  31.333%,
-  35.333% {
-    z-index: 2;
-    transform: scaleX(1.2755) scaleY(1.1333);
-  }
 }
 
 .best_pose_vote_strip::-webkit-scrollbar {
@@ -1207,9 +1175,14 @@
   right: 0;
   bottom: 0;
   left: 0;
-  height: 44%;
+  height: 62%;
   z-index: 1;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.72) 100%);
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.72) 0%,
+    rgba(102, 102, 102, 0.3) 64%,
+    rgba(102, 102, 102, 0) 100%
+  );
   content: '';
   pointer-events: none;
 }
@@ -1227,7 +1200,20 @@
   bottom: 0;
   left: 0;
   z-index: 2;
-  padding: 40px 14px 14px;
+  display: flex;
+  min-height: 62%;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  padding: 48px 14px 14px;
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.46) 0%,
+    rgba(102, 102, 102, 0.2) 62%,
+    rgba(102, 102, 102, 0) 100%
+  );
+  pointer-events: none;
 }
 
 .content_overlay p {
@@ -1235,6 +1221,7 @@
   color: #ffffff;
   word-break: keep-all;
   text-align: center;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.28);
   white-space: pre-line;
 }
 

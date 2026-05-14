@@ -5,6 +5,7 @@ import './HealthReport.css'
 import { markHealthReportViewed } from '../../utils/challengeStatus'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
+import ChevronIcon from '../../components/ChevronIcon'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
 import hospitalImage from '../../img/hospital_3d.png'
@@ -178,7 +179,12 @@ function HealthReport() {
           >
             <img src={hospitalImage} alt="" aria-hidden="true" className="hr_action_img" />
             <div className="hr_action_text">
-              <p className="hr_action_title">병원 찾기</p>
+              <span className="hr_action_title_row">
+                <p className="hr_action_title">병원 찾기</p>
+                <span className="hr_action_arrow" aria-hidden="true">
+                  <ChevronIcon direction="right" size="md" />
+                </span>
+              </span>
               <p className="hr_action_desc">{'내 주변 병원 검색\n및 정보 확인'}</p>
             </div>
           </button>
@@ -189,7 +195,12 @@ function HealthReport() {
           >
             <img src={consultImage} alt="" aria-hidden="true" className="hr_action_img hr_action_img_disabled" />
             <div className="hr_action_text">
-              <p className="hr_action_title hr_action_title_disabled">수의사 상담</p>
+              <span className="hr_action_title_row">
+                <p className="hr_action_title hr_action_title_disabled">수의사 상담</p>
+                <span className="hr_action_arrow hr_action_arrow_disabled" aria-hidden="true">
+                  <ChevronIcon direction="right" size="md" />
+                </span>
+              </span>
               <p className="hr_action_desc hr_action_desc_disabled">{'실시간 상담으로\n전문가와 대화'}</p>
             </div>
           </button>

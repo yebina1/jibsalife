@@ -121,6 +121,9 @@ const contentItems = [
   },
 ] as const
 
+const WEEKLY_RANKING_MANUAL_STEP = 228
+const WEEKLY_RANKING_TRANSITION_MS = 560
+
 type SummaryStat = {
   label: string
   value: string
@@ -150,7 +153,7 @@ function readCalendarRecords() {
   return [
     ...readMissionActivityRecords().map(toMissionHistoryRecord),
     ...readMissionHistoryRecordsWithDefaults(),
-  ]
+]
 }
 
 function isMealRecord(record: MissionHistoryRecord) {
@@ -277,7 +280,14 @@ function Home() {
   const [petIdPhoto, setPetIdPhoto] = useState<string | null>(null)
   const [petIdForm, setPetIdForm] = useState<PetIdCardForm>(emptyPetIdForm)
   const [calendarRecords, setCalendarRecords] = useState<MissionHistoryRecord[]>(readCalendarRecords)
+  const [isWeeklyRankingPaused, setIsWeeklyRankingPaused] = useState(false)
+  const [weeklyRankingIndex, setWeeklyRankingIndex] = useState(weeklyRankingItems.length + 1)
+  const [weeklyRankingDragOffset, setWeeklyRankingDragOffset] = useState(0)
+  const [isWeeklyRankingDragging, setIsWeeklyRankingDragging] = useState(false)
+  const [isWeeklyRankingResetting, setIsWeeklyRankingResetting] = useState(false)
   const dragStateRef = useRef({ startX: 0 })
+  const weeklyRankingDragRef = useRef({ startX: 0 })
+  const ignoreWeeklyRankingClickRef = useRef(false)
   const summarySlides = [
     ...profileSlides,
     {
@@ -288,7 +298,7 @@ function Home() {
 
   const todaySummaryDate = formatTodaySummaryDate()
   const todaySummaryStats = createSummaryStats(calendarRecords)
-  const weeklyRankingLoopItems = [...weeklyRankingItems, ...weeklyRankingItems]
+  const visibleWeeklyRankingItems = [...weeklyRankingItems, ...weeklyRankingItems, ...weeklyRankingItems]
   const currentPoints = readProfilePoints()
 
   useEffect(() => {
@@ -350,6 +360,37 @@ function Home() {
     }
   }, [isPetIdModalOpen])
 
+  useEffect(() => {
+    if (isWeeklyRankingPaused || isWeeklyRankingDragging) return
+
+    const slideTimer = window.setInterval(() => {
+      setWeeklyRankingIndex((current) => current + 1)
+    }, 2600)
+
+    return () => {
+      window.clearInterval(slideTimer)
+    }
+  }, [isWeeklyRankingDragging, isWeeklyRankingPaused])
+
+  useEffect(() => {
+    if (isWeeklyRankingDragging) return
+
+    const rankingCount = weeklyRankingItems.length
+    if (weeklyRankingIndex >= rankingCount && weeklyRankingIndex < rankingCount * 2) return
+
+    const resetTimer = window.setTimeout(() => {
+      setIsWeeklyRankingResetting(true)
+      setWeeklyRankingIndex(((weeklyRankingIndex % rankingCount) + rankingCount) % rankingCount + rankingCount)
+      window.requestAnimationFrame(() => {
+        setIsWeeklyRankingResetting(false)
+      })
+    }, WEEKLY_RANKING_TRANSITION_MS)
+
+    return () => {
+      window.clearTimeout(resetTimer)
+    }
+  }, [isWeeklyRankingDragging, weeklyRankingIndex])
+
   const handleDragStart = (clientX: number) => {
     dragStateRef.current.startX = clientX
     setIsDragging(true)
@@ -384,6 +425,50 @@ function Home() {
 
     setIsDragging(false)
     setDragOffset(0)
+  }
+
+  const pauseWeeklyRankingAt = (index: number) => {
+    if (ignoreWeeklyRankingClickRef.current) return
+
+    setIsWeeklyRankingPaused(true)
+    setWeeklyRankingIndex(isWeeklyRankingPaused ? index : weeklyRankingItems.length + (index % weeklyRankingItems.length))
+    setWeeklyRankingDragOffset(0)
+  }
+
+  const handleWeeklyRankingDragStart = (clientX: number) => {
+    setIsWeeklyRankingPaused(true)
+    setIsWeeklyRankingDragging(true)
+    setWeeklyRankingDragOffset(0)
+    weeklyRankingDragRef.current.startX = clientX
+  }
+
+  const handleWeeklyRankingDragMove = (clientX: number) => {
+    if (!isWeeklyRankingDragging) return
+
+    const nextOffset = clientX - weeklyRankingDragRef.current.startX
+    if (Math.abs(nextOffset) > 8) {
+      ignoreWeeklyRankingClickRef.current = true
+    }
+
+    setWeeklyRankingDragOffset(nextOffset)
+  }
+
+  const handleWeeklyRankingDragEnd = () => {
+    if (!isWeeklyRankingDragging) return
+
+    const threshold = 48
+
+    if (weeklyRankingDragOffset <= -threshold) {
+      setWeeklyRankingIndex((current) => current + 1)
+    } else if (weeklyRankingDragOffset >= threshold) {
+      setWeeklyRankingIndex((current) => current - 1)
+    }
+
+    setIsWeeklyRankingDragging(false)
+    setWeeklyRankingDragOffset(0)
+    window.setTimeout(() => {
+      ignoreWeeklyRankingClickRef.current = false
+    }, 0)
   }
 
   const handlePetIdInputChange = (field: keyof PetIdCardForm, value: string) => {
@@ -612,14 +697,50 @@ function Home() {
           subtitle="지난주 가장 많은 사랑을 받은 아이들을 만나보세요."
         >
           <div className="home_weekly_ranking_body">
-            <div className="home_weekly_ranking_gallery" aria-label="주간 인기 반려동물 랭킹">
-              <div className="home_weekly_ranking_track">
-                {weeklyRankingLoopItems.map((item, index) => (
+            <div
+              className={`home_weekly_ranking_gallery${isWeeklyRankingPaused ? ' is_manual' : ' is_auto'}${
+                isWeeklyRankingDragging ? ' is_dragging' : ''
+              }${isWeeklyRankingResetting ? ' is_resetting' : ''}`}
+              aria-label="주간 인기 반려동물 랭킹"
+              onPointerDown={(event) => {
+                if (!isWeeklyRankingPaused) return
+                handleWeeklyRankingDragStart(event.clientX)
+                event.currentTarget.setPointerCapture(event.pointerId)
+              }}
+              onPointerMove={(event) => {
+                if (!isWeeklyRankingPaused) return
+                handleWeeklyRankingDragMove(event.clientX)
+              }}
+              onPointerUp={(event) => {
+                if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+                  event.currentTarget.releasePointerCapture(event.pointerId)
+                }
+                if (!isWeeklyRankingPaused) return
+                handleWeeklyRankingDragEnd()
+              }}
+              onPointerCancel={(event) => {
+                if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+                  event.currentTarget.releasePointerCapture(event.pointerId)
+                }
+                if (!isWeeklyRankingPaused) return
+                handleWeeklyRankingDragEnd()
+              }}
+            >
+              <div
+                className="home_weekly_ranking_track"
+                style={{
+                  transform: `translateX(calc(-${weeklyRankingIndex} * ${WEEKLY_RANKING_MANUAL_STEP}px + ${weeklyRankingDragOffset}px))`,
+                }}
+              >
+                {visibleWeeklyRankingItems.map((item, index) => (
                 <article
                   key={`${item.id}-${index}`}
-                  className={`home_weekly_ranking_card rank_${item.rank}`}
+                  className={`home_weekly_ranking_card rank_${item.rank}${
+                    index === weeklyRankingIndex ? ' is_active' : ''
+                  }`}
                   aria-label={`${item.rank}위`}
                   style={{ '--ranking-image': `url(${item.image})` } as CSSProperties}
+                  onClick={() => pauseWeeklyRankingAt(index)}
                 >
                   <img src={item.image} alt={item.alt} style={{ objectPosition: item.objectPosition }} />
                   <strong>{item.rank}</strong>

@@ -1,7 +1,7 @@
-﻿import hospitalPhoto24h from '../../img/24h_animal.png'
-import hospitalPhotoCompanion from '../../img/companion_animal.png'
-import hospitalPhotoLove from '../../img/love_animal.png'
-import hospitalPhotoWe from '../../img/we_animal.png'
+import hospitalPhoto1 from '../../img/hospital/hospital1.png'
+import hospitalPhoto2 from '../../img/hospital/hospital2.png'
+import hospitalPhoto3 from '../../img/hospital/hospital3.png'
+import hospitalPhoto4 from '../../img/hospital/hospital4.png'
 
 export type HospitalSearchItem = {
   name: string
@@ -17,17 +17,17 @@ export type HospitalSearchItem = {
 export const hospitalSearchItems: HospitalSearchItem[] = [
   {
     name: '24시 행복 동물병원',
-    image: hospitalPhoto24h,
+    image: hospitalPhoto1,
     rating: '4.8',
     reviewCount: 120,
     distanceKm: 1.2,
-    tags: ['고양이친화', '건강검진', '스케일링'],
+    tags: ['예방케어', '건강검진', '스케일링'],
     open: '09:00',
     close: '20:30',
   },
   {
     name: '우리반려 동물병원',
-    image: hospitalPhotoCompanion,
+    image: hospitalPhoto2,
     rating: '4.5',
     reviewCount: 680,
     distanceKm: 0.7,
@@ -37,7 +37,7 @@ export const hospitalSearchItems: HospitalSearchItem[] = [
   },
   {
     name: '사랑 동물병원',
-    image: hospitalPhotoLove,
+    image: hospitalPhoto3,
     rating: '4.3',
     reviewCount: 420,
     distanceKm: 2.1,
@@ -47,7 +47,7 @@ export const hospitalSearchItems: HospitalSearchItem[] = [
   },
   {
     name: '우리 동물병원',
-    image: hospitalPhotoWe,
+    image: hospitalPhoto4,
     rating: '4.6',
     reviewCount: 198,
     distanceKm: 1.8,

@@ -822,9 +822,9 @@
 }
 
 .mission_category_confirm:disabled {
-  border-color: #e7e2d9;
-  background: #e7e2d9;
-  color: #c4beb4;
+  border-color: #A5ADB8;
+  background: #A5ADB8;
+  color: #ffffff;
   cursor: not-allowed;
 }
 

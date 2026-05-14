@@ -79,6 +79,13 @@
   gap: 6px;
 }
 
+.health_hospital_recommend_text {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .health_hospital_recommend_row {
   display: flex;
   align-items: center;
@@ -180,7 +187,7 @@
   align-self: flex-start;
   padding: 4px 8px;
   border-radius: 4px;
-  background: #E5E5EC;
+  background: #efefef;
   font-size: 14px;
   font-weight: 500;
   line-height: 1.4;

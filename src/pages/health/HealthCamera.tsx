@@ -66,6 +66,13 @@ const categoryOptions = [
   { id: 'symptom', label: '증상', color: '#b9dfe3' },
 ]
 
+const repeatOptions = [
+  { id: 'none', label: '안 함' },
+  { id: 'daily', label: '매일' },
+  { id: 'weekly', label: '매주' },
+  { id: 'monthly', label: '매월' },
+]
+
 const quickMessages = [
   '사료 30g',
   '사료 60g',
@@ -76,6 +83,32 @@ const quickMessages = [
 
 function getDateKey(year: number, month: number, day: number) {
   return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+}
+
+function createRepeatDateKeys(repeatId: string, date: Date) {
+  const dateKeys = [getDateKey(date.getFullYear(), date.getMonth() + 1, date.getDate())]
+
+  if (repeatId === 'none') {
+    return dateKeys
+  }
+
+  const repeatCount = repeatId === 'daily' ? 6 : repeatId === 'weekly' ? 3 : 2
+
+  for (let index = 1; index <= repeatCount; index += 1) {
+    const nextDate = new Date(date)
+
+    if (repeatId === 'daily') {
+      nextDate.setDate(date.getDate() + index)
+    } else if (repeatId === 'weekly') {
+      nextDate.setDate(date.getDate() + index * 7)
+    } else {
+      nextDate.setMonth(date.getMonth() + index)
+    }
+
+    dateKeys.push(getDateKey(nextDate.getFullYear(), nextDate.getMonth() + 1, nextDate.getDate()))
+  }
+
+  return dateKeys
 }
 
 const guideConfigs: Record<
@@ -380,10 +413,20 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
   ]
   const [isMemoSheetOpen, setIsMemoSheetOpen] = useState(false)
   const [selectedCategoryId, setSelectedCategoryId] = useState(categoryOptions[0].id)
+  const [draftCategoryId, setDraftCategoryId] = useState(categoryOptions[0].id)
+  const [selectedRepeatId, setSelectedRepeatId] = useState(repeatOptions[0].id)
+  const [draftRepeatId, setDraftRepeatId] = useState(repeatOptions[0].id)
+  const [recordDate, setRecordDate] = useState(today)
+  const [isPeriodPickerOpen, setIsPeriodPickerOpen] = useState(false)
+  const [isRepeatPickerOpen, setIsRepeatPickerOpen] = useState(false)
+  const [isCategoryPickerOpen, setIsCategoryPickerOpen] = useState(false)
   const [memoText, setMemoText] = useState('')
   const [selectedQuickMessage, setSelectedQuickMessage] = useState('')
   const [feedAmount, setFeedAmount] = useState(30)
   const selectedCategory = categoryOptions.find((category) => category.id === selectedCategoryId) ?? categoryOptions[0]
+  const draftCategory = categoryOptions.find((category) => category.id === draftCategoryId) ?? selectedCategory
+  const selectedRepeat = repeatOptions.find((option) => option.id === selectedRepeatId) ?? repeatOptions[0]
+  const draftRepeat = repeatOptions.find((option) => option.id === draftRepeatId) ?? selectedRepeat
   const canSaveMemo =
     memoText.trim().length > 0 ||
     selectedQuickMessage.length > 0 ||
@@ -398,18 +441,23 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
     navigate(`/health/camera/capture?mode=${mode}${isEditFlow ? '&edit=true' : ''}`, { replace: true })
   }
 
-  const handleCategoryClick = () => {
-    const currentIndex = categoryOptions.findIndex((category) => category.id === selectedCategoryId)
-    const nextCategory = categoryOptions[(currentIndex + 1) % categoryOptions.length]
-    setSelectedCategoryId(nextCategory.id)
-    setSelectedQuickMessage('')
-    setMemoText('')
+  const openMemoSheet = () => {
+    setIsMemoSheetOpen(true)
+  }
+
+  const closeMemoSheet = () => {
+    setIsMemoSheetOpen(false)
+    setIsPeriodPickerOpen(false)
+    setIsRepeatPickerOpen(false)
+    setIsCategoryPickerOpen(false)
   }
 
   const resetMemoSheet = () => {
     setMemoText('')
     setSelectedQuickMessage('')
     setFeedAmount(30)
+    setSelectedRepeatId(repeatOptions[0].id)
+    setDraftRepeatId(repeatOptions[0].id)
   }
 
   const handleMemoSave = () => {
@@ -424,48 +472,178 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
     }
 
     const now = new Date()
-    const newRecord: MissionHistoryRecord = {
-      id: Date.now(),
+    const baseId = Date.now()
+    const repeatDateKeys = createRepeatDateKeys(selectedRepeatId, recordDate)
+    const newRecords: MissionHistoryRecord[] = repeatDateKeys.map((date, index) => ({
+      id: baseId + index,
       title: selectedCategory.id === 'symptom' ? '증상 기록' : selectedCategory.label,
       detail,
       time: `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`,
       color: selectedCategory.color,
-      date: getDateKey(now.getFullYear(), now.getMonth() + 1, now.getDate()),
-    }
+      date,
+    }))
 
-    writeStoredMissionHistoryRecords([newRecord, ...readMissionHistoryRecordsWithDefaults()])
-    window.dispatchEvent(new CustomEvent(MISSION_HISTORY_RECORDS_CHANGE_EVENT, { detail: newRecord }))
+    writeStoredMissionHistoryRecords([...newRecords.reverse(), ...readMissionHistoryRecordsWithDefaults()])
+    window.dispatchEvent(new CustomEvent(MISSION_HISTORY_RECORDS_CHANGE_EVENT, { detail: newRecords[0] }))
     resetMemoSheet()
-    setIsMemoSheetOpen(false)
+    closeMemoSheet()
   }
 
   const memoSheet = isMemoSheetOpen ? (
-    <AddSheet onClose={() => setIsMemoSheetOpen(false)}>
-      <MissionRecordSheet
-        addDate={{ month: today.getMonth() + 1, day: today.getDate() }}
-        selectedCategory={selectedCategory}
-        repeatLabel="매일"
-        addTitle={memoText}
-        feedAmount={feedAmount}
-        canSave={canSaveMemo}
-        isEditing={false}
-        quickMessageOptions={quickMessages}
-        selectedQuickMessage={selectedQuickMessage}
-        onOpenPeriodPicker={() => {}}
-        onOpenRepeatPicker={() => {}}
-        onOpenCategoryPicker={handleCategoryClick}
-        onQuickMessageSelect={(message) => {
-          setSelectedQuickMessage(message)
-          setMemoText('')
-        }}
-        onTitleChange={(title) => {
-          setMemoText(title)
-          setSelectedQuickMessage('')
-        }}
-        onFeedAmountChange={setFeedAmount}
-        onDelete={() => {}}
-        onSave={handleMemoSave}
-      />
+    <AddSheet onClose={closeMemoSheet}>
+      {isPeriodPickerOpen ? (
+        <div className="mission_repeat_picker">
+          <h2>기간 선택</h2>
+          <div className="mission_repeat_grid">
+            {[0, 1, 2, 3].map((offset) => {
+              const date = new Date(today)
+              date.setDate(today.getDate() + offset)
+              const isSelected = getDateKey(date.getFullYear(), date.getMonth() + 1, date.getDate()) ===
+                getDateKey(recordDate.getFullYear(), recordDate.getMonth() + 1, recordDate.getDate())
+
+              return (
+                <button
+                  key={offset}
+                  type="button"
+                  className={isSelected ? 'mission_repeat_option active' : 'mission_repeat_option'}
+                  onClick={() => setRecordDate(date)}
+                >
+                  <span>{offset === 0 ? '오늘' : `${date.getMonth() + 1}월 ${date.getDate()}일`}</span>
+                </button>
+              )
+            })}
+          </div>
+          <div className="mission_category_actions mission_repeat_actions">
+            <button type="button" className="mission_category_prev white_btn" onClick={() => setIsPeriodPickerOpen(false)}>
+              이전
+            </button>
+            <button type="button" className="mission_category_confirm" onClick={() => setIsPeriodPickerOpen(false)}>
+              확인
+            </button>
+          </div>
+        </div>
+      ) : isRepeatPickerOpen ? (
+        <div className="mission_repeat_picker">
+          <h2>반복 설정</h2>
+          <div className="mission_repeat_grid">
+            {repeatOptions.map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                className={option.id === draftRepeat.id ? 'mission_repeat_option active' : 'mission_repeat_option'}
+                onClick={() => setDraftRepeatId(option.id)}
+              >
+                <span>{option.label}</span>
+              </button>
+            ))}
+          </div>
+          <div className="mission_category_actions mission_repeat_actions">
+            <button
+              type="button"
+              className="mission_category_prev white_btn"
+              onClick={() => {
+                setDraftRepeatId(selectedRepeatId)
+                setIsRepeatPickerOpen(false)
+              }}
+            >
+              이전
+            </button>
+            <button
+              type="button"
+              className="mission_category_confirm"
+              onClick={() => {
+                setSelectedRepeatId(draftRepeatId)
+                setIsRepeatPickerOpen(false)
+              }}
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      ) : isCategoryPickerOpen ? (
+        <div className="mission_category_picker">
+          <div className="mission_category_picker_top">
+            <span aria-hidden="true" />
+            <h2>카테고리 선택</h2>
+            <span aria-hidden="true" />
+          </div>
+          <div className="mission_category_grid">
+            {categoryOptions.map((category) => (
+              <button
+                key={category.id}
+                type="button"
+                className={category.id === draftCategory.id ? 'mission_category_option active' : 'mission_category_option'}
+                onClick={() => setDraftCategoryId(category.id)}
+              >
+                <span
+                  className="mission_category_dot"
+                  style={{ backgroundColor: category.color }}
+                  aria-hidden="true"
+                />
+                <span>{category.label}</span>
+              </button>
+            ))}
+          </div>
+          <div className="mission_category_actions">
+            <button
+              type="button"
+              className="mission_category_prev white_btn"
+              onClick={() => {
+                setDraftCategoryId(selectedCategoryId)
+                setIsCategoryPickerOpen(false)
+              }}
+            >
+              이전
+            </button>
+            <button
+              type="button"
+              className="mission_category_confirm"
+              onClick={() => {
+                if (draftCategoryId !== selectedCategoryId) {
+                  setSelectedQuickMessage('')
+                  setMemoText('')
+                }
+                setSelectedCategoryId(draftCategoryId)
+                setIsCategoryPickerOpen(false)
+              }}
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      ) : (
+        <MissionRecordSheet
+          addDate={{ month: recordDate.getMonth() + 1, day: recordDate.getDate() }}
+          selectedCategory={selectedCategory}
+          repeatLabel={selectedRepeat.label}
+          addTitle={memoText}
+          feedAmount={feedAmount}
+          canSave={canSaveMemo}
+          isEditing={false}
+          quickMessageOptions={quickMessages}
+          selectedQuickMessage={selectedQuickMessage}
+          onOpenPeriodPicker={() => setIsPeriodPickerOpen(true)}
+          onOpenRepeatPicker={() => {
+            setDraftRepeatId(selectedRepeatId)
+            setIsRepeatPickerOpen(true)
+          }}
+          onOpenCategoryPicker={() => {
+            setDraftCategoryId(selectedCategoryId)
+            setIsCategoryPickerOpen(true)
+          }}
+          onQuickMessageSelect={(message) => {
+            setSelectedQuickMessage(message)
+            setMemoText('')
+          }}
+          onTitleChange={(title) => {
+            setMemoText(title)
+            setSelectedQuickMessage('')
+          }}
+          onFeedAmountChange={setFeedAmount}
+          onDelete={() => {}}
+          onSave={handleMemoSave}
+        />
+      )}
     </AddSheet>
   ) : null
 
@@ -1024,6 +1202,16 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
           <button type="button" className="health_camera_side_button" aria-label="카메라 전환">
             <span className="health_camera_switch_icon" />
           </button>
+        </div>
+        <div className="health_cam_tabs_wrapper">
+          <div className="health_cam_tabs" role="tablist" aria-label="건강 체크 입력 방식">
+            <button type="button" className="health_cam_tab is_active">
+              카메라
+            </button>
+            <button type="button" className="health_cam_tab" onClick={openMemoSheet}>
+              메모
+            </button>
+          </div>
         </div>
       </div>
       {memoSheet}

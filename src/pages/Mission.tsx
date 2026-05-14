@@ -63,6 +63,8 @@ const periodOptions: Array<{ value: PeriodDateTime['period']; label: string }> =
 ]
 const periodHourOptions = Array.from({ length: 12 }, (_, index) => index + 1)
 const periodMinuteOptions = Array.from({ length: 60 }, (_, index) => index)
+const periodWheelLoops = [0, 1, 2]
+const periodWheelItemHeight = 44
 const PERIOD_DATE_RANGE_DAYS = 366
 
 function createCalendarDays(year: number, month: number): CalendarDay[] {
@@ -148,6 +150,19 @@ function createRepeatDateKeys(
   return dateKeys.length > 0 ? dateKeys : [getDateKey(date.year, date.month, date.day)]
 }
 
+function getRepeatEndDate(
+  repeatId: string,
+  start: Pick<PeriodDateTime, 'year' | 'month' | 'day'>,
+  end: Pick<PeriodDateTime, 'year' | 'month' | 'day'>,
+) {
+  if (repeatId === 'none') return end
+
+  const startDate = new Date(start.year, start.month - 1, start.day)
+  const endDate = new Date(end.year, end.month - 1, end.day)
+
+  return endDate > startDate ? end : undefined
+}
+
 function createPeriodDateTime(
   year: number,
   month: number,
@@ -166,25 +181,6 @@ function getHour24(dateTime: PeriodDateTime) {
   return dateTime.hour === 12 ? 12 : dateTime.hour + 12
 }
 
-function addHoursToPeriodDateTime(dateTime: PeriodDateTime, hours: number) {
-  const date = new Date(
-    dateTime.year,
-    dateTime.month - 1,
-    dateTime.day,
-    getHour24(dateTime),
-    dateTime.minute,
-  )
-  date.setHours(date.getHours() + hours)
-
-  return createPeriodDateTime(
-    date.getFullYear(),
-    date.getMonth() + 1,
-    date.getDate(),
-    date.getHours(),
-    date.getMinutes(),
-  )
-}
-
 function getPeriodTimeLabel(dateTime: PeriodDateTime) {
   return `${String(getHour24(dateTime)).padStart(2, '0')}:${String(dateTime.minute).padStart(2, '0')}`
 }
@@ -193,6 +189,13 @@ function getPeriodDateLabel(dateTime: PeriodDateTime) {
   const date = new Date(dateTime.year, dateTime.month - 1, dateTime.day)
 
   return `${dateTime.year}년 ${dateTime.month}월 ${dateTime.day}일 ${periodWeekLabels[date.getDay()]}요일 ${getPeriodTimeLabel(dateTime)}`
+}
+
+function getPeriodRangeLabel(start: PeriodDateTime, end: PeriodDateTime) {
+  const startLabel = `${start.month}월 ${start.day}일`
+  const endLabel = `${end.month}월 ${end.day}일`
+
+  return startLabel === endLabel ? startLabel : `${startLabel} ~ ${endLabel}`
 }
 
 function getPeriodOptionKey(dateTime: Pick<PeriodDateTime, 'year' | 'month' | 'day'>) {
@@ -629,7 +632,7 @@ function Mission() {
   const activeDraftPeriod = periodEditingField === 'start' ? draftPeriodStart : draftPeriodEnd
   const periodDateOptions = useMemo(
     () => createPeriodDateOptions(activeDraftPeriod),
-    [isPeriodDatePickerOpen, periodEditingField],
+    [activeDraftPeriod],
   )
   const visiblePeriodHourOptions = useMemo(
     () => createCenteredNumberOptions(activeDraftPeriod.hour, periodHourOptions),
@@ -645,7 +648,9 @@ function Mission() {
 
     const frameId = window.requestAnimationFrame(() => {
       document.querySelectorAll<HTMLElement>('.mission_period_wheel_column').forEach((column) => {
-        const activeOption = column.querySelector<HTMLElement>('button.active')
+        const activeOption =
+          column.querySelector<HTMLElement>('button.active[data-loop="1"]') ??
+          column.querySelector<HTMLElement>('button.active')
         activeOption?.scrollIntoView({ block: 'center' })
       })
     })
@@ -667,15 +672,7 @@ function Mission() {
     setDraftPeriodEnd(updater)
   }
 
-  const createCurrentStartPeriod = () => {
-    const now = new Date()
-    return createPeriodDateTime(addDate.year, addDate.month, addDate.day, now.getHours(), now.getMinutes())
-  }
-
   const openStartPeriodPicker = () => {
-    const nextStartPeriod = createCurrentStartPeriod()
-    setDraftPeriodStart(nextStartPeriod)
-    setDraftPeriodEnd(addHoursToPeriodDateTime(nextStartPeriod, 1))
     setPeriodEditingField('start')
     setIsPeriodDatePickerOpen(true)
   }
@@ -847,15 +844,13 @@ function Mission() {
 
   const saveMission = () => {
     const memo = addTitle.trim()
-    const effectiveAddDate = isPeriodPickerOpen
-      ? {
-          year: draftPeriodStart.year,
-          month: draftPeriodStart.month,
-          day: draftPeriodStart.day,
-        }
-      : addDate
-    const effectivePeriodStart = isPeriodPickerOpen ? draftPeriodStart : periodStart
-    const effectivePeriodEnd = isPeriodPickerOpen ? draftPeriodEnd : periodEnd
+    const effectiveAddDate = {
+      year: draftPeriodStart.year,
+      month: draftPeriodStart.month,
+      day: draftPeriodStart.day,
+    }
+    const effectivePeriodStart = draftPeriodStart
+    const effectivePeriodEnd = draftPeriodEnd
     const primaryDetail =
       selectedCategory.id === 'meal'
         ? `사료 ${feedAmount}g`
@@ -872,7 +867,11 @@ function Mission() {
     const time = getPeriodTimeLabel(effectivePeriodStart)
     const recordTitle = selectedCategory.label === '증상' ? '증상 기록' : selectedCategory.label
     const recordDate = getDateKey(effectiveAddDate.year, effectiveAddDate.month, effectiveAddDate.day)
-    const repeatDateKeys = createRepeatDateKeys(selectedRepeatId, effectiveAddDate, effectivePeriodEnd)
+    const repeatDateKeys = createRepeatDateKeys(
+      selectedRepeatId,
+      effectiveAddDate,
+      getRepeatEndDate(selectedRepeatId, effectivePeriodStart, effectivePeriodEnd),
+    )
 
     if (editingHistoryId !== null) {
       setHistoryItems((prev) =>
@@ -904,7 +903,10 @@ function Mission() {
 
     if (selectedCategory.id === 'walk') markWalkRecorded()
     if (selectedCategory.id === 'meal') markMealRecorded()
-    setHistoryItems((prev) => [...nextRecords.reverse(), ...prev])
+    const nextHistory = [...nextRecords].reverse().concat(historyItems)
+    writeStoredMissionHistoryRecords(nextHistory)
+    setHistoryItems(nextHistory)
+    window.dispatchEvent(new CustomEvent(MISSION_HISTORY_RECORDS_CHANGE_EVENT, { detail: nextRecords[0] }))
     requestCloseMissionSheet()
   }
 
@@ -1065,6 +1067,23 @@ function Mission() {
   ) => {
     const column = event.currentTarget
     const frameKey = `${periodEditingField}-${type}`
+    const optionCount =
+      type === 'period'
+        ? periodOptions.length
+        : type === 'hour'
+          ? periodHourOptions.length
+          : type === 'minute'
+            ? periodMinuteOptions.length
+            : 0
+
+    if (optionCount > 0) {
+      const loopHeight = optionCount * periodWheelItemHeight
+      if (column.scrollTop < loopHeight * 0.5) {
+        column.scrollTop += loopHeight
+      } else if (column.scrollTop > loopHeight * 1.5) {
+        column.scrollTop -= loopHeight
+      }
+    }
 
     if (periodWheelScrollFrames.current[frameKey]) {
       window.cancelAnimationFrame(periodWheelScrollFrames.current[frameKey])
@@ -1157,49 +1176,58 @@ function Mission() {
         className="mission_period_wheel_column period"
         onScroll={(event) => handlePeriodWheelScroll(event, 'period')}
       >
-        {periodOptions.map((option) => (
-          <button
-            key={option.value}
-            type="button"
-            className={activeDraftPeriod.period === option.value ? 'active' : ''}
-            data-value={option.value}
-            onClick={() => updateDraftPeriod({ period: option.value })}
-          >
-            {option.label}
-          </button>
-        ))}
+        {periodWheelLoops.flatMap((loopIndex) =>
+          periodOptions.map((option) => (
+            <button
+              key={`${option.value}-${loopIndex}`}
+              type="button"
+              className={activeDraftPeriod.period === option.value ? 'active' : ''}
+              data-value={option.value}
+              data-loop={loopIndex}
+              onClick={() => updateDraftPeriod({ period: option.value })}
+            >
+              {option.label}
+            </button>
+          )),
+        )}
       </div>
       <div
         className="mission_period_wheel_column"
         onScroll={(event) => handlePeriodWheelScroll(event, 'hour')}
       >
-        {visiblePeriodHourOptions.map((hour) => (
-          <button
-            key={hour}
-            type="button"
-            className={activeDraftPeriod.hour === hour ? 'active' : ''}
-            data-value={hour}
-            onClick={() => updateDraftPeriod({ hour })}
-          >
-            {hour}
-          </button>
-        ))}
+        {periodWheelLoops.flatMap((loopIndex) =>
+          visiblePeriodHourOptions.map((hour) => (
+            <button
+              key={`${hour}-${loopIndex}`}
+              type="button"
+              className={activeDraftPeriod.hour === hour ? 'active' : ''}
+              data-value={hour}
+              data-loop={loopIndex}
+              onClick={() => updateDraftPeriod({ hour })}
+            >
+              {hour}
+            </button>
+          )),
+        )}
       </div>
       <div
         className="mission_period_wheel_column"
         onScroll={(event) => handlePeriodWheelScroll(event, 'minute')}
       >
-        {visiblePeriodMinuteOptions.map((minute) => (
-          <button
-            key={minute}
-            type="button"
-            className={activeDraftPeriod.minute === minute ? 'active' : ''}
-            data-value={minute}
-            onClick={() => updateDraftPeriod({ minute })}
-          >
-            {String(minute).padStart(2, '0')}
-          </button>
-        ))}
+        {periodWheelLoops.flatMap((loopIndex) =>
+          visiblePeriodMinuteOptions.map((minute) => (
+            <button
+              key={`${minute}-${loopIndex}`}
+              type="button"
+              className={activeDraftPeriod.minute === minute ? 'active' : ''}
+              data-value={minute}
+              data-loop={loopIndex}
+              onClick={() => updateDraftPeriod({ minute })}
+            >
+              {String(minute).padStart(2, '0')}
+            </button>
+          )),
+        )}
       </div>
     </div>
   )
@@ -1889,6 +1917,7 @@ function Mission() {
                 addDate={addDate}
                 selectedCategory={selectedCategory}
                 repeatLabel={selectedRepeat.label}
+                periodLabel={getPeriodRangeLabel(draftPeriodStart, draftPeriodEnd)}
                 addTitle={addTitle}
                 feedAmount={feedAmount}
                 canSave={canSaveMission}
@@ -1938,10 +1967,7 @@ function Mission() {
                   </div>
                 )}
                 onOpenPeriodPicker={() => {
-                  const nextStartPeriod = createCurrentStartPeriod()
                   setDraftAddDate(addDate)
-                  setDraftPeriodStart(nextStartPeriod)
-                  setDraftPeriodEnd(addHoursToPeriodDateTime(nextStartPeriod, 1))
                   setPeriodEditingField('start')
                   setIsPeriodDatePickerOpen(true)
                   setIsRepeatPickerOpen(false)

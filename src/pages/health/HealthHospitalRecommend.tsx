@@ -7,7 +7,11 @@ import HeaderIcon from '../../components/HeaderIcon'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
 import LikeButton from '../../components/LikeButton'
-import hospitalImage from '../../img/24h_animal.png'
+import hospitalImage1 from '../../img/hospital/hospital1.png'
+import hospitalImage2 from '../../img/hospital/hospital2.png'
+import hospitalImage3 from '../../img/hospital/hospital3.png'
+import hospitalImage4 from '../../img/hospital/hospital4.png'
+import hospitalImage5 from '../../img/hospital/hospital5.png'
 
 type Hospital = {
   name: string
@@ -25,7 +29,7 @@ const hospitals: Hospital[] = [
     rating: 4.8,
     reviews: 120,
     distance: '1.2 KM',
-    tags: ['고양이친화', '건강검진', '스케일링'],
+    tags: ['예방케어', '건강검진', '스케일링'],
     openTime: '09:00',
     closeTime: '21:00',
   },
@@ -52,7 +56,7 @@ const hospitals: Hospital[] = [
     rating: 4.6,
     reviews: 198,
     distance: '1.8 KM',
-    tags: ['고양이친화', '건강검진', '스케일링'],
+    tags: ['생활케어', '건강검진', '스케일링'],
     openTime: '11:00',
     closeTime: '20:00',
   },
@@ -61,10 +65,18 @@ const hospitals: Hospital[] = [
     rating: 4.4,
     reviews: 310,
     distance: '3.2 KM',
-    tags: ['고양이친화', '건강검진', '스케일링'],
+    tags: ['생활케어', '건강검진', '스케일링'],
     openTime: '09:00',
     closeTime: '17:30',
   },
+]
+
+const hospitalImages = [
+  hospitalImage1,
+  hospitalImage2,
+  hospitalImage3,
+  hospitalImage4,
+  hospitalImage5,
 ]
 
 function toMinutes(time: string) {
@@ -123,17 +135,18 @@ function HealthHospitalRecommend() {
         </div>
 
         <ul className="health_hospital_recommend_list">
-          {hospitals.map((hospital) => {
+          {hospitals.map((hospital, index) => {
             const status = getClinicStatus(hospital.openTime, hospital.closeTime)
             const isLiked = likedNames.includes(hospital.name)
 
             return (
               <li key={hospital.name} className="health_hospital_recommend_item">
                 <div className="health_hospital_recommend_img" aria-hidden="true">
-                  <img src={hospitalImage} alt="" />
+                  <img src={hospitalImages[index % hospitalImages.length]} alt="" />
                 </div>
 
                 <div className="health_hospital_recommend_info">
+                  <div className="health_hospital_recommend_text">
                   <div className="health_hospital_recommend_row">
                     <span className="health_hospital_recommend_name">{hospital.name}</span>
                     <LikeButton
@@ -159,6 +172,7 @@ function HealthHospitalRecommend() {
                         {tag}
                       </span>
                     ))}
+                  </div>
                   </div>
 
                   <span className="health_hospital_recommend_status">

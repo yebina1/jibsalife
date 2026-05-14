@@ -105,6 +105,7 @@ function Layout({
     '/onboarding',
     '/login',
     '/signup',
+    '/place',
     '/mypage',
     '/community',
     '/mission',

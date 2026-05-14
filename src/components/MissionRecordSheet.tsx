@@ -1,5 +1,6 @@
-import Button from './html/Button'
+﻿import Button from './html/Button'
 import ChevronIcon from './ChevronIcon'
+import whatIcon from '../svg/what.svg'
 import './MissionRecordSheet.css'
 
 type MissionSheetDate = {
@@ -17,6 +18,7 @@ type Props = {
   addDate: MissionSheetDate
   selectedCategory: MissionSheetCategory
   repeatLabel: string
+  periodLabel?: string
   addTitle: string
   feedAmount: number
   canSave: boolean
@@ -33,12 +35,16 @@ type Props = {
   onFeedAmountChange: (amount: number) => void
   onDelete: () => void
   onSave: () => void
+  onSecondaryAction?: () => void
+  saveLabel?: string
+  secondaryActionLabel?: string
 }
 
 function MissionRecordSheet({
   addDate,
   selectedCategory,
   repeatLabel,
+  periodLabel,
   addTitle,
   feedAmount,
   canSave,
@@ -55,6 +61,9 @@ function MissionRecordSheet({
   onFeedAmountChange,
   onDelete,
   onSave,
+  onSecondaryAction,
+  saveLabel,
+  secondaryActionLabel,
 }: Props) {
   const isAmountInputCategory =
     selectedCategory.id === 'meal' || selectedCategory.id === 'walk'
@@ -65,28 +74,30 @@ function MissionRecordSheet({
       ? '활동기록'
       : selectedCategory.label
 
+  const shouldShowSecondaryAction = isEditing || Boolean(secondaryActionLabel && onSecondaryAction)
+
   return (
     <>
       <div className="mission_add_rows">
         {isPeriodPickerOpen && periodPickerContent ? (
           periodPickerContent
         ) : (
-        <div className="mission_add_row">
-          <span className="mission_add_row_label">기간</span>
-          <button
-            type="button"
-            className="mission_add_row_value"
-            onClick={onOpenPeriodPicker}
-          >
-            {addDate.month}월 {addDate.day}일
-            <ChevronIcon direction="right" size="md" />
-          </button>
-        </div>
+          <div className="mission_add_row">
+            <span className="mission_add_row_label">기간</span>
+            <button
+              type="button"
+              className="mission_add_row_value"
+              onClick={onOpenPeriodPicker}
+            >
+              {periodLabel ?? `${addDate.month}월 ${addDate.day}일`}
+              <ChevronIcon direction="right" size="md" />
+            </button>
+          </div>
         )}
         <div className="mission_add_row">
           <span className="mission_add_row_label">
-            반복
-            <span className="mission_add_info" aria-hidden="true">i</span>
+            반복설정
+            <img className="mission_add_info_icon" src={whatIcon} alt="" aria-hidden="true" />
           </span>
           <button
             type="button"
@@ -116,7 +127,6 @@ function MissionRecordSheet({
           </button>
         </div>
       </div>
-
       <section className={`mission_add_content${isAmountInputCategory ? ' has_amount' : ''}`}>
         {isAmountInputCategory ? (
           <div className="mission_amount_frame">
@@ -201,14 +211,15 @@ function MissionRecordSheet({
         />
       </section>
 
-      <div className={`mission_add_save_wrap${isEditing ? ' is_editing' : ''}`}>
-        {isEditing && (
+      <div className={`mission_add_save_wrap${shouldShowSecondaryAction ? ' is_split' : ''}`}>
+        {shouldShowSecondaryAction && (
           <button
             type="button"
             className="mission_add_delete_btn"
-            onClick={onDelete}
+            disabled={!isEditing && !canSave}
+            onClick={isEditing ? onDelete : onSecondaryAction}
           >
-            삭제하기
+            {isEditing ? '삭제하기' : secondaryActionLabel}
           </button>
         )}
         <Button
@@ -217,7 +228,7 @@ function MissionRecordSheet({
           disabled={!canSave}
           onClick={onSave}
         >
-          {isEditing ? '수정하기' : '저장하기'}
+          {saveLabel ?? (isEditing ? '수정하기' : '저장하기')}
         </Button>
       </div>
     </>
@@ -225,3 +236,4 @@ function MissionRecordSheet({
 }
 
 export default MissionRecordSheet
+

@@ -38,6 +38,11 @@ function LikeButton({
   const [hearts, setHearts] = useState<FloatingHeart[]>([])
 
   const handleLikeClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (liked) {
+      onClick?.(event)
+      return
+    }
+
     const newHearts = Array.from({ length: 6 }, (_, index) => ({
       id: Date.now() + index,
       x: Math.random() * 48 - 24,
