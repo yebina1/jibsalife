@@ -96,7 +96,8 @@ function CommunityChallenge() {
   const currentCardRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const cardRefs = useRef<(HTMLDivElement | null)[]>([])
-  const touchStartX = useRef(0)
+  const pointerStartX = useRef(0)
+  const isDragging = useRef(false)
   const [participatedDays, setParticipatedDays] = useState<Set<number>>(() => readParticipatedDays())
   const [currentDay, setCurrentDay] = useState<number>(() => {
     const claimed = readParticipatedDays()
@@ -127,21 +128,27 @@ function CommunityChallenge() {
   useEffect(() => {
     const el = scrollContainerRef.current
     if (!el) return
-    const onTouchStart = (e: TouchEvent) => {
-      touchStartX.current = e.touches[0].clientX
+    const onPointerDown = (e: PointerEvent) => {
+      pointerStartX.current = e.clientX
+      isDragging.current = true
+      el.setPointerCapture(e.pointerId)
       e.preventDefault()
     }
-    const onTouchEnd = (e: TouchEvent) => {
-      const diff = touchStartX.current - e.changedTouches[0].clientX
+    const onPointerUp = (e: PointerEvent) => {
+      if (!isDragging.current) return
+      isDragging.current = false
+      const diff = pointerStartX.current - e.clientX
       if (Math.abs(diff) > 30) {
         scrollToCard(diff > 0 ? visibleIndexRef.current + 1 : visibleIndexRef.current - 1)
       }
     }
-    el.addEventListener('touchstart', onTouchStart, { passive: false })
-    el.addEventListener('touchend', onTouchEnd)
+    el.addEventListener('pointerdown', onPointerDown)
+    el.addEventListener('pointerup', onPointerUp)
+    el.addEventListener('pointercancel', onPointerUp)
     return () => {
-      el.removeEventListener('touchstart', onTouchStart)
-      el.removeEventListener('touchend', onTouchEnd)
+      el.removeEventListener('pointerdown', onPointerDown)
+      el.removeEventListener('pointerup', onPointerUp)
+      el.removeEventListener('pointercancel', onPointerUp)
     }
   }, [scrollToCard])
 

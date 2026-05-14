@@ -47,9 +47,8 @@
 .community_reward_point_copy h3 {
   color: #6d59f8;
   font-family: 'Pretendard', 'SUIT', system-ui, sans-serif;
-  font-size: 20px;
+  font-size: clamp(20px, 1.2vw, 22px);
   font-weight: 600;
-  line-height: 1.4;
   letter-spacing: -0.025em;
 }
 

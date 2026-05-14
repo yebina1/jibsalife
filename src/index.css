@@ -28,22 +28,22 @@
 
   
    /* Title */
-  --font-title-h1: 28px;
-  --font-title-h2: 24px;
-  --font-title-h3: 20px;
-  --font-title-h4: 18px;
-  --font-title-h5: 16px;
+  --font-title-h1: clamp(28px, 1.4vw, 30px);
+  --font-title-h2: clamp(24px, 1.2vw, 26px);
+  --font-title-h3: clamp(20px, 1.2vw, 22px);
+  --font-title-h4: clamp(18px, 1.2vw, 20px);
+  --font-title-h5: clamp(16px, 1vw, 18px);
   --font-title-h6: 14px;
 
 
   /* Body */
-  --font-body-rg: 18px;
-  --font-body-md: 16px;
+  --font-body-rg: clamp(20px, 1.2vw, 22px);
+  --font-body-md: clamp(16px, 1vw, 18px);
   --font-body-sm: 14px;
 
   /* ETC */
-  --font-point-md:14px;
-  --font-point-sm: 12px;
+  --font-point-md: 14px;
+  --font-point-sm: clamp(12px, 0.7vw, 14px);
 
   /* Spacing*/
   --gap-title: 4px;

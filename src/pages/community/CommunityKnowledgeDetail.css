@@ -74,9 +74,8 @@
 .community_knowledge_detail_content h1 {
   margin: 0;
   color: #111111;
-  font-size: 26px;
-  font-weight: 800;
-  line-height: 1.32;
+  font-size: clamp(28px, 1.4vw, 30px);
+  font-weight: 600;
   letter-spacing: -0.025em;
   word-break: keep-all;
 }
@@ -112,7 +111,7 @@
   padding-top: 26px;
   border-top: 1px solid #E5E5EC;
   color: #111111;
-  font-size: 15px;
+  font-size: clamp(16px, 1vw, 18px);
   font-weight: 500;
 }
 
@@ -161,7 +160,7 @@
   gap: 8px;
   color: #111111;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .community_knowledge_detail_card_badge {
@@ -175,7 +174,7 @@
   background: #8a7cf6;
   color: #ffffff;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.5;
 }
 
@@ -271,7 +270,7 @@
   color: #111111;
   font-size: 14px;
   font-weight: 500;
-  line-height: 1.5;
+  line-height: 1.45;
   white-space: pre-wrap;
 }
 
@@ -292,14 +291,13 @@
   color: #707070;
   font-size: 12px;
   font-weight: 600;
-  line-height: 1.4;
+  line-height: 1.45;
   cursor: pointer;
 }
 
 .cpsdetail_comment_actions i {
   color: #707070;
   font-size: 20px;
-  line-height: 1;
 }
 
 .cpsdetail_comment_actions button svg {
@@ -355,9 +353,8 @@
   border: 0;
   background: transparent;
   color: #111111;
-  font-size: 15px;
+  font-size: clamp(16px, 1vw, 18px);
   font-weight: 500;
-  line-height: 1.4;
   letter-spacing: -0.025em;
 }
 
@@ -397,9 +394,8 @@
   background: #6d59f8;
   color: #ffffff;
   font-family: 'Pretendard', 'SUIT', system-ui, sans-serif;
-  font-size: 16px;
+  font-size: clamp(16px, 1vw, 18px);
   font-weight: 700;
-  line-height: 1.4;
   letter-spacing: -0.025em;
 }
 
