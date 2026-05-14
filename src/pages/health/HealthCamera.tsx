@@ -7,6 +7,8 @@ import HeaderIcon from '../../components/HeaderIcon'
 import ChevronIcon from '../../components/ChevronIcon'
 import Button from '../../components/html/Button'
 import BackButton from '../../components/html/BackButton'
+import AddSheet from '../../components/AddSheet'
+import MissionRecordSheet from '../../components/MissionRecordSheet'
 import calendarGuideIcon from '../../svg/calendar.svg?raw'
 import cameraGuideIcon from '../../svg/camera.svg?raw'
 import camcorderGuideIcon from '../../svg/camcorder.svg?raw'
@@ -14,6 +16,12 @@ import guideExampleImage from '../../img/ex.png'
 import guideVideoImage from '../../img/guide_video.png'
 import communicateGuideIcon from '../../svg/nav communicate off.svg?raw'
 import memoGuideIcon from '../../svg/memo.svg?raw'
+import {
+  MISSION_HISTORY_RECORDS_CHANGE_EVENT,
+  readMissionHistoryRecordsWithDefaults,
+  type MissionHistoryRecord,
+  writeStoredMissionHistoryRecords,
+} from '../../utils/missionHistoryRecords'
 
 type GuideMode = 'photo' | 'audio' | 'video' | 'memo'
 type GuideIconType =
@@ -48,6 +56,27 @@ const memoExamples = [
     description: '산책이나 놀이 활동이 줄었어요',
   },
 ]
+
+const today = new Date()
+
+const categoryOptions = [
+  { id: 'meal', label: '식사 기록', color: '#ffd1a8' },
+  { id: 'poop', label: '배변 기록', color: '#527ca3' },
+  { id: 'activity', label: '활동 기록', color: '#428fe6' },
+  { id: 'symptom', label: '증상', color: '#b9dfe3' },
+]
+
+const quickMessages = [
+  '사료 30g',
+  '사료 60g',
+  '사료 90g',
+  '사료 120g',
+  '사료 150g',
+]
+
+function getDateKey(year: number, month: number, day: number) {
+  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+}
 
 const guideConfigs: Record<
   GuideMode,
@@ -349,15 +378,96 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
     { label: 'PORTRAIT' },
     { label: 'PANO' },
   ]
+  const [isMemoSheetOpen, setIsMemoSheetOpen] = useState(false)
+  const [selectedCategoryId, setSelectedCategoryId] = useState(categoryOptions[0].id)
+  const [memoText, setMemoText] = useState('')
+  const [selectedQuickMessage, setSelectedQuickMessage] = useState('')
+  const [feedAmount, setFeedAmount] = useState(30)
+  const selectedCategory = categoryOptions.find((category) => category.id === selectedCategoryId) ?? categoryOptions[0]
+  const canSaveMemo =
+    memoText.trim().length > 0 ||
+    selectedQuickMessage.length > 0 ||
+    (selectedCategory.id === 'meal' && feedAmount > 0)
 
   const continueAfterGuide = () => {
     if (mode === 'memo') {
-      navigate('/health/register?section=memo', { replace: true })
+      setIsMemoSheetOpen(true)
       return
     }
 
     navigate(`/health/camera/capture?mode=${mode}${isEditFlow ? '&edit=true' : ''}`, { replace: true })
   }
+
+  const handleCategoryClick = () => {
+    const currentIndex = categoryOptions.findIndex((category) => category.id === selectedCategoryId)
+    const nextCategory = categoryOptions[(currentIndex + 1) % categoryOptions.length]
+    setSelectedCategoryId(nextCategory.id)
+    setSelectedQuickMessage('')
+    setMemoText('')
+  }
+
+  const resetMemoSheet = () => {
+    setMemoText('')
+    setSelectedQuickMessage('')
+    setFeedAmount(30)
+  }
+
+  const handleMemoSave = () => {
+    const primaryDetail =
+      selectedCategory.id === 'meal' && feedAmount > 0
+        ? `사료 ${feedAmount}g`
+        : selectedQuickMessage
+    const detail = [primaryDetail, memoText.trim()].filter(Boolean).join('\n')
+
+    if (!detail) {
+      return
+    }
+
+    const now = new Date()
+    const newRecord: MissionHistoryRecord = {
+      id: Date.now(),
+      title: selectedCategory.id === 'symptom' ? '증상 기록' : selectedCategory.label,
+      detail,
+      time: `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`,
+      color: selectedCategory.color,
+      date: getDateKey(now.getFullYear(), now.getMonth() + 1, now.getDate()),
+    }
+
+    writeStoredMissionHistoryRecords([newRecord, ...readMissionHistoryRecordsWithDefaults()])
+    window.dispatchEvent(new CustomEvent(MISSION_HISTORY_RECORDS_CHANGE_EVENT, { detail: newRecord }))
+    resetMemoSheet()
+    setIsMemoSheetOpen(false)
+  }
+
+  const memoSheet = isMemoSheetOpen ? (
+    <AddSheet onClose={() => setIsMemoSheetOpen(false)}>
+      <MissionRecordSheet
+        addDate={{ month: today.getMonth() + 1, day: today.getDate() }}
+        selectedCategory={selectedCategory}
+        repeatLabel="매일"
+        addTitle={memoText}
+        feedAmount={feedAmount}
+        canSave={canSaveMemo}
+        isEditing={false}
+        quickMessageOptions={quickMessages}
+        selectedQuickMessage={selectedQuickMessage}
+        onOpenPeriodPicker={() => {}}
+        onOpenRepeatPicker={() => {}}
+        onOpenCategoryPicker={handleCategoryClick}
+        onQuickMessageSelect={(message) => {
+          setSelectedQuickMessage(message)
+          setMemoText('')
+        }}
+        onTitleChange={(title) => {
+          setMemoText(title)
+          setSelectedQuickMessage('')
+        }}
+        onFeedAmountChange={setFeedAmount}
+        onDelete={() => {}}
+        onSave={handleMemoSave}
+      />
+    </AddSheet>
+  ) : null
 
   const returnToRegister = (
     section: Exclude<GuideMode, 'memo'>,
@@ -805,6 +915,7 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
             </section>
           </section>
         </main>
+        {memoSheet}
       </>
     )
   }
@@ -915,6 +1026,7 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
           </button>
         </div>
       </div>
+      {memoSheet}
     </main>
   )
 }
