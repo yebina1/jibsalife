@@ -14,10 +14,11 @@ function ConfirmDialog({ message, onCancel, onConfirm }: ConfirmDialogProps) {
       <p className="confirm_dialog_msg">{message}</p>
       <div className="confirm_dialog_btns">
         <Button type="button" className="white_btn" onClick={onCancel}>아니요</Button>
-        <Button type="button" className="purple_btn" onClick={onConfirm}>네</Button>
+        <Button type="button" className="purple_btn" onClick={onConfirm}>예</Button>
       </div>
     </Alert>
   )
 }
 
 export default ConfirmDialog
+

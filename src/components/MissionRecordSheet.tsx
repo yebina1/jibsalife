@@ -1,5 +1,7 @@
-﻿import Button from './html/Button'
+import { useState } from 'react'
+import Button from './html/Button'
 import ChevronIcon from './ChevronIcon'
+import ConfirmDialog from './ConfirmDialog'
 import whatIcon from '../svg/what.svg'
 import './MissionRecordSheet.css'
 
@@ -65,6 +67,7 @@ function MissionRecordSheet({
   saveLabel,
   secondaryActionLabel,
 }: Props) {
+  const [confirmAction, setConfirmAction] = useState<'edit' | 'delete' | null>(null)
   const isAmountInputCategory =
     selectedCategory.id === 'meal' || selectedCategory.id === 'walk'
   const amountInputLabel = selectedCategory.id === 'walk' ? '산책 시간' : '사료량'
@@ -75,6 +78,17 @@ function MissionRecordSheet({
       : selectedCategory.label
 
   const shouldShowSecondaryAction = isEditing || Boolean(secondaryActionLabel && onSecondaryAction)
+  const handleConfirm = () => {
+    if (confirmAction === 'delete') {
+      onDelete()
+    }
+
+    if (confirmAction === 'edit') {
+      onSave()
+    }
+
+    setConfirmAction(null)
+  }
 
   return (
     <>
@@ -217,7 +231,7 @@ function MissionRecordSheet({
             type="button"
             className="mission_add_delete_btn"
             disabled={!isEditing && !canSave}
-            onClick={isEditing ? onDelete : onSecondaryAction}
+            onClick={isEditing ? () => setConfirmAction('delete') : onSecondaryAction}
           >
             {isEditing ? '삭제하기' : secondaryActionLabel}
           </button>
@@ -226,14 +240,22 @@ function MissionRecordSheet({
           type="button"
           className="purple_btn"
           disabled={!canSave}
-          onClick={onSave}
+          onClick={isEditing ? () => setConfirmAction('edit') : onSave}
         >
           {saveLabel ?? (isEditing ? '수정하기' : '저장하기')}
         </Button>
       </div>
+      {confirmAction && (
+        <ConfirmDialog
+          message={confirmAction === 'delete' ? '삭제하시겠습니까?' : '수정하시겠습니까?'}
+          onCancel={() => setConfirmAction(null)}
+          onConfirm={handleConfirm}
+        />
+      )}
     </>
   )
 }
 
 export default MissionRecordSheet
+
 

@@ -9,6 +9,7 @@ import HomeSummaryBanner from '../components/HomeSummaryBanner'
 import SummaryProfileCard, { SummaryProfileAddCard } from '../components/SummaryProfileCard'
 import Button from '../components/html/Button'
 import Alert from '../components/Alert'
+import ConfirmDialog from '../components/ConfirmDialog'
 import ConfettiEffect from '../components/effect/ConfettiEffect'
 import RewardHero from '../components/RewardHero'
 import RewardPointCard from '../components/RewardPointCard'
@@ -275,6 +276,7 @@ function Home() {
     hasVotedMission(BEST_POSE_VOTE_ID),
   )
   const [isVoteRewardOpen, setIsVoteRewardOpen] = useState(false)
+  const [confirmAction, setConfirmAction] = useState<'profile-edit' | 'profile-delete' | 'vote-edit' | null>(null)
   const [isPetIdModalOpen, setIsPetIdModalOpen] = useState(false)
   const [editingProfileId, setEditingProfileId] = useState<number | null>(null)
   const [petIdPhoto, setPetIdPhoto] = useState<string | null>(null)
@@ -524,6 +526,15 @@ function Home() {
 
   const submitPetIdModal = () => {
     if (editingProfileId !== null) {
+      setConfirmAction('profile-edit')
+      return
+    }
+
+    savePetIdProfile()
+  }
+
+  const savePetIdProfile = () => {
+    if (editingProfileId !== null) {
       setProfileSlides((current) =>
         current.map((profile) =>
           profile.id === editingProfileId
@@ -562,6 +573,15 @@ function Home() {
   }
 
   const deletePetIdProfile = () => {
+    if (editingProfileId !== null) {
+      setConfirmAction('profile-delete')
+      return
+    }
+
+    closePetIdModal()
+  }
+
+  const confirmDeletePetIdProfile = () => {
     if (editingProfileId === null) {
       closePetIdModal()
       return
@@ -586,12 +606,33 @@ function Home() {
   const openBestPoseVoteReward = () => {
     if (selectedBestPoseId === null) return
     if (hasSubmittedBestPoseVote) {
-      writeVotedMissionId(BEST_POSE_VOTE_ID)
-      writeVotedCandidate(BEST_POSE_VOTE_ID, selectedBestPoseId)
+      setConfirmAction('vote-edit')
       return
     }
 
     setIsVoteRewardOpen(true)
+  }
+
+  const confirmBestPoseVoteEdit = () => {
+    if (selectedBestPoseId === null) return
+    writeVotedMissionId(BEST_POSE_VOTE_ID)
+    writeVotedCandidate(BEST_POSE_VOTE_ID, selectedBestPoseId)
+  }
+
+  const handleConfirmAction = () => {
+    if (confirmAction === 'profile-edit') {
+      savePetIdProfile()
+    }
+
+    if (confirmAction === 'profile-delete') {
+      confirmDeletePetIdProfile()
+    }
+
+    if (confirmAction === 'vote-edit') {
+      confirmBestPoseVoteEdit()
+    }
+
+    setConfirmAction(null)
   }
 
   const confirmBestPoseVote = () => {
@@ -1026,6 +1067,18 @@ function Home() {
               </Button>
             </div>
           </Alert>
+        ) : null}
+
+        {confirmAction ? (
+          <ConfirmDialog
+            message={
+              confirmAction === 'profile-delete'
+                ? '삭제하시겠습니까?'
+                : '수정하시겠습니까?'
+            }
+            onCancel={() => setConfirmAction(null)}
+            onConfirm={handleConfirmAction}
+          />
         ) : null}
       </main>
     </>
