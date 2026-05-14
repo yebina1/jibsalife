@@ -1,5 +1,6 @@
 ﻿import { type CSSProperties, useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
+import '../Mission.css'
 import './Health.css'
 import './HealthCamera.css'
 import PageHeader from '../../components/PageHeader'
@@ -8,6 +9,7 @@ import ChevronIcon from '../../components/ChevronIcon'
 import Button from '../../components/html/Button'
 import BackButton from '../../components/html/BackButton'
 import AddSheet from '../../components/AddSheet'
+import ConfirmDialog from '../../components/ConfirmDialog'
 import MissionRecordSheet from '../../components/MissionRecordSheet'
 import calendarGuideIcon from '../../svg/calendar.svg?raw'
 import cameraGuideIcon from '../../svg/camera.svg?raw'
@@ -39,6 +41,17 @@ type GuideIconType =
   | 'calendar'
   | 'activity'
 
+type PeriodDateTime = {
+  year: number
+  month: number
+  day: number
+  period: 'AM' | 'PM'
+  hour: number
+  minute: number
+}
+
+type PeriodField = 'start' | 'end'
+
 const memoExamples = [
   {
     icon: 'meal' as const,
@@ -69,8 +82,8 @@ const categoryOptions = [
 const repeatOptions = [
   { id: 'none', label: '안 함' },
   { id: 'daily', label: '매일' },
+  { id: 'weekdays', label: '주중만' },
   { id: 'weekly', label: '매주' },
-  { id: 'monthly', label: '매월' },
 ]
 
 const quickMessages = [
@@ -85,30 +98,84 @@ function getDateKey(year: number, month: number, day: number) {
   return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 }
 
-function createRepeatDateKeys(repeatId: string, date: Date) {
-  const dateKeys = [getDateKey(date.getFullYear(), date.getMonth() + 1, date.getDate())]
+function createPeriodDateTime(
+  year: number,
+  month: number,
+  day: number,
+  hour24 = 16,
+  minute = 0,
+): PeriodDateTime {
+  const period = hour24 >= 12 ? 'PM' : 'AM'
+  const hour = hour24 % 12 === 0 ? 12 : hour24 % 12
 
-  if (repeatId === 'none') {
-    return dateKeys
-  }
+  return { year, month, day, period, hour, minute }
+}
 
-  const repeatCount = repeatId === 'daily' ? 6 : repeatId === 'weekly' ? 3 : 2
+function getHour24(dateTime: PeriodDateTime) {
+  if (dateTime.period === 'AM') return dateTime.hour === 12 ? 0 : dateTime.hour
+  return dateTime.hour === 12 ? 12 : dateTime.hour + 12
+}
 
-  for (let index = 1; index <= repeatCount; index += 1) {
-    const nextDate = new Date(date)
+function getPeriodTimeLabel(dateTime: PeriodDateTime) {
+  return `${String(getHour24(dateTime)).padStart(2, '0')}:${String(dateTime.minute).padStart(2, '0')}`
+}
 
-    if (repeatId === 'daily') {
-      nextDate.setDate(date.getDate() + index)
-    } else if (repeatId === 'weekly') {
-      nextDate.setDate(date.getDate() + index * 7)
-    } else {
-      nextDate.setMonth(date.getMonth() + index)
+function getPeriodDateLabel(dateTime: PeriodDateTime) {
+  return `${dateTime.year}.${String(dateTime.month).padStart(2, '0')}.${String(dateTime.day).padStart(2, '0')}`
+}
+
+function getPeriodRangeLabel(start: PeriodDateTime, end: PeriodDateTime) {
+  const startLabel = `${start.month}월 ${start.day}일`
+  const endLabel = `${end.month}월 ${end.day}일`
+
+  return startLabel === endLabel ? startLabel : `${startLabel} ~ ${endLabel}`
+}
+
+function createRepeatDateKeysFromPeriod(
+  repeatId: string,
+  start: Pick<PeriodDateTime, 'year' | 'month' | 'day'>,
+  end?: Pick<PeriodDateTime, 'year' | 'month' | 'day'>,
+) {
+  const startDate = new Date(start.year, start.month - 1, start.day)
+  const selectedEndDate = end
+    ? new Date(end.year, end.month - 1, end.day)
+    : startDate
+  const endDate = selectedEndDate < startDate ? startDate : selectedEndDate
+  const dateKeys: string[] = []
+
+  for (
+    const currentDate = new Date(startDate);
+    currentDate <= endDate;
+    currentDate.setDate(currentDate.getDate() + 1)
+  ) {
+    const dayOfWeek = currentDate.getDay()
+    const shouldInclude =
+      repeatId === 'daily' ||
+      (repeatId === 'weekdays' && dayOfWeek >= 1 && dayOfWeek <= 5) ||
+      (repeatId === 'weekly' && dayOfWeek === startDate.getDay()) ||
+      (repeatId === 'none' && currentDate.getTime() === startDate.getTime())
+
+    if (shouldInclude) {
+      dateKeys.push(
+        getDateKey(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate()),
+      )
     }
-
-    dateKeys.push(getDateKey(nextDate.getFullYear(), nextDate.getMonth() + 1, nextDate.getDate()))
   }
 
-  return dateKeys
+  return dateKeys.length > 0 ? dateKeys : [getDateKey(start.year, start.month, start.day)]
+}
+
+function getRepeatEndPeriod(
+  repeatId: string,
+  start: Pick<PeriodDateTime, 'year' | 'month' | 'day'>,
+  end: Pick<PeriodDateTime, 'year' | 'month' | 'day'>,
+) {
+  if (repeatId === 'none') return end
+
+  const startDate = new Date(start.year, start.month - 1, start.day)
+  const endDate = new Date(end.year, end.month - 1, end.day)
+
+  return endDate > startDate ? end : undefined
 }
 
 const guideConfigs: Record<
@@ -416,21 +483,42 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
   const [draftCategoryId, setDraftCategoryId] = useState(categoryOptions[0].id)
   const [selectedRepeatId, setSelectedRepeatId] = useState(repeatOptions[0].id)
   const [draftRepeatId, setDraftRepeatId] = useState(repeatOptions[0].id)
-  const [recordDate, setRecordDate] = useState(today)
+  const [periodStart, setPeriodStart] = useState(() =>
+    createPeriodDateTime(today.getFullYear(), today.getMonth() + 1, today.getDate(), today.getHours(), today.getMinutes()),
+  )
+  const [periodEnd, setPeriodEnd] = useState(() =>
+    createPeriodDateTime(today.getFullYear(), today.getMonth() + 1, today.getDate(), today.getHours(), today.getMinutes()),
+  )
+  const [draftPeriodStart, setDraftPeriodStart] = useState(periodStart)
+  const [draftPeriodEnd, setDraftPeriodEnd] = useState(periodEnd)
+  const [periodEditingField, setPeriodEditingField] = useState<PeriodField>('start')
   const [isPeriodPickerOpen, setIsPeriodPickerOpen] = useState(false)
   const [isRepeatPickerOpen, setIsRepeatPickerOpen] = useState(false)
   const [isCategoryPickerOpen, setIsCategoryPickerOpen] = useState(false)
   const [memoText, setMemoText] = useState('')
   const [selectedQuickMessage, setSelectedQuickMessage] = useState('')
   const [feedAmount, setFeedAmount] = useState(30)
+  const [isSaveCompleteDialogOpen, setIsSaveCompleteDialogOpen] = useState(false)
   const selectedCategory = categoryOptions.find((category) => category.id === selectedCategoryId) ?? categoryOptions[0]
   const draftCategory = categoryOptions.find((category) => category.id === draftCategoryId) ?? selectedCategory
   const selectedRepeat = repeatOptions.find((option) => option.id === selectedRepeatId) ?? repeatOptions[0]
   const draftRepeat = repeatOptions.find((option) => option.id === draftRepeatId) ?? selectedRepeat
+  const activeDraftPeriod = periodEditingField === 'start' ? draftPeriodStart : draftPeriodEnd
   const canSaveMemo =
     memoText.trim().length > 0 ||
     selectedQuickMessage.length > 0 ||
     (selectedCategory.id === 'meal' && feedAmount > 0)
+
+  const updateDraftPeriod = (nextValue: Partial<PeriodDateTime>) => {
+    const updater = (prev: PeriodDateTime) => ({ ...prev, ...nextValue })
+
+    if (periodEditingField === 'start') {
+      setDraftPeriodStart(updater)
+      return
+    }
+
+    setDraftPeriodEnd(updater)
+  }
 
   const continueAfterGuide = () => {
     if (mode === 'memo') {
@@ -453,14 +541,28 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
   }
 
   const resetMemoSheet = () => {
+    const nextToday = new Date()
+    const nextPeriod = createPeriodDateTime(
+      nextToday.getFullYear(),
+      nextToday.getMonth() + 1,
+      nextToday.getDate(),
+      nextToday.getHours(),
+      nextToday.getMinutes(),
+    )
+
     setMemoText('')
     setSelectedQuickMessage('')
     setFeedAmount(30)
     setSelectedRepeatId(repeatOptions[0].id)
     setDraftRepeatId(repeatOptions[0].id)
+    setPeriodStart(nextPeriod)
+    setPeriodEnd(nextPeriod)
+    setDraftPeriodStart(nextPeriod)
+    setDraftPeriodEnd(nextPeriod)
+    setPeriodEditingField('start')
   }
 
-  const handleMemoSave = () => {
+  const saveMemoToCalendar = () => {
     const primaryDetail =
       selectedCategory.id === 'meal' && feedAmount > 0
         ? `사료 ${feedAmount}g`
@@ -468,59 +570,123 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
     const detail = [primaryDetail, memoText.trim()].filter(Boolean).join('\n')
 
     if (!detail) {
-      return
+      return false
     }
 
-    const now = new Date()
     const baseId = Date.now()
-    const repeatDateKeys = createRepeatDateKeys(selectedRepeatId, recordDate)
+    const repeatDateKeys = createRepeatDateKeysFromPeriod(
+      selectedRepeatId,
+      draftPeriodStart,
+      getRepeatEndPeriod(selectedRepeatId, draftPeriodStart, draftPeriodEnd),
+    )
     const newRecords: MissionHistoryRecord[] = repeatDateKeys.map((date, index) => ({
       id: baseId + index,
       title: selectedCategory.id === 'symptom' ? '증상 기록' : selectedCategory.label,
       detail,
-      time: `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`,
+      time: getPeriodTimeLabel(draftPeriodStart),
       color: selectedCategory.color,
       date,
     }))
 
     writeStoredMissionHistoryRecords([...newRecords.reverse(), ...readMissionHistoryRecordsWithDefaults()])
     window.dispatchEvent(new CustomEvent(MISSION_HISTORY_RECORDS_CHANGE_EVENT, { detail: newRecords[0] }))
+    setPeriodStart(draftPeriodStart)
+    setPeriodEnd(draftPeriodEnd)
+    setSelectedRepeatId(draftRepeatId)
+    return true
+  }
+
+  const handleMemoSaveComplete = () => {
+    if (!saveMemoToCalendar()) return
+
     resetMemoSheet()
     closeMemoSheet()
+    setIsSaveCompleteDialogOpen(true)
   }
+
+  const handleMemoUpload = () => {
+    if (!saveMemoToCalendar()) return
+
+    resetMemoSheet()
+    closeMemoSheet()
+    navigate('/health/check')
+  }
+
+  const periodPickerContent = (
+    <div className="mission_period_inline health_camera_period_inline">
+      <div className="mission_period_rows">
+        <button
+          type="button"
+          className={`mission_period_row${periodEditingField === 'start' ? ' active' : ''}`}
+          onClick={() => setPeriodEditingField('start')}
+        >
+          <span className="mission_period_row_label">시작일</span>
+          <span className="mission_period_row_value">
+            {getPeriodDateLabel(draftPeriodStart)}
+            <ChevronIcon direction="right" size="sm" />
+          </span>
+        </button>
+        <button
+          type="button"
+          className={`mission_period_row${periodEditingField === 'end' ? ' active' : ''}`}
+          onClick={() => setPeriodEditingField('end')}
+        >
+          <span className="mission_period_row_label">종료일</span>
+          <span className="mission_period_row_value">
+            {getPeriodDateLabel(draftPeriodEnd)}
+            <ChevronIcon direction="right" size="sm" />
+          </span>
+        </button>
+      </div>
+
+      <div className="health_camera_period_editor">
+        <label className="health_camera_period_field">
+          <span>{periodEditingField === 'start' ? '시작일 선택' : '종료일 선택'}</span>
+          <input
+            type="date"
+            value={getDateKey(activeDraftPeriod.year, activeDraftPeriod.month, activeDraftPeriod.day)}
+            onChange={(event) => {
+              const [year, month, day] = event.target.value.split('-').map(Number)
+              if (!year || !month || !day) return
+              updateDraftPeriod({ year, month, day })
+            }}
+          />
+        </label>
+      </div>
+
+      <div className="mission_category_actions mission_period_actions">
+        <button
+          type="button"
+          className="mission_category_prev white_btn"
+          onClick={() => {
+            setDraftPeriodStart(periodStart)
+            setDraftPeriodEnd(periodEnd)
+            setIsPeriodPickerOpen(false)
+          }}
+        >
+          이전
+        </button>
+        <button
+          type="button"
+          className="mission_category_confirm"
+          onClick={() => {
+            setPeriodStart(draftPeriodStart)
+            setPeriodEnd(draftPeriodEnd)
+            setIsPeriodPickerOpen(false)
+          }}
+        >
+          확인
+        </button>
+      </div>
+    </div>
+  )
 
   const memoSheet = isMemoSheetOpen ? (
     <AddSheet onClose={closeMemoSheet}>
       {isPeriodPickerOpen ? (
         <div className="mission_repeat_picker">
           <h2>기간 선택</h2>
-          <div className="mission_repeat_grid">
-            {[0, 1, 2, 3].map((offset) => {
-              const date = new Date(today)
-              date.setDate(today.getDate() + offset)
-              const isSelected = getDateKey(date.getFullYear(), date.getMonth() + 1, date.getDate()) ===
-                getDateKey(recordDate.getFullYear(), recordDate.getMonth() + 1, recordDate.getDate())
-
-              return (
-                <button
-                  key={offset}
-                  type="button"
-                  className={isSelected ? 'mission_repeat_option active' : 'mission_repeat_option'}
-                  onClick={() => setRecordDate(date)}
-                >
-                  <span>{offset === 0 ? '오늘' : `${date.getMonth() + 1}월 ${date.getDate()}일`}</span>
-                </button>
-              )
-            })}
-          </div>
-          <div className="mission_category_actions mission_repeat_actions">
-            <button type="button" className="mission_category_prev white_btn" onClick={() => setIsPeriodPickerOpen(false)}>
-              이전
-            </button>
-            <button type="button" className="mission_category_confirm" onClick={() => setIsPeriodPickerOpen(false)}>
-              확인
-            </button>
-          </div>
+          {periodPickerContent}
         </div>
       ) : isRepeatPickerOpen ? (
         <div className="mission_repeat_picker">
@@ -613,22 +779,34 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
         </div>
       ) : (
         <MissionRecordSheet
-          addDate={{ month: recordDate.getMonth() + 1, day: recordDate.getDate() }}
+          addDate={{ month: periodStart.month, day: periodStart.day }}
           selectedCategory={selectedCategory}
           repeatLabel={selectedRepeat.label}
+          periodLabel={getPeriodRangeLabel(periodStart, periodEnd)}
           addTitle={memoText}
           feedAmount={feedAmount}
           canSave={canSaveMemo}
           isEditing={false}
           quickMessageOptions={quickMessages}
           selectedQuickMessage={selectedQuickMessage}
-          onOpenPeriodPicker={() => setIsPeriodPickerOpen(true)}
+          isPeriodPickerOpen={isPeriodPickerOpen}
+          periodPickerContent={periodPickerContent}
+          onOpenPeriodPicker={() => {
+            setDraftPeriodStart(periodStart)
+            setDraftPeriodEnd(periodEnd)
+            setPeriodEditingField('start')
+            setIsRepeatPickerOpen(false)
+            setIsCategoryPickerOpen(false)
+            setIsPeriodPickerOpen(true)
+          }}
           onOpenRepeatPicker={() => {
             setDraftRepeatId(selectedRepeatId)
+            setIsPeriodPickerOpen(false)
             setIsRepeatPickerOpen(true)
           }}
           onOpenCategoryPicker={() => {
             setDraftCategoryId(selectedCategoryId)
+            setIsPeriodPickerOpen(false)
             setIsCategoryPickerOpen(true)
           }}
           onQuickMessageSelect={(message) => {
@@ -641,7 +819,10 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
           }}
           onFeedAmountChange={setFeedAmount}
           onDelete={() => {}}
-          onSave={handleMemoSave}
+          onSecondaryAction={handleMemoSaveComplete}
+          onSave={handleMemoUpload}
+          secondaryActionLabel="기록 완료"
+          saveLabel="업로드 하기"
         />
       )}
     </AddSheet>
@@ -1094,6 +1275,15 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
           </section>
         </main>
         {memoSheet}
+        {isSaveCompleteDialogOpen ? (
+          <ConfirmDialog
+            message="캘린더에 등록되었습니다"
+            onCancel={() => setIsSaveCompleteDialogOpen(false)}
+            onConfirm={() => setIsSaveCompleteDialogOpen(false)}
+            confirmLabel="확인"
+            hideCancel
+          />
+        ) : null}
       </>
     )
   }
@@ -1215,6 +1405,15 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
         </div>
       </div>
       {memoSheet}
+      {isSaveCompleteDialogOpen ? (
+        <ConfirmDialog
+          message="캘린더에 등록되었습니다"
+          onCancel={() => setIsSaveCompleteDialogOpen(false)}
+          onConfirm={() => setIsSaveCompleteDialogOpen(false)}
+          confirmLabel="확인"
+          hideCancel
+        />
+      ) : null}
     </main>
   )
 }

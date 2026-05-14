@@ -1,6 +1,7 @@
 .mission_page {
   --mission-fixed-calendar-height: 174px;
   --mission-fixed-title-height: 62px;
+  min-height: auto;
   background: #ffffff;
   color: #171717;
 }
@@ -383,6 +384,8 @@
 
 .mission_history_list {
   display: grid;
+  height: auto;
+  align-self: start;
   align-content: start;
   gap: 20px;
   grid-auto-rows: max-content;

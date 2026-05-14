@@ -7,6 +7,67 @@ import loginPetImg from '../img/illust_login_pet.png'
 import helloIcon from '../svg/hello icon.svg'
 import './Login.css'
 
+function ClearIcon() {
+  return (
+    <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+      <circle cx="10" cy="10" r="8" fill="currentColor" opacity="0.2" />
+      <path
+        d="M7 7l6 6M13 7l-6 6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+function EyeOpenIcon() {
+  return (
+    <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+      <path
+        d="M2.5 10c1.8-3 4.4-4.5 7.5-4.5s5.7 1.5 7.5 4.5c-1.8 3-4.4 4.5-7.5 4.5S4.3 13 2.5 10Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="10" cy="10" r="2.3" fill="none" stroke="currentColor" strokeWidth="1.7" />
+    </svg>
+  )
+}
+
+function EyeClosedIcon() {
+  return (
+    <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+      <path
+        d="M3 3l14 14"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+      />
+      <path
+        d="M6 6.2A9.5 9.5 0 0 1 10 5.5c3.1 0 5.7 1.5 7.5 4.5a10.8 10.8 0 0 1-2.3 2.7"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M13.2 13.2A7.7 7.7 0 0 1 10 14.5c-3.1 0-5.7-1.5-7.5-4.5a10.6 10.6 0 0 1 1.9-2.4"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
 function Login() {
   const [id, setId] = useState('')
   const [password, setPassword] = useState('')
@@ -57,7 +118,7 @@ function Login() {
               {id && (
                 <div className="login_input_actions">
                   <button type="button" className="login_input_clear" onClick={() => { setId(''); setError('') }}>
-                    <i className="bxf bx-x-circle" aria-hidden="true" />
+                    <ClearIcon />
                   </button>
                 </div>
               )}
@@ -67,14 +128,11 @@ function Login() {
               {password && (
                 <div className="login_input_actions">
                   <button type="button" className="login_input_eye" onClick={() => setShowPassword((p) => !p)}>
-                    <i
-                      className={`bx ${showPassword ? 'bx-eye login_eye_icon_open' : 'bx-eye-closed login_eye_icon_closed'}`}
-                      aria-hidden="true"
-                    />
+                    {showPassword ? <EyeOpenIcon /> : <EyeClosedIcon />}
                   </button>
                   {password && (
                     <button type="button" className="login_input_clear" onClick={() => { setPassword(''); setError('') }}>
-                      <i className="bxf bx-x-circle" aria-hidden="true" />
+                      <ClearIcon />
                     </button>
                   )}
                 </div>

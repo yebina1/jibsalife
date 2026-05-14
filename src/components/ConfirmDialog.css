@@ -12,3 +12,7 @@
   gap: 8px;
   width: 100%;
 }
+
+.confirm_dialog_btns > :only-child {
+  grid-column: 1 / -1;
+}

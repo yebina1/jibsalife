@@ -223,6 +223,18 @@
   gap: 2px;
 }
 
+.summary_profile_card_stat_item.is_clickable {
+  appearance: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.summary_profile_card_stat_item.is_disabled {
+  opacity: 0.38;
+}
+
 .summary_profile_card_stat_divider {
   display: flex;
   width: 24px;
