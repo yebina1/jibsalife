@@ -63,5 +63,7 @@ export function writeVotedCandidate(voteId: string, candidateId: number) {
     const parsed = saved ? JSON.parse(saved) : {}
     parsed[voteId] = candidateId
     window.localStorage.setItem(votedCandidatesStorageKey, JSON.stringify(parsed))
-  } catch {}
+  } catch {
+    // localStorage can fail in private browsing or when storage is full.
+  }
 }

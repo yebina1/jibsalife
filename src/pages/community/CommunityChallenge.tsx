@@ -1,6 +1,6 @@
 import './Community.css'
 import './CommunityChallenge.css'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { checkChallengeDayDone, CHALLENGE_STATUS_CHANGED_EVENT } from '../../utils/challengeStatus'
 import { useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'
@@ -21,6 +21,7 @@ import cheerGroupImg from '../../img/challenge/challenge_cheer_group.png'
 import footprintsIcon from '../../svg/footprints.svg'
 import pointIcon from '../../svg/point.svg'
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const challengeCardItems = [
   { id: 1, title: '제일 귀엽게 밥을 먹는 귀염둥이는?', participants: 22, deadline: '05.10 마감', image: day1Img, status: 'active' },
   { id: 2, title: '가장 말썽꾸러기 같은 아이는?', participants: 17, deadline: '05.10 마감', image: day2Img, status: 'active' },
@@ -108,7 +109,7 @@ function CommunityChallenge() {
   const [visibleIndex, setVisibleIndex] = useState(currentDay)
   const [missionDone, setMissionDone] = useState(() => checkChallengeDayDone(currentDay))
 
-  const scrollToCard = (index: number) => {
+  const scrollToCard = useCallback((index: number) => {
     const clamped = Math.max(0, Math.min(index, TOTAL_DAYS - 1))
     visibleIndexRef.current = clamped
     setVisibleIndex(clamped)
@@ -117,15 +118,11 @@ function CommunityChallenge() {
     if (!card || !container) return
     const targetLeft = card.offsetLeft - (container.clientWidth - card.offsetWidth) / 2
     container.scrollTo({ left: targetLeft, behavior: 'smooth' })
-  }
-
-  const scrollToCardRef = useRef(scrollToCard)
-  scrollToCardRef.current = scrollToCard
+  }, [])
 
   useEffect(() => {
-    scrollToCardRef.current(currentDay)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    scrollToCard(currentDay)
+  }, [currentDay, scrollToCard])
 
   useEffect(() => {
     const el = scrollContainerRef.current
@@ -137,7 +134,7 @@ function CommunityChallenge() {
     const onTouchEnd = (e: TouchEvent) => {
       const diff = touchStartX.current - e.changedTouches[0].clientX
       if (Math.abs(diff) > 30) {
-        scrollToCardRef.current(diff > 0 ? visibleIndexRef.current + 1 : visibleIndexRef.current - 1)
+        scrollToCard(diff > 0 ? visibleIndexRef.current + 1 : visibleIndexRef.current - 1)
       }
     }
     el.addEventListener('touchstart', onTouchStart, { passive: false })
@@ -146,7 +143,7 @@ function CommunityChallenge() {
       el.removeEventListener('touchstart', onTouchStart)
       el.removeEventListener('touchend', onTouchEnd)
     }
-  }, [])
+  }, [scrollToCard])
 
   // 현재 날 직전까지 연속 성공 일수
   let consecutive = 0

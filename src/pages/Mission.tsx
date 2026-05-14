@@ -1420,7 +1420,7 @@ function Mission() {
             setIsPeriodDatePickerOpen(false)
           }}
         >
-            {false && isPeriodPickerOpen ? (
+            {import.meta.env.VITE_ENABLE_PERIOD_PICKER === 'true' && isPeriodPickerOpen ? (
               <div className="mission_period_picker">
                 <div className="mission_period_rows">
                   <button
@@ -1971,7 +1971,7 @@ function Mission() {
         </AddSheet>
       )}
 
-      {false && isFabOpen && isPeriodPickerOpen && (
+      {import.meta.env.VITE_ENABLE_PERIOD_PICKER === 'true' && isFabOpen && isPeriodPickerOpen && (
         <AddSheet
           onClose={() => {
             setIsPeriodPickerOpen(false)
