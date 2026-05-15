@@ -32,3 +32,33 @@
 .confirm_dialog_btns > :only-child {
   grid-column: 1 / -1;
 }
+
+/* vote-edit variant */
+.alert.confirm_dialog_vote_edit {
+  width: min(100%, 343px);
+  border-radius: 12px;
+  padding: 20px 32px;
+  background: #ffffff;
+}
+
+.confirm_dialog_vote_edit .confirm_dialog_copy {
+  gap: 8px;
+  margin: 0 0 24px;
+}
+
+.confirm_dialog_vote_edit .confirm_dialog_msg {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.confirm_dialog_vote_edit .confirm_dialog_desc {
+  color: #505050;
+  font-size: 14px;
+  letter-spacing: -0.025em;
+  text-align: center;
+}
+
+.confirm_dialog_vote_edit .confirm_dialog_btns {
+  gap: 8px;
+}

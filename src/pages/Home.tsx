@@ -31,13 +31,13 @@ import {
   type PetProfileSummary,
 } from '../utils/petProfiles'
 import { voteDetails } from './community/CommunityVoteData'
-import { hasVotedMission, readVotedCandidate, writeVotedCandidate, writeVotedMissionId } from '../utils/communityVoteStatus'
+import { writeVotedCandidate, writeVotedMissionId } from '../utils/communityVoteStatus'
 import { readProfilePoints } from '../utils/profilePoints'
 import { showStateBarMessage } from '../utils/stateBarMessage'
 import knowledge1 from '../img/petstory/Knowledge/knowledge1.png'
-import knowledge2 from '../img/petstory/Knowledge/knowledge2.png'
 import knowledge3 from '../img/petstory/Knowledge/knowledge3.png'
 import knowledge4 from '../img/petstory/Knowledge/knowledge4.png'
+import footImg from '../img/home/foot-img.png'
 import animalCardImage from '../img/animal_card.png'
 import homeRank1Photo from '../img/home/1st_photo.png'
 import homeRank2Photo from '../img/home/2nd_photo.png'
@@ -80,13 +80,15 @@ const contentItems = [
     title: '강아지 산책 안 하면\n생기는 문제점',
     image: knowledge1,
     objectPosition: '61% center',
+    chip: '반려상식',
     path: '/community/petstory/knowledge/walkproblems',
   },
   {
     id: 2,
     title: '강아지 발사탕 스프레이\n추천해주세요!',
-    image: knowledge2,
+    image: footImg,
     objectPosition: '64% center',
+    chip: '일상',
     path: '/community/petstory/knowledge/catjumpsecret',
   },
   {
@@ -94,6 +96,7 @@ const contentItems = [
     title: '강아지에게 절대 주면\n안되는 음식 7가지',
     image: knowledge3,
     objectPosition: '43% center',
+    chip: '반려상식',
     path: '/community/petstory/knowledge/forbiddenfoods',
   },
   {
@@ -101,6 +104,7 @@ const contentItems = [
     title: '봄철 강아지\n알레르기 증상과 관리법',
     image: knowledge4,
     objectPosition: '48% center',
+    chip: '반려상식',
     path: '/community/petstory/knowledge/springallergy',
   },
 ] as const
@@ -128,6 +132,21 @@ function getTodayDateKey() {
   const day = String(today.getDate()).padStart(2, '0')
 
   return `${year}-${month}-${day}`
+}
+
+function getInitialVoteState(): { votedCardId: number | null; hasModified: boolean } {
+  try {
+    const raw = localStorage.getItem('weekly-vote-state')
+    if (!raw) return { votedCardId: null, hasModified: false }
+    const parsed = JSON.parse(raw) as { votedCardId?: number; hasModified?: boolean; votedDate?: string }
+    if (parsed.votedDate !== getTodayDateKey()) return { votedCardId: null, hasModified: false }
+    return {
+      votedCardId: parsed.votedCardId ?? null,
+      hasModified: parsed.hasModified ?? false,
+    }
+  } catch {
+    return { votedCardId: null, hasModified: false }
+  }
 }
 
 function readCalendarRecords() {
@@ -231,6 +250,19 @@ function createProfileDetails(profile: ProfileSummarySlide) {
   return `나이: ${age || '-'} · 몸무게: ${weightLabel} · 성별: ${sexLabel || '-'}`
 }
 
+const rankingCardsData = [
+  { rank: 1, photo: homeRank1Photo, icon: homeRank1Icon, photoAlt: '1위 반려동물', iconAlt: '1위', rankClass: 'rank_1' },
+  { rank: 2, photo: homeRank2Photo, icon: homeRank2Icon, photoAlt: '2위 반려동물', iconAlt: '2위', rankClass: 'rank_2' },
+  { rank: 3, photo: homeRank3Photo, icon: homeRank3Icon, photoAlt: '3위 반려동물', iconAlt: '3위', rankClass: 'rank_3' },
+] as const
+
+function getRankingCardPositionClass(cardIdx: number, activeIdx: number) {
+  const diff = (cardIdx - activeIdx + 3) % 3
+  if (diff === 0) return 'is_center'
+  if (diff === 1) return 'is_right'
+  return 'is_left'
+}
+
 function VoteHeartIcon({ active }: { active: boolean }) {
   return (
     <svg
@@ -249,12 +281,16 @@ function Home() {
   const [summarySlideIndex, setSummarySlideIndex] = useState(getInitialSummarySlideIndex)
   const [dragOffset, setDragOffset] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
-  const [selectedBestPoseId, setSelectedBestPoseId] = useState<number | null>(() =>
-    readVotedCandidate(BEST_POSE_VOTE_ID),
+  const [selectedCardId, setSelectedCardId] = useState<number | null>(
+    () => getInitialVoteState().votedCardId,
   )
-  const [hasSubmittedBestPoseVote, setHasSubmittedBestPoseVote] = useState(() =>
-    hasVotedMission(BEST_POSE_VOTE_ID),
+  const [votedCardId, setVotedCardId] = useState<number | null>(
+    () => getInitialVoteState().votedCardId,
   )
+  const [hasModified, setHasModified] = useState<boolean>(
+    () => getInitialVoteState().hasModified,
+  )
+  const [rankingIndex, setRankingIndex] = useState(0)
   const [isVoteRewardOpen, setIsVoteRewardOpen] = useState(false)
   const [confirmAction, setConfirmAction] = useState<'profile-edit' | 'profile-delete' | 'vote-edit' | null>(null)
   const [isPetIdModalOpen, setIsPetIdModalOpen] = useState(false)
@@ -333,6 +369,13 @@ function Home() {
       window.scrollTo(0, scrollY)
     }
   }, [isPetIdModalOpen])
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setRankingIndex((prev) => (prev + 1) % 3)
+    }, 2500)
+    return () => clearInterval(timer)
+  }, [])
 
   const handleDragStart = (clientX: number) => {
     dragStateRef.current.startX = clientX
@@ -498,12 +541,13 @@ function Home() {
   }
 
   const selectBestPoseVote = (id: number) => {
-    setSelectedBestPoseId(id)
+    if (votedCardId !== null && hasModified) return
+    setSelectedCardId((prev) => (prev === id ? null : id))
   }
 
   const openBestPoseVoteReward = () => {
-    if (selectedBestPoseId === null) return
-    if (hasSubmittedBestPoseVote) {
+    if (selectedCardId === null) return
+    if (votedCardId !== null) {
       setConfirmAction('vote-edit')
       return
     }
@@ -512,9 +556,16 @@ function Home() {
   }
 
   const confirmBestPoseVoteEdit = () => {
-    if (selectedBestPoseId === null) return
+    if (selectedCardId === null) return
     writeVotedMissionId(BEST_POSE_VOTE_ID)
-    writeVotedCandidate(BEST_POSE_VOTE_ID, selectedBestPoseId)
+    writeVotedCandidate(BEST_POSE_VOTE_ID, selectedCardId)
+    localStorage.setItem('weekly-vote-state', JSON.stringify({
+      votedCardId: selectedCardId,
+      hasModified: true,
+      votedDate: getTodayDateKey(),
+    }))
+    setVotedCardId(selectedCardId)
+    setHasModified(true)
     showStateBarMessage('투표가 수정되었습니다.', 3000)
   }
 
@@ -535,10 +586,15 @@ function Home() {
   }
 
   const confirmBestPoseVote = () => {
-    if (selectedBestPoseId === null) return
+    if (selectedCardId === null) return
     writeVotedMissionId(BEST_POSE_VOTE_ID)
-    writeVotedCandidate(BEST_POSE_VOTE_ID, selectedBestPoseId)
-    setHasSubmittedBestPoseVote(true)
+    writeVotedCandidate(BEST_POSE_VOTE_ID, selectedCardId)
+    localStorage.setItem('weekly-vote-state', JSON.stringify({
+      votedCardId: selectedCardId,
+      hasModified: false,
+      votedDate: getTodayDateKey(),
+    }))
+    setVotedCardId(selectedCardId)
     setIsVoteRewardOpen(false)
   }
 
@@ -554,7 +610,7 @@ function Home() {
             <Button
               type="button"
               aria-label="알림"
-              onClick={() => navigate('/mission')}
+              onClick={() => navigate('/notification')}
             >
               <HeaderIcon type="notification" />
             </Button>
@@ -635,27 +691,21 @@ function Home() {
           title="이번주 주인공은 나야 나!"
           subtitle="지난주 가장 많은 사랑을 받은 아이들을 만나보세요 💜"
         >
-          <div className="home_ranking_podium" aria-label="주간 인기 반려동물 랭킹">
-            <div className="home_ranking_card rank_2">
-              <img src={homeRank2Photo} alt="2위 반려동물" className="home_ranking_card_photo" />
-              <img src={homeRank2Icon} alt="2위" className="home_ranking_badge_icon" />
-            </div>
-            <div className="home_ranking_card rank_1">
-              <img src={homeRank1Photo} alt="1위 반려동물" className="home_ranking_card_photo" />
-              <img src={homeRank1Icon} alt="1위" className="home_ranking_badge_icon" />
-            </div>
-            <div className="home_ranking_card rank_3">
-              <img src={homeRank3Photo} alt="3위 반려동물" className="home_ranking_card_photo" />
-              <img src={homeRank3Icon} alt="3위" className="home_ranking_badge_icon" />
-            </div>
+          <div className="home_ranking_carousel" aria-label="주간 인기 반려동물 랭킹">
+            {rankingCardsData.map((card, i) => (
+              <div key={card.rank} className={`home_ranking_card ${card.rankClass} ${getRankingCardPositionClass(i, rankingIndex)}`}>
+                <img src={card.photo} alt={card.photoAlt} className="home_ranking_card_photo" />
+                <img src={card.icon} alt={card.iconAlt} className="home_ranking_badge_icon" />
+              </div>
+            ))}
           </div>
 
           <div className="home_ranking_banner">
+            <img src={lankingIconImg} alt="" aria-hidden="true" className="home_ranking_banner_icon" />
             <div className="home_ranking_banner_copy">
               <p>이번주엔 루루가 제일 인기 많았대!</p>
               <span>(다들 너무 귀여워서 고르기 힘들어요…)</span>
             </div>
-            <img src={lankingIconImg} alt="" aria-hidden="true" className="home_ranking_banner_icon" />
           </div>
 
           <Button
@@ -674,7 +724,7 @@ function Home() {
         >
           <div className="best_pose_vote_strip" aria-label="오늘의 베스트 포즈 투표 목록">
             {bestPoseVoteItems.map((item, index) => {
-              const isLiked = selectedBestPoseId === item.id
+              const isLiked = selectedCardId === item.id
               const displayName = homeVoteDisplayNames[index] ?? item.name
 
               return (
@@ -704,10 +754,13 @@ function Home() {
           <Button
             type="button"
             className="home_vote_btn"
-            disabled={selectedBestPoseId === null}
+            disabled={
+              selectedCardId === null ||
+              (votedCardId !== null && (selectedCardId === votedCardId || hasModified))
+            }
             onClick={openBestPoseVoteReward}
           >
-            {hasSubmittedBestPoseVote ? '수정하기' : '투표하기'}
+            {votedCardId !== null ? '수정하기' : '투표하기'}
           </Button>
         </ContentSection>
 
@@ -717,10 +770,10 @@ function Home() {
           backgroundColor="#EDE9FE"
           ariaLabel="수의사 상담 배너"
           rotateImage={false}
-          imageWidth={148}
-          imageHeight={140}
-          imageBottom={-20}
-          imageRight={20}
+          imageWidth={81}
+          imageHeight={65}
+          imageTop={5}
+          imageRight={50}
         />
 
         <ContentSection className="home_section home_content_section" title="펫스토리">
@@ -733,7 +786,7 @@ function Home() {
                 onClick={() => navigate(item.path)}
               >
                 <img src={item.image} alt={item.title} style={{ objectPosition: item.objectPosition }} />
-                <span className="content_card_chip">일상</span>
+                <span className="content_card_chip">{item.chip}</span>
                 <div className="content_overlay">
                   <p className="p_semibold">{item.title}</p>
                 </div>
@@ -943,13 +996,28 @@ function Home() {
             message={
               confirmAction === 'profile-delete'
                 ? '삭제하시겠습니까?'
-                : '수정하시겠습니까?'
+                : confirmAction === 'vote-edit'
+                  ? '투표를 수정할까요?'
+                  : '수정하시겠습니까?'
             }
             description={
+              confirmAction === 'vote-edit' ? (
+                <>
+                  투표는 기간 내 1회만 수정할 수 있어요.
+                  <br />
+                  정말 수정하시겠어요?
+                </>
+              ) : undefined
+            }
+            cancelLabel={confirmAction === 'vote-edit' ? '취소' : '아니요'}
+            confirmLabel={confirmAction === 'vote-edit' ? '수정' : '네'}
+            accentColor={confirmAction === 'vote-edit' ? '#FF88C5' : undefined}
+            cancelButtonStyle={
               confirmAction === 'vote-edit'
-                ? '정확한 투표 집계를 위해 수정은 1회만 가능해요.'
+                ? { backgroundColor: '#D9D9D9', border: 'none', color: '#111111' }
                 : undefined
             }
+            dialogClassName={confirmAction === 'vote-edit' ? 'confirm_dialog_vote_edit' : undefined}
             onCancel={() => setConfirmAction(null)}
             onConfirm={handleConfirmAction}
           />

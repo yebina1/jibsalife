@@ -121,6 +121,7 @@ function Layout({
     '/mypage/subscription',
     '/signup/terms/service',
     '/signup/terms/privacy',
+    '/notification',
   ]
   const hideFloatingAiButton = hideFloatingAiButtonPaths.includes(pathname) || isCommunityPath
 

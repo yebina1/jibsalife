@@ -20,6 +20,12 @@ export type ChatMessage = {
 
 type FeedbackType = 'like' | 'dislike'
 
+type ChatRoomResponse =
+  | void
+  | ChatMessage
+  | ChatMessage[]
+  | Promise<void | ChatMessage | ChatMessage[]>
+
 type ChatRoomProps = {
   initialMessages: ChatMessage[]
   bottomPromptMessage?: ChatMessage
@@ -33,7 +39,10 @@ type ChatRoomProps = {
   botAvatarSrc?: string
   feedbackSelections?: Record<number, FeedbackType>
   onChipSelect?: (chip: string) => void | ChatMessage | ChatMessage[]
-  onMessageSubmit?: (message: string) => void | ChatMessage | ChatMessage[]
+  onMessageSubmit?: (
+    message: string,
+    recentMessages: ChatMessage[]
+  ) => ChatRoomResponse
   onActionSelect?: (
     action: ChatAction,
     sourceMessage: ChatMessage,
@@ -134,11 +143,24 @@ function ChatRoom({
     text,
   })
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const trimmedMessage = message.trim()
+
     if (!trimmedMessage) return
 
-    const followUp = onMessageSubmit?.(trimmedMessage)
+    const recentMessages = messages
+      .filter(
+        (item) =>
+          item.sender === 'user' ||
+          item.sender === 'bot'
+      )
+      .slice(-6)
+
+    const followUp =
+      await onMessageSubmit?.(
+        trimmedMessage,
+        recentMessages
+      )
     const chatbotAnswer = followUp ? null : createLocalChatbotAnswer(trimmedMessage)
     const nextMessageId = Date.now()
 

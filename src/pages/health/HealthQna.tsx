@@ -16,7 +16,6 @@ import {
   type ChatbotRecordCategory,
   type ChatbotFeedbackType,
 } from '../../utils/chatbotRecords'
-import { createLocalChatbotAnswer } from '../../utils/localChatbotAnswers'
 import {
   parseMealRecordDetail,
   parsePoopRecordDetail,
@@ -211,6 +210,7 @@ function HealthQna() {
   const [profileName, setProfileName] = useState(() => readMyProfileName())
   const [feedbackSelections, setFeedbackSelections] = useState(buildFeedbackSelections)
   const [pendingOtherRecord, setPendingOtherRecord] = useState<PendingOtherRecord | null>(null)
+  const [chatCount, setChatCount] = useState(0)
   const introMessages = useMemo(() => createIntroMessages(profileName), [profileName])
 
   useEffect(() => {
@@ -254,8 +254,19 @@ function HealthQna() {
     }
   }
 
-  const handleMessageSubmit = (message: string) => {
-    if (pendingOtherRecord) {
+  const handleMessageSubmit = async (
+    message: string,
+    recentMessages: ChatMessage[]
+  ) => {
+    if (chatCount >= 10) {
+      return {
+        id: buildMessageId(),
+        sender: 'bot' as const,
+        text: 'AI 상담은 하루 10회까지 이용할 수 있어요.',
+      }
+    }
+
+  if (pendingOtherRecord) {
       const draft: RecordDraft = {
         kind: pendingOtherRecord.kind,
         category: pendingOtherRecord.category,
@@ -319,15 +330,65 @@ function HealthQna() {
       return buildConfirmMessage(draft, profileName, '증상 기록을 저장했어요.')
     }
 
-    const chatbotAnswer = createLocalChatbotAnswer(message)
-    if (!chatbotAnswer) return
+    try {
+
+  const res = await fetch(
+    "http://localhost:4000/api/chat",
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({
+        message,
+
+        recentMessages: recentMessages.map(
+          (item) => `${item.sender}: ${item.text}`
+        ),
+
+        petRecord: `
+          05/13 기록
+          - 식사: 120g
+          - 산책: 30분
+          - 배변·배뇨: 정상 변
+
+          05/14 기록
+          - 식사: 120g
+          - 활동: 활발함
+          - 배변·배뇨: 정상 변
+
+          05/15 기록
+          - 식사: 120g
+          - 활동: 활발함
+          - 증상: 재채기
+        `
+        }),
+      }
+    )
+
+      const data = await res.json()
+
+      setChatCount((count) => count + 1)
+
+      return {
+        id: buildMessageId(),
+        sender: 'bot' as const,
+        text: data.answer,
+      }
+
+    } catch (error) {
+
+    console.error(error)
 
     return {
       id: buildMessageId(),
       sender: 'bot' as const,
-      text: chatbotAnswer,
+      text: '답변 생성 중 오류가 발생했어요.',
     }
   }
+}
 
   const handleActionSelect = (action: ChatAction) => {
     if (action.value === 'dismiss') {

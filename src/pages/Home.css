@@ -138,7 +138,6 @@
 
 .home_weekly_ranking_section .content_section_header {
   margin-bottom: 0;
-  padding-inline: var(--layout-inline-padding);
 }
 
 .home_weekly_ranking_section .content_section_copy {
@@ -162,38 +161,53 @@
   letter-spacing: -0.025em;
 }
 
-.home_ranking_podium {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 8px;
-  padding-inline: 16px;
+.home_ranking_carousel {
+  position: relative;
+  overflow: hidden;
+  height: 360px;
+  margin-inline: calc(var(--layout-inline-padding) * -1);
 }
 
 .home_ranking_card {
-  position: relative;
+  position: absolute;
+  top: 50%;
+  left: 50%;
   overflow: hidden;
   border-radius: 12px;
-  flex-shrink: 1;
+  aspect-ratio: 250 / 340;
+  height: 340px;
+  width: auto;
+  transition: transform 0.4s ease, opacity 0.4s ease;
 }
 
-.home_ranking_card.rank_2,
-.home_ranking_card.rank_3 {
-  flex: 1 0 0;
-  max-width: 196px;
-  aspect-ratio: 196 / 300;
+.home_ranking_card.is_center {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  z-index: 2;
+}
+
+.home_ranking_card.is_left {
+  transform: translate(calc(-50% - 175px), calc(-50% + 20px)) scale(0.85);
+  opacity: 0.7;
+  z-index: 1;
+}
+
+.home_ranking_card.is_right {
+  transform: translate(calc(-50% + 175px), calc(-50% + 20px)) scale(0.85);
+  opacity: 0.7;
+  z-index: 1;
+}
+
+.home_ranking_card.rank_1 {
+  border: 2px solid rgba(253, 255, 131, 0.7);
+}
+
+.home_ranking_card.rank_2 {
   border: 2px solid rgba(188, 139, 255, 0.7);
 }
 
 .home_ranking_card.rank_3 {
-  border-color: rgba(251, 186, 251, 0.7);
-}
-
-.home_ranking_card.rank_1 {
-  flex: 1.276 0 0;
-  max-width: 250px;
-  aspect-ratio: 250 / 340;
-  border: 2px solid rgba(253, 255, 131, 0.7);
+  border: 2px solid rgba(251, 186, 251, 0.7);
 }
 
 .home_ranking_card_photo {
@@ -209,25 +223,32 @@
   top: 10px;
   left: 10px;
   z-index: 2;
-  width: 40px;
-  height: auto;
+  width: 57px;
+  height: 58px;
   object-fit: contain;
 }
 
-.home_ranking_card.rank_2 .home_ranking_badge_icon,
-.home_ranking_card.rank_3 .home_ranking_badge_icon {
-  width: 32px;
-}
-
 .home_ranking_banner {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 18px;
   margin-inline: 16px;
-  padding: 12px 16px;
+  padding: 16px 16px;
   border-radius: 12px;
   background: #E4FBFF;
-  gap: 8px;
+}
+
+.home_ranking_banner::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 12px solid #E4FBFF;
 }
 
 .home_ranking_banner_copy {
@@ -262,14 +283,15 @@
   align-items: center;
   justify-content: center;
   align-self: center;
-  width: fit-content;
+  width: 162px;
+  height: 46px;
   margin-inline: auto;
-  padding: 12px 24px;
+  padding: 0 12px;
   border: 1px solid #6D59F8;
   border-radius: 100px;
   color: #6D59F8;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
   background: transparent;
   cursor: pointer;
   white-space: nowrap;
@@ -286,7 +308,7 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px 8px;
   margin-inline: -16px;
-  padding-inline: 16px;
+  padding-inline: 8px;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
@@ -330,9 +352,13 @@
   padding: 0;
   border: 0;
   border-radius: 999px;
-  background: rgb(17 17 17 / 50%);
+  background: transparent;
   color: #ffffff;
   cursor: pointer;
+}
+
+.best_pose_vote_card_like.is_active {
+  background: #FF88C5;
 }
 
 .best_pose_vote_card_heart {
@@ -351,7 +377,8 @@
 }
 
 .best_pose_vote_card_heart.is_active path {
-  fill: #A10803;
+  fill: #ffffff;
+  stroke: #ffffff;
 }
 
 .best_pose_vote_card p {
@@ -365,21 +392,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: fit-content;
+  width: 162px;
+  height: 46px;
   margin: 32px auto 0;
-  padding: 12px 32px;
-  border: 1px solid #FF88C5;
-  border-radius: 100px;
-  color: #D52C83;
-  font-size: 14px;
-  font-weight: 500;
-  background: transparent;
+  padding: 0 12px;
+  border: 1px solid #FF88C5 !important;
+  border-radius: 100px !important;
+  color: #D52C83 !important;
+  font-size: 16px;
+  font-weight: 600;
+  background: transparent !important;
   cursor: pointer;
   white-space: nowrap;
 }
 
 .home_vote_btn::after {
   content: none;
+}
+
+.home_vote_btn:not(:disabled) {
+  background: #FF88C5 !important;
+  color: #ffffff !important;
 }
 
 .home_vote_btn:disabled {
@@ -397,15 +430,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  width: fit-content;
+  gap: 4px;
+  width: 162px;
+  height: 46px;
   margin: 32px auto 0;
-  padding: 12px 32px;
+  padding: 0 12px;
   border: 1px solid #E5E5EC;
   border-radius: 100px;
   color: #111111;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
   background: transparent;
   cursor: pointer;
   white-space: nowrap;

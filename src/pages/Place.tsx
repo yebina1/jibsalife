@@ -129,7 +129,7 @@ function Place() {
             <Button type="button" aria-label="캘린더" onClick={() => navigate('/mission')}>
               <HeaderIcon type="calendar" />
             </Button>
-            <Button type="button" aria-label="알림">
+            <Button type="button" aria-label="알림" onClick={() => navigate('/notification')}>
               <HeaderIcon type="notification" />
             </Button>
           </>

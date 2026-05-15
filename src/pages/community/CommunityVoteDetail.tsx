@@ -75,7 +75,7 @@ function CommunityVoteDetail() {
             <Button type="button" aria-label="calendar" onClick={() => navigate('/mission')}>
               <HeaderIcon type="calendar" />
             </Button>
-            <Button type="button" aria-label="notification">
+            <Button type="button" aria-label="notification" onClick={() => navigate('/notification')}>
               <HeaderIcon type="notification" />
             </Button>
           </>
