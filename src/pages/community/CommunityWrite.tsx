@@ -1,6 +1,6 @@
 import './CommunityWrite.css'
 import { createPortal } from 'react-dom'
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useActionRowSlot } from '../../contexts/ActionRowContext'
 import { useLocation, useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'
@@ -11,12 +11,19 @@ import { MY_PROFILE_NAME } from '../../utils/myProfile'
 import communityWriteBg from '../../svg/community_write_bg.svg'
 import imageIcon from '../../svg/Image.svg'
 import tagsIcon from '../../svg/tags.svg'
+import locationIcon from '../../svg/location.svg'
+import keyboardIcon from '../../svg/keyboard.svg'
 import PostMoreSheet from '../../components/PostMoreSheet'
 
 const createdPostsStorageKey = 'jibsalife.community.createdPosts'
 
 const boardOptions = ['일상'] as const
 type BoardOption = (typeof boardOptions)[number]
+
+const boardDisplayOptions: { value: string; disabled: boolean }[] = [
+  { value: '일상', disabled: false },
+  { value: '자랑하기', disabled: true },
+]
 
 type EditPost = {
   id: number
@@ -35,45 +42,6 @@ type EditPost = {
   place?: { name: string; address: string }
 }
 
-type TextBlock = { type: 'text'; id: number; value: string }
-type ImageBlock = { type: 'image'; id: number; url: string }
-type ContentBlock = TextBlock | ImageBlock
-
-function AutoGrowTextarea({
-  value,
-  onChange,
-  onFocus,
-  placeholder,
-  className,
-}: {
-  value: string
-  onChange: (v: string) => void
-  onFocus?: () => void
-  placeholder?: string
-  className?: string
-}) {
-  const ref = useRef<HTMLTextAreaElement>(null)
-
-  useLayoutEffect(() => {
-    const el = ref.current
-    if (!el) return
-    el.style.height = 'auto'
-    el.style.height = `${el.scrollHeight}px`
-  }, [value])
-
-  return (
-    <textarea
-      ref={ref}
-      className={['input_field', className].filter(Boolean).join(' ')}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      onFocus={onFocus}
-      placeholder={placeholder}
-      rows={1}
-      style={{ overflow: 'hidden' }}
-    />
-  )
-}
 
 function CommunityWrite() {
   const navigate = useNavigate()
@@ -81,40 +49,32 @@ function CommunityWrite() {
   const editPost = (location.state as { editPost?: EditPost } | null)?.editPost
 
   const [board, setBoard] = useState<BoardOption | ''>(
-    editPost && boardOptions.includes(editPost.tag as BoardOption) ? (editPost.tag as BoardOption) : '일상'
+    editPost && boardOptions.includes(editPost.tag as BoardOption) ? (editPost.tag as BoardOption) : ''
   )
   const [isBoardOpen, setIsBoardOpen] = useState(false)
   const [title, setTitle] = useState(editPost?.title ?? '')
-  const [blocks, setBlocks] = useState<ContentBlock[]>(() => {
-    if (editPost) {
-      const textBlock: TextBlock = { type: 'text', id: 1, value: editPost.content ?? '' }
-      if (editPost.images?.length) {
-        const imgBlocks: ImageBlock[] = editPost.images.map((url, i) => ({
-          type: 'image',
-          id: i + 2,
-          url,
-        }))
-        return [textBlock, ...imgBlocks, { type: 'text', id: editPost.images.length + 2, value: '' }]
-      }
-      return [textBlock]
-    }
-    return [{ type: 'text', id: Date.now(), value: '' }]
-  })
-  const [focusedBlockId, setFocusedBlockId] = useState<number | null>(null)
+  const [content, setContent] = useState(editPost?.content ?? '')
+  const [images, setImages] = useState<string[]>(editPost?.images ?? [])
   const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false)
+  const [isKeyboardShown, setIsKeyboardShown] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const cameraInputRef = useRef<HTMLInputElement>(null)
+  const contentTextareaRef = useRef<HTMLTextAreaElement>(null)
+  const boardSelectRef = useRef<HTMLDivElement>(null)
   const actionRowSlot = useActionRowSlot()
   const handleAddTagRef = useRef<() => void>(() => {})
+  const handleKeyboardToggleRef = useRef<() => void>(() => {})
 
-  const derivedContent = blocks
-    .filter((b): b is TextBlock => b.type === 'text')
-    .map((b) => b.value)
-    .join('\n')
-    .trim()
-  const derivedImages = blocks
-    .filter((b): b is ImageBlock => b.type === 'image')
-    .map((b) => b.url)
+  useEffect(() => {
+    if (!isBoardOpen) return
+    const handleClickOutside = (e: MouseEvent) => {
+      if (!boardSelectRef.current?.contains(e.target as Node)) {
+        setIsBoardOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isBoardOpen])
 
   const handleAlbum = () => { setIsPhotoSheetOpen(false); fileInputRef.current?.click() }
   const handleCamera = () => { setIsPhotoSheetOpen(false); cameraInputRef.current?.click() }
@@ -124,62 +84,32 @@ function CommunityWrite() {
     const urls = files.map((f) => URL.createObjectURL(f))
     e.target.value = ''
     if (!urls.length) return
-
-    setBlocks((prev) => {
-      const insertAfterIdx =
-        focusedBlockId !== null
-          ? prev.findIndex((b) => b.id === focusedBlockId)
-          : prev.length - 1
-      const idx = insertAfterIdx >= 0 ? insertAfterIdx : prev.length - 1
-
-      const imageBlocks: ImageBlock[] = urls.map((url, i) => ({
-        type: 'image',
-        id: Date.now() + i,
-        url,
-      }))
-      const newTextBlock: TextBlock = {
-        type: 'text',
-        id: Date.now() + urls.length,
-        value: '',
-      }
-
-      const next = [...prev]
-      next.splice(idx + 1, 0, ...imageBlocks, newTextBlock)
-      return next
-    })
+    setImages((prev) => [...prev, ...urls])
   }
 
-  const updateTextBlock = (id: number, value: string) => {
-    setBlocks((prev) => prev.map((b) => b.type === 'text' && b.id === id ? { ...b, value } : b))
-  }
-
-  const removeImageBlock = (id: number) => {
-    setBlocks((prev) => {
-      const next = prev.filter((b) => b.id !== id)
-      if (next.length === 0) return [{ type: 'text', id: Date.now(), value: '' }]
-      return next
-    })
+  const removeImage = (idx: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== idx))
   }
 
   const handleAddTag = () => {
-    const targetId =
-      focusedBlockId ??
-      blocks.filter((b): b is TextBlock => b.type === 'text').at(-1)?.id
-    if (targetId === undefined) return
-    setBlocks((prev) =>
-      prev.map((b) =>
-        b.type === 'text' && b.id === targetId
-          ? { ...b, value: b.value ? `${b.value} #` : '#' }
-          : b
-      )
-    )
+    setContent((prev) => (prev ? `${prev} #` : '#'))
+    contentTextareaRef.current?.focus()
   }
   handleAddTagRef.current = handleAddTag
+
+  const handleKeyboardToggle = () => {
+    if (isKeyboardShown) {
+      contentTextareaRef.current?.blur()
+    } else {
+      contentTextareaRef.current?.focus()
+    }
+  }
+  handleKeyboardToggleRef.current = handleKeyboardToggle
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault()
     const trimmedTitle = title.trim()
-    const trimmedContent = derivedContent
+    const trimmedContent = content.trim()
     if (!trimmedTitle || !trimmedContent || !board) return
 
     if (editPost) {
@@ -188,8 +118,8 @@ function CommunityWrite() {
         tag: board,
         title: trimmedTitle,
         content: trimmedContent,
-        image: derivedImages[0] ?? null,
-        images: derivedImages,
+        image: images[0] ?? null,
+        images,
         tags: [],
       }
       try {
@@ -220,8 +150,8 @@ function CommunityWrite() {
       comments: 0,
       shares: 0,
       createdAt: now.toISOString(),
-      image: derivedImages[0] ?? null,
-      images: derivedImages,
+      image: images[0] ?? null,
+      images,
       tags: [],
     }
 
@@ -245,7 +175,7 @@ function CommunityWrite() {
             type="submit"
             form="cw_form"
             className="s_purple_btn"
-            disabled={!title.trim() || !derivedContent || !board}
+            disabled={!title.trim() || !content.trim() || !board}
           >
             {editPost ? '수정' : '등록'}
           </Button>
@@ -253,10 +183,10 @@ function CommunityWrite() {
       />
 
       <main className="page cw_page">
-        <form id="cw_form" className="cw_form" onSubmit={handleSubmit}>
+        <form id="cw_form" className="cw_form" style={{ backgroundImage: `url(${communityWriteBg})` }} onSubmit={handleSubmit}>
 
           <div className="cw_section cw_section_no_bottom_space cw_board_section">
-            <div className="cw_board_select">
+            <div className="cw_board_select" ref={boardSelectRef}>
               <button
                 type="button"
                 className="cw_board_toggle"
@@ -264,25 +194,24 @@ function CommunityWrite() {
                 aria-haspopup="listbox"
                 aria-expanded={isBoardOpen}
               >
-                <span className={board ? '' : 'cw_placeholder'}>{board || '주제를 선택하세요'}</span>
+                <span className={board ? '' : 'cw_placeholder'}>{board || '게시글을 선택해주세요'}</span>
                 <i className="bx bx-chevron-down cw_chevron_icon" aria-hidden="true" />
               </button>
-              {isBoardOpen && (
-                <div className="cw_board_menu" role="listbox">
-                  {boardOptions.map((opt) => (
+              <div className={`cw_board_menu${isBoardOpen ? ' open' : ''}`} role="listbox">
+                  {boardDisplayOptions.map((opt) => (
                     <button
-                      key={opt}
+                      key={opt.value}
                       type="button"
-                      className={`cw_board_option${board === opt ? ' active' : ''}`}
+                      className={`cw_board_option${board === opt.value ? ' active' : ''}${opt.disabled ? ' is_disabled' : ''}`}
                       role="option"
-                      aria-selected={board === opt}
-                      onClick={() => { setBoard(opt); setIsBoardOpen(false) }}
+                      aria-selected={board === opt.value}
+                      disabled={opt.disabled}
+                      onClick={() => { setBoard(opt.value as BoardOption); setIsBoardOpen(false) }}
                     >
-                      {opt}
+                      {opt.value}
                     </button>
                   ))}
                 </div>
-              )}
             </div>
           </div>
 
@@ -296,41 +225,35 @@ function CommunityWrite() {
             />
           </div>
 
-          <div
-            className="cw_section cw_section_no_bottom_space cw_content_section"
-            style={{ backgroundImage: `url(${communityWriteBg})` }}
-          >
-            <div className="cw_content_blocks">
-              {blocks.map((block) =>
-                block.type === 'image' ? (
-                  <div key={block.id} className="cw_inline_image_wrap">
-                    <img src={block.url} alt="" className="cw_inline_image" />
-                    <button
-                      type="button"
-                      className="cw_inline_image_remove"
-                      onClick={() => removeImageBlock(block.id)}
-                      aria-label="사진 삭제"
-                    >
-                      <i className="bx bxs-x-circle" aria-hidden="true" />
-                    </button>
-                  </div>
-                ) : (
-                  <AutoGrowTextarea
-                    key={block.id}
-                    className="cw_content_textarea"
-                    value={block.value}
-                    onChange={(v) => updateTextBlock(block.id, v)}
-                    onFocus={() => setFocusedBlockId(block.id)}
-                    placeholder={
-                      block === blocks[0]
-                        ? '오늘의 펫스토리 내용을 작성해 보세요\n#투표 #반려동물 #일상...'
-                        : undefined
-                    }
-                  />
-                )
-              )}
-            </div>
+          <div className="cw_section cw_section_no_bottom_space cw_content_section">
+            <textarea
+              ref={contentTextareaRef}
+              className="input_field cw_content_textarea"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              onFocus={() => setIsKeyboardShown(true)}
+              onBlur={() => setIsKeyboardShown(false)}
+              placeholder={'오늘의 펫스토리 내용을 작성해 보세요\n#투표 #반려동물 #일상...'}
+            />
           </div>
+
+          {images.length > 0 && (
+            <div className="cw_image_gallery">
+              {images.map((url, idx) => (
+                <div key={idx} className="cw_gallery_item">
+                  <img src={url} alt="" className="cw_gallery_image" />
+                  <button
+                    type="button"
+                    className="cw_inline_image_remove"
+                    onClick={() => removeImage(idx)}
+                    aria-label="사진 삭제"
+                  >
+                    <i className="bx bxs-x-circle" aria-hidden="true" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
 
         </form>
       </main>
@@ -349,13 +272,22 @@ function CommunityWrite() {
 
       {actionRowSlot && createPortal(
         <div className="cw_action_row">
-          <button type="button" className="p_regular" onClick={() => setIsPhotoSheetOpen(true)}>
-            <img src={imageIcon} className="cw_action_icon" alt="" />
-            사진
-          </button>
-          <button type="button" className="p_regular" onClick={() => handleAddTagRef.current()}>
-            <img src={tagsIcon} className="cw_action_icon" alt="" />
-            태그
+          <div className="cw_action_left">
+            <button type="button" className="p_regular" onClick={() => setIsPhotoSheetOpen(true)}>
+              <img src={imageIcon} className="cw_action_icon" alt="사진" />
+              사진
+            </button>
+            <button type="button" className="p_regular" onClick={() => handleAddTagRef.current()}>
+              <img src={tagsIcon} className="cw_action_icon" alt="태그" />
+              태그
+            </button>
+            <button type="button" className="p_regular">
+              <img src={locationIcon} className="cw_action_icon" alt="위" />
+              위치
+            </button>
+          </div>
+          <button type="button" className="keyboard" onClick={() => handleKeyboardToggleRef.current()}>
+            <img src={keyboardIcon} className="cw_action_icon" alt="키보드" />
           </button>
         </div>,
         actionRowSlot

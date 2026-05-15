@@ -12,6 +12,7 @@ import knowledge1 from '../../img/petstory/Knowledge/knowledge1.png'
 import knowledge2 from '../../img/petstory/Knowledge/knowledge2.png'
 import knowledge3 from '../../img/petstory/Knowledge/knowledge3.png'
 import knowledge4 from '../../img/petstory/Knowledge/knowledge4.png'
+import dailyThumbnail from '../../img/petstory/daily/daily_thumbnail.jpg'
 import life1 from '../../img/petstory/daily/daily_1.jpg'
 import life2 from '../../img/petstory/daily/daily_2.png'
 import life3 from '../../img/petstory/daily/daily_3.png'
@@ -502,12 +503,10 @@ function CommunityPetStory() {
               {dailyFeedPosts.map((post) => (
                 <article
                   key={post.id}
-                  className={`cpsd_item${post.image == null ? ' cpsd_item_featured' : ''}`}
+                  className="cpsd_item"
                   onClick={() => openPostDetail(post)}
                 >
-                  {post.image != null && (
-                    <img src={post.image} alt={post.title} className="cpsd_thumb" />
-                  )}
+                  <img src={post.image ?? dailyThumbnail} alt={post.title} className="cpsd_thumb" />
                   <Title
                     as="h5"
                     className="cpsd_body"
@@ -580,7 +579,7 @@ function CommunityPetStory() {
               {overviewPosts.map((post) => (
                 <article
                   key={post.id}
-                  className={`cpsd_item${post.image == null ? ' cpsd_item_featured' : ''}`}
+                  className="cpsd_item"
                   onClick={() => {
                     if (post.path) {
                       openKnowledgeDetail({
@@ -600,9 +599,7 @@ function CommunityPetStory() {
                     openPostDetail(post)
                   }}
                 >
-                  {post.image != null && (
-                    <img src={post.image} alt={post.title} className="cpsd_thumb" />
-                  )}
+                  <img src={post.image ?? dailyThumbnail} alt={post.title} className="cpsd_thumb" />
                   <Title
                     as="h5"
                     className="cpsd_body"
@@ -642,12 +639,10 @@ function CommunityPetStory() {
               posts.map((post) => (
                 <article
                   key={post.id}
-                  className={`community_post${post.image == null ? ' community_post_featured' : ''}`}
+                  className="community_post"
                   onClick={() => openPostDetail(post)}
                 >
-                  {post.image != null && (
-                    <img className="community_post_image" src={post.image} alt={post.title} />
-                  )}
+                  <img className="community_post_image" src={post.image ?? dailyThumbnail} alt={post.title} />
                   <div className="community_post_body">
                     <div className="community_post_header">
                       <span className="community_post_tag">{post.tag}</span>
