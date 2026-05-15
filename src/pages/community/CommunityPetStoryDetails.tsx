@@ -500,7 +500,7 @@ function CommunityPetStoryDetails() {
             >
               <BookmarkIcon />
             </Button>
-            <Button type="button" aria-label="알림">
+            <Button type="button" aria-label="알림" onClick={() => navigate('/notification')}>
               <HeaderIcon type="notification" />
             </Button>
           </>

@@ -32,6 +32,7 @@ import HealthQna from './pages/health/HealthQna'
 import HealthRegister from './pages/health/HealthRegister'
 import HealthVetChat from './pages/health/HealthVetChat'
 import Home from './pages/Home'
+import Notification from './pages/Notification'
 import Login from './pages/Login'
 import Mission from './pages/Mission'
 import MyPage from './pages/mypage/MyPage'
@@ -91,6 +92,9 @@ function App() {
         </Route>
         <Route element={<Layout showHeader={false} showNav={false} />}>
           <Route path="/mypage/subscription" element={<SubscriptionPage />} />
+        </Route>
+        <Route element={<Layout showHeader={false} showNav={false} showFooter={false} />}>
+          <Route path="/notification" element={<Notification />} />
         </Route>
         <Route element={<Layout />}>
           <Route path="/mypage/posts" element={<MyPostsPage />} />

@@ -6,9 +6,10 @@ type Props = {
   onClose: () => void
   children?: ReactNode
   dialogRef?: Ref<HTMLElement>
+  dialogClassName?: string
 }
 
-function Alert({ onClose, children, dialogRef }: Props) {
+function Alert({ onClose, children, dialogRef, dialogClassName }: Props) {
   const content = (
     <div className="alert_layer" role="presentation">
       <button
@@ -17,7 +18,12 @@ function Alert({ onClose, children, dialogRef }: Props) {
         aria-label="닫기"
         onClick={onClose}
       />
-      <section ref={dialogRef} className="alert" role="alertdialog" aria-modal="true">
+      <section
+        ref={dialogRef}
+        className={dialogClassName ? `alert ${dialogClassName}` : 'alert'}
+        role="alertdialog"
+        aria-modal="true"
+      >
         {children}
       </section>
     </div>

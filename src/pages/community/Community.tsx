@@ -550,6 +550,7 @@ function Community({ section }: CommunityProps) {
             <Button
               type="button"
               aria-label="notification"
+              onClick={() => navigate('/notification')}
             >
               <HeaderIcon type="notification" />
             </Button>
