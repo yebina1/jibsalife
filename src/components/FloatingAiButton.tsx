@@ -18,7 +18,8 @@ export default function FloatingAiButton({ className }: FloatingAiButtonProps) {
       onClick={() => navigate('/health/qna')}
     >
       <span className="floating_button_icon_frame" aria-hidden="true">
-        <img src={aiChatIcon} alt="AI 챗봇 아이콘" />
+        <span className="floating_ai_chat_bubble" />
+        <img src={aiChatIcon} alt="AI chat" />
       </span>
     </FloatingButton>
   )
