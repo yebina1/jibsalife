@@ -1,5 +1,6 @@
 import './CommunityWrite.css'
 import './VoteWrite.css'
+import { createPortal } from 'react-dom'
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'
@@ -13,6 +14,7 @@ import peopleIcon from '../../svg/people.svg'
 import voteOIcon from '../../svg/vote_o.svg'
 import voteXIcon from '../../svg/vote_x.svg'
 import { saveUserVote } from '../../utils/savedVotes'
+import { useActionRowSlot } from '../../contexts/ActionRowContext'
 
 const VOTE_DURATION_OPTIONS = [3, 7, 10] as const
 type VoteDuration = (typeof VOTE_DURATION_OPTIONS)[number]
@@ -36,6 +38,7 @@ function VoteWrite() {
   ])
   const [isVoteConfirmOpen, setIsVoteConfirmOpen] = useState(false)
   const voteItemFileRefs = useRef<(HTMLInputElement | null)[]>([])
+  const actionRowSlot = useActionRowSlot()
 
   const isVoteReady =
     voteType !== '' &&
@@ -223,19 +226,6 @@ function VoteWrite() {
         </div>
       </main>
 
-      <footer>
-        <div className="cw_action_row">
-          <button type="button" className="p_regular">
-            <img src={imageIcon} className="cw_action_icon" alt="" />
-            사진
-          </button>
-          <button type="button" className="p_regular">
-            <img src={peopleIcon} className="cw_action_icon" alt="" />
-            투표
-          </button>
-        </div>
-      </footer>
-
       {isVoteConfirmOpen && (
         <ConfirmDialog
           message="투표를 등록할까요?"
@@ -245,6 +235,20 @@ function VoteWrite() {
           onCancel={() => setIsVoteConfirmOpen(false)}
           onConfirm={handleVoteConfirm}
         />
+      )}
+
+      {actionRowSlot && createPortal(
+        <div className="cw_action_row">
+          <button type="button" className="p_regular">
+            <img src={imageIcon} className="cw_action_icon" alt="" />
+            사진
+          </button>
+          <button type="button" className="p_regular">
+            <img src={peopleIcon} className="cw_action_icon" alt="" />
+            투표
+          </button>
+        </div>,
+        actionRowSlot
       )}
     </>
   )

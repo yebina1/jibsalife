@@ -8,6 +8,7 @@ import Nav from '../components/Nav'
 import StateBar from '../components/StateBar'
 import StatusMessageBar from '../components/StatusMessageBar'
 import { HeaderContext, type HeaderConfig } from '../contexts/HeaderContext'
+import { ActionRowContext } from '../contexts/ActionRowContext'
 
 type LayoutProps = {
   showHeader?: boolean
@@ -60,6 +61,7 @@ function Layout({
   hasContentPadding = true,
 }: LayoutProps) {
   const [header, setHeader] = useState<HeaderConfig>(null)
+  const [actionRowSlot, setActionRowSlot] = useState<HTMLElement | null>(null)
   const [isCommunitySortOpen, setIsCommunitySortOpen] = useState(false)
   const navigate = useNavigate()
   const [isFloatingAiHiddenByScroll, setIsFloatingAiHiddenByScroll] = useState(false)
@@ -222,6 +224,7 @@ function Layout({
   }, [pathname])
 
   return (
+    <ActionRowContext.Provider value={actionRowSlot}>
     <HeaderContext.Provider value={setHeader}>
       <div className={layoutClassName} ref={layoutRef}>
         {!isNoLayoutPage ? (
@@ -334,12 +337,14 @@ function Layout({
         ) : null}
         {!isNoLayoutPage && showFooter ? (
           <footer>
+            <div ref={setActionRowSlot} />
             {showNav && !isPetStoryDetailPage && !isKnowledgeDetailPage && !isVoteResultPage && !isPetStoryWritePage && !isVoteWritePage && <Nav />}
             <HomeIndicator />
           </footer>
         ) : null}
       </div>
     </HeaderContext.Provider>
+    </ActionRowContext.Provider>
   )
 }
 

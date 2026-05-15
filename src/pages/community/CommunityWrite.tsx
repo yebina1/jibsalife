@@ -1,5 +1,7 @@
 import './CommunityWrite.css'
+import { createPortal } from 'react-dom'
 import { useLayoutEffect, useRef, useState } from 'react'
+import { useActionRowSlot } from '../../contexts/ActionRowContext'
 import { useLocation, useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'
 import BackButton from '../../components/html/BackButton'
@@ -102,6 +104,8 @@ function CommunityWrite() {
   const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const cameraInputRef = useRef<HTMLInputElement>(null)
+  const actionRowSlot = useActionRowSlot()
+  const handleAddTagRef = useRef<() => void>(() => {})
 
   const derivedContent = blocks
     .filter((b): b is TextBlock => b.type === 'text')
@@ -170,6 +174,7 @@ function CommunityWrite() {
       )
     )
   }
+  handleAddTagRef.current = handleAddTag
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault()
@@ -330,19 +335,6 @@ function CommunityWrite() {
         </form>
       </main>
 
-      <footer>
-        <div className="cw_action_row">
-          <button type="button" className="p_regular" onClick={() => setIsPhotoSheetOpen(true)}>
-            <img src={imageIcon} className="cw_action_icon" alt="" />
-            사진
-          </button>
-          <button type="button" className="p_regular" onClick={handleAddTag}>
-            <img src={tagsIcon} className="cw_action_icon" alt="" />
-            태그
-          </button>
-        </div>
-      </footer>
-
       <input ref={fileInputRef} type="file" accept="image/*" multiple className="cw_hidden_input" onChange={handleFileChange} />
       <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="cw_hidden_input" onChange={handleFileChange} />
 
@@ -353,6 +345,20 @@ function CommunityWrite() {
           onCamera={handleCamera}
           onAlbum={handleAlbum}
         />
+      )}
+
+      {actionRowSlot && createPortal(
+        <div className="cw_action_row">
+          <button type="button" className="p_regular" onClick={() => setIsPhotoSheetOpen(true)}>
+            <img src={imageIcon} className="cw_action_icon" alt="" />
+            사진
+          </button>
+          <button type="button" className="p_regular" onClick={() => handleAddTagRef.current()}>
+            <img src={tagsIcon} className="cw_action_icon" alt="" />
+            태그
+          </button>
+        </div>,
+        actionRowSlot
       )}
     </>
   )
