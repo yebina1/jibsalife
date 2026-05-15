@@ -6,12 +6,7 @@ import FloatingAiButton from '../components/FloatingAiButton'
 import HomeIndicator from '../components/HomeIndicator'
 import Nav from '../components/Nav'
 import StateBar from '../components/StateBar'
-<<<<<<< HEAD
 import StatusMessageBar from '../components/StatusMessageBar'
-import addIcon from '../svg/add icon.svg'
-import emojiIcon from '../svg/emoji.svg'
-=======
->>>>>>> ae560fdeca8baa9d2668c39c89412e1c5c96a5f3
 import { HeaderContext, type HeaderConfig } from '../contexts/HeaderContext'
 
 type LayoutProps = {

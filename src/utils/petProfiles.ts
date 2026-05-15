@@ -39,13 +39,30 @@ export const defaultPetProfiles: PetProfileSummary[] = [
   },
 ]
 
+function normalizeProfileImage(image: unknown, fallbackImage: string) {
+  if (typeof image !== 'string') return fallbackImage
+
+  const trimmedImage = image.trim()
+  if (!trimmedImage) return fallbackImage
+
+  const isUploadedImage = trimmedImage.startsWith('data:image/')
+  const isExternalImage = /^https?:\/\//.test(trimmedImage)
+  const isCurrentBundledImage = trimmedImage === fallbackImage
+
+  if (isUploadedImage || isExternalImage || isCurrentBundledImage) {
+    return trimmedImage
+  }
+
+  return fallbackImage
+}
+
 function normalizePetProfile(value: Partial<PetProfileSummary>, fallback: PetProfileSummary): PetProfileSummary {
   return {
     id: typeof value.id === 'number' ? value.id : fallback.id,
     type: 'profile',
     name: typeof value.name === 'string' && value.name.trim() ? value.name : fallback.name,
     breed: typeof value.breed === 'string' && value.breed.trim() ? value.breed : fallback.breed,
-    image: typeof value.image === 'string' && value.image.trim() ? value.image : fallback.image,
+    image: normalizeProfileImage(value.image, fallback.image),
     birthDate: typeof value.birthDate === 'string' ? value.birthDate : fallback.birthDate,
     weight: typeof value.weight === 'string' ? value.weight : fallback.weight,
     sex: typeof value.sex === 'string' ? value.sex : fallback.sex,
