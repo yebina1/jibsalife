@@ -16,7 +16,6 @@ import {
   type ChatbotRecordCategory,
   type ChatbotFeedbackType,
 } from '../../utils/chatbotRecords'
-import { createLocalChatbotAnswer } from '../../utils/localChatbotAnswers'
 import {
   parseMealRecordDetail,
   parsePoopRecordDetail,

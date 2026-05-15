@@ -1,5 +1,6 @@
 import './Mission.css'
 import { useEffect, useMemo, useRef, useState, type UIEvent } from 'react'
+import { useNavigate } from 'react-router'
 import PageHeader from '../components/PageHeader'
 import ChevronIcon from '../components/ChevronIcon'
 import FloatingWriteButton from '../components/FloatingWriteButton'
@@ -413,6 +414,7 @@ const categoryQuickMessageOptions: Record<string, string[]> = {
 }
 
 function Mission() {
+  const navigate = useNavigate()
   const [calendarYear, setCalendarYear] = useState(CALENDAR_YEAR)
   const [calendarMonth, setCalendarMonth] = useState(CALENDAR_MONTH)
   const [selectedDayId, setSelectedDayId] = useState(`c-${CALENDAR_DAY}`)
