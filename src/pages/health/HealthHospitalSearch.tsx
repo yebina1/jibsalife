@@ -12,7 +12,7 @@ import { Link } from 'react-router'
 import calendarIcon from '../../svg/calendar.svg'
 import hospital3d from '../../img/hospital_3d.png'
 import message3d from '../../img/message_3d.png'
-import { getOperatingState, hospitalSearchItems } from './HealthHospitalData'
+import { getOperatingState, hospitalSearchItems, sortHospitalsByStatusAndDistance } from './HealthHospitalData'
 
 type ServiceCard = {
   title: string
@@ -38,6 +38,11 @@ const serviceCards: ServiceCard[] = [
 
 function HealthHospitalSearch() {
   const [favoriteNames, setFavoriteNames] = useState<string[]>([])
+  const sortedHospitalItems = sortHospitalsByStatusAndDistance(hospitalSearchItems, (item) => ({
+    open: item.open,
+    close: item.close,
+    distance: item.distanceKm,
+  }))
 
   const handleFavoriteToggle = (hospitalName: string) => {
     setFavoriteNames((current) =>
@@ -89,7 +94,7 @@ function HealthHospitalSearch() {
         >
 
           <ul className="health_hospital_search_list">
-            {hospitalSearchItems.map((item) => {
+            {sortedHospitalItems.map((item) => {
               const operatingState = getOperatingState(item.open, item.close)
               const isFavorite = favoriteNames.includes(item.name)
 

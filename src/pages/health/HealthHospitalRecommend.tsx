@@ -12,6 +12,7 @@ import hospitalImage2 from '../../img/hospital/hospital2.png'
 import hospitalImage3 from '../../img/hospital/hospital3.png'
 import hospitalImage4 from '../../img/hospital/hospital4.png'
 import hospitalImage5 from '../../img/hospital/hospital5.png'
+import { sortHospitalsByStatusAndDistance } from './HealthHospitalData'
 
 type Hospital = {
   name: string
@@ -102,6 +103,14 @@ function getClinicStatus(openTime: string, closeTime: string) {
 function HealthHospitalRecommend() {
   const navigate = useNavigate()
   const [likedNames, setLikedNames] = useState<string[]>([])
+  const sortedHospitals = sortHospitalsByStatusAndDistance(
+    hospitals.map((hospital, index) => ({ hospital, image: hospitalImages[index % hospitalImages.length] })),
+    ({ hospital }) => ({
+      open: hospital.openTime,
+      close: hospital.closeTime,
+      distance: hospital.distance,
+    }),
+  )
 
   const toggleLike = (name: string) => {
     setLikedNames((prev) =>
@@ -135,14 +144,14 @@ function HealthHospitalRecommend() {
         </div>
 
         <ul className="health_hospital_recommend_list">
-          {hospitals.map((hospital, index) => {
+          {sortedHospitals.map(({ hospital, image }) => {
             const status = getClinicStatus(hospital.openTime, hospital.closeTime)
             const isLiked = likedNames.includes(hospital.name)
 
             return (
               <li key={hospital.name} className="health_hospital_recommend_item">
                 <div className="health_hospital_recommend_img" aria-hidden="true">
-                  <img src={hospitalImages[index % hospitalImages.length]} alt="" />
+                  <img src={image} alt="" />
                 </div>
 
                 <div className="health_hospital_recommend_info">

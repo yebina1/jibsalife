@@ -10,7 +10,7 @@ import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
 import LikeButton from '../../components/LikeButton'
 import calendarIcon from '../../svg/calendar.svg'
-import { hospitalSearchItems } from './HealthHospitalData'
+import { hospitalSearchItems, sortHospitalsByStatusAndDistance } from './HealthHospitalData'
 
 function toMinutes(time: string) {
   const [hours, minutes] = time.split(':').map(Number)
@@ -34,6 +34,11 @@ function getClinicStatus(openTime: string, closeTime: string) {
 
 function HealthHospitalList() {
   const [favoriteNames, setFavoriteNames] = useState<string[]>([])
+  const sortedHospitalItems = sortHospitalsByStatusAndDistance(hospitalSearchItems, (item) => ({
+    open: item.open,
+    close: item.close,
+    distance: item.distanceKm,
+  }))
 
   const handleFavoriteToggle = (hospitalName: string) => {
     setFavoriteNames((current) =>
@@ -67,7 +72,7 @@ function HealthHospitalList() {
           subtitle="내 주변 병원 목록을 한눈에 확인해 보세요."
         >
           <ul className="health_hospital_list">
-            {hospitalSearchItems.map((item) => {
+            {sortedHospitalItems.map((item) => {
               const status = getClinicStatus(item.open, item.close)
               const isFavorite = favoriteNames.includes(item.name)
 

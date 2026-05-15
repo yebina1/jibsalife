@@ -76,6 +76,10 @@
   white-space: nowrap;
 }
 
+.home_summary_section .content_section_subtitle {
+  color: #505050;
+}
+
 .home_section_heading {
   display: flex;
   flex-direction: row;
@@ -535,6 +539,16 @@
   letter-spacing: -2.5%;
   transform: rotate(8deg);
   transform-origin: left top;
+}
+
+.home_weekly_ranking_card .home_weekly_ranking_rank_icon {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  width: 72px;
+  height: auto;
+  object-fit: contain;
 }
 
 .best_pose_vote_strip::-webkit-scrollbar {
@@ -1207,7 +1221,8 @@
   padding: 2px 8px;
   box-sizing: border-box;
   border-radius: 999px;
-  background: #f4f1ff;
+  border: 1px solid #6d59f8 ;
+  background: rgba(244,241,255,0.7);
   color: #6d59f8;
   font-size: 16px;
   font-weight: 400;

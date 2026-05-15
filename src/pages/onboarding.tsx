@@ -14,6 +14,18 @@ import onboardingDogChatImage from '../img/onboarding/onboarding6_dog.png'
 import onboardingCatChatImage from '../img/onboarding/onboarding6_cat.png'
 import onboardingCompleteImage from '../img/onboarding/onboarding7.png'
 import { writeMyProfile } from '../utils/myProfile'
+import { defaultPetProfiles } from '../utils/petProfiles'
+import { voteDetails } from './community/CommunityVoteData'
+import knowledge1 from '../img/Knowledge/knowledge1.png'
+import knowledge2 from '../img/Knowledge/knowledge2.png'
+import knowledge3 from '../img/Knowledge/knowledge3.png'
+import knowledge4 from '../img/Knowledge/knowledge4.png'
+import animalCardImage from '../img/animal_card.png'
+import bannerIcon2Image from '../img/banner_icon2.png'
+import weeklyRankFirstImage from '../img/home_lanking/lank1.png'
+import weeklyRankSecondImage from '../img/home_lanking/lank2.png'
+import weeklyRankThirdImage from '../img/home_lanking/lank3.png'
+import lankGoldIcon from '../svg/home/lank_gold.svg'
 import './onboarding.css'
 
 type GuardianType = 'dog' | 'cat'
@@ -51,6 +63,60 @@ const featureSlides = [
     catImage: onboardingCatChatImage,
   },
 ] as const
+
+const bestPoseVoteImages = voteDetails.find((voteDetail) => voteDetail.id === 'best-pose')?.candidates.map((candidate) => candidate.image) ?? []
+
+const onboardingPreloadImages = [
+  onboardingWelcomeImage,
+  onboardingDogLoverImage,
+  onboardingCatLoverImage,
+  onboardingDogNameImage,
+  onboardingCatNameImage,
+  onboardingDogRecordImage,
+  onboardingCatRecordImage,
+  onboardingShareImage,
+  onboardingDogChatImage,
+  onboardingCatChatImage,
+  onboardingCompleteImage,
+] as const
+
+const homePreloadImages = [
+  ...defaultPetProfiles.map((profile) => profile.image),
+  weeklyRankFirstImage,
+  weeklyRankSecondImage,
+  weeklyRankThirdImage,
+  lankGoldIcon,
+  ...bestPoseVoteImages,
+  bannerIcon2Image,
+  knowledge1,
+  knowledge2,
+  knowledge3,
+  knowledge4,
+  animalCardImage,
+] as const
+
+const preloadedImages = new Set<string>()
+
+function preloadImages(srcs: readonly string[]) {
+  if (typeof window === 'undefined') return
+
+  srcs.forEach((src) => {
+    if (!src || preloadedImages.has(src)) return
+    preloadedImages.add(src)
+
+    const link = document.createElement('link')
+    link.rel = 'preload'
+    link.as = 'image'
+    link.href = src
+    document.head.appendChild(link)
+
+    const image = new Image()
+    image.src = src
+    image.decode?.().catch(() => {
+      // The preload request still warms the cache even if decoding is skipped.
+    })
+  })
+}
 
 const featureBodyGapByStep: Record<4 | 5 | 6, number> = {
   4: 39,
@@ -98,6 +164,8 @@ function Onboarding() {
 
   useEffect(() => {
     document.documentElement.classList.add('onboarding-active')
+    preloadImages([...onboardingPreloadImages, ...homePreloadImages])
+
     return () => {
       document.documentElement.classList.remove('onboarding-active')
     }
