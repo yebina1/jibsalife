@@ -1,5 +1,5 @@
-﻿import './Home.css'
-import { useEffect, useRef, useState, type CSSProperties, type ChangeEvent } from 'react'
+import './Home.css'
+import { useEffect, useRef, useState, type ChangeEvent } from 'react'
 import { useNavigate } from 'react-router'
 import ChevronIcon from '../components/ChevronIcon'
 import PageHeader from '../components/PageHeader'
@@ -34,16 +34,19 @@ import { voteDetails } from './community/CommunityVoteData'
 import { hasVotedMission, readVotedCandidate, writeVotedCandidate, writeVotedMissionId } from '../utils/communityVoteStatus'
 import { readProfilePoints } from '../utils/profilePoints'
 import { showStateBarMessage } from '../utils/stateBarMessage'
-import knowledge1 from '../img/petstory/Knowledge/knowledge1.png'
-import knowledge2 from '../img/petstory/Knowledge/knowledge2.png'
-import knowledge3 from '../img/petstory/Knowledge/knowledge3.png'
-import knowledge4 from '../img/petstory/Knowledge/knowledge4.png'
+import knowledge1 from '../img/Knowledge/knowledge1.png'
+import knowledge2 from '../img/Knowledge/knowledge2.png'
+import knowledge3 from '../img/Knowledge/knowledge3.png'
+import knowledge4 from '../img/Knowledge/knowledge4.png'
 import animalCardImage from '../img/animal_card.png'
-import bannerIcon2Image from '../img/banner_icon2.png'
-import weeklyRankFirstImage from '../img/home_lanking/lank1.png'
-import weeklyRankSecondImage from '../img/home_lanking/lank2.png'
-import weeklyRankThirdImage from '../img/home_lanking/lank3.png'
-import lankGoldIcon from '../svg/home/lank_gold.svg'
+import homeRank1Photo from '../img/home/1st_photo.png'
+import homeRank2Photo from '../img/home/2nd_photo.png'
+import homeRank3Photo from '../img/home/3rd-photo.png'
+import homeRank1Icon from '../img/home/1st-icon.png'
+import homeRank2Icon from '../img/home/2nd-icon.png'
+import homeRank3Icon from '../img/home/3rd-icon.png'
+import lankingIconImg from '../img/home/lanking-icon.png'
+import careIconImg from '../img/home/care-icon.png'
 
 type PetIdCardForm = {
   name: string
@@ -68,31 +71,8 @@ const emptyPetIdForm: PetIdCardForm = {
 const bestPoseVoteItems = voteDetails.find((voteDetail) => voteDetail.id === 'best-pose')?.candidates ?? []
 const BEST_POSE_VOTE_ID = 'best-pose'
 const VOTE_REWARD_AMOUNT = 60
-const WEEKLY_RANKING_TRANSITION_MS = 560
 
-const weeklyRankingItems = [
-  {
-    id: 3,
-    rank: 3,
-    image: weeklyRankThirdImage,
-    alt: '3위 반려동물 사진',
-    objectPosition: 'center center',
-  },
-  {
-    id: 1,
-    rank: 1,
-    image: weeklyRankFirstImage,
-    alt: '1위 반려동물 사진',
-    objectPosition: 'center center',
-  },
-  {
-    id: 2,
-    rank: 2,
-    image: weeklyRankSecondImage,
-    alt: '2위 반려동물 사진',
-    objectPosition: 'center center',
-  },
-] as const
+const homeVoteDisplayNames = ['콩이', '공심이', '뿡뿡이', '준하', '재석', '명수']
 
 const contentItems = [
   {
@@ -104,7 +84,7 @@ const contentItems = [
   },
   {
     id: 2,
-    title: '고양이 점프의 숨겨진 비밀',
+    title: '강아지 발사탕 스프레이\n추천해주세요!',
     image: knowledge2,
     objectPosition: '64% center',
     path: '/community/petstory/knowledge/catjumpsecret',
@@ -118,14 +98,12 @@ const contentItems = [
   },
   {
     id: 4,
-    title: '봄청 강아지\n알레르기 증상과 관리법',
+    title: '봄철 강아지\n알레르기 증상과 관리법',
     image: knowledge4,
     objectPosition: '48% center',
     path: '/community/petstory/knowledge/springallergy',
   },
 ] as const
-
-const WEEKLY_RANKING_MANUAL_STEP = 228
 
 type SummaryStat = {
   label: string
@@ -284,17 +262,7 @@ function Home() {
   const [petIdPhoto, setPetIdPhoto] = useState<string | null>(null)
   const [petIdForm, setPetIdForm] = useState<PetIdCardForm>(emptyPetIdForm)
   const [calendarRecords, setCalendarRecords] = useState<MissionHistoryRecord[]>(readCalendarRecords)
-  const [isWeeklyRankingPaused, setIsWeeklyRankingPaused] = useState(false)
-  const [weeklyRankingIndex, setWeeklyRankingIndex] = useState(weeklyRankingItems.length + 1)
-  const [weeklyRankingDragOffset, setWeeklyRankingDragOffset] = useState(0)
-  const [isWeeklyRankingDragging, setIsWeeklyRankingDragging] = useState(false)
-  const [isWeeklyRankingResetting, setIsWeeklyRankingResetting] = useState(false)
   const dragStateRef = useRef({ startX: 0 })
-  const weeklyRankingDragRef = useRef({ startX: 0 })
-  const ignoreWeeklyRankingClickRef = useRef(false)
-  const isWeeklyRankingAnimatingRef = useRef(false)
-  const weeklyRankingAnimationTimerRef = useRef<number | null>(null)
-  const weeklyRankingResetFrameRef = useRef<number | null>(null)
   const summarySlides = [
     ...profileSlides,
     {
@@ -305,7 +273,6 @@ function Home() {
 
   const todaySummaryDate = formatTodaySummaryDate()
   const todaySummaryStats = createSummaryStats(calendarRecords)
-  const visibleWeeklyRankingItems = [...weeklyRankingItems, ...weeklyRankingItems, ...weeklyRankingItems]
   const currentPoints = readProfilePoints()
 
   useEffect(() => {
@@ -367,57 +334,6 @@ function Home() {
     }
   }, [isPetIdModalOpen])
 
-  useEffect(() => {
-    if (isWeeklyRankingPaused || isWeeklyRankingDragging) return
-
-    const slideTimer = window.setInterval(() => {
-      moveWeeklyRanking((current) => current + 1)
-    }, 2600)
-
-    return () => {
-      window.clearInterval(slideTimer)
-    }
-  }, [isWeeklyRankingDragging, isWeeklyRankingPaused])
-
-  useEffect(() => {
-    return () => {
-      if (weeklyRankingAnimationTimerRef.current !== null) {
-        window.clearTimeout(weeklyRankingAnimationTimerRef.current)
-      }
-
-      if (weeklyRankingResetFrameRef.current !== null) {
-        window.cancelAnimationFrame(weeklyRankingResetFrameRef.current)
-      }
-    }
-  }, [])
-
-  const releaseWeeklyRankingMotion = () => {
-    isWeeklyRankingAnimatingRef.current = false
-
-    if (weeklyRankingAnimationTimerRef.current !== null) {
-      window.clearTimeout(weeklyRankingAnimationTimerRef.current)
-      weeklyRankingAnimationTimerRef.current = null
-    }
-  }
-
-  const lockWeeklyRankingMotion = () => {
-    if (weeklyRankingAnimationTimerRef.current !== null) {
-      window.clearTimeout(weeklyRankingAnimationTimerRef.current)
-    }
-
-    isWeeklyRankingAnimatingRef.current = true
-    weeklyRankingAnimationTimerRef.current = window.setTimeout(() => {
-      releaseWeeklyRankingMotion()
-    }, WEEKLY_RANKING_TRANSITION_MS)
-  }
-
-  const moveWeeklyRanking = (getNextIndex: (current: number) => number) => {
-    if (isWeeklyRankingAnimatingRef.current || isWeeklyRankingResetting) return
-
-    lockWeeklyRankingMotion()
-    setWeeklyRankingIndex(getNextIndex)
-  }
-
   const handleDragStart = (clientX: number) => {
     dragStateRef.current.startX = clientX
     setIsDragging(true)
@@ -452,70 +368,6 @@ function Home() {
 
     setIsDragging(false)
     setDragOffset(0)
-  }
-
-  const pauseWeeklyRankingAt = (index: number) => {
-    if (ignoreWeeklyRankingClickRef.current || isWeeklyRankingAnimatingRef.current) return
-
-    setIsWeeklyRankingPaused(true)
-    lockWeeklyRankingMotion()
-    setWeeklyRankingIndex(isWeeklyRankingPaused ? index : weeklyRankingItems.length + (index % weeklyRankingItems.length))
-    setWeeklyRankingDragOffset(0)
-  }
-
-  const handleWeeklyRankingDragStart = (clientX: number) => {
-    if (isWeeklyRankingAnimatingRef.current) return
-
-    setIsWeeklyRankingPaused(true)
-    setIsWeeklyRankingDragging(true)
-    setWeeklyRankingDragOffset(0)
-    weeklyRankingDragRef.current.startX = clientX
-  }
-
-  const handleWeeklyRankingDragMove = (clientX: number) => {
-    if (!isWeeklyRankingDragging) return
-
-    const nextOffset = clientX - weeklyRankingDragRef.current.startX
-    if (Math.abs(nextOffset) > 8) {
-      ignoreWeeklyRankingClickRef.current = true
-    }
-
-    setWeeklyRankingDragOffset(nextOffset)
-  }
-
-  const handleWeeklyRankingDragEnd = () => {
-    if (!isWeeklyRankingDragging) return
-
-    const threshold = 48
-
-    if (weeklyRankingDragOffset <= -threshold) {
-      moveWeeklyRanking((current) => current + 1)
-    } else if (weeklyRankingDragOffset >= threshold) {
-      moveWeeklyRanking((current) => current - 1)
-    }
-
-    setIsWeeklyRankingDragging(false)
-    setWeeklyRankingDragOffset(0)
-    window.setTimeout(() => {
-      ignoreWeeklyRankingClickRef.current = false
-    }, 0)
-  }
-
-  const resetWeeklyRankingLoop = () => {
-    if (isWeeklyRankingDragging) return
-
-    const rankingCount = weeklyRankingItems.length
-    if (weeklyRankingIndex >= rankingCount && weeklyRankingIndex < rankingCount * 2) return
-
-    releaseWeeklyRankingMotion()
-    setIsWeeklyRankingResetting(true)
-    setWeeklyRankingIndex(((weeklyRankingIndex % rankingCount) + rankingCount) % rankingCount + rankingCount)
-    weeklyRankingResetFrameRef.current = window.requestAnimationFrame(() => {
-      weeklyRankingResetFrameRef.current = window.requestAnimationFrame(() => {
-        setIsWeeklyRankingResetting(false)
-        weeklyRankingResetFrameRef.current = null
-      })
-    })
   }
 
   const handlePetIdInputChange = (field: keyof PetIdCardForm, value: string) => {
@@ -776,114 +628,74 @@ function Home() {
               ))}
             </div>
           </div>
-
         </ContentSection>
 
         <ContentSection
           className="home_section home_weekly_ranking_section"
           title="이번주 주인공은 나야 나!"
-          subtitle="지난주 가장 많은 사랑을 받은 아이들을 만나보세요."
+          subtitle="지난주 가장 많은 사랑을 받은 아이들을 만나보세요 💜"
         >
-          <div className="home_weekly_ranking_body">
-            <div
-              className={`home_weekly_ranking_gallery${isWeeklyRankingPaused ? ' is_manual' : ' is_auto'}${
-                isWeeklyRankingDragging ? ' is_dragging' : ''
-              }${isWeeklyRankingResetting ? ' is_resetting' : ''}`}
-              aria-label="주간 인기 반려동물 랭킹"
-              onPointerDown={(event) => {
-                if (!isWeeklyRankingPaused) return
-                handleWeeklyRankingDragStart(event.clientX)
-                event.currentTarget.setPointerCapture(event.pointerId)
-              }}
-              onPointerMove={(event) => {
-                if (!isWeeklyRankingPaused) return
-                handleWeeklyRankingDragMove(event.clientX)
-              }}
-              onPointerUp={(event) => {
-                if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-                  event.currentTarget.releasePointerCapture(event.pointerId)
-                }
-                if (!isWeeklyRankingPaused) return
-                handleWeeklyRankingDragEnd()
-              }}
-              onPointerCancel={(event) => {
-                if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-                  event.currentTarget.releasePointerCapture(event.pointerId)
-                }
-                if (!isWeeklyRankingPaused) return
-                handleWeeklyRankingDragEnd()
-              }}
-            >
-              <div
-                className="home_weekly_ranking_track"
-                style={{
-                  transform: `translateX(calc(-${weeklyRankingIndex} * ${WEEKLY_RANKING_MANUAL_STEP}px + ${weeklyRankingDragOffset}px))`,
-                }}
-                onTransitionEnd={(event) => {
-                  if (event.target === event.currentTarget && event.propertyName === 'transform') {
-                    resetWeeklyRankingLoop()
-                  }
-                }}
-              >
-                {visibleWeeklyRankingItems.map((item, index) => (
-                <article
-                  key={`${item.id}-${index}`}
-                  className={`home_weekly_ranking_card rank_${item.rank}${
-                    index === weeklyRankingIndex ? ' is_active' : ''
-                  }`}
-                  aria-label={`${item.rank}위`}
-                  style={{ '--ranking-image': `url(${item.image})` } as CSSProperties}
-                  onClick={() => pauseWeeklyRankingAt(index)}
-                >
-                  <img src={item.image} alt={item.alt} style={{ objectPosition: item.objectPosition }} />
-                  {item.rank === 1 ? (
-                    <img className="home_weekly_ranking_rank_icon" src={lankGoldIcon} alt="1위" />
-                  ) : (
-                    <strong>{item.rank}</strong>
-                  )}
-                </article>
-                ))}
-              </div>
+          <div className="home_ranking_podium" aria-label="주간 인기 반려동물 랭킹">
+            <div className="home_ranking_card rank_2">
+              <img src={homeRank2Photo} alt="2위 반려동물" className="home_ranking_card_photo" />
+              <img src={homeRank2Icon} alt="2위" className="home_ranking_badge_icon" />
             </div>
-
-            <Button
-              type="button"
-              className="white_radius_btn more_button"
-              onClick={() => navigate('/community/vote/result')}
-            >
-              랭킹 보기
-            </Button>
+            <div className="home_ranking_card rank_1">
+              <img src={homeRank1Photo} alt="1위 반려동물" className="home_ranking_card_photo" />
+              <img src={homeRank1Icon} alt="1위" className="home_ranking_badge_icon" />
+            </div>
+            <div className="home_ranking_card rank_3">
+              <img src={homeRank3Photo} alt="3위 반려동물" className="home_ranking_card_photo" />
+              <img src={homeRank3Icon} alt="3위" className="home_ranking_badge_icon" />
+            </div>
           </div>
+
+          <div className="home_ranking_banner">
+            <div className="home_ranking_banner_copy">
+              <p>이번주엔 루루가 제일 인기 많았대!</p>
+              <span>(다들 너무 귀여워서 고르기 힘들어요…)</span>
+            </div>
+            <img src={lankingIconImg} alt="" aria-hidden="true" className="home_ranking_banner_icon" />
+          </div>
+
+          <Button
+            type="button"
+            className="home_ranking_btn"
+            onClick={() => navigate('/community/vote/result')}
+          >
+            전체 랭킹 보기
+          </Button>
         </ContentSection>
 
         <ContentSection
           className="home_section"
           title="사진찍냥? BEST 포즈 투표하개!"
-          subtitle="투표 기간에는 결과는 비공개 처리돼요. "
+          subtitle="투표 기간에는 결과는 비공개 처리돼요."
         >
           <div className="best_pose_vote_strip" aria-label="오늘의 베스트 포즈 투표 목록">
-            {bestPoseVoteItems.map((item) => {
+            {bestPoseVoteItems.map((item, index) => {
               const isLiked = selectedBestPoseId === item.id
+              const displayName = homeVoteDisplayNames[index] ?? item.name
 
               return (
                 <article key={item.id} className="best_pose_vote_card">
                   <div className="best_pose_vote_card_media">
                     <img
                       src={item.image}
-                      alt={`${item.name} 포즈 사진`}
+                      alt={`${displayName} 포즈 사진`}
                       style={{ objectPosition: item.objectPosition }}
                     />
                     <button
                       type="button"
                       className={`best_pose_vote_card_like${isLiked ? ' is_active' : ''}`}
-                      aria-label={`${item.name} 선택`}
+                      aria-label={`${displayName} 선택`}
                       aria-pressed={isLiked}
                       onClick={() => selectBestPoseVote(item.id)}
                     >
                       <VoteHeartIcon active={isLiked} />
                     </button>
                   </div>
-                  <p className="p_semibold">{item.name}</p>
+                  <p className="p_semibold">{displayName}</p>
                 </article>
               )
             })}
@@ -891,7 +703,7 @@ function Home() {
 
           <Button
             type="button"
-            className="white_radius_btn more_button"
+            className="home_vote_btn"
             disabled={selectedBestPoseId === null}
             onClick={openBestPoseVoteReward}
           >
@@ -901,7 +713,7 @@ function Home() {
 
         <HomeSummaryBanner
           text={`궁금한 점이 있다면\n수의사와 상담해 보세요.`}
-          imageSrc={bannerIcon2Image}
+          imageSrc={careIconImg}
           backgroundColor="#EDE9FE"
           ariaLabel="수의사 상담 배너"
           rotateImage={false}
@@ -931,7 +743,7 @@ function Home() {
 
           <Button
             type="button"
-            className="white_radius_btn more_button"
+            className="home_more_btn"
             onClick={() => navigate('/community/petstory')}
           >
             더보기
