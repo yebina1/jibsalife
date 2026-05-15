@@ -9,6 +9,7 @@ import CommunityOverview from './pages/community/CommunityOverview'
 import CommunityPetStory from './pages/community/CommunityPetStory'
 import CommunityPetStoryComments from './pages/community/CommunityPetStoryComments'
 import CommunityWrite from './pages/community/CommunityWrite'
+import VoteWrite from './pages/community/VoteWrite'
 import CommunityPetStoryDetails from './pages/community/CommunityPetStoryDetails'
 import CommunityReward from './pages/community/CommunityReward'
 import CommunityVote from './pages/community/CommunityVote'
@@ -106,7 +107,7 @@ function App() {
         <Route element={<Layout showNav={false} />}>
           <Route path="/health/qna" element={<HealthQna />} />
           <Route path="/health/vet-chat" element={<HealthVetChat />} />
-          <Route path="/community/vote/write" element={<CommunityWrite />} />
+          <Route path="/community/vote/write" element={<VoteWrite />} />
         </Route>
         <Route element={<Layout showHeader={false} />}>
           <Route path="/health/cam" element={<Health />} />

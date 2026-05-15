@@ -1,0 +1,158 @@
+/* 투표 기간 선택 */
+.vw_duration_row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 0 12px;
+  flex-wrap: wrap;
+}
+
+.vw_duration_label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111111;
+  white-space: nowrap;
+}
+
+.vw_duration_btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #A1A9B6;
+  padding: 0;
+  height: auto;
+  min-width: 0;
+  font-family: inherit;
+}
+
+.vw_duration_btn.active {
+  color: #111111;
+}
+
+.vw_duration_check_icon {
+  font-size: 18px;
+  line-height: 1;
+  color: #A1A9B6;
+}
+
+.vw_duration_btn.active .vw_duration_check_icon {
+  color: #6D59F8;
+}
+
+/* 투표 항목 공통 */
+.vw_items_section {
+  width: 100%;
+  padding: 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 8px;
+}
+
+.vw_items_title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111111;
+}
+
+/* 사진 투표 항목 */
+.vw_item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vw_item_image_btn {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px dashed #D8D8E5;
+  border-radius: 12px;
+  background: #F5F5FA;
+  cursor: pointer;
+  overflow: hidden;
+  padding: 0;
+}
+
+.vw_item_image_preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vw_item_image_plus {
+  font-size: 36px;
+  font-weight: 300;
+  color: #B0B0C3;
+  line-height: 1;
+}
+
+.vw_item_label_row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-bottom: 1px solid #F0F0F5;
+  padding-bottom: 4px;
+}
+
+.vw_item_label_input.input_field {
+  flex: 1;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  padding: 6px 0;
+  background: transparent;
+  font-size: 14px;
+  box-shadow: none;
+  outline: none;
+}
+
+.vw_item_label_input.input_field:focus {
+  border: 0;
+  box-shadow: none;
+}
+
+.vw_item_clear_btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 18px;
+  color: #A1A9B6;
+  height: auto;
+  min-width: 0;
+  line-height: 1;
+}
+
+/* OX 투표 항목 */
+.vw_ox_grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.vw_ox_item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border: 1.5px solid #E5E5EC;
+  border-radius: 12px;
+  background: #F5F5FA;
+}
+
+.vw_ox_icon {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
