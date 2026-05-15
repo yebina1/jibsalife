@@ -7,6 +7,7 @@ import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
 import FloatingWriteButton from '../../components/FloatingWriteButton'
 import PostMoreSheet from '../../components/PostMoreSheet'
+import ConfirmDialog from '../../components/ConfirmDialog'
 import { readMyProfileName } from '../../utils/myProfile'
 import commentIcon from '../../svg/nav communicate.svg'
 import sharingIcon from '../../svg/sharing.svg'
@@ -197,6 +198,7 @@ function MyPostsPage() {
   const navigate = useNavigate()
   const [posts, setPosts] = useState<MyPost[]>(readMyPosts)
   const [activeMorePostId, setActiveMorePostId] = useState<number | null>(null)
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
 
   useEffect(() => {
     const syncPosts = () => {
@@ -274,6 +276,11 @@ function MyPostsPage() {
 
   const handleDeletePost = () => {
     if (!activeMorePost) return
+    setIsDeleteConfirmOpen(true)
+  }
+
+  const confirmDeletePost = () => {
+    if (!activeMorePost) return
 
     setPosts((current) => current.filter((post) => post.id !== activeMorePost.id))
 
@@ -288,6 +295,7 @@ function MyPostsPage() {
       // Ignore storage write failures and keep the UI in sync for this session.
     }
 
+    setIsDeleteConfirmOpen(false)
     closeMoreSheet()
   }
 
@@ -393,6 +401,15 @@ function MyPostsPage() {
           onClose={closeMoreSheet}
           onDelete={handleDeletePost}
           onEdit={handleEditPost}
+        />
+      ) : null}
+      {isDeleteConfirmOpen ? (
+        <ConfirmDialog
+          message="삭제하시겠습니까?"
+          onCancel={() => setIsDeleteConfirmOpen(false)}
+          onConfirm={confirmDeletePost}
+          cancelLabel="아니요"
+          confirmLabel="네"
         />
       ) : null}
       <FloatingWriteButton showMenu />

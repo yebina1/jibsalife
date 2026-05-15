@@ -7,6 +7,10 @@ import pungpungiImage from '../../img/pungpungi.png'
 import leeyoriImage from '../../img/leeyori.png'
 import galleryIcon from '../../img/gallery-icon.svg'
 import cameraFlipIcon from '../../img/camera-flip-icon.svg'
+import tutorialArrowVideo from '../../svg/health/arrow1.svg'
+import tutorialArrowPhoto from '../../svg/health/arrow2.svg'
+import tutorialArrowRecord from '../../svg/health/arrow3.svg'
+import tutorialArrowClose from '../../svg/health/arrow4.svg'
 import AddSheet from '../../components/AddSheet'
 import ChevronIcon from '../../components/ChevronIcon'
 import BackButton from '../../components/html/BackButton'
@@ -49,6 +53,7 @@ type PeriodDateTime = {
 }
 
 type PeriodField = 'start' | 'end'
+type CameraTutorialStepId = 'video' | 'photo' | 'record' | 'close'
 
 const categoryOptions: CategoryOption[] = [
   { id: 'meal', label: '식사 기록', color: '#ffd1a8' },
@@ -110,6 +115,8 @@ const periodHourOptions = Array.from({ length: 12 }, (_, index) => index + 1)
 const periodMinuteOptions = Array.from({ length: 60 }, (_, index) => index)
 const periodWheelLoops = [0, 1, 2]
 const periodWheelItemHeight = 44
+const cameraTutorialStepOrder: CameraTutorialStepId[] = ['video', 'photo', 'record', 'close']
+const cameraTutorialStepDurations = [2200, 2200, 2400, 2200]
 
 function getDateKey(year: number, month: number, day: number) {
   return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
@@ -258,6 +265,7 @@ function Health() {
   const [cameraMode, setCameraMode] = useState<'photo' | 'video'>('photo')
   const [activeTab, setActiveTab] = useState<'camera' | 'memo'>('camera')
   const [capturedImage, setCapturedImage] = useState<string | null>(null)
+  const [cameraTutorialStepIndex, setCameraTutorialStepIndex] = useState<number | null>(0)
   const [showPetModal, setShowPetModal] = useState(false)
   const [showCalendarPetSwitch, setShowCalendarPetSwitch] = useState(false)
   const [pets, setPets] = useState<PetProfileSummary[]>(readPetProfiles)
@@ -766,9 +774,58 @@ function Health() {
 
   const selectedPetName = pets.find((p) => p.id === selectedPetId)?.name || ''
   const effectiveSelectedPetId = selectedPetId ?? pets[0]?.id ?? null
+  const activeCameraTutorialStep =
+    cameraTutorialStepIndex !== null ? cameraTutorialStepOrder[cameraTutorialStepIndex] ?? null : null
+  const isCameraTutorialCameraTabActive =
+    activeCameraTutorialStep === 'video' || activeCameraTutorialStep === 'photo' || activeCameraTutorialStep === 'close'
+  const isCameraTutorialRecordTabActive = activeCameraTutorialStep === 'record'
+  const isCameraTutorialVisible =
+    activeCameraTutorialStep !== null &&
+    !capturedImage &&
+    !capturedVideo &&
+    activeTab === 'camera' &&
+    !showPetModal &&
+    !showCalendarPetSwitch &&
+    !showMemoSheet &&
+    !showCalendarMemoSheet
+
+  useEffect(() => {
+    if (!isCameraTutorialVisible || cameraTutorialStepIndex === null) return
+    if (cameraTutorialStepOrder[cameraTutorialStepIndex] === 'close') return
+
+    const timeoutId = window.setTimeout(() => {
+      setCameraTutorialStepIndex((currentStep) => {
+        if (currentStep === null) return null
+        return currentStep < cameraTutorialStepOrder.length - 1 ? currentStep + 1 : null
+      })
+    }, cameraTutorialStepDurations[cameraTutorialStepIndex] ?? 2200)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [cameraTutorialStepIndex, isCameraTutorialVisible])
+
+  useEffect(() => {
+    if (
+      capturedImage ||
+      capturedVideo ||
+      activeTab !== 'camera' ||
+      showPetModal ||
+      showCalendarPetSwitch ||
+      showMemoSheet ||
+      showCalendarMemoSheet
+    ) {
+      setCameraTutorialStepIndex(null)
+    }
+  }, [activeTab, capturedImage, capturedVideo, showCalendarMemoSheet, showCalendarPetSwitch, showMemoSheet, showPetModal])
+
+  const advanceCameraTutorial = () => {
+    setCameraTutorialStepIndex((currentStep) => {
+      if (currentStep === null) return null
+      return currentStep < cameraTutorialStepOrder.length - 1 ? currentStep + 1 : currentStep
+    })
+  }
 
   return (
-    <main className="health_cam_ui">
+    <main className={`health_cam_ui${isCameraTutorialVisible ? ' is_tutorial_active' : ''}`}>
       <StateBar />
       <section className="health_cam_view" aria-label="카메라 뷰">
         {capturedVideo ? (
@@ -785,7 +842,7 @@ function Health() {
           bgColor="#505050"
           iconColor="#fff"
           size={36}
-          className="health_cam_close_btn"
+          className={`health_cam_close_btn${activeCameraTutorialStep === 'close' ? ' is_tutorial_target' : ''}`}
           icon={
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <line x1="18" y1="6" x2="6" y2="18" />
@@ -843,14 +900,14 @@ function Health() {
         <div className="health_cam_modes" role="tablist" aria-label="촬영 모드">
           <button
             type="button"
-            className={`health_cam_mode${cameraMode === 'video' ? ' is_active' : ''}`}
+            className={`health_cam_mode${cameraMode === 'video' ? ' is_active' : ''}${activeCameraTutorialStep === 'video' ? ' is_tutorial_target is_tutorial_label' : ''}`}
             onClick={() => setCameraMode('video')}
           >
             VIDEO
           </button>
           <button
             type="button"
-            className={`health_cam_mode${cameraMode === 'photo' ? ' is_active' : ''}`}
+            className={`health_cam_mode${cameraMode === 'photo' ? ' is_active' : ''}${activeCameraTutorialStep === 'photo' ? ' is_tutorial_target is_tutorial_label' : ''}`}
             onClick={() => setCameraMode('photo')}
           >
             PHOTO
@@ -885,7 +942,7 @@ function Health() {
             재촬영 하기
           </button>
           <button type="button" className="health_cam_upload" onClick={handleUpload}>
-            업로드 하기
+           건강 리포트 받기
           </button>
         </div>
       ) : (
@@ -908,6 +965,85 @@ function Health() {
           </div>
         </div>
       )}
+
+      {isCameraTutorialVisible ? (
+        <button type="button" className="health_cam_tutorial_layer" onClick={activeCameraTutorialStep === 'close' ? undefined : advanceCameraTutorial} aria-label={activeCameraTutorialStep === 'close' ? '촬영 가이드' : '촬영 가이드 다음'}>
+          <span className="health_cam_tutorial_backdrop" aria-hidden="true" />
+          <span className="health_cam_tutorial_focus_box" aria-hidden="true">
+            <span />
+          </span>
+          <span className="health_cam_tabs_wrapper health_cam_tutorial_tabs_wrapper" aria-hidden="true">
+            <span className="health_cam_tabs health_cam_tutorial_tabs">
+              <span className={`health_cam_tab${isCameraTutorialCameraTabActive ? ' is_active' : ''}`}>
+                카메라
+              </span>
+              <span className={`health_cam_tab${isCameraTutorialRecordTabActive ? ' is_active' : ''}`}>
+                기록
+              </span>
+            </span>
+          </span>
+
+          {activeCameraTutorialStep === 'video' ? (
+            <span className="health_cam_tutorial_callout health_cam_tutorial_callout_video">
+              <span className="health_cam_tutorial_text">
+                동영상은
+                <br />
+                <span className="health_cam_tutorial_emphasis">흔들리지 않게</span> 해 주세요!
+              </span>
+              <span className="health_cam_tutorial_text_overlay health_cam_tutorial_text_overlay_video" aria-hidden="true">
+                <span>동영상은</span>
+                <span className="health_cam_tutorial_emphasis">흔들리지 않게</span>
+                <span>해 주세요!</span>
+              </span>
+              <img src={tutorialArrowVideo} alt="" aria-hidden="true" />
+            </span>
+          ) : null}
+
+          {activeCameraTutorialStep === 'photo' ? (
+            <span className="health_cam_tutorial_callout health_cam_tutorial_callout_photo">
+              <span className="health_cam_tutorial_text">
+                사진은 <span className="health_cam_tutorial_emphasis">밝은</span> 곳에서
+                <br />
+                <span className="health_cam_tutorial_emphasis">선명</span>하게 촬영 해주세요!
+              </span>
+              <span className="health_cam_tutorial_text_overlay health_cam_tutorial_text_overlay_photo" aria-hidden="true">
+                <span>사진 촬영은</span>
+                <span><span className="health_cam_tutorial_emphasis">밝은 곳</span>에서</span>
+                <span><span className="health_cam_tutorial_emphasis">선명하게</span> 해 주세요!</span>
+              </span>
+              <img src={tutorialArrowPhoto} alt="" aria-hidden="true" />
+            </span>
+          ) : null}
+
+          {activeCameraTutorialStep === 'record' ? (
+            <span className="health_cam_tutorial_callout health_cam_tutorial_callout_record">
+              <span className="health_cam_tutorial_text">
+                <span className="health_cam_tutorial_emphasis">기록</span>을 저장하거나
+                <br />
+                <span className="health_cam_tutorial_emphasis">AI 건강 리포트</span>를
+                <br />
+                받을 수 있어요!
+              </span>
+              <img src={tutorialArrowRecord} alt="" aria-hidden="true" />
+            </span>
+          ) : null}
+
+          {activeCameraTutorialStep === 'close' ? (
+            <span className="health_cam_tutorial_callout health_cam_tutorial_callout_close">
+              <span className="health_cam_tutorial_text">
+                <span className="health_cam_tutorial_emphasis">닫기</span>를 눌러
+                <br />
+                나갈 수 있어요!
+              </span>
+              <span className="health_cam_tutorial_text_overlay health_cam_tutorial_text_overlay_close" aria-hidden="true">
+                <span>닫기를 눌러</span>
+                <span>나갈 수 있어요!</span>
+              </span>
+              <img src={tutorialArrowClose} alt="" aria-hidden="true" />
+            </span>
+          ) : null}
+        </button>
+      ) : null}
 
       <div style={{ backgroundColor: 'white', height: '34px', position: 'relative', width: '100%' }} aria-hidden="true">
         <div style={{
@@ -1309,7 +1445,7 @@ function Health() {
               onSecondaryAction={handleMemoSaveOnly}
               onSave={handleMemoUpload}
               secondaryActionLabel="기록 완료"
-              saveLabel="업로드 하기"
+              saveLabel="건강 리포트 받기"
             />
           )}
         </AddSheet>
@@ -1400,7 +1536,7 @@ function Health() {
                 }}
                 onClick={handleMemoUpload}
               >
-                업로드 하기
+                건강 리포트 받기
               </button>
             </div>
           </div>
