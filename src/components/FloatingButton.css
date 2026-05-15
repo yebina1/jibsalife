@@ -99,43 +99,19 @@
   height: auto;
 }
 
-.floating_button_ai_chat .floating_button_icon_frame img {
+.floating_button_ai_chat .floating_ai_chat_base,
+.floating_button_ai_chat .floating_ai_chat_bubble_image {
   width: 96px;
   height: 96px;
 }
 
-.floating_ai_chat_bubble {
+.floating_button_ai_chat .floating_ai_chat_bubble_image {
   position: absolute;
-  top: 7px;
-  right: 13px;
-  z-index: 1;
-  width: 34px;
-  height: 30px;
-  border-radius: 16px 16px 16px 6px;
-  background: linear-gradient(180deg, #f4e9ff 0%, #c9a7ff 100%);
-  box-shadow: 0 5px 10px rgba(109, 89, 248, 0.22);
+  inset: 0;
+  z-index: 2;
+  clip-path: inset(8px 19px 48px 42px);
   pointer-events: none;
   animation: floating-ai-bubble-bounce 1.35s ease-in-out infinite;
-}
-
-.floating_ai_chat_bubble::before,
-.floating_ai_chat_bubble::after {
-  position: absolute;
-  top: 10px;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #ffffff;
-  content: '';
-}
-
-.floating_ai_chat_bubble::before {
-  left: 10px;
-  box-shadow: 7px 0 0 #ffffff;
-}
-
-.floating_ai_chat_bubble::after {
-  right: 8px;
 }
 
 @keyframes floating-ai-bubble-bounce {
