@@ -8,6 +8,9 @@ import CommentInputForm from '../../components/html/CommentInputForm'
 import Button from '../../components/html/Button'
 import LikeButton from '../../components/LikeButton'
 import knowledge1 from '../../img/petstory/Knowledge/knowledge1.png'
+import knowledge2 from '../../img/petstory/Knowledge/knowledge2.png'
+import knowledge3 from '../../img/petstory/Knowledge/knowledge3.png'
+import knowledge4 from '../../img/petstory/Knowledge/knowledge4.png'
 import dogWalk1 from '../../img/petstory/Knowledge/dog_Walk_1_increased_stress.png'
 import dogWalk2 from '../../img/petstory/Knowledge/dog_Walk_2_obesity.png'
 import dogWalk3 from '../../img/petstory/Knowledge/dog_Walk_3_a_lack_of_social_skills.png'
@@ -54,6 +57,45 @@ type DetailItem = {
 }
 
 const defaultKnowledgeId = 'walkproblems'
+
+const knowledgeDetailFallbackItems: Record<string, NonNullable<KnowledgeDetailState['item']>> = {
+  walkproblems: {
+    id: 1,
+    title: '강아지 산책 안 하면 생기는 문제점',
+    image: knowledge1,
+    viewsText: '1.2k',
+    likes: 8,
+    comments: 3,
+    createdAt: '2026-05-02T09:00:00',
+  },
+  catjumpsecret: {
+    id: 2,
+    title: '고양이 점프의 숨겨진 비밀',
+    image: knowledge2,
+    viewsText: '968',
+    likes: 8,
+    comments: 3,
+    createdAt: '2026-05-01T10:00:00',
+  },
+  forbiddenfoods: {
+    id: 3,
+    title: '고양이에게 절대 주면 안 되는 음식 7가지',
+    image: knowledge3,
+    viewsText: '860',
+    likes: 8,
+    comments: 3,
+    createdAt: '2026-04-30T11:00:00',
+  },
+  springallergy: {
+    id: 4,
+    title: '봄철 강아지 알레르기 증상과 관리법',
+    image: knowledge4,
+    viewsText: '482',
+    likes: 8,
+    comments: 3,
+    createdAt: '2026-04-29T12:00:00',
+  },
+}
 
 function getKnowledgeCommentsPagePath(knowledgeId: string) {
   return `/community/petstory/knowledge/${knowledgeId}/comments`
@@ -413,7 +455,8 @@ function CommunityKnowledgeDetail() {
     readKnowledgeComments(knowledgeCommentsStorageKey),
   )
   const lastScrollTopRef = useRef(0)
-  const item = (location.state as KnowledgeDetailState | null)?.item
+  const stateItem = (location.state as KnowledgeDetailState | null)?.item
+  const item = stateItem ?? knowledgeDetailFallbackItems[knowledgeId] ?? knowledgeDetailFallbackItems[defaultKnowledgeId]
   const knowledgeLikeKey = String(item?.id ?? knowledgeId)
   const [likedKnowledgeKeys, setLikedKnowledgeKeys] = useState<string[]>([])
   const detailTitle = item?.title ?? '강아지 산책 안 하면 생기는 문제점'

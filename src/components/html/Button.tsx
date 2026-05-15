@@ -4,6 +4,7 @@ import './Button.css'
 import {
   MISSION_ACTIVITY_RECORDS_CHANGE_EVENT,
   MISSION_HISTORY_RECORDS_CHANGE_EVENT,
+  NOTIFICATION_READ_CHANGE_EVENT,
   shouldShowNotificationDot,
 } from '../../utils/notificationState'
 
@@ -66,11 +67,13 @@ export default function Button(props: Buttonprops) {
 
     window.addEventListener(MISSION_ACTIVITY_RECORDS_CHANGE_EVENT, syncNotificationState)
     window.addEventListener(MISSION_HISTORY_RECORDS_CHANGE_EVENT, syncNotificationState)
+    window.addEventListener(NOTIFICATION_READ_CHANGE_EVENT, syncNotificationState)
     window.addEventListener('storage', syncNotificationState)
 
     return () => {
       window.removeEventListener(MISSION_ACTIVITY_RECORDS_CHANGE_EVENT, syncNotificationState)
       window.removeEventListener(MISSION_HISTORY_RECORDS_CHANGE_EVENT, syncNotificationState)
+      window.removeEventListener(NOTIFICATION_READ_CHANGE_EVENT, syncNotificationState)
       window.removeEventListener('storage', syncNotificationState)
     }
   }, [isNotificationIconButton])

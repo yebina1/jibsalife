@@ -1,7 +1,18 @@
+.layout_indicator_only:has(.notification_page) {
+  background: #ffffff;
+}
+
+.layout_indicator_only .layout_content:has(.notification_page) {
+  padding-bottom: 0;
+  background: #ffffff;
+}
+
 .notification_page {
   display: flex;
   flex-direction: column;
-  min-height: calc(100dvh - var(--layout-header-height, 97px));
+  min-height: calc(
+    100dvh - var(--layout-header-height, 97px) - var(--layout-footer-height, 34px)
+  );
   margin-inline: calc(var(--layout-inline-padding, 16px) * -1);
   background: #ffffff;
   color: #111111;

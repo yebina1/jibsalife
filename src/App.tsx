@@ -93,7 +93,7 @@ function App() {
         <Route element={<Layout showHeader={false} showNav={false} />}>
           <Route path="/mypage/subscription" element={<SubscriptionPage />} />
         </Route>
-        <Route element={<Layout showHeader={false} showNav={false} showFooter={false} />}>
+        <Route element={<Layout showHeader={false} showNav={false} />}>
           <Route path="/notification" element={<Notification />} />
         </Route>
         <Route element={<Layout />}>

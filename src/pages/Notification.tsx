@@ -2,11 +2,12 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import './Notification.css'
 import BackButton from '../components/html/BackButton'
-import HomeIndicator from '../components/HomeIndicator'
 import bellIconImg from '../img/bell-icon.png'
 import waitImg from '../img/wait-img.png'
-
-const STORAGE_KEY = 'notification_read'
+import {
+  readNotificationReadIds,
+  saveNotificationReadIds,
+} from '../utils/notificationState'
 
 type NotificationItem = {
   id: number
@@ -53,25 +54,7 @@ const notificationItems: NotificationItem[] = [
 ]
 
 function readInitialReadIds(): Set<number> {
-  const initiallyRead = notificationItems
-    .filter((item) => item.isRead)
-    .map((item) => item.id)
-
-  try {
-    const stored = sessionStorage.getItem(STORAGE_KEY)
-    const fromStorage: number[] = stored ? JSON.parse(stored) : []
-    return new Set([...initiallyRead, ...fromStorage])
-  } catch {
-    return new Set(initiallyRead)
-  }
-}
-
-function saveReadIds(ids: Set<number>) {
-  try {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify([...ids]))
-  } catch {
-    // ignore storage errors
-  }
+  return readNotificationReadIds()
 }
 
 function Notification() {
@@ -83,7 +66,7 @@ function Notification() {
       if (prev.has(item.id)) return prev
       const next = new Set(prev)
       next.add(item.id)
-      saveReadIds(next)
+      saveNotificationReadIds(next)
       return next
     })
     navigate(item.path)
@@ -127,8 +110,6 @@ function Notification() {
           className="notification_empty_img"
         />
       </div>
-
-      <HomeIndicator />
     </div>
   )
 }

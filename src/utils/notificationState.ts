@@ -1,28 +1,43 @@
-import {
-  MISSION_ACTIVITY_RECORDS_CHANGE_EVENT,
-  readMissionActivityRecords,
-} from './missionActivityRecords'
+import { MISSION_ACTIVITY_RECORDS_CHANGE_EVENT } from './missionActivityRecords'
 import {
   MISSION_HISTORY_RECORDS_CHANGE_EVENT,
-  readStoredMissionHistoryRecords,
 } from './missionHistoryRecords'
 
 export { MISSION_ACTIVITY_RECORDS_CHANGE_EVENT, MISSION_HISTORY_RECORDS_CHANGE_EVENT }
 
-function getTodayDateKey() {
-  const today = new Date()
-  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+export const NOTIFICATION_READ_STORAGE_KEY = 'notification_read'
+export const NOTIFICATION_READ_CHANGE_EVENT = 'jibsalife.notification.readChange'
+
+const notificationIds = [1, 2, 3, 4]
+const initiallyReadNotificationIds = [4]
+
+export function readNotificationReadIds(): Set<number> {
+  if (typeof window === 'undefined') return new Set(initiallyReadNotificationIds)
+
+  try {
+    const stored = window.sessionStorage.getItem(NOTIFICATION_READ_STORAGE_KEY)
+    const fromStorage: number[] = stored ? JSON.parse(stored) : []
+    return new Set([...initiallyReadNotificationIds, ...fromStorage])
+  } catch {
+    return new Set(initiallyReadNotificationIds)
+  }
+}
+
+export function saveNotificationReadIds(ids: Set<number>) {
+  if (typeof window === 'undefined') return
+
+  try {
+    window.sessionStorage.setItem(NOTIFICATION_READ_STORAGE_KEY, JSON.stringify([...ids]))
+    window.dispatchEvent(new Event(NOTIFICATION_READ_CHANGE_EVENT))
+  } catch {
+    // ignore storage errors
+  }
 }
 
 export function shouldShowNotificationDot() {
   if (typeof window === 'undefined') return false
 
-  const todayDateKey = getTodayDateKey()
-  const activityRecords = readMissionActivityRecords()
-  const storedHistoryRecords = readStoredMissionHistoryRecords()
-  const hasTodayRecord = [...activityRecords, ...storedHistoryRecords].some(
-    (record) => record.date === todayDateKey,
-  )
+  const readIds = readNotificationReadIds()
 
-  return !hasTodayRecord
+  return notificationIds.some((id) => !readIds.has(id))
 }

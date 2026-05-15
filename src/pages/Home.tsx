@@ -89,7 +89,7 @@ const contentItems = [
     image: footImg,
     objectPosition: '64% center',
     chip: '일상',
-    path: '/community/petstory/knowledge/catjumpsecret',
+    path: '/community/petstory/detail/4',
   },
   {
     id: 3,
@@ -1010,7 +1010,7 @@ function Home() {
               ) : undefined
             }
             cancelLabel={confirmAction === 'vote-edit' ? '취소' : '아니요'}
-            confirmLabel={confirmAction === 'vote-edit' ? '수정' : '네'}
+            confirmLabel={confirmAction === 'vote-edit' ? '수정하기' : '네'}
             accentColor={confirmAction === 'vote-edit' ? '#FF88C5' : undefined}
             cancelButtonStyle={
               confirmAction === 'vote-edit'
