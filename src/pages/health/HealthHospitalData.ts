@@ -65,7 +65,36 @@ function toMinutes(value: string) {
 export function getOperatingState(open: string, close: string) {
   const now = new Date()
   const currentMinutes = now.getHours() * 60 + now.getMinutes()
-  const isOpen = currentMinutes >= toMinutes(open) && currentMinutes <= toMinutes(close)
+  const isOpen = currentMinutes >= toMinutes(open) && currentMinutes < toMinutes(close)
 
   return { isOpen }
+}
+
+function parseDistanceKm(distance: number | string) {
+  if (typeof distance === 'number') return distance
+
+  const parsed = parseFloat(distance.replace(/[^\d.]/g, ''))
+  return Number.isFinite(parsed) ? parsed : Number.POSITIVE_INFINITY
+}
+
+type HospitalSortValues = {
+  open: string
+  close: string
+  distance: number | string
+}
+
+export function sortHospitalsByStatusAndDistance<T>(
+  items: readonly T[],
+  getValues: (item: T) => HospitalSortValues,
+) {
+  return [...items].sort((a, b) => {
+    const aValues = getValues(a)
+    const bValues = getValues(b)
+    const aIsOpen = getOperatingState(aValues.open, aValues.close).isOpen
+    const bIsOpen = getOperatingState(bValues.open, bValues.close).isOpen
+
+    if (aIsOpen !== bIsOpen) return aIsOpen ? -1 : 1
+
+    return parseDistanceKm(aValues.distance) - parseDistanceKm(bValues.distance)
+  })
 }

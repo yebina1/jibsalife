@@ -14,6 +14,15 @@
   color: #ffffff;
   box-shadow: 0 1px 2px rgba(196, 181, 253, 1);
   cursor: pointer;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.floating_button.is_scroll_hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
 }
 
 .floating_write_button {

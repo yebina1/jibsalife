@@ -62,6 +62,7 @@ function Layout({
   const [header, setHeader] = useState<HeaderConfig>(null)
   const [isCommunitySortOpen, setIsCommunitySortOpen] = useState(false)
   const navigate = useNavigate()
+  const [isFloatingAiHiddenByScroll, setIsFloatingAiHiddenByScroll] = useState(false)
   const headerRef = useRef<HTMLElement>(null)
   const layoutRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -190,6 +191,34 @@ function Layout({
     return () => observer.disconnect()
   }, [header, showHeader, showCommunityChrome, communitySubTabs])
 
+  useEffect(() => {
+    if (pathname !== '/mypage/posts' || typeof window === 'undefined') {
+      setIsFloatingAiHiddenByScroll(false)
+      return
+    }
+
+    let scrollEndTimerId: number | undefined
+
+    const handleScroll = () => {
+      setIsFloatingAiHiddenByScroll(true)
+      window.clearTimeout(scrollEndTimerId)
+      scrollEndTimerId = window.setTimeout(() => {
+        setIsFloatingAiHiddenByScroll(false)
+      }, 180)
+    }
+
+    const el = contentRef.current
+    el?.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      window.clearTimeout(scrollEndTimerId)
+      setIsFloatingAiHiddenByScroll(false)
+      el?.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [pathname])
+
   return (
     <HeaderContext.Provider value={setHeader}>
       <div className={layoutClassName} ref={layoutRef}>
@@ -298,7 +327,9 @@ function Layout({
           <Outlet />
         </div>
         {!isNoLayoutPage ? <StatusMessageBar /> : null}
-        {!hideFloatingAiButton ? <FloatingAiButton /> : null}
+        {!hideFloatingAiButton ? (
+          <FloatingAiButton className={isFloatingAiHiddenByScroll ? 'is_scroll_hidden' : undefined} />
+        ) : null}
         {!isNoLayoutPage && showFooter ? (
           <footer>
             {showNav && !isPetStoryDetailPage && !isKnowledgeDetailPage && !isVoteResultPage && !isPetStoryWritePage && !isVoteWritePage && <Nav />}

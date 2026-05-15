@@ -43,6 +43,7 @@ import bannerIcon2Image from '../img/banner_icon2.png'
 import weeklyRankFirstImage from '../img/home_lanking/lank1.png'
 import weeklyRankSecondImage from '../img/home_lanking/lank2.png'
 import weeklyRankThirdImage from '../img/home_lanking/lank3.png'
+import lankGoldIcon from '../svg/home/lank_gold.svg'
 
 type PetIdCardForm = {
   name: string
@@ -124,7 +125,6 @@ const contentItems = [
 ] as const
 
 const WEEKLY_RANKING_MANUAL_STEP = 228
-const WEEKLY_RANKING_TRANSITION_MS = 560
 
 type SummaryStat = {
   label: string
@@ -375,25 +375,6 @@ function Home() {
     }
   }, [isWeeklyRankingDragging, isWeeklyRankingPaused])
 
-  useEffect(() => {
-    if (isWeeklyRankingDragging) return
-
-    const rankingCount = weeklyRankingItems.length
-    if (weeklyRankingIndex >= rankingCount && weeklyRankingIndex < rankingCount * 2) return
-
-    const resetTimer = window.setTimeout(() => {
-      setIsWeeklyRankingResetting(true)
-      setWeeklyRankingIndex(((weeklyRankingIndex % rankingCount) + rankingCount) % rankingCount + rankingCount)
-      window.requestAnimationFrame(() => {
-        setIsWeeklyRankingResetting(false)
-      })
-    }, WEEKLY_RANKING_TRANSITION_MS)
-
-    return () => {
-      window.clearTimeout(resetTimer)
-    }
-  }, [isWeeklyRankingDragging, weeklyRankingIndex])
-
   const handleDragStart = (clientX: number) => {
     dragStateRef.current.startX = clientX
     setIsDragging(true)
@@ -472,6 +453,21 @@ function Home() {
     window.setTimeout(() => {
       ignoreWeeklyRankingClickRef.current = false
     }, 0)
+  }
+
+  const resetWeeklyRankingLoop = () => {
+    if (isWeeklyRankingDragging) return
+
+    const rankingCount = weeklyRankingItems.length
+    if (weeklyRankingIndex >= rankingCount && weeklyRankingIndex < rankingCount * 2) return
+
+    setIsWeeklyRankingResetting(true)
+    setWeeklyRankingIndex(((weeklyRankingIndex % rankingCount) + rankingCount) % rankingCount + rankingCount)
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        setIsWeeklyRankingResetting(false)
+      })
+    })
   }
 
   const handlePetIdInputChange = (field: keyof PetIdCardForm, value: string) => {
@@ -775,6 +771,11 @@ function Home() {
                 style={{
                   transform: `translateX(calc(-${weeklyRankingIndex} * ${WEEKLY_RANKING_MANUAL_STEP}px + ${weeklyRankingDragOffset}px))`,
                 }}
+                onTransitionEnd={(event) => {
+                  if (event.target === event.currentTarget && event.propertyName === 'transform') {
+                    resetWeeklyRankingLoop()
+                  }
+                }}
               >
                 {visibleWeeklyRankingItems.map((item, index) => (
                 <article
@@ -787,7 +788,11 @@ function Home() {
                   onClick={() => pauseWeeklyRankingAt(index)}
                 >
                   <img src={item.image} alt={item.alt} style={{ objectPosition: item.objectPosition }} />
-                  <strong>{item.rank}</strong>
+                  {item.rank === 1 ? (
+                    <img className="home_weekly_ranking_rank_icon" src={lankGoldIcon} alt="1위" />
+                  ) : (
+                    <strong>{item.rank}</strong>
+                  )}
                 </article>
                 ))}
               </div>
@@ -854,7 +859,7 @@ function Home() {
           rotateImage={false}
           imageWidth={148}
           imageHeight={140}
-          imageBottom={-10}
+          imageBottom={-20}
           imageRight={20}
         />
 
@@ -879,7 +884,7 @@ function Home() {
           <Button
             type="button"
             className="white_radius_btn more_button"
-            onClick={() => navigate('/community/petstory/knowledge')}
+            onClick={() => navigate('/community/petstory')}
           >
             더보기
             <ChevronIcon direction="right" size="md" />
@@ -1079,6 +1084,11 @@ function Home() {
               confirmAction === 'profile-delete'
                 ? '삭제하시겠습니까?'
                 : '수정하시겠습니까?'
+            }
+            description={
+              confirmAction === 'vote-edit'
+                ? '정확한 투표 집계를 위해 수정은 1회만 가능해요.'
+                : undefined
             }
             onCancel={() => setConfirmAction(null)}
             onConfirm={handleConfirmAction}

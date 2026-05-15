@@ -740,9 +740,9 @@ function CommunityPetStoryDetails() {
         />
       )}
 
-      {moreSheetOpen && (
+      {moreSheetOpen === 'own' ? (
         <PostMoreSheet
-          type={moreSheetOpen}
+          type="own"
           onClose={() => setMoreSheetOpen(false)}
           onDelete={() => { setMoreSheetOpen(false); setDeleteAlertOpen(true) }}
           onEdit={() => {
@@ -763,7 +763,12 @@ function CommunityPetStoryDetails() {
             }
           }}
         />
-      )}
+      ) : moreSheetOpen === 'other' ? (
+        <PostMoreSheet
+          type="other"
+          onClose={() => setMoreSheetOpen(false)}
+        />
+      ) : null}
     </>
   )
 }

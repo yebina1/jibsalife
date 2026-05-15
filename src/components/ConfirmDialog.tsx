@@ -23,8 +23,10 @@ function ConfirmDialog({
 }: ConfirmDialogProps) {
   return (
     <Alert onClose={onCancel}>
-      <p className="confirm_dialog_msg">{message}</p>
-      {description && <p className="confirm_dialog_desc">{description}</p>}
+      <div className="confirm_dialog_copy">
+        <p className="confirm_dialog_msg">{message}</p>
+        {description ? <p className="confirm_dialog_desc">{description}</p> : null}
+      </div>
       <div className="confirm_dialog_btns">
         {!hideCancel ? (
           <Button type="button" className="white_btn" onClick={onCancel}>
