@@ -6,12 +6,7 @@ import FloatingAiButton from '../components/FloatingAiButton'
 import HomeIndicator from '../components/HomeIndicator'
 import Nav from '../components/Nav'
 import StateBar from '../components/StateBar'
-<<<<<<< HEAD
 import StatusMessageBar from '../components/StatusMessageBar'
-import addIcon from '../svg/add icon.svg'
-import emojiIcon from '../svg/emoji.svg'
-=======
->>>>>>> ae560fdeca8baa9d2668c39c89412e1c5c96a5f3
 import { HeaderContext, type HeaderConfig } from '../contexts/HeaderContext'
 
 type LayoutProps = {
@@ -67,7 +62,6 @@ function Layout({
   const [header, setHeader] = useState<HeaderConfig>(null)
   const [isCommunitySortOpen, setIsCommunitySortOpen] = useState(false)
   const navigate = useNavigate()
-  const [isCommunityControlsVisible, setIsCommunityControlsVisible] = useState(true)
   const headerRef = useRef<HTMLElement>(null)
   const layoutRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -86,9 +80,10 @@ function Layout({
   const isKnowledgeDetailPage = pathname.startsWith('/community/petstory/knowledge/')
   const isVoteDetailPage = pathname === '/community/vote/detail'
   const isVoteResultPage = pathname === '/community/vote/result'
+  const isVoteWritePage = pathname === '/community/vote/write'
   const isRewardPage = pathname.startsWith('/community/challenge/reward')
   const showCommunityChrome =
-    isCommunityPath && !isPetStoryDetailPage && !isPetStoryWritePage && !isKnowledgeDetailPage && !isVoteDetailPage && !isVoteResultPage && !isRewardPage
+    isCommunityPath && !isPetStoryDetailPage && !isPetStoryWritePage && !isKnowledgeDetailPage && !isVoteDetailPage && !isVoteResultPage && !isVoteWritePage && !isRewardPage
   const communitySubTabs = !isPetStoryDetailPage && !isPetStoryWritePage && !isKnowledgeDetailPage && pathname.startsWith('/community/petstory')
     ? petStorySubTabs
     : !isPetStoryDetailPage && !isKnowledgeDetailPage && pathname.startsWith('/community/vote') && pathname !== '/community/vote/detail' && !isVoteResultPage
@@ -158,7 +153,7 @@ function Layout({
   }
 
   const isMinimal = !showHeader && !showNav && !showFooter
-  const isIndicatorOnlyLayout = (!showNav && showFooter) || isPetStoryDetailPage || isKnowledgeDetailPage || isVoteResultPage || isPetStoryWritePage
+  const isIndicatorOnlyLayout = (!showNav && showFooter) || isPetStoryDetailPage || isKnowledgeDetailPage || isVoteResultPage || isPetStoryWritePage || isVoteWritePage
   const layoutClassName = isCameraPage
     ? 'layout layout_camera'
     : isMinimal
@@ -166,9 +161,7 @@ function Layout({
           isOnboardingPage && !hasContentPadding ? 'layout_minimal_no_header_space' : ''
         }`
       : showCommunityChrome
-        ? `layout layout_community ${communitySubTabs ? 'layout_community_with_subtabs' : ''} ${
-            communitySubTabs && !isCommunityControlsVisible ? 'layout_community_subtabs_hidden' : ''
-          }`
+        ? `layout layout_community ${communitySubTabs ? 'layout_community_with_subtabs' : ''}`
         : `layout ${!showFooter ? 'layout_no_footer' : ''} ${
             isIndicatorOnlyLayout ? 'layout_indicator_only' : ''
           } ${isKnowledgeDetailPage ? 'layout_knowledge_detail' : ''}`
@@ -195,97 +188,7 @@ function Layout({
     updateHeaderHeight()
     observer.observe(headerEl)
     return () => observer.disconnect()
-  }, [header, showHeader, showCommunityChrome, communitySubTabs, isCommunityControlsVisible])
-
-  useEffect(() => {
-    if (!communitySubTabs || typeof window === 'undefined') {
-      return
-    }
-
-    const resetTimerId = window.setTimeout(() => {
-      setIsCommunityControlsVisible(true)
-    }, 0)
-
-    let scrollAccum = 0
-    let lastDir = 0
-    let isTransitioning = false
-    let transitionTimerId: number | undefined
-
-    const lockTransition = () => {
-      isTransitioning = true
-      window.clearTimeout(transitionTimerId)
-      transitionTimerId = window.setTimeout(() => {
-        isTransitioning = false
-      }, 220)
-    }
-
-    const getScrollY = () => {
-      const el = contentRef.current
-      if (el && el.scrollHeight > el.clientHeight) return el.scrollTop
-      return window.scrollY
-    }
-
-    const isNearBottom = () => {
-      const el = contentRef.current
-      if (el && el.scrollHeight > el.clientHeight) {
-        return el.scrollHeight - el.scrollTop - el.clientHeight < 80
-      }
-      return document.documentElement.scrollHeight - window.scrollY - window.innerHeight < 100
-    }
-
-    let lastScrollY = getScrollY()
-
-    const handleScroll = () => {
-      const currentScrollY = getScrollY()
-      const delta = currentScrollY - lastScrollY
-      lastScrollY = currentScrollY
-
-      if (currentScrollY <= 8) {
-        scrollAccum = 0
-        setIsCommunityControlsVisible(true)
-        return
-      }
-
-      if (isTransitioning) {
-        scrollAccum = 0
-        return
-      }
-
-      const dir = delta > 0 ? 1 : delta < 0 ? -1 : 0
-      if (dir !== 0 && dir !== lastDir) {
-        scrollAccum = 0
-        lastDir = dir
-      }
-      scrollAccum += delta
-
-      if (isNearBottom()) {
-        scrollAccum = 0
-        return
-      }
-
-      if (scrollAccum > 30) {
-        scrollAccum = 0
-        setIsCommunityControlsVisible(false)
-        setIsCommunitySortOpen(false)
-        lockTransition()
-      } else if (scrollAccum < -30) {
-        scrollAccum = 0
-        setIsCommunityControlsVisible(true)
-        lockTransition()
-      }
-    }
-
-    const el = contentRef.current
-    el?.addEventListener('scroll', handleScroll, { passive: true })
-    window.addEventListener('scroll', handleScroll, { passive: true })
-
-    return () => {
-      window.clearTimeout(resetTimerId)
-      window.clearTimeout(transitionTimerId)
-      el?.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('scroll', handleScroll)
-    }
-  }, [communitySubTabs])
+  }, [header, showHeader, showCommunityChrome, communitySubTabs])
 
   return (
     <HeaderContext.Provider value={setHeader}>
@@ -398,7 +301,7 @@ function Layout({
         {!hideFloatingAiButton ? <FloatingAiButton /> : null}
         {!isNoLayoutPage && showFooter ? (
           <footer>
-            {showNav && !isPetStoryDetailPage && !isKnowledgeDetailPage && !isVoteResultPage && !isPetStoryWritePage && <Nav />}
+            {showNav && !isPetStoryDetailPage && !isKnowledgeDetailPage && !isVoteResultPage && !isPetStoryWritePage && !isVoteWritePage && <Nav />}
             <HomeIndicator />
           </footer>
         ) : null}

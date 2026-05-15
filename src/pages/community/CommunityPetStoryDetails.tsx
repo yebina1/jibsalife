@@ -10,15 +10,14 @@ import PostMoreSheet from '../../components/PostMoreSheet'
 import Button from '../../components/html/Button'
 import CommentInputForm from '../../components/html/CommentInputForm'
 import LikeButton from '../../components/LikeButton'
-import life1 from '../../img/daily/daily_1.jpg'
-import life2 from '../../img/daily/daily_2.png'
-import life3 from '../../img/daily/daily_3.png'
-import life4 from '../../img/daily/daily_4.png'
-import life5 from '../../img/daily/daily_5.jpg'
-import life6 from '../../img/daily/daily_6.jpg'
+import life1 from '../../img/petstory/daily/daily_1.jpg'
+import life2 from '../../img/petstory/daily/daily_2.png'
+import life3 from '../../img/petstory/daily/daily_3.png'
+import life4 from '../../img/petstory/daily/daily_4.png'
+import life5 from '../../img/petstory/daily/daily_5.jpg'
+import life6 from '../../img/petstory/daily/daily_6.jpg'
 import addIcon from '../../svg/add icon.svg'
 import emojiIcon from '../../svg/emoji.svg'
-import sharingIcon from '../../svg/sharing.svg'
 import { MY_PROFILE_IMAGE, MY_PROFILE_NAME } from '../../utils/myProfile'
 import { petStoryDetailComments } from './CommunityPetStoryDetailData'
 
@@ -231,6 +230,14 @@ function formatRelativeTime(createdAt: string): string {
   return `${Math.floor(days / 365)}년 전`
 }
 
+function BookmarkIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M7 4.5h10a1.5 1.5 0 0 1 1.5 1.5v13.2l-6.5-3.6-6.5 3.6V6A1.5 1.5 0 0 1 7 4.5Z" />
+    </svg>
+  )
+}
+
 function MoreIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -241,50 +248,7 @@ function MoreIcon() {
   )
 }
 
-function CommentIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 4.8c-4.4 0-8 2.9-8 6.6 0 2.1 1.2 4 3.1 5.2l-.8 3 3.3-1.8c.8.2 1.6.3 2.4.3 4.4 0 8-2.9 8-6.7s-3.6-6.6-8-6.6Z" />
-    </svg>
-  )
-}
 
-type PetStoryDetailFooterReactionsProps = {
-  isLiked: boolean
-  likeCount: number
-  commentCount: number
-  onLike: () => void
-  onComment: () => void
-}
-
-function PetStoryDetailFooterReactions({
-  isLiked,
-  likeCount,
-  commentCount,
-  onLike,
-  onComment,
-}: PetStoryDetailFooterReactionsProps) {
-  return (
-    <div className="cpsdetail_footer_reactions" aria-label="게시글 반응">
-      <LikeButton
-        className="cpsdetail_footer_reaction"
-        liked={isLiked}
-        onClick={onLike}
-        aria-label={`좋아요 ${likeCount}`}
-      >
-        {likeCount}
-      </LikeButton>
-      <button type="button" className="cpsdetail_footer_reaction" aria-label={`댓글 ${commentCount}`} onClick={onComment}>
-        <CommentIcon />
-        <span>{commentCount}</span>
-      </button>
-    </div>
-  )
-}
-
-function ShareIcon() {
-  return <img className="header_icon" src={sharingIcon} alt="" aria-hidden="true" />
-}
 
 function CommentText({ text }: { text: string }) {
   const parts = text.split(/(@\S+)/g)
@@ -343,7 +307,7 @@ function CommunityPetStoryDetails() {
   const [editCommentId, setEditCommentId] = useState<number | null>(null)
   const [editMentionAuthor, setEditMentionAuthor] = useState<string | null>(null)
   const [editCommentInitialText, setEditCommentInitialText] = useState<string | undefined>(undefined)
-  const [isCommentFormVisible, setIsCommentFormVisible] = useState(true)
+  const [isBookmarked, setIsBookmarked] = useState(false)
   const galleryRef = useRef<HTMLDivElement>(null)
   const footerRef = useRef<HTMLElement>(null)
   const pageRef = useRef<HTMLElement>(null)
@@ -352,7 +316,6 @@ function CommunityPetStoryDetails() {
   const content = post.content?.trim() || fallbackPost.content || '함께 나누고 싶은 반려 생활 이야기를 남겼어요.'
   const isLiked = likedPostIds.includes(post.id)
   const likeCount = post.likes + (isLiked ? 1 : 0)
-  const commentCount = visibleComments.length
   const topLevelCommentCount = visibleComments.filter((comment) => !comment.parentId).length
   const editCommentText = editCommentId !== null ? editCommentInitialText : undefined
 
@@ -393,28 +356,6 @@ function CommunityPetStoryDetails() {
     return () => observer.disconnect()
   }, [])
 
-  useEffect(() => {
-    const scrollContainer = document.querySelector('.layout_content') as HTMLElement | null
-
-    lastScrollTopRef.current = scrollContainer ? scrollContainer.scrollTop : window.scrollY
-
-    const handleScroll = () => {
-      const currentScrollTop = scrollContainer ? scrollContainer.scrollTop : window.scrollY
-      const scrollDelta = currentScrollTop - lastScrollTopRef.current
-
-      if (Math.abs(scrollDelta) < 8) return
-
-      setIsCommentFormVisible(currentScrollTop <= 8 || scrollDelta < 0)
-      lastScrollTopRef.current = currentScrollTop
-    }
-
-    const scrollTarget: HTMLElement | Window = scrollContainer ?? window
-    scrollTarget.addEventListener('scroll', handleScroll, { passive: true })
-
-    return () => {
-      scrollTarget.removeEventListener('scroll', handleScroll)
-    }
-  }, [])
 
   const handleEditConfirm = () => {
     if (editCommentId !== null) {
@@ -518,7 +459,6 @@ function CommunityPetStoryDetails() {
 
     setReplyTo(nextReplyTo)
     setEditCommentId(null)
-    setIsCommentFormVisible(true)
   }
 
   const handleGalleryScroll = () => {
@@ -552,8 +492,13 @@ function CommunityPetStoryDetails() {
         leftContent={<BackButton to="/community/petstory" />}
         rightContent={
           <>
-            <Button type="button" aria-label="공유">
-              <ShareIcon />
+            <Button
+              type="button"
+              aria-label={isBookmarked ? '북마크 해제' : '북마크'}
+              className={isBookmarked ? 'cpsdetail_bookmark_btn active' : 'cpsdetail_bookmark_btn'}
+              onClick={() => setIsBookmarked((v) => !v)}
+            >
+              <BookmarkIcon />
             </Button>
             <Button type="button" aria-label="알림">
               <HeaderIcon type="notification" />
@@ -695,7 +640,7 @@ function CommunityPetStoryDetails() {
             const renderComment = (comment: DetailComment, isReply = false) => {
               const replyCount = repliesMap[comment.id]?.length ?? 0
               return (
-              <article key={comment.id} className={`cpsdetail_comment${isReply ? ' cpsdetail_reply' : ''}`}>
+              <article key={comment.id} className={`cpsdetail_comment${isReply ? ' cpsdetail_reply' : ''}${comment.author === MY_PROFILE_NAME ? ' cpsdetail_my_comment' : ''}`}>
                 <AvatarIcon />
                 <div className="cpsdetail_comment_body">
                   <div className="cpsdetail_comment_head">
@@ -759,7 +704,7 @@ function CommunityPetStoryDetails() {
 
       <footer className="cpsdetail_footer" aria-label="댓글 작성 및 반응" ref={footerRef}>
         <CommentInputForm
-          className={`cpsdetail_comment_form ${isCommentFormVisible ? 'is_visible' : 'is_hidden'}`}
+          className="cpsdetail_comment_form"
           iconButtonClassName="cpsdetail_form_icon"
           inputWrapClassName="cpsdetail_comment_input"
           placeholder="메시지를 입력해 주세요."
@@ -776,13 +721,6 @@ function CommunityPetStoryDetails() {
               addComment(text)
             }
           }}
-        />
-        <PetStoryDetailFooterReactions
-          isLiked={isLiked}
-          likeCount={likeCount}
-          commentCount={commentCount}
-          onLike={toggleLike}
-          onComment={() => navigate(`/community/petstory/detail/${post.id}/comments`)}
         />
       </footer>
 

@@ -107,7 +107,7 @@ function CommunityOverview() {
           <PetStoryPreviewSection />
         </section>
       </main>
-      <FloatingWriteButton onClick={() => navigate('/community/petstory/write')} />
+      <FloatingWriteButton showMenu />
     </>
   )
 }

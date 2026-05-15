@@ -1,10 +1,24 @@
+.layout:has(.cw_page) {
+  min-height: 100dvh;
+}
+
 .layout_content:has(.cw_page) {
+  display: flex;
+  flex-direction: column;
   background: #ffffff;
-  /* padding-bottom: 0; */
+  padding-bottom: 0;
+}
+
+/* min-height 오버라이드: flex로 높이를 채우므로 min-height 불필요 */
+.layout_content > .page.cw_page {
+  flex: 1;
+  min-height: 0;
 }
 
 .page.cw_page {
-  padding-block: 20px;
+  padding-top: 20px;
+  /* cw_action_row(~46px) + HomeIndicator(34px) + 여유 */
+  padding-bottom: 80px;
 }
 
 
@@ -142,10 +156,53 @@
   color: #a1a9b6;
 }
 
+/* 내용 입력 블록 컨테이너 */
+.cw_content_blocks {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* 인라인 이미지 */
+.cw_inline_image_wrap {
+  position: relative;
+  width: 312px;
+  height: 22px;
+  margin: 4px 0;
+  overflow: hidden;
+}
+
+.cw_inline_image {
+  display: block;
+  width: 312px;
+  height: 22px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.cw_inline_image_remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  color: #ffffff;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
 /* 내용 입력 */
 .cw_content_textarea.input_field {
   width: 100%;
-  height: auto;
+  min-height: 24px;
   padding: 12px;
   border: 0;
   border-radius: 0;
@@ -345,10 +402,10 @@
 
 /* 내용 배경 */
 .cw_content_section {
-  min-height: 220px;
+  min-height: 160px;
   background-repeat: no-repeat;
   background-position: center;
-  background-size: 160px auto;
+  background-size: 140px auto;
 }
 
 /* 장소 선택 버튼 */
@@ -384,9 +441,18 @@
 }
 
 .cw_action_row {
+  position: fixed;
+  bottom: var(--layout-footer-height);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100%, var(--layout-max-width));
   display: flex;
-  padding-block: 20px;
+  padding: 12px var(--layout-inline-padding);
   gap: 12px;
+  background: #ffffff;
+  border-top: 1px solid #f0f0f5;
+  box-sizing: border-box;
+  z-index: 105;
 }
 
 .cw_action_row .p_regular{
@@ -398,4 +464,167 @@
   width: 22px;
   height: 22px;
 }
+
+/* ── 투표 글쓰기 ── */
+
+/* 투표 기간 선택 */
+.vw_duration_row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 0 12px;
+  flex-wrap: wrap;
+}
+
+.vw_duration_label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111111;
+  white-space: nowrap;
+}
+
+.vw_duration_btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #A1A9B6;
+  padding: 0;
+  height: auto;
+  min-width: 0;
+  font-family: inherit;
+}
+
+.vw_duration_btn.active {
+  color: #111111;
+}
+
+.vw_duration_check_icon {
+  font-size: 18px;
+  line-height: 1;
+  color: #A1A9B6;
+}
+
+.vw_duration_btn.active .vw_duration_check_icon {
+  color: #6D59F8;
+}
+
+/* 투표 항목 공통 */
+.vw_items_section {
+  width: 100%;
+  padding: 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 8px;
+}
+
+.vw_items_title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111111;
+}
+
+/* 사진 투표 항목 */
+.vw_item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vw_item_image_btn {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px dashed #D8D8E5;
+  border-radius: 12px;
+  background: #F5F5FA;
+  cursor: pointer;
+  overflow: hidden;
+  padding: 0;
+}
+
+.vw_item_image_preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vw_item_image_plus {
+  font-size: 36px;
+  font-weight: 300;
+  color: #B0B0C3;
+  line-height: 1;
+}
+
+.vw_item_label_row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-bottom: 1px solid #F0F0F5;
+  padding-bottom: 4px;
+}
+
+.vw_item_label_input.input_field {
+  flex: 1;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  padding: 6px 0;
+  background: transparent;
+  font-size: 14px;
+  box-shadow: none;
+  outline: none;
+}
+
+.vw_item_label_input.input_field:focus {
+  border: 0;
+  box-shadow: none;
+}
+
+.vw_item_clear_btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 18px;
+  color: #A1A9B6;
+  height: auto;
+  min-width: 0;
+  line-height: 1;
+}
+
+/* OX 투표 항목 */
+.vw_ox_grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.vw_ox_item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border: 1.5px solid #E5E5EC;
+  border-radius: 12px;
+  background: #F5F5FA;
+}
+
+.vw_ox_icon {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+
 

@@ -8,21 +8,24 @@ import HeaderIcon from '../../components/HeaderIcon'
 import Button from '../../components/html/Button'
 import FloatingWriteButton from '../../components/FloatingWriteButton'
 import LikeButton from '../../components/LikeButton'
-import knowledge1 from '../../img/Knowledge/knowledge1.png'
-import knowledge2 from '../../img/Knowledge/knowledge2.png'
-import knowledge3 from '../../img/Knowledge/knowledge3.png'
-import knowledge4 from '../../img/Knowledge/knowledge4.png'
-import life1 from '../../img/daily/daily_1.jpg'
-import life2 from '../../img/daily/daily_2.png'
-import life3 from '../../img/daily/daily_3.png'
-import life4 from '../../img/daily/daily_4.png'
-import life5 from '../../img/daily/daily_5.jpg'
-import life6 from '../../img/daily/daily_6.jpg'
+import knowledge1 from '../../img/petstory/Knowledge/knowledge1.png'
+import knowledge2 from '../../img/petstory/Knowledge/knowledge2.png'
+import knowledge3 from '../../img/petstory/Knowledge/knowledge3.png'
+import knowledge4 from '../../img/petstory/Knowledge/knowledge4.png'
+import life1 from '../../img/petstory/daily/daily_1.jpg'
+import life2 from '../../img/petstory/daily/daily_2.png'
+import life3 from '../../img/petstory/daily/daily_3.png'
+import life4 from '../../img/petstory/daily/daily_4.png'
+import life5 from '../../img/petstory/daily/daily_5.jpg'
+import life6 from '../../img/petstory/daily/daily_6.jpg'
 import commentIcon from '../../svg/nav communicate.svg'
 import sharingIcon from '../../svg/sharing.svg'
 import { MY_PROFILE_NAME } from '../../utils/myProfile'
 import { petStoryDetailCommentCount } from './CommunityPetStoryDetailData'
 import VoteMissionBanner from '../../components/VoteMissionBanner'
+import petstoryOverviewImg from '../../img/petstory/petstory_overview.png'
+import petstoryDailyImg from '../../img/petstory/daily/petstory_daily.png'
+import petstoryKnowledgeImg from '../../img/petstory/Knowledge/petstory_Knowledge.png'
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const dailyPosts = [
@@ -460,157 +463,179 @@ function CommunityPetStory() {
       />
 
       <main className={isDaily ? 'page cpsd_page' : 'page community_page community_page_petstory'}>
-        <VoteMissionBanner
-          className="cps_vote_banner"
-          backgroundColor="#FFD6D9"
-          timerColor="#E03C3C"
-          timeText="02:18:35 남음"
-          title={<>멍스타 모델 도전</>}
-          description="내 반려동물을 스타로!"
-        />
-        {isDaily ? (
-          <div className="cpsd_feed">
-            {dailyFeedPosts.map((post) => (
-              <article
-                key={post.id}
-                className={`cpsd_item${post.image == null ? ' cpsd_item_featured' : ''}`}
-                onClick={() => openPostDetail(post)}
-              >
-                {post.image != null && (
-                  <img src={post.image} alt={post.title} className="cpsd_thumb" />
-                )}
-                <Title
-                  as="h5"
-                  className="cpsd_body"
-                  headingClassName="cpsd_title"
-                  title={<><span className="community_post_tag">{post.tag}</span><span className="cpsd_title_text">{post.title}</span></>}
-                >
-                  <div className="cpsd_meta">
-                    <p className="cpsd_author">{post.author}</p>
-                    <span className="cpsd_meta_divider" aria-hidden="true">|</span>
-                    <p className="cpsd_time">{getPostTimeText(post)}</p>
-                  </div>
-                  <div className="cpsd_actions">
-                    <div
-                      className={`cpsd_like_stat${likedPostIds.includes(post.id) ? ' active' : ''}`}
-                    >
-                      <span className="cpsd_action_icon"><HeartIcon /></span>
-                      <span>{post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}</span>
-                    </div>
-                    <div className="cpsd_comment_stat">
-                      <span className="cpsd_action_icon"><CommentIcon /></span>
-                      <span>{getPostCommentCount(post)}</span>
-                    </div>
-                    <div className="cpsd_share_stat">
-                      <span className="cpsd_action_icon"><ShareIcon /></span>
-                      <span>{post.shares ?? 10}</span>
-                    </div>
-                  </div>
-                </Title>
-              </article>
-            ))}
+        {isOverview ? (
+          <div className="cps_section_banner cps_section_banner_overview">
+            <div className="cps_section_banner_text">
+              <strong className="cps_section_banner_title">펫스토리,<br />이야기가 모이는 곳</strong>
+              <span className="cps_section_banner_desc">집사들의 반려생활 커뮤니티</span>
+            </div>
+            <img src={petstoryOverviewImg} alt="" className="cps_section_banner_img" aria-hidden="true" />
+          </div>
+        ) : isDaily ? (
+          <div className="cps_section_banner cps_section_banner_daily">
+            <div className="cps_section_banner_text">
+              <strong className="cps_section_banner_title">일상</strong>
+              <span className="cps_section_banner_desc">반려동물과 함께한 순간을<br />자유롭게 공유해보세요</span>
+            </div>
+            <img src={petstoryDailyImg} alt="" className="cps_section_banner_img" aria-hidden="true" />
           </div>
         ) : isKnowledge ? (
-          <section className="community_knowledge_feed">
-            <div className="community_knowledge_list">
-              {sortedKnowledgeItems.map((item) => (
+          <div className="cps_section_banner cps_section_banner_knowledge">
+            <div className="cps_section_banner_text">
+              <strong className="cps_section_banner_title">반려상식</strong>
+              <span className="cps_section_banner_desc">건강케어 웰뜨까지,<br />집사인생이 선하는 반려 이야기</span>
+            </div>
+            <img src={petstoryKnowledgeImg} alt="" className="cps_section_banner_img" aria-hidden="true" />
+          </div>
+        ) : (
+          <VoteMissionBanner
+            className="cps_vote_banner"
+            backgroundColor="#FFD6D9"
+            timerColor="#E03C3C"
+            timeText="02:18:35 남음"
+            title={<>멍스타 모델 도전</>}
+            description="내 반려동물을 스타로!"
+          />
+        )}
+        {isDaily ? (
+          <div className="cpsd_feed">
+              {dailyFeedPosts.map((post) => (
                 <article
-                  key={item.id}
-                  className="community_knowledge_feed_card community_knowledge_feed_card_clickable"
-                  onClick={() => openKnowledgeDetail(item)}
+                  key={post.id}
+                  className={`cpsd_item${post.image == null ? ' cpsd_item_featured' : ''}`}
+                  onClick={() => openPostDetail(post)}
                 >
-                  <img
-                    className="community_knowledge_feed_image"
-                    src={item.image}
-                    alt={item.title}
-                    style={{ objectPosition: item.objectPosition }}
-                  />
+                  {post.image != null && (
+                    <img src={post.image} alt={post.title} className="cpsd_thumb" />
+                  )}
                   <Title
                     as="h5"
-                    className="community_knowledge_feed_overlay"
-                    title={
-                      <>
-                      {getKnowledgeTitleLines(item).map((line) => (
-                        <span key={line}>{line}</span>
-                      ))}
-                      </>
-                    }
+                    className="cpsd_body"
+                    headingClassName="cpsd_title"
+                    title={<><span className="community_post_tag">{post.tag}</span><span className="cpsd_title_text">{post.title}</span></>}
                   >
-                    <p className="community_knowledge_feed_views">
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
-                        <circle cx="12" cy="12" r="3" />
-                      </svg>
-                      <span>{(() => { const c = knowledgeViewCounts[getKnowledgeIdFromPath(item.path)]; return c != null ? c.toLocaleString('ko-KR') : item.viewsText })()}</span>
-                    </p>
+                    <div className="cpsd_meta">
+                      <p className="cpsd_author">{post.author}</p>
+                      <span className="cpsd_meta_divider" aria-hidden="true">|</span>
+                      <p className="cpsd_time">{getPostTimeText(post)}</p>
+                    </div>
+                    <div className="cpsd_actions">
+                      <div className={`cpsd_like_stat${likedPostIds.includes(post.id) ? ' active' : ''}`}>
+                        <span className="cpsd_action_icon"><HeartIcon /></span>
+                        <span>{post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}</span>
+                      </div>
+                      <div className="cpsd_comment_stat">
+                        <span className="cpsd_action_icon"><CommentIcon /></span>
+                        <span>{getPostCommentCount(post)}</span>
+                      </div>
+                      <div className="cpsd_share_stat">
+                        <span className="cpsd_action_icon"><ShareIcon /></span>
+                        <span>{post.shares ?? 10}</span>
+                      </div>
+                    </div>
                   </Title>
                 </article>
               ))}
             </div>
-          </section>
+        ) : isKnowledge ? (
+          <section className="community_knowledge_feed">
+              <div className="community_knowledge_list">
+                {sortedKnowledgeItems.map((item) => (
+                  <article
+                    key={item.id}
+                    className="community_knowledge_feed_card community_knowledge_feed_card_clickable"
+                    onClick={() => openKnowledgeDetail(item)}
+                  >
+                    <img
+                      className="community_knowledge_feed_image"
+                      src={item.image}
+                      alt={item.title}
+                      style={{ objectPosition: item.objectPosition }}
+                    />
+                    <Title
+                      as="h5"
+                      className="community_knowledge_feed_overlay"
+                      title={
+                        <>
+                          {getKnowledgeTitleLines(item).map((line) => (
+                            <span key={line}>{line}</span>
+                          ))}
+                        </>
+                      }
+                    >
+                      <p className="community_knowledge_feed_views">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                        <span>{(() => { const c = knowledgeViewCounts[getKnowledgeIdFromPath(item.path)]; return c != null ? c.toLocaleString('ko-KR') : item.viewsText })()}</span>
+                      </p>
+                    </Title>
+                  </article>
+                ))}
+              </div>
+            </section>
         ) : isOverview ? (
           <section className="community_feed">
-            {overviewPosts.map((post) => (
-              <article
-                key={post.id}
-                className={`cpsd_item${post.image == null ? ' cpsd_item_featured' : ''}`}
-                onClick={() => {
-                  if (post.path) {
-                    openKnowledgeDetail({
-                      id: post.id,
-                      tag: post.tag,
-                      title: post.title,
-                      image: post.image ?? knowledge1,
-                      likes: post.likes,
-                      comments: post.comments,
-                      viewsText: post.viewsText,
-                      objectPosition: post.objectPosition,
-                      path: post.path,
-                      createdAt: post.createdAt,
-                    })
-                    return
-                  }
-                  openPostDetail(post)
-                }}
-              >
-                {post.image != null && (
-                  <img src={post.image} alt={post.title} className="cpsd_thumb" />
-                )}
-                <Title
-                  as="h5"
-                  className="cpsd_body"
-                  headingClassName="cpsd_title"
-                  title={<><span className="community_post_tag">{post.tag}</span><span className="cpsd_title_text">{post.title}</span></>}
+              {overviewPosts.map((post) => (
+                <article
+                  key={post.id}
+                  className={`cpsd_item${post.image == null ? ' cpsd_item_featured' : ''}`}
+                  onClick={() => {
+                    if (post.path) {
+                      openKnowledgeDetail({
+                        id: post.id,
+                        tag: post.tag,
+                        title: post.title,
+                        image: post.image ?? knowledge1,
+                        likes: post.likes,
+                        comments: post.comments,
+                        viewsText: post.viewsText,
+                        objectPosition: post.objectPosition,
+                        path: post.path,
+                        createdAt: post.createdAt,
+                      })
+                      return
+                    }
+                    openPostDetail(post)
+                  }}
                 >
-                  <div className="cpsd_meta">
-                    <p className="cpsd_author">{post.author}</p>
-                    {getPostTimeText(post) && (
-                      <>
-                        <span className="cpsd_meta_divider" aria-hidden="true">|</span>
-                        <p className="cpsd_time">{getPostTimeText(post)}</p>
-                      </>
-                    )}
-                  </div>
-                  <div className="cpsd_actions">
-                    <div
-                      className={`cpsd_like_stat${likedPostIds.includes(post.id) ? ' active' : ''}`}
-                    >
-                      <span className="cpsd_action_icon"><HeartIcon /></span>
-                      <span>{post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}</span>
+                  {post.image != null && (
+                    <img src={post.image} alt={post.title} className="cpsd_thumb" />
+                  )}
+                  <Title
+                    as="h5"
+                    className="cpsd_body"
+                    headingClassName="cpsd_title"
+                    title={<><span className="community_post_tag">{post.tag}</span><span className="cpsd_title_text">{post.title}</span></>}
+                  >
+                    <div className="cpsd_meta">
+                      <p className="cpsd_author">{post.author}</p>
+                      {getPostTimeText(post) && (
+                        <>
+                          <span className="cpsd_meta_divider" aria-hidden="true">|</span>
+                          <p className="cpsd_time">{getPostTimeText(post)}</p>
+                        </>
+                      )}
                     </div>
-                    <div className="cpsd_comment_stat">
-                      <span className="cpsd_action_icon"><CommentIcon /></span>
-                      <span>{getPostCommentCount(post)}</span>
+                    <div className="cpsd_actions">
+                      <div className={`cpsd_like_stat${likedPostIds.includes(post.id) ? ' active' : ''}`}>
+                        <span className="cpsd_action_icon"><HeartIcon /></span>
+                        <span>{post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}</span>
+                      </div>
+                      <div className="cpsd_comment_stat">
+                        <span className="cpsd_action_icon"><CommentIcon /></span>
+                        <span>{getPostCommentCount(post)}</span>
+                      </div>
+                      <div className="cpsd_share_stat">
+                        <span className="cpsd_action_icon"><ShareIcon /></span>
+                        <span>{post.shares ?? 10}</span>
+                      </div>
                     </div>
-                    <div className="cpsd_share_stat">
-                      <span className="cpsd_action_icon"><ShareIcon /></span>
-                      <span>{post.shares ?? 10}</span>
-                    </div>
-                  </div>
-                </Title>
-              </article>
-            ))}
-          </section>
+                  </Title>
+                </article>
+              ))}
+            </section>
         ) : (
           <section className="community_feed">
             {posts.length > 0 ? (
@@ -670,7 +695,7 @@ function CommunityPetStory() {
           </section>
         )}
 
-        {!isKnowledge && <FloatingWriteButton onClick={() => navigate('/community/petstory/write')} />}
+        {!isKnowledge && <FloatingWriteButton showMenu />}
       </main>
     </>
   )

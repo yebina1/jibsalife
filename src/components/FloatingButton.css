@@ -135,6 +135,38 @@
   color: #ffffff;
 }
 
+/* 글쓰기 팝업 메뉴 */
+.floating_write_backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 118;
+  background: transparent;
+}
+
+.floating_write_menu {
+  position: fixed;
+  right: 18px;
+  bottom: calc(118px + 56px + 12px);
+  z-index: 119;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none;
+  /* 닫힌 상태: 자신의 높이 + 간격만큼 아래로 이동 → 플로팅 버튼 위치에 숨겨짐 */
+  transform: translateY(calc(100% + 12px));
+  transition:
+    transform 280ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    opacity 200ms ease;
+  opacity: 0;
+}
+
+.floating_write_menu.is_open {
+  pointer-events: auto;
+  transform: translateY(0);
+  opacity: 1;
+}
+
 @media (min-width: 768px) {
   .floating_button_ai {
     right: max(24px, calc((100vw - var(--layout-max-width, 1440px)) / 2 + 24px));
@@ -162,5 +194,11 @@
 
   .floating_write_button.is_expanded {
     width: 104px;
+  }
+
+  .floating_write_menu {
+    right: 16px;
+    bottom: calc(112px + 56px + 12px);
+    /* 닫힌 상태 translateY는 공통 스타일이 그대로 적용됨 */
   }
 }

@@ -230,3 +230,14 @@
   color: #ffffff;
   cursor: not-allowed;
 }
+
+.light_purple_radius_btn {
+  background: #9A8BFF;
+  font-size: 16px;
+  font-weight: 600;
+  min-width: 152px;
+  padding: 11px 24px;
+  color: #fff;
+  border-radius: 999px;
+  text-align: center;
+}

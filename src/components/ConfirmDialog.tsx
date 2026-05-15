@@ -4,6 +4,7 @@ import Button from './html/Button'
 
 type ConfirmDialogProps = {
   message: string
+  description?: string
   onCancel: () => void
   onConfirm: () => void
   cancelLabel?: string
@@ -13,6 +14,7 @@ type ConfirmDialogProps = {
 
 function ConfirmDialog({
   message,
+  description,
   onCancel,
   onConfirm,
   cancelLabel = '아니요',
@@ -22,6 +24,7 @@ function ConfirmDialog({
   return (
     <Alert onClose={onCancel}>
       <p className="confirm_dialog_msg">{message}</p>
+      {description && <p className="confirm_dialog_desc">{description}</p>}
       <div className="confirm_dialog_btns">
         {!hideCancel ? (
           <Button type="button" className="white_btn" onClick={onCancel}>

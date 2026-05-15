@@ -186,16 +186,11 @@
 .layout_community_controls {
   display: flex;
   width: 100%;
-  max-height: 80px;
   align-items: center;
   gap: 10px;
   box-sizing: border-box;
   padding: 10px var(--layout-inline-padding);
   background: #ffffff;
-  transition:
-    opacity 180ms ease,
-    max-height 180ms ease,
-    padding 180ms ease;
 }
 
 .layout_community_subtab_scroll {
@@ -235,14 +230,6 @@
   font-weight: var(--font-weight-sb);
 }
 
-.layout_community_subtabs_hidden .layout_community_controls {
-  opacity: 0;
-  pointer-events: none;
-  max-height: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-  overflow: hidden;
-}
 
 .layout_community_subtab_dropdown {
   position: relative;

@@ -88,6 +88,7 @@ function App() {
         <Route element={<Layout showNav={false} />}>
           <Route path="/health/qna" element={<HealthQna />} />
           <Route path="/health/vet-chat" element={<HealthVetChat />} />
+          <Route path="/community/vote/write" element={<CommunityWrite />} />
         </Route>
         <Route element={<Layout showHeader={false} />}>
           <Route path="/health/cam" element={<Health />} />

@@ -245,3 +245,238 @@ html:has(.cv2_page) {
   font-size: 12px;
   color: #9CA3AF;
 }
+
+/* ── 사용자 등록 투표 카드 ── */
+.uvote_card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid #E5E7EB;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.uvote_card_title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+  line-height: 1.4;
+}
+
+.uvote_card_desc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #6B7280;
+  line-height: 1.4;
+}
+
+/* 사진 투표 */
+.uvote_photo_grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.uvote_photo_option {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s;
+}
+
+.uvote_photo_option.selected {
+  border-color: #6D59F8;
+}
+
+.uvote_photo_img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.uvote_photo_placeholder {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  background: #F0F0F5;
+}
+
+.uvote_photo_label_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 0 4px 6px;
+}
+
+.uvote_photo_label {
+  font-size: 13px;
+  color: #374151;
+  flex: 1;
+}
+
+.uvote_photo_radio {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid #D1D5DB;
+  box-sizing: border-box;
+}
+
+.uvote_photo_radio.checked {
+  border-color: #6D59F8;
+  background: #6D59F8;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 8'%3E%3Cpath d='M1 4l3 3 5-6' stroke='%23fff' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 10px 8px;
+}
+
+/* 투표하기 버튼 */
+.uvote_submit_btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: #FF6B8A;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.uvote_submit_btn:disabled {
+  background: #FFAFC1;
+  cursor: not-allowed;
+}
+
+/* OX 투표 */
+.uvote_ox_grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.uvote_ox_option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border: 1.5px solid #E5E5EC;
+  border-radius: 12px;
+  background: #F5F5FA;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.uvote_ox_option.selected {
+  border-color: #6D59F8;
+  background: #EFEDFF;
+}
+
+.uvote_ox_icon {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+/* 텍스트만 뼈다귀 카드 */
+.uvote_bone_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.uvote_bone_shape {
+  display: flex;
+  align-items: center;
+}
+
+.uvote_bone_cap {
+  width: 72px;
+  height: 72px;
+  background: #D0D0D0;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.uvote_bone_bar {
+  flex: 1;
+  height: 40px;
+  background: #D0D0D0;
+  margin: 0 -6px;
+}
+
+.uvote_bone_labels {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+
+.uvote_bone_option {
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 0;
+  font-family: inherit;
+}
+
+.uvote_bone_option.selected {
+  color: #6D59F8;
+}
+
+.uvote_bone_vs {
+  font-size: 14px;
+  color: #9CA3AF;
+  font-weight: 500;
+}
+
+/* 텍스트 투표 */
+.uvote_text_grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.uvote_text_option {
+  padding: 24px 12px;
+  border: 1.5px solid #E5E5EC;
+  border-radius: 12px;
+  background: #F5F5FA;
+  color: #374151;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.uvote_text_option.selected {
+  border-color: #6D59F8;
+  background: #EFEDFF;
+  color: #6D59F8;
+}
+
+/* 메타 */
+.uvote_meta {
+  margin: 0;
+  font-size: 12px;
+  color: #9CA3AF;
+}

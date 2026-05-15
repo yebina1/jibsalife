@@ -4,7 +4,7 @@ import Button from './html/Button'
 
 type PostMoreSheetProps =
   | { type: 'own';   onClose: () => void; onDelete: () => void; onEdit: () => void; onCamera?: never; onAlbum?: never }
-  | { type: 'other'; onClose: () => void; onDelete?: never; onEdit?: never; onCamera?: never; onAlbum?: never }
+  | { type: 'other'; onClose: () => void; onDelete?: () => void; onEdit?: () => void; onCamera?: never; onAlbum?: never }
   | { type: 'photo'; onClose: () => void; onCamera: () => void; onAlbum: () => void; onDelete?: never; onEdit?: never }
 
 function PostMoreSheet({ type, onClose, onDelete, onEdit, onCamera, onAlbum }: PostMoreSheetProps) {

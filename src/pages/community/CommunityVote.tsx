@@ -6,11 +6,16 @@ import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
 import Title from '../../components/Title'
 import Button from '../../components/html/Button'
+import FloatingWriteButton from '../../components/FloatingWriteButton'
+import VoteMissionBanner from '../../components/VoteMissionBanner'
 import crownIcon from '../../svg/crown.svg'
 import timerIcon from '../../svg/timer.svg'
 import timerClosedIcon from '../../svg/timer_closed.svg'
 import { readVotedMissionIds } from '../../utils/communityVoteStatus'
 import { missionVotes, regularVoteItems } from './CommunityVoteData'
+import { readUserVotes, calcDeadlineText, type UserVote } from '../../utils/savedVotes'
+import voteOIcon from '../../svg/vote_o.svg'
+import voteXIcon from '../../svg/vote_x.svg'
 
 const topTabs = ['전체', '펫스토리', '챌린지', '투표'] as const
 const topTabRoutes: Record<string, string> = {
@@ -39,6 +44,9 @@ function CommunityVote() {
   const showRegular = sub === 'all' || sub === 'regular'
   const showResult = sub === 'all' || sub === 'result'
   const [votedIds] = useState(() => readVotedMissionIds())
+  const [savedVotes] = useState<UserVote[]>(() => readUserVotes())
+  const [voteSelections, setVoteSelections] = useState<Record<number, number>>({})
+  const [localVotedIds, setLocalVotedIds] = useState<Set<number>>(new Set())
   const sortedRegularVoteItems = useMemo(() => {
     return [...regularVoteItems].sort((a, b) => {
       if (sort === 'popular') {
@@ -82,6 +90,14 @@ function CommunityVote() {
       />
 
       <main className="page cv2_page">
+        <VoteMissionBanner
+          className="cps_vote_banner"
+          backgroundColor="#FFD6D9"
+          timerColor="#E03C3C"
+          timeText="02:18:35 남음"
+          title={<>멍스타 모델 도전</>}
+          description="내 반려동물을 스타로!"
+        />
         {/* 탭 바 */}
         <section className="community_tab_bar" aria-label="커뮤니티 상위 카테고리">
           {topTabs.map((tab) => (
@@ -203,6 +219,110 @@ function CommunityVote() {
         {showRegular && <section className="cv2_section">
           <Title as="h4" className="cv2_section_title" title="일반 투표" />
           <div className="cv2_regular_list">
+            {savedVotes.map((vote) => {
+              const sel = voteSelections[vote.id]
+              const voted = localVotedIds.has(vote.id)
+              const deadline = calcDeadlineText(vote.createdAt, vote.voteDuration)
+              const hasImages = vote.voteItems.some(it => it.image !== null)
+              const hasLabels = vote.voteType === '사진 투표' && vote.voteItems.some(it => it.label.trim() !== '')
+
+              const handleSelect = (itemId: number) => setVoteSelections(prev => ({ ...prev, [vote.id]: itemId }))
+              const handleSubmit = () => { if (sel !== undefined) setLocalVotedIds(prev => new Set([...prev, vote.id])) }
+              const handleDirectVote = (itemId: number) => {
+                setVoteSelections(prev => ({ ...prev, [vote.id]: itemId }))
+                setLocalVotedIds(prev => new Set([...prev, vote.id]))
+              }
+
+              return (
+                <div key={vote.id} className="uvote_card">
+                  <div className="uvote_card_header">
+                    <p className="uvote_card_title">{vote.title}</p>
+                    {vote.content && <p className="uvote_card_desc">{vote.content}</p>}
+                  </div>
+
+                  {/* 텍스트만 (이미지 없음) → 뼈다귀 카드 */}
+                  {vote.voteType === '사진 투표' && !hasImages && (
+                    <div className="uvote_bone_wrap">
+                      <div className="uvote_bone_shape">
+                        <div className="uvote_bone_cap" />
+                        <div className="uvote_bone_bar" />
+                        <div className="uvote_bone_cap" />
+                      </div>
+                      <div className="uvote_bone_labels">
+                        <button
+                          type="button"
+                          className={`uvote_bone_option${sel === vote.voteItems[0]?.id ? ' selected' : ''}`}
+                          onClick={() => handleDirectVote(vote.voteItems[0].id)}
+                        >
+                          {vote.voteItems[0]?.label}
+                        </button>
+                        <span className="uvote_bone_vs">vs</span>
+                        <button
+                          type="button"
+                          className={`uvote_bone_option${sel === vote.voteItems[1]?.id ? ' selected' : ''}`}
+                          onClick={() => handleDirectVote(vote.voteItems[1].id)}
+                        >
+                          {vote.voteItems[1]?.label}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 이미지 있는 사진 투표 → 사진 그리드 */}
+                  {vote.voteType === '사진 투표' && hasImages && (
+                    <div className="uvote_photo_grid">
+                      {vote.voteItems.map(item => {
+                        const isSelected = sel === item.id
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            className={`uvote_photo_option${isSelected ? ' selected' : ''}`}
+                            onClick={() => {
+                              handleSelect(item.id)
+                              if (!hasLabels) handleDirectVote(item.id)
+                            }}
+                          >
+                            <img src={item.image!} alt={item.label} className="uvote_photo_img" />
+                            {hasLabels && (
+                              <span className="uvote_photo_label_row">
+                                <span className="uvote_photo_label">{item.label}</span>
+                                <span className={`uvote_photo_radio${isSelected ? ' checked' : ''}`} />
+                              </span>
+                            )}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
+
+                  {vote.voteType === '사진 투표' && hasImages && hasLabels && (
+                    <button type="button" className="uvote_submit_btn" disabled={sel === undefined} onClick={handleSubmit}>
+                      {voted ? '수정하기' : '투표하기'}
+                    </button>
+                  )}
+
+                  {vote.voteType === 'OX' && (
+                    <div className="uvote_ox_grid">
+                      {([{ id: 1, icon: voteOIcon, alt: 'O' }, { id: 2, icon: voteXIcon, alt: 'X' }] as const).map(ox => (
+                        <button
+                          key={ox.id}
+                          type="button"
+                          className={`uvote_ox_option${sel === ox.id ? ' selected' : ''}`}
+                          onClick={() => { handleSelect(ox.id); setLocalVotedIds(prev => new Set([...prev, vote.id])) }}
+                        >
+                          <img src={ox.icon} alt={ox.alt} className="uvote_ox_icon" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+
+                  <p className="uvote_meta">{deadline} <span className="cv2_divider">|</span> 참여자 수 0명</p>
+                </div>
+              )
+            })}
+
             {activeRegularItems.map((item) => (
               <div key={item.id} className="cv2_regular_item">
                 <Title as="h5" className="cv2_regular_body" title={item.title}>
@@ -233,6 +353,7 @@ function CommunityVote() {
           </div>
         </section>}
       </main>
+      <FloatingWriteButton showMenu />
     </>
   )
 }
