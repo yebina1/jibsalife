@@ -464,29 +464,29 @@ function CommunityPetStory() {
 
       <main className={isDaily ? 'page cpsd_page' : 'page community_page community_page_petstory'}>
         {isOverview ? (
-          <div className="cps_section_banner cps_section_banner_overview">
-            <div className="cps_section_banner_text">
-              <strong className="cps_section_banner_title">펫스토리,<br />이야기가 모이는 곳</strong>
-              <span className="cps_section_banner_desc">집사들의 반려생활 커뮤니티</span>
-            </div>
-            <img src={petstoryOverviewImg} alt="" className="cps_section_banner_img" aria-hidden="true" />
-          </div>
+          <VoteMissionBanner
+            className="cps_section_banner cps_section_banner_overview"
+            backgroundColor="#FFB62E"
+            imageSrc={petstoryOverviewImg}
+            title={<>펫스토리,<br />이야기가 모이는 곳</>}
+            description="집사들의 반려생활 커뮤니티"
+          />
         ) : isDaily ? (
-          <div className="cps_section_banner cps_section_banner_daily">
-            <div className="cps_section_banner_text">
-              <strong className="cps_section_banner_title">일상</strong>
-              <span className="cps_section_banner_desc">반려동물과 함께한 순간을<br />자유롭게 공유해보세요</span>
-            </div>
-            <img src={petstoryDailyImg} alt="" className="cps_section_banner_img" aria-hidden="true" />
-          </div>
+          <VoteMissionBanner
+            className="cps_section_banner cps_section_banner_daily"
+            backgroundColor="#B8D7AE"
+            imageSrc={petstoryDailyImg}
+            title={<>일상</>}
+            description="반려동물과 함께한 순간을 자유롭게 공유해보세요"
+          />
         ) : isKnowledge ? (
-          <div className="cps_section_banner cps_section_banner_knowledge">
-            <div className="cps_section_banner_text">
-              <strong className="cps_section_banner_title">반려상식</strong>
-              <span className="cps_section_banner_desc">건강케어 웰뜨까지,<br />집사인생이 선하는 반려 이야기</span>
-            </div>
-            <img src={petstoryKnowledgeImg} alt="" className="cps_section_banner_img" aria-hidden="true" />
-          </div>
+          <VoteMissionBanner
+            className="cps_section_banner cps_section_banner_knowledge"
+            backgroundColor="#A3D7FD"
+            imageSrc={petstoryKnowledgeImg}
+            title={<>반려상식</>}
+            description="건강케어 웰뜨까지, 집사인생이 선하는 반려 이야기"
+          />
         ) : (
           <VoteMissionBanner
             className="cps_vote_banner"

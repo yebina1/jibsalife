@@ -14,7 +14,7 @@ type VoteMissionBannerProps = {
 }
 
 function VoteMissionBanner({
-  timeText = '7시간 남음',
+  timeText,
   title = (
     <>
       5월 3주차
@@ -37,13 +37,15 @@ function VoteMissionBanner({
         as="h2"
         className="vote_mission_banner_title"
         beforeTitle={
-          <span
-            className="vote_mission_banner_timer"
-            style={timerColor ? { color: timerColor } : undefined}
-          >
-            <img src={timerIcon} alt="" aria-hidden="true" />
-            {timeText}
-          </span>
+          timeText ? (
+            <span
+              className="vote_mission_banner_timer"
+              style={timerColor ? { color: timerColor } : undefined}
+            >
+              <img src={timerIcon} alt="" aria-hidden="true" />
+              {timeText}
+            </span>
+          ) : undefined
         }
         title={title}
       >
