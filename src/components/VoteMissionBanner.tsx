@@ -6,7 +6,7 @@ import './VoteMissionBanner.css'
 type VoteMissionBannerProps = {
   timeText?: string
   title?: React.ReactNode
-  description?: string
+  description?: React.ReactNode
   backgroundColor?: string
   imageSrc?: string
   className?: string

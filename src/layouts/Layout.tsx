@@ -106,6 +106,7 @@ function Layout({
     '/signup',
     '/place',
     '/mypage',
+    '/mypage/posts',
     '/community',
     '/mission',
     '/health',

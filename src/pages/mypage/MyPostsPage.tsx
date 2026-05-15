@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
+import FloatingWriteButton from '../../components/FloatingWriteButton'
 import { readMyProfileName } from '../../utils/myProfile'
 import commentIcon from '../../svg/nav communicate.svg'
 import sharingIcon from '../../svg/sharing.svg'
@@ -306,6 +307,7 @@ function MyPostsPage() {
           </section>
         )}
       </main>
+      <FloatingWriteButton showMenu />
     </>
   )
 }

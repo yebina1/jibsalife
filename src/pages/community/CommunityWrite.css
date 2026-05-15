@@ -1,28 +1,36 @@
 .layout:has(.cw_page) {
-  min-height: 100dvh;
+  /* min-height: 100dvh; */
 }
 
 .layout_content:has(.cw_page) {
+  /* footer(HomeIndicator 34px) + action_row visible above footer(47px) */
+  height: calc(100dvh - var(--layout-header-height) - var(--layout-footer-height) - 47px);
+  min-height: unset;
   display: flex;
   flex-direction: column;
   background: #ffffff;
   padding-bottom: 0;
+  overflow: hidden;
 }
 
 /* min-height 오버라이드: flex로 높이를 채우므로 min-height 불필요 */
 .layout_content > .page.cw_page {
   flex: 1;
   min-height: 0;
+  overflow-y: auto;
 }
 
 .page.cw_page {
-  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  padding-block: 20px;
   /* cw_action_row(~46px) + HomeIndicator(34px) + 여유 */
-  padding-bottom: 80px;
 }
 
 
 .cw_form {
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -166,16 +174,15 @@
 /* 인라인 이미지 */
 .cw_inline_image_wrap {
   position: relative;
-  width: 312px;
-  height: 22px;
+  width: 100%;
   margin: 4px 0;
   overflow: hidden;
 }
 
 .cw_inline_image {
   display: block;
-  width: 312px;
-  height: 22px;
+  width: 100%;
+  height: 224px;
   border-radius: 8px;
   object-fit: cover;
 }
@@ -440,14 +447,19 @@
   display: none;
 }
 
+.layout:has(.cw_page) > footer {
+  z-index: 110;
+}
+
 .cw_action_row {
   position: fixed;
-  bottom: var(--layout-footer-height);
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
   width: min(100%, var(--layout-max-width));
   display: flex;
   padding: 12px var(--layout-inline-padding);
+  padding-bottom: 46px;
   gap: 12px;
   background: #ffffff;
   border-top: 1px solid #f0f0f5;

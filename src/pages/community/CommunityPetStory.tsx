@@ -477,7 +477,7 @@ function CommunityPetStory() {
             backgroundColor="#B8D7AE"
             imageSrc={petstoryDailyImg}
             title={<>일상</>}
-            description="반려동물과 함께한 순간을 자유롭게 공유해보세요"
+            description={<>반려동물과 함께한 순간을<br />자유롭게 공유해보세요</>}
           />
         ) : isKnowledge ? (
           <VoteMissionBanner
@@ -485,7 +485,7 @@ function CommunityPetStory() {
             backgroundColor="#A3D7FD"
             imageSrc={petstoryKnowledgeImg}
             title={<>반려상식</>}
-            description="건강케어 웰뜨까지, 집사인생이 선하는 반려 이야기"
+            description={<>건강부터 행동까지,<br/>집사인생이 전하는 반려 이야기</>}
           />
         ) : (
           <VoteMissionBanner

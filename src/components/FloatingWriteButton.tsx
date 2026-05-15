@@ -58,36 +58,38 @@ function FloatingWriteButton({
       {showMenu && isMenuOpen && (
         <div className="floating_write_backdrop" onClick={() => setIsMenuOpen(false)} />
       )}
-      {showMenu && (
-        <div className={`floating_write_menu${isMenuOpen ? ' is_open' : ''}`}>
-          <Button
-            type="button"
-            className="light_purple_radius_btn"
-            onClick={() => { setIsMenuOpen(false); navigate('/community/vote/write') }}
-          >
-            투표 올리기
-          </Button>
-          <Button
-            type="button"
-            className="light_purple_radius_btn"
-            onClick={() => { setIsMenuOpen(false); navigate('/community/petstory/write') }}
-          >
-            일상 공유하기
-          </Button>
-        </div>
-      )}
-      <FloatingButton
-        placement="community"
-        aria-label={ariaLabel}
-        className={resolvedClassName}
-        onClick={handleClick}
-        {...props}
-      >
-        <span className="floating_button_icon_frame" aria-hidden="true">
-          <i className="bx bx-edit-alt" />
-        </span>
-        <span className="floating_write_button_label">글쓰기</span>
-      </FloatingButton>
+      <div className="floating_write_container">
+        {showMenu && (
+          <div className={`floating_write_menu${isMenuOpen ? ' is_open' : ''}`}>
+            <Button
+              type="button"
+              className="light_purple_radius_btn"
+              onClick={() => { setIsMenuOpen(false); navigate('/community/vote/write') }}
+            >
+              투표 올리기
+            </Button>
+            <Button
+              type="button"
+              className="light_purple_radius_btn"
+              onClick={() => { setIsMenuOpen(false); navigate('/community/petstory/write') }}
+            >
+              일상 공유하기
+            </Button>
+          </div>
+        )}
+        <FloatingButton
+          placement="community"
+          aria-label={ariaLabel}
+          className={resolvedClassName}
+          onClick={handleClick}
+          {...props}
+        >
+          <span className="floating_button_icon_frame" aria-hidden="true">
+            <i className="bx bx-edit-alt" />
+          </span>
+          <span className="floating_write_button_label">글쓰기</span>
+        </FloatingButton>
+      </div>
     </>
   )
 }

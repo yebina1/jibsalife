@@ -18,8 +18,8 @@ function PostMoreSheet({ type, onClose, onDelete, onEdit, onCamera, onAlbum }: P
           </>
         ) : type === 'photo' ? (
           <>
-            <li><button type="button" onClick={onCamera}>촬영하기</button></li>
-            <li><button type="button" onClick={onAlbum}>앨범</button></li>
+            <li><button type="button" onClick={onCamera}>사진 촬영하기</button></li>
+            <li><button type="button" onClick={onAlbum}>갤러리에서 업로드</button></li>
           </>
         ) : (
           <>

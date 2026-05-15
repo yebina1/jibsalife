@@ -351,25 +351,26 @@
   display: none;
 }
 
-.cpsdetail_bookmark_btn {
+.cpsdetail_bookmark_btn span {
   display: inline-flex;
+  width: 28px;
+  height: 28px;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
   padding: 0;
   border: 0;
   background: transparent;
-  color: #767676;
-  cursor: pointer;
+  color: #111111;
 }
 
 .cpsdetail_bookmark_btn svg {
-  width: 22px;
-  height: 22px;
-  stroke: currentColor;
-  stroke-width: 1.8;
+  width: 28px;
+  height: 28px;
   fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .cpsdetail_bookmark_btn.active {

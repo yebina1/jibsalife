@@ -14,6 +14,7 @@ type CommentInputFormProps = {
   onClearReply?: () => void
   prefilledText?: string
   onSubmit?: (value: string) => void
+  onAddPhoto?: () => void
 }
 
 function CommentInputForm({
@@ -27,6 +28,7 @@ function CommentInputForm({
   onClearReply,
   prefilledText,
   onSubmit,
+  onAddPhoto,
 }: CommentInputFormProps) {
   const [value, setValue] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -76,7 +78,7 @@ function CommentInputForm({
 
   return (
     <form className={className} onSubmit={handleSubmit}>
-      <button type="button" aria-label="사진 추가" className={iconButtonClassName}>
+      <button type="button" aria-label="사진 추가" className={iconButtonClassName} onClick={onAddPhoto}>
         <img src={addIcon} alt="" />
       </button>
 

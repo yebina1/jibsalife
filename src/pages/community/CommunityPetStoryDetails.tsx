@@ -18,6 +18,7 @@ import life5 from '../../img/petstory/daily/daily_5.jpg'
 import life6 from '../../img/petstory/daily/daily_6.jpg'
 import addIcon from '../../svg/add icon.svg'
 import emojiIcon from '../../svg/emoji.svg'
+import commentIcon from '../../svg/nav communicate.svg'
 import { MY_PROFILE_IMAGE, MY_PROFILE_NAME } from '../../utils/myProfile'
 import { petStoryDetailComments } from './CommunityPetStoryDetailData'
 
@@ -308,9 +309,11 @@ function CommunityPetStoryDetails() {
   const [editMentionAuthor, setEditMentionAuthor] = useState<string | null>(null)
   const [editCommentInitialText, setEditCommentInitialText] = useState<string | undefined>(undefined)
   const [isBookmarked, setIsBookmarked] = useState(false)
+  const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false)
   const galleryRef = useRef<HTMLDivElement>(null)
   const footerRef = useRef<HTMLElement>(null)
   const pageRef = useRef<HTMLElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const viewIncrementedForRef = useRef<number | null>(null)
   const lastScrollTopRef = useRef(0)
   const content = post.content?.trim() || fallbackPost.content || '함께 나누고 싶은 반려 생활 이야기를 남겼어요.'
@@ -669,7 +672,7 @@ function CommunityPetStoryDetails() {
                       좋아요 {comment.likes || ''}
                     </LikeButton>
                   <button type="button" onClick={() => startReply(comment)}>
-                    <i className="bx bx-message-rounded-dots" aria-hidden="true" />
+                    <img src={commentIcon} alt="" aria-hidden="true" />
                     <span>답글쓰기{replyCount > 0 ? ` ${replyCount}` : ''}</span>
                   </button>
                   </div>
@@ -703,6 +706,12 @@ function CommunityPetStoryDetails() {
       </main>
 
       <footer className="cpsdetail_footer" aria-label="댓글 작성 및 반응" ref={footerRef}>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+        />
         <CommentInputForm
           className="cpsdetail_comment_form"
           iconButtonClassName="cpsdetail_form_icon"
@@ -713,6 +722,7 @@ function CommunityPetStoryDetails() {
           replyTo={editCommentId !== null ? editMentionAuthor : (replyTo?.author ?? null)}
           onClearReply={editCommentId !== null ? () => setEditMentionAuthor(null) : () => setReplyTo(null)}
           prefilledText={editCommentText}
+          onAddPhoto={() => setIsPhotoSheetOpen(true)}
           onSubmit={(text) => {
             if (editCommentId !== null) {
               setPendingEditText(text)
@@ -769,6 +779,27 @@ function CommunityPetStoryDetails() {
           onClose={() => setMoreSheetOpen(false)}
         />
       ) : null}
+
+      {isPhotoSheetOpen && (
+        <PostMoreSheet
+          type="photo"
+          onClose={() => setIsPhotoSheetOpen(false)}
+          onCamera={() => {
+            setIsPhotoSheetOpen(false)
+            if (fileInputRef.current) {
+              fileInputRef.current.setAttribute('capture', 'environment')
+              fileInputRef.current.click()
+            }
+          }}
+          onAlbum={() => {
+            setIsPhotoSheetOpen(false)
+            if (fileInputRef.current) {
+              fileInputRef.current.removeAttribute('capture')
+              fileInputRef.current.click()
+            }
+          }}
+        />
+      )}
     </>
   )
 }
