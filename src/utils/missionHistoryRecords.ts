@@ -38,6 +38,15 @@ export const DEFAULT_MISSION_HISTORY_RECORDS: MissionHistoryRecord[] = [
   { id: 114, title: '증상 기록', detail: '무기력', time: '19:36', color: '#A28BFA', date: '2026-05-12' },
   { id: 115, title: '배변 · 배뇨 기록', detail: '평소와 다름', time: '10:10', color: '#BEE3F8', date: '2026-05-13' },
   { id: 116, title: '식사 기록', detail: '사료 90g', time: '16:00', color: '#F2B472', date: '2026-05-13' },
+  { id: 117, title: '식사 기록', detail: '사료 120g', time: '08:00', color: '#F2B472', date: '2026-05-13' },
+  { id: 118, title: '산책 기록', detail: '산책 30분', time: '18:30', color: '#A4CE95', date: '2026-05-13' },
+  { id: 119, title: '배변 · 배뇨 기록', detail: '정상 변', time: '09:30', color: '#BEE3F8', date: '2026-05-13' },
+  { id: 120, title: '식사 기록', detail: '사료 120g', time: '08:00', color: '#F2B472', date: '2026-05-14' },
+  { id: 121, title: '활동 기록', detail: '활발함', time: '15:00', color: '#162447', date: '2026-05-14' },
+  { id: 122, title: '배변 · 배뇨 기록', detail: '정상 변', time: '09:30', color: '#BEE3F8', date: '2026-05-14' },
+  { id: 123, title: '식사 기록', detail: '사료 120g', time: '08:00', color: '#F2B472', date: '2026-05-15' },
+  { id: 124, title: '활동 기록', detail: '활발함', time: '15:00', color: '#162447', date: '2026-05-15' },
+  { id: 125, title: '증상 기록', detail: '재채기', time: '14:00', color: '#A28BFA', date: '2026-05-15' },
 ]
 
 const LEEYORI_MISSION_HISTORY_RECORDS: MissionHistoryRecord[] = [

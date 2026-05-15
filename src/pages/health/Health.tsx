@@ -862,6 +862,7 @@ function Health() {
             justifyContent: 'center',
           }}
           aria-label="닫기"
+          onClick={isCameraTutorialVisible ? () => setCameraTutorialStepIndex(null) : undefined}
         />
       </section>
 

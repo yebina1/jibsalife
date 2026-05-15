@@ -14,6 +14,7 @@ type BackButtonProps = {
   style?: CSSProperties
   state?: unknown
   'aria-label'?: string
+  onClick?: () => void
 }
 
 export default function BackButton({
@@ -27,10 +28,16 @@ export default function BackButton({
   style,
   state,
   'aria-label': ariaLabel,
+  onClick,
 }: BackButtonProps) {
   const navigate = useNavigate()
 
   const handleClick = () => {
+    if (onClick) {
+      onClick()
+      return
+    }
+
     if (typeof to === 'number') {
       navigate(to)
       return
