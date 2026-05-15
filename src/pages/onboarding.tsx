@@ -303,6 +303,9 @@ function Onboarding() {
       <OnboardingLayout
         step={isWelcomeStep ? undefined : progress}
         totalSteps={isWelcomeStep ? undefined : 3}
+        topActionLabel={isWelcomeStep ? undefined : '건너뛰기'}
+        topActionInline={!isWelcomeStep}
+        onTopAction={isWelcomeStep ? undefined : goToLogin}
         title={slide.title}
         subtitle={slide.subtitle}
         bodyGap={isWelcomeStep ? 74 : 39}
@@ -381,6 +384,11 @@ function Onboarding() {
 
   const renderPetNameStep = () => (
     <OnboardingLayout
+      step={3}
+      totalSteps={6}
+      topActionLabel="건너뛰기"
+      topActionInline
+      onTopAction={handlePetNameNext}
       title="우리 아이 이름이 뭐예요?"
       subtitle="아이의 이름을 입력해주세요."
       bodyGap={32}
@@ -441,7 +449,7 @@ function Onboarding() {
 
   return (
     <main key={step} ref={pageRef} className="onboarding_page">
-      {!isProfileSetup && step !== 'welcome' && step !== 'profile' && step !== 'petName' && step !== 'complete' ? (
+      {false ? (
         <button type="button" className="onboarding_skip_button caption_medium" onClick={goToLogin}>
           건너뛰기
         </button>

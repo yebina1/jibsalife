@@ -46,7 +46,9 @@ type EditPost = {
 function CommunityWrite() {
   const navigate = useNavigate()
   const location = useLocation()
-  const editPost = (location.state as { editPost?: EditPost } | null)?.editPost
+  const writeState = (location.state as { editPost?: EditPost; returnTo?: string } | null) ?? null
+  const editPost = writeState?.editPost
+  const backTarget = writeState?.returnTo
 
   const [board, setBoard] = useState<BoardOption | ''>(
     editPost && boardOptions.includes(editPost.tag as BoardOption) ? (editPost.tag as BoardOption) : ''
@@ -126,11 +128,18 @@ function CommunityWrite() {
         const saved = window.localStorage.getItem(createdPostsStorageKey)
         const existing = saved ? JSON.parse(saved) : []
         const updated = Array.isArray(existing)
-          ? existing.map((p: { id: number }) => (p.id === editPost.id ? updatedPost : p))
+          ? existing.some((p: { id: number }) => p.id === editPost.id)
+            ? existing.map((p: { id: number }) => (p.id === editPost.id ? updatedPost : p))
+            : [updatedPost, ...existing]
           : [updatedPost]
         window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(updated))
       } catch { /* noop */ }
-      navigate(`/community/petstory/detail/${editPost.id}`, { state: { post: updatedPost } })
+      navigate(`/community/petstory/detail/${editPost.id}`, {
+        state: {
+          post: updatedPost,
+          returnTo: backTarget,
+        },
+      })
       return
     }
 
@@ -169,7 +178,7 @@ function CommunityWrite() {
     <>
       <PageHeader
         title={editPost ? '글수정' : '글작성'}
-        leftContent={<BackButton />}
+        leftContent={<BackButton to={backTarget ?? -1} />}
         rightContent={
           <Button
             type="submit"

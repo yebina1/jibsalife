@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router'
 import FloatingButton from './FloatingButton'
-import aiChatIcon from '../img/aichat.svg'
+import aiChatBase from '../svg/aichat.svg'
+import aiChatBubble from '../svg/aichat_bubble.svg'
 
 type FloatingAiButtonProps = {
   className?: string
@@ -18,8 +19,8 @@ export default function FloatingAiButton({ className }: FloatingAiButtonProps) {
       onClick={() => navigate('/health/qna')}
     >
       <span className="floating_button_icon_frame" aria-hidden="true">
-        <img className="floating_ai_chat_base" src={aiChatIcon} alt="AI chat" />
-        <img className="floating_ai_chat_bubble_image" src={aiChatIcon} alt="" />
+        <img className="floating_ai_chat_base" src={aiChatBase} alt="AI chat" />
+        <img className="floating_ai_chat_bubble_image" src={aiChatBubble} alt="" />
       </span>
     </FloatingButton>
   )

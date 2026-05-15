@@ -95,21 +95,30 @@
 
 .floating_button_ai_chat .floating_button_icon_frame {
   position: relative;
-  width: auto;
-  height: auto;
+  width: 104px;
+  height: 108px;
 }
 
-.floating_button_ai_chat .floating_ai_chat_base,
-.floating_button_ai_chat .floating_ai_chat_bubble_image {
-  width: 96px;
-  height: 96px;
+.floating_button_ai_chat .floating_ai_chat_base {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  width: 76px;
+  height: 80px;
 }
 
 .floating_button_ai_chat .floating_ai_chat_bubble_image {
   position: absolute;
-  inset: 0;
-  z-index: 2;
-  clip-path: inset(8px 19px 48px 42px);
+  width: 30px;
+  height: 27px;
+  pointer-events: none;
+}
+
+.floating_button_ai_chat .floating_ai_chat_bubble_image {
+  top: 6px;
+  right: 2px;
+  z-index: 3;
   pointer-events: none;
   animation: floating-ai-bubble-bounce 1.35s ease-in-out infinite;
 }

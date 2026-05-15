@@ -633,13 +633,13 @@ function HealthRegister() {
   const handleActionClick = (action: string) => {
     if (currentActionSection === 'photo' && action === '사진 촬영') {
       setIsActionSheetOpen(false)
-      navigate('/health/camera?mode=photo')
+      navigate('/health/camera/capture?mode=photo')
       return
     }
 
     if (currentActionSection === 'photo' && action === '촬영하고 편집 후 추가') {
       setIsActionSheetOpen(false)
-      navigate('/health/camera?mode=photo&edit=true')
+      navigate('/health/camera/capture?mode=photo&edit=true')
       return
     }
 

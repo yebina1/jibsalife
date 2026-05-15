@@ -72,6 +72,29 @@
   color: var(--font-block);
 }
 
+.onboarding_layout_progress_row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 24px;
+}
+
+.onboarding_layout_progress_row.has_inline_action {
+  padding-right: 72px;
+  box-sizing: border-box;
+}
+
+.onboarding_layout_top_action_inline_slot {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+}
+
 .title_h4_semibold {
   font-size: var(--font-title-h4);
   font-weight: var(--font-weight-sb);

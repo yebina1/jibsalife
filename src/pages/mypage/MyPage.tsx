@@ -71,14 +71,15 @@ function readCreatedPostCount() {
 
   try {
     const saved = window.localStorage.getItem(createdPostsStorageKey)
-    const parsed = saved ? JSON.parse(saved) : []
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed.length
+    const parsed = saved ? JSON.parse(saved) : null
+
+    if (saved !== null) {
+      return Array.isArray(parsed) ? parsed.length : 0
     }
 
     return defaultCreatedPostCount
   } catch {
-    return defaultCreatedPostCount
+    return 0
   }
 }
 

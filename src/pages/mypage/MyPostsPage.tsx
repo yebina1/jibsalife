@@ -5,9 +5,11 @@ import PageHeader from '../../components/PageHeader'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
 import FloatingWriteButton from '../../components/FloatingWriteButton'
+import PostMoreSheet from '../../components/PostMoreSheet'
 import { readMyProfileName } from '../../utils/myProfile'
 import commentIcon from '../../svg/nav communicate.svg'
 import sharingIcon from '../../svg/sharing.svg'
+import emptyPostImage from '../../img/mypage/empty_post_.png'
 
 const createdPostsStorageKey = 'jibsalife.community.createdPosts'
 
@@ -104,22 +106,20 @@ function readMyPosts(): MyPost[] {
 
   try {
     const saved = window.localStorage.getItem(createdPostsStorageKey)
-    const parsed = saved ? JSON.parse(saved) : []
+    const parsed = saved ? JSON.parse(saved) : null
 
-    if (!Array.isArray(parsed)) return []
+    if (saved !== null && !Array.isArray(parsed)) return []
 
     const profileName = readMyProfileName()
 
-    const normalizedPosts = parsed
-      .filter((post): post is MyPost => typeof post?.id === 'number' && typeof post?.title === 'string')
-      .map((post) => ({
-        ...post,
-        author: typeof post.author === 'string' && post.author.trim() ? post.author : profileName,
-      }))
-      .sort((a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime())
-
-    if (normalizedPosts.length > 0) {
-      return normalizedPosts
+    if (Array.isArray(parsed)) {
+      return parsed
+        .filter((post): post is MyPost => typeof post?.id === 'number' && typeof post?.title === 'string')
+        .map((post) => ({
+          ...post,
+          author: typeof post.author === 'string' && post.author.trim() ? post.author : profileName,
+        }))
+        .sort((a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime())
     }
 
     return dummyPosts.map((post) => ({
@@ -127,10 +127,7 @@ function readMyPosts(): MyPost[] {
       author: profileName,
     }))
   } catch {
-    return dummyPosts.map((post) => ({
-      ...post,
-      author: readMyProfileName(),
-    }))
+    return []
   }
 }
 
@@ -185,9 +182,20 @@ function ShareIcon() {
   return <img src={sharingIcon} alt="" aria-hidden="true" />
 }
 
+function MoreIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <circle cx="12" cy="5" r="1.8" />
+      <circle cx="12" cy="12" r="1.8" />
+      <circle cx="12" cy="19" r="1.8" />
+    </svg>
+  )
+}
+
 function MyPostsPage() {
   const navigate = useNavigate()
   const [posts, setPosts] = useState<MyPost[]>(readMyPosts)
+  const [activeMorePostId, setActiveMorePostId] = useState<number | null>(null)
 
   useEffect(() => {
     const syncPosts = () => {
@@ -216,6 +224,8 @@ function MyPostsPage() {
     [posts],
   )
 
+  const activeMorePost = postCards.find((post) => post.id === activeMorePostId) ?? null
+
   const openPost = (post: MyPostCard) => {
     navigate(`/community/petstory/detail/${post.id}`, {
       state: {
@@ -239,6 +249,47 @@ function MyPostsPage() {
     })
   }
 
+  const closeMoreSheet = () => {
+    setActiveMorePostId(null)
+  }
+
+  const handleEditPost = () => {
+    if (!activeMorePost) return
+
+    try {
+      window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(posts))
+    } catch {
+      // Ignore storage write failures and continue to the edit screen.
+    }
+
+    navigate('/community/petstory/write', {
+      state: {
+        editPost: activeMorePost,
+        returnTo: '/mypage/posts',
+      },
+    })
+    closeMoreSheet()
+  }
+
+  const handleDeletePost = () => {
+    if (!activeMorePost) return
+
+    setPosts((current) => current.filter((post) => post.id !== activeMorePost.id))
+
+    try {
+      const saved = window.localStorage.getItem(createdPostsStorageKey)
+      const parsed = saved ? JSON.parse(saved) : []
+      const filtered = Array.isArray(parsed)
+        ? parsed.filter((post: { id?: number }) => post?.id !== activeMorePost.id)
+        : []
+      window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(filtered))
+    } catch {
+      // Ignore storage write failures and keep the UI in sync for this session.
+    }
+
+    closeMoreSheet()
+  }
+
   return (
     <>
       <PageHeader title={UI.title} leftContent={<BackButton to="/mypage" />} />
@@ -252,16 +303,35 @@ function MyPostsPage() {
         {postCards.length > 0 ? (
           <section className="myposts_list" aria-label={UI.listLabel}>
             {postCards.map((post) => (
-              <button
+              <article
                 key={post.id}
-                type="button"
                 className="myposts_card"
                 onClick={() => openPost(post)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault()
+                    openPost(post)
+                  }
+                }}
+                role="button"
+                tabIndex={0}
               >
                 <div className="myposts_card_body">
                   <div className="myposts_card_header">
-                    <span className="myposts_tag">{post.tag}</span>
-                    {post.dateLabel ? <span className="myposts_date">{post.dateLabel}</span> : null}
+                    <div className="myposts_card_header_main">
+                      <span className="myposts_tag">{post.tag}</span>
+                    </div>
+                    <button
+                      type="button"
+                      className="myposts_more_button"
+                      aria-label="게시글 더보기"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        setActiveMorePostId(post.id)
+                      }}
+                    >
+                      <MoreIcon />
+                    </button>
                   </div>
                   <div className="myposts_text">
                     <strong className="myposts_title">{post.title}</strong>
@@ -282,31 +352,35 @@ function MyPostsPage() {
                         <span>{post.shares ?? 0}</span>
                       </span>
                     </div>
-                    <span className="myposts_views" aria-label={`${UI.views} ${post.viewCount}`}>
-                      {`${UI.views} ${post.viewCount.toLocaleString('ko-KR')}`}
-                    </span>
+                    <div className="myposts_meta_side">
+                      {post.dateLabel ? <span className="myposts_meta_text">{post.dateLabel}</span> : null}
+                      <span className="myposts_meta_text" aria-label={`${UI.views} ${post.viewCount}`}>
+                        {`${UI.views} ${post.viewCount.toLocaleString('ko-KR')}`}
+                      </span>
+                    </div>
                   </div>
                 </div>
                 {post.image ? (
                   <img className="myposts_thumb" src={post.image} alt="" aria-hidden="true" />
                 ) : null}
-              </button>
+              </article>
             ))}
           </section>
         ) : (
           <section className="myposts_empty" aria-label={UI.emptyLabel}>
-            <strong>{UI.emptyTitle}</strong>
-            <p>{UI.emptyBody}</p>
-            <Button
-              type="button"
-              className="s_purple_btn myposts_write_button"
-              onClick={() => navigate('/community/petstory/write')}
-            >
-              {UI.writeCta}
-            </Button>
+            <strong>{'아직 작성한 게시글이 없어요'}</strong>
+            <img className="myposts_empty_img" src={emptyPostImage} alt="" aria-hidden="true" />
           </section>
         )}
       </main>
+      {activeMorePost ? (
+        <PostMoreSheet
+          type="own"
+          onClose={closeMoreSheet}
+          onDelete={handleDeletePost}
+          onEdit={handleEditPost}
+        />
+      ) : null}
       <FloatingWriteButton showMenu />
     </>
   )

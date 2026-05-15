@@ -16,7 +16,6 @@ import CommunityVote from './pages/community/CommunityVote'
 import CommunityVoteDetail from './pages/community/CommunityVoteDetail'
 import CommunityVoteResult from './pages/community/CommunityVoteResult'
 import Health from './pages/health/Health'
-import HealthCamera from './pages/health/HealthCamera'
 import HealthCameraCapture from './pages/health/HealthCameraCapture'
 import HealthCheckAnalysis from './pages/health/HealthCheckAnalysis'
 import HealthCheckLoading from './pages/health/HealthCheckLoading'
@@ -120,7 +119,7 @@ function App() {
           <Route path="/health/check" element={<HealthCheckAnalysis />} />
           <Route path="/health/report" element={<HealthReport />} />
           <Route path="/health/hospital" element={<HealthHospitalRecommend />} />
-          <Route path="/health/camera" element={<HealthCamera />} />
+          <Route path="/health/camera" element={<HealthCameraCapture />} />
           <Route path="/health/camera/capture" element={<HealthCameraCapture />} />
           <Route path="/health/register" element={<HealthRegister />} />
           <Route path="/health/check-loading" element={<HealthCheckLoading />} />

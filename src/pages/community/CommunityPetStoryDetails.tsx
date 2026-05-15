@@ -278,11 +278,13 @@ function CommunityPetStoryDetails() {
   const navigate = useNavigate()
   const { postId } = useParams()
   const location = useLocation()
-  const statePost = (location.state as { post?: DetailPost } | null)?.post
+  const detailState = (location.state as { post?: DetailPost; previousPage?: string; returnTo?: string } | null) ?? null
+  const statePost = detailState?.post
   const fallbackPost = findFallbackPost(postId)
   const post = statePost
     ? { ...statePost, place: statePost.place ?? fallbackPost.place }
     : fallbackPost
+  const backDestination = detailState?.returnTo ?? (detailState?.previousPage === 'home' ? '/home' : '/community/petstory')
   const timeText = post.createdAt ? formatRelativeTime(post.createdAt) : (post.time ?? post.date ?? '방금 전')
   const fallbackSideImage = post.image === life5 ? life4 : life5
   const galleryImages = post.images?.length
@@ -492,7 +494,7 @@ function CommunityPetStoryDetails() {
     <>
       <PageHeader
         title=""
-        leftContent={<BackButton to="/community/petstory" />}
+        leftContent={<BackButton to={backDestination} />}
         rightContent={
           <>
             <Button

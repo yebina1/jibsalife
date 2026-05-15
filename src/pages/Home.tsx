@@ -783,7 +783,13 @@ function Home() {
                 key={item.id}
                 type="button"
                 className="content_card"
-                onClick={() => navigate(item.path)}
+                onClick={() =>
+                  navigate(item.path, {
+                    state: {
+                      previousPage: 'home',
+                    },
+                  })
+                }
               >
                 <img src={item.image} alt={item.title} style={{ objectPosition: item.objectPosition }} />
                 <span className="content_card_chip">{item.chip}</span>
