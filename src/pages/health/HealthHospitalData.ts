@@ -22,8 +22,8 @@ export const hospitalSearchItems: HospitalSearchItem[] = [
     reviewCount: 120,
     distanceKm: 1.2,
     tags: ['고양이친화', '건강검진', '스케일링'],
-    open: '09:00',
-    close: '21:00',
+    open: '00:00',
+    close: '24:00',
   },
   {
     name: 'PAWS&CARE 동물병원',

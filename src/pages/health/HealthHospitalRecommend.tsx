@@ -67,8 +67,8 @@ const hospitals: Hospital[] = [
     reviews: 310,
     distance: '3.2 KM',
     tags: ['생활케어', '건강검진', '스케일링'],
-    openTime: '09:00',
-    closeTime: '13:30',
+    openTime: '00:00',
+    closeTime: '24:00',
   },
 ]
 

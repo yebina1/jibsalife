@@ -68,6 +68,7 @@ const emptyPetIdForm: PetIdCardForm = {
 const bestPoseVoteItems = voteDetails.find((voteDetail) => voteDetail.id === 'best-pose')?.candidates ?? []
 const BEST_POSE_VOTE_ID = 'best-pose'
 const VOTE_REWARD_AMOUNT = 60
+const WEEKLY_RANKING_TRANSITION_MS = 560
 
 const weeklyRankingItems = [
   {
@@ -291,6 +292,9 @@ function Home() {
   const dragStateRef = useRef({ startX: 0 })
   const weeklyRankingDragRef = useRef({ startX: 0 })
   const ignoreWeeklyRankingClickRef = useRef(false)
+  const isWeeklyRankingAnimatingRef = useRef(false)
+  const weeklyRankingAnimationTimerRef = useRef<number | null>(null)
+  const weeklyRankingResetFrameRef = useRef<number | null>(null)
   const summarySlides = [
     ...profileSlides,
     {
@@ -367,13 +371,52 @@ function Home() {
     if (isWeeklyRankingPaused || isWeeklyRankingDragging) return
 
     const slideTimer = window.setInterval(() => {
-      setWeeklyRankingIndex((current) => current + 1)
+      moveWeeklyRanking((current) => current + 1)
     }, 2600)
 
     return () => {
       window.clearInterval(slideTimer)
     }
   }, [isWeeklyRankingDragging, isWeeklyRankingPaused])
+
+  useEffect(() => {
+    return () => {
+      if (weeklyRankingAnimationTimerRef.current !== null) {
+        window.clearTimeout(weeklyRankingAnimationTimerRef.current)
+      }
+
+      if (weeklyRankingResetFrameRef.current !== null) {
+        window.cancelAnimationFrame(weeklyRankingResetFrameRef.current)
+      }
+    }
+  }, [])
+
+  const releaseWeeklyRankingMotion = () => {
+    isWeeklyRankingAnimatingRef.current = false
+
+    if (weeklyRankingAnimationTimerRef.current !== null) {
+      window.clearTimeout(weeklyRankingAnimationTimerRef.current)
+      weeklyRankingAnimationTimerRef.current = null
+    }
+  }
+
+  const lockWeeklyRankingMotion = () => {
+    if (weeklyRankingAnimationTimerRef.current !== null) {
+      window.clearTimeout(weeklyRankingAnimationTimerRef.current)
+    }
+
+    isWeeklyRankingAnimatingRef.current = true
+    weeklyRankingAnimationTimerRef.current = window.setTimeout(() => {
+      releaseWeeklyRankingMotion()
+    }, WEEKLY_RANKING_TRANSITION_MS)
+  }
+
+  const moveWeeklyRanking = (getNextIndex: (current: number) => number) => {
+    if (isWeeklyRankingAnimatingRef.current || isWeeklyRankingResetting) return
+
+    lockWeeklyRankingMotion()
+    setWeeklyRankingIndex(getNextIndex)
+  }
 
   const handleDragStart = (clientX: number) => {
     dragStateRef.current.startX = clientX
@@ -412,14 +455,17 @@ function Home() {
   }
 
   const pauseWeeklyRankingAt = (index: number) => {
-    if (ignoreWeeklyRankingClickRef.current) return
+    if (ignoreWeeklyRankingClickRef.current || isWeeklyRankingAnimatingRef.current) return
 
     setIsWeeklyRankingPaused(true)
+    lockWeeklyRankingMotion()
     setWeeklyRankingIndex(isWeeklyRankingPaused ? index : weeklyRankingItems.length + (index % weeklyRankingItems.length))
     setWeeklyRankingDragOffset(0)
   }
 
   const handleWeeklyRankingDragStart = (clientX: number) => {
+    if (isWeeklyRankingAnimatingRef.current) return
+
     setIsWeeklyRankingPaused(true)
     setIsWeeklyRankingDragging(true)
     setWeeklyRankingDragOffset(0)
@@ -443,9 +489,9 @@ function Home() {
     const threshold = 48
 
     if (weeklyRankingDragOffset <= -threshold) {
-      setWeeklyRankingIndex((current) => current + 1)
+      moveWeeklyRanking((current) => current + 1)
     } else if (weeklyRankingDragOffset >= threshold) {
-      setWeeklyRankingIndex((current) => current - 1)
+      moveWeeklyRanking((current) => current - 1)
     }
 
     setIsWeeklyRankingDragging(false)
@@ -461,11 +507,13 @@ function Home() {
     const rankingCount = weeklyRankingItems.length
     if (weeklyRankingIndex >= rankingCount && weeklyRankingIndex < rankingCount * 2) return
 
+    releaseWeeklyRankingMotion()
     setIsWeeklyRankingResetting(true)
     setWeeklyRankingIndex(((weeklyRankingIndex % rankingCount) + rankingCount) % rankingCount + rankingCount)
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => {
+    weeklyRankingResetFrameRef.current = window.requestAnimationFrame(() => {
+      weeklyRankingResetFrameRef.current = window.requestAnimationFrame(() => {
         setIsWeeklyRankingResetting(false)
+        weeklyRankingResetFrameRef.current = null
       })
     })
   }

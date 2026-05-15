@@ -3,16 +3,19 @@ export type AuthAccount = {
   password: string
   petType?: 'dog' | 'cat' | null
   petName?: string
+  profileSetupDone?: boolean
   createdAt: string
 }
 
 const AUTH_ACCOUNTS_STORAGE_KEY = 'jibsalife.auth.accounts'
 export const AUTH_LOGGED_IN_STORAGE_KEY = 'jibsalife.auth.loggedIn'
 export const AUTH_CURRENT_USER_STORAGE_KEY = 'jibsalife.auth.currentUser'
+export const PROFILE_SETUP_DONE_STORAGE_KEY = 'jibsalife.onboarding.profile.done'
 
 const demoAccount: AuthAccount = {
   id: 'hello@jipsa.app',
   password: '123456',
+  profileSetupDone: true,
   createdAt: 'demo',
 }
 
@@ -63,6 +66,7 @@ export function saveAuthAccount(account: Omit<AuthAccount, 'id' | 'createdAt'> &
   const nextAccount: AuthAccount = {
     ...account,
     id: normalizedId,
+    profileSetupDone: false,
     createdAt: new Date().toISOString(),
   }
   const nextAccounts = [
@@ -89,4 +93,72 @@ export function markLoggedIn(account: AuthAccount) {
 
   window.localStorage.setItem(AUTH_LOGGED_IN_STORAGE_KEY, 'true')
   window.localStorage.setItem(AUTH_CURRENT_USER_STORAGE_KEY, account.id)
+
+  if (shouldShowProfileSetupForAccount(account)) {
+    window.localStorage.removeItem(PROFILE_SETUP_DONE_STORAGE_KEY)
+  } else {
+    window.localStorage.setItem(PROFILE_SETUP_DONE_STORAGE_KEY, 'true')
+  }
+}
+
+export function isDemoAccount(accountOrId: AuthAccount | string | null | undefined) {
+  const id = typeof accountOrId === 'string' ? accountOrId : accountOrId?.id
+  return normalizeId(id ?? '') === demoAccount.id
+}
+
+export function getCurrentAuthAccount() {
+  if (typeof window === 'undefined') {
+    return null
+  }
+
+  const currentUserId = window.localStorage.getItem(AUTH_CURRENT_USER_STORAGE_KEY)
+  if (!currentUserId) {
+    return null
+  }
+
+  const normalizedId = normalizeId(currentUserId)
+  return readAuthAccounts().find((account) => account.id === normalizedId) ?? null
+}
+
+export function shouldShowProfileSetupForAccount(account: AuthAccount | null | undefined) {
+  if (!account || isDemoAccount(account)) {
+    return false
+  }
+
+  return account.profileSetupDone === false
+}
+
+export function shouldShowProfileSetupForCurrentUser() {
+  if (typeof window === 'undefined') {
+    return false
+  }
+
+  if (window.localStorage.getItem(PROFILE_SETUP_DONE_STORAGE_KEY) === 'true') {
+    return false
+  }
+
+  return shouldShowProfileSetupForAccount(getCurrentAuthAccount())
+}
+
+export function markCurrentUserProfileSetupDone() {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  const currentUser = getCurrentAuthAccount()
+  window.localStorage.setItem(PROFILE_SETUP_DONE_STORAGE_KEY, 'true')
+
+  if (!currentUser || isDemoAccount(currentUser)) {
+    return
+  }
+
+  const nextAccounts = readAuthAccounts()
+    .filter((account) => account.id !== demoAccount.id)
+    .map((account) => (
+      account.id === currentUser.id
+        ? { ...account, profileSetupDone: true }
+        : account
+    ))
+
+  window.localStorage.setItem(AUTH_ACCOUNTS_STORAGE_KEY, JSON.stringify(nextAccounts))
 }

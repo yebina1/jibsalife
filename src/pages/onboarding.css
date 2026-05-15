@@ -87,7 +87,7 @@
   --onboarding-paw-size: 20px;
   z-index: 2;
   top: 9%;
-  right: 1%;
+  right: -3%;
 }
 
 .onboarding_decorated_image_welcome .onboarding_decoration_3 {

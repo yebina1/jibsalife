@@ -39,51 +39,40 @@ import MyPostsPage from './pages/mypage/MyPostsPage'
 import Onboarding from './pages/onboarding'
 import Place from './pages/Place'
 import Signup from './pages/Signup'
+import Splash from './pages/Splash'
 import SubscriptionPage from './pages/mypage/SubscriptionPage'
 import TermsDetail from './pages/TermsDetail'
 import PrivacyDetail from './pages/PrivacyDetail'
+import {
+  AUTH_LOGGED_IN_STORAGE_KEY,
+  shouldShowProfileSetupForCurrentUser,
+} from './utils/authAccounts'
 
-const ONBOARDING_DONE_KEY = 'jibsalife.onboarding.done'
-const AUTH_LOGGED_IN_KEY = 'jibsalife.auth.loggedIn'
-const PROFILE_SETUP_DONE_KEY = 'jibsalife.onboarding.profile.done'
+function isLoggedIn() {
+  return localStorage.getItem(AUTH_LOGGED_IN_STORAGE_KEY) === 'true'
+}
 
 function RootRedirect() {
-  if (localStorage.getItem(AUTH_LOGGED_IN_KEY) === 'true') {
-    return localStorage.getItem(PROFILE_SETUP_DONE_KEY) === 'true'
-      ? <Navigate to="/home" replace />
-      : <Navigate to="/onboarding?setup=profile" replace />
-  }
-  if (localStorage.getItem(ONBOARDING_DONE_KEY) === 'true') return <Navigate to="/login" replace />
+  if (isLoggedIn()) return <Navigate to="/home" replace />
   return <Navigate to="/onboarding" replace />
 }
 
 function OnboardingGuard({ children }: { children: ReactNode }) {
   const { search } = useLocation()
   const isProfileSetup = new URLSearchParams(search).get('setup') === 'profile'
-  const isLoggedIn = localStorage.getItem(AUTH_LOGGED_IN_KEY) === 'true'
-  const isProfileSetupDone = localStorage.getItem(PROFILE_SETUP_DONE_KEY) === 'true'
 
   if (isProfileSetup) {
-    if (!isLoggedIn) return <Navigate to="/login" replace />
-    if (isProfileSetupDone) return <Navigate to="/home" replace />
+    if (!isLoggedIn()) return <Navigate to="/login" replace />
+    if (!shouldShowProfileSetupForCurrentUser()) return <Navigate to="/home" replace />
     return <>{children}</>
   }
 
-  if (isLoggedIn) {
-    return isProfileSetupDone
-      ? <Navigate to="/home" replace />
-      : <Navigate to="/onboarding?setup=profile" replace />
-  }
-  if (localStorage.getItem(ONBOARDING_DONE_KEY) === 'true') return <Navigate to="/login" replace />
+  if (isLoggedIn()) return <Navigate to="/home" replace />
   return <>{children}</>
 }
 
 function LoginGuard({ children }: { children: ReactNode }) {
-  if (localStorage.getItem(AUTH_LOGGED_IN_KEY) === 'true') {
-    return localStorage.getItem(PROFILE_SETUP_DONE_KEY) === 'true'
-      ? <Navigate to="/home" replace />
-      : <Navigate to="/onboarding?setup=profile" replace />
-  }
+  if (isLoggedIn()) return <Navigate to="/home" replace />
   return <>{children}</>
 }
 
@@ -94,6 +83,7 @@ function App() {
       <Routes>
         <Route element={<Layout showHeader={false} showNav={false} showFooter={false} hasContentPadding={false} />}>
           <Route path="/onboarding" element={<OnboardingGuard><Onboarding /></OnboardingGuard>} />
+          <Route path="/splash" element={<Splash />} />
         </Route>
         <Route element={<Layout showHeader={false} showNav={false} showFooter={false} />}>
           <Route path="/login" element={<LoginGuard><Login /></LoginGuard>} />

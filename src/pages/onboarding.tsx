@@ -32,6 +32,7 @@ import onboardingDecoration3 from '../svg/onboarding/paw3.svg'
 import onboardingDecoration4 from '../svg/onboarding/paw4.svg'
 import onboardingDecoration5 from '../svg/onboarding/paw5.svg'
 import onboardingDecoration6 from '../svg/onboarding/paw6.svg'
+import { markCurrentUserProfileSetupDone } from '../utils/authAccounts'
 import './onboarding.css'
 
 type GuardianType = 'dog' | 'cat'
@@ -165,7 +166,6 @@ const featureProgressStepByStep: Record<4 | 5 | 6, number> = {
 }
 
 const ONBOARDING_DONE_KEY = 'jibsalife.onboarding.done'
-const PROFILE_SETUP_DONE_KEY = 'jibsalife.onboarding.profile.done'
 
 const nicknameSuggestions = [
   '포근한하루',
@@ -449,7 +449,7 @@ function Onboarding() {
         actionClassName="purple_btn onboarding_action_primary onboarding_action_start"
         onAction={() => {
           localStorage.setItem(ONBOARDING_DONE_KEY, 'true')
-          localStorage.setItem(PROFILE_SETUP_DONE_KEY, 'true')
+          markCurrentUserProfileSetupDone()
           navigate('/home')
         }}
       />

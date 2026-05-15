@@ -7,10 +7,8 @@ import loginPetImg from '../img/illust_login_pet.png'
 import helloIcon from '../svg/hello icon.svg'
 import xIcon from '../img/x-icon.png'
 import eyeIcon from '../img/eye-icon.png'
-import { findAuthAccount, markLoggedIn } from '../utils/authAccounts'
+import { findAuthAccount, markLoggedIn, shouldShowProfileSetupForAccount } from '../utils/authAccounts'
 import './Login.css'
-
-const PROFILE_SETUP_DONE_KEY = 'jibsalife.onboarding.profile.done'
 
 function Login() {
   const [id, setId] = useState('')
@@ -30,7 +28,7 @@ function Login() {
     if (account) {
       setError('')
       markLoggedIn(account)
-      navigate(localStorage.getItem(PROFILE_SETUP_DONE_KEY) === 'true' ? '/home' : '/onboarding?setup=profile')
+      navigate(shouldShowProfileSetupForAccount(account) ? '/onboarding?setup=profile' : '/home')
     } else {
       setError('아이디 또는 비밀번호가 잘못 입력되었습니다.')
     }
