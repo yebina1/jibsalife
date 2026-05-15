@@ -43,7 +43,7 @@
   flex: 0 0 auto;
   justify-items: center;
   align-content: start;
-  row-gap: var(--onboarding-content-gap, 32px);
+  row-gap: var(--onboarding-content-gap);
 }
 
 .onboarding_layout_body {
