@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import OnboardingLayout from '../components/OnboardingLayout'
 import Input from '../components/html/Input'
 import onboardingWelcomeImage from '../img/onboarding/onboarding1.png'
@@ -26,6 +26,12 @@ import weeklyRankFirstImage from '../img/home_lanking/lank1.png'
 import weeklyRankSecondImage from '../img/home_lanking/lank2.png'
 import weeklyRankThirdImage from '../img/home_lanking/lank3.png'
 import lankGoldIcon from '../svg/home/lank_gold.svg'
+import onboardingDecoration1 from '../svg/onboarding/paw1.svg'
+import onboardingDecoration2 from '../svg/onboarding/paw2.svg'
+import onboardingDecoration3 from '../svg/onboarding/paw3.svg'
+import onboardingDecoration4 from '../svg/onboarding/paw4.svg'
+import onboardingDecoration5 from '../svg/onboarding/paw5.svg'
+import onboardingDecoration6 from '../svg/onboarding/paw6.svg'
 import './onboarding.css'
 
 type GuardianType = 'dog' | 'cat'
@@ -78,6 +84,12 @@ const onboardingPreloadImages = [
   onboardingDogChatImage,
   onboardingCatChatImage,
   onboardingCompleteImage,
+  onboardingDecoration1,
+  onboardingDecoration2,
+  onboardingDecoration3,
+  onboardingDecoration4,
+  onboardingDecoration5,
+  onboardingDecoration6,
 ] as const
 
 const homePreloadImages = [
@@ -128,6 +140,33 @@ const featureContentGapByStep: Partial<Record<4 | 5 | 6, number>> = {
   6: 54,
 }
 
+const featureSlideByStep = {
+  4: featureSlides[0],
+  5: featureSlides[1],
+  6: featureSlides[2],
+} as const
+
+const featureNextStepByStep: Record<4 | 5 | 6, 5 | 6 | null> = {
+  4: 6,
+  6: 5,
+  5: null,
+}
+
+const featureIndicatorByStep: Record<4 | 5 | 6, number> = {
+  4: 0,
+  6: 1,
+  5: 2,
+}
+
+const featureProgressStepByStep: Record<4 | 5 | 6, number> = {
+  4: 1,
+  6: 2,
+  5: 3,
+}
+
+const ONBOARDING_DONE_KEY = 'jibsalife.onboarding.done'
+const PROFILE_SETUP_DONE_KEY = 'jibsalife.onboarding.profile.done'
+
 const nicknameSuggestions = [
   '포근한하루',
   '노을산책',
@@ -152,10 +191,52 @@ function getRandomNicknameSuggestion() {
   return nicknameSuggestions[Math.floor(Math.random() * nicknameSuggestions.length)]
 }
 
+const onboardingDecorations = [
+  onboardingDecoration1,
+  onboardingDecoration2,
+  onboardingDecoration3,
+  onboardingDecoration4,
+  onboardingDecoration5,
+  onboardingDecoration6,
+] as const
+
+function DecoratedOnboardingImage({
+  src,
+  alt,
+  variant,
+  imageClassName,
+}: {
+  src: string
+  alt: string
+  variant: 'welcome' | 'complete'
+  imageClassName: string
+}) {
+  return (
+    <div className={`onboarding_decorated_image onboarding_decorated_image_${variant}`}>
+      {onboardingDecorations.map((decoration, index) => (
+        <img
+          key={`${variant}-${decoration}`}
+          className={`onboarding_decoration onboarding_decoration_${index + 1}`}
+          src={decoration}
+          alt=""
+          aria-hidden="true"
+        />
+      ))}
+      <img
+        className={`onboarding_visual_image ${imageClassName}`}
+        src={src}
+        alt={alt}
+      />
+    </div>
+  )
+}
+
 function Onboarding() {
   const navigate = useNavigate()
+  const { search } = useLocation()
+  const isProfileSetup = new URLSearchParams(search).get('setup') === 'profile'
   const pageRef = useRef<HTMLElement>(null)
-  const [step, setStep] = useState(1)
+  const [step, setStep] = useState(() => (isProfileSetup ? 2 : 1))
   const [guardianType, setGuardianType] = useState<GuardianType | null>(null)
   const [profileName, setProfileName] = useState<string>(getRandomNicknameSuggestion)
 
@@ -178,12 +259,19 @@ function Onboarding() {
   }, [step])
 
   const handleSkip = () => {
-    setStep(7)
+    localStorage.setItem(ONBOARDING_DONE_KEY, 'true')
+    navigate('/login')
   }
 
   const handleGuardianContinue = () => {
-    if (!guardianType) return
-    setStep(3)
+    if (!guardianType || trimmedProfileName.length < 2) return
+
+    writeMyProfile({
+      name: trimmedProfileName,
+      guardianType,
+    })
+
+    setStep(7)
   }
 
   const handleProfileNameContinue = () => {
@@ -191,6 +279,7 @@ function Onboarding() {
 
     writeMyProfile({
       name: trimmedProfileName,
+      guardianType: selectedType,
     })
 
     setStep(4)
@@ -200,21 +289,20 @@ function Onboarding() {
     if (step === 1) {
       return (
         <OnboardingLayout
-          step={1}
-          totalSteps={6}
           title={'집사인생에\n오신 것을 환영해요!'}
           subtitle={'우리 아이의 하루를\n더 건강하고, 더 따뜻하게\n기록해 보세요.'}
           bodyGap={74}
           visual={(
-            <img
-              className="onboarding_visual_image onboarding_visual_image_welcome"
+            <DecoratedOnboardingImage
               src={onboardingWelcomeImage}
-              alt="집사인생 환영 일러스트"
+              variant="welcome"
+              imageClassName="onboarding_visual_image_welcome"
+              alt="온보딩 환영 일러스트"
             />
           )}
           actionLabel="다음"
           actionClassName="purple_btn onboarding_action_start"
-          onAction={() => setStep(2)}
+          onAction={() => setStep(4)}
         />
       )
     }
@@ -222,11 +310,9 @@ function Onboarding() {
     if (step === 2) {
       return (
         <OnboardingLayout
-          step={2}
-          totalSteps={6}
-          title="어떤 집사님이신가요?"
-          subtitle={'선택한 캐릭터와 함께\n집사인생을 시작해요!'}
-          bodyGap={90}
+          title={'집사 프로필 만들기'}
+          subtitle={'캐릭터와 닉네임을 설정해주세요.'}
+          bodyGap={32}
           visual={(
             <div className="onboarding_guardian_grid">
               {guardianOptions.map((option) => {
@@ -251,9 +337,21 @@ function Onboarding() {
           )}
           actionLabel="이 캐릭터로 시작하기"
           actionClassName="purple_btn onboarding_action_primary"
-          actionDisabled={!guardianType}
+          actionDisabled={!guardianType || trimmedProfileName.length < 2}
           onAction={handleGuardianContinue}
-        />
+        >
+          <div className="onboarding_guardian_name_form">
+            <Input
+              value={profileName}
+              placeholder={'\uC774\uB984\uC744 \uC785\uB825\uD574 \uC8FC\uC138\uC694'}
+              ariaLabel={'\uC9D1\uC0AC \uD504\uB85C\uD544 \uB2C9\uB124\uC784'}
+              onChange={setProfileName}
+            />
+            <p className="onboarding_guardian_name_hint">
+              {'\uB2C9\uB124\uC784\uC740 \uC5B8\uC81C\uB4E0\uC9C0 \uC218\uC815\uD560 \uC218 \uC788\uC5B4\uC694.'}
+            </p>
+          </div>
+        </OnboardingLayout>
       )
     }
 
@@ -294,22 +392,25 @@ function Onboarding() {
     }
 
     if (step >= 4 && step <= 6) {
-      const slide = featureSlides[step - 4]
       const featureStep = step as 4 | 5 | 6
+      const slide = featureSlideByStep[featureStep]
 
       const handleFeatureContinue = () => {
-        if (step < 6) {
-          setStep(step + 1)
+        const nextStep = featureNextStepByStep[featureStep]
+
+        if (nextStep) {
+          setStep(nextStep)
           return
         }
 
-        setStep(7)
+        localStorage.setItem(ONBOARDING_DONE_KEY, 'true')
+        navigate('/login')
       }
 
       return (
         <OnboardingLayout
-          step={step}
-          totalSteps={6}
+          step={featureProgressStepByStep[featureStep]}
+          totalSteps={3}
           bodyGap={featureBodyGapByStep[featureStep]}
           contentGap={featureContentGapByStep[featureStep]}
           title={slide.title}
@@ -323,7 +424,7 @@ function Onboarding() {
             />
           )}
           indicatorCount={3}
-          activeIndicator={step - 4}
+          activeIndicator={featureIndicatorByStep[featureStep]}
           actionLabel="다음"
           actionClassName="purple_btn onboarding_action_primary"
           onAction={handleFeatureContinue}
@@ -333,23 +434,23 @@ function Onboarding() {
 
     return (
       <OnboardingLayout
-        topCenterLabel="완료"
-        reserveTopActionSpace
-        title={'이제 함께\n기록해 볼까요?'}
-        subtitle={'집사인생이 우리 아이의\n건강한 하루를 응원해요!'}
+        title={`${trimmedProfileName || profileName} 집사님,\n준비가 완료됐어요!`}
+        subtitle={'이제 우리 아이의 건강을 기록해보세요.'}
         bodyGap={76}
         visual={(
-          <img
-            className="onboarding_visual_image onboarding_visual_image_complete"
+          <DecoratedOnboardingImage
             src={onboardingCompleteImage}
+            variant="complete"
+            imageClassName="onboarding_visual_image_complete"
             alt="온보딩 완료 일러스트"
           />
         )}
         actionLabel="집사인생 시작하기"
-        actionClassName="purple_btn onboarding_action_primary"
+        actionClassName="purple_btn onboarding_action_primary onboarding_action_start"
         onAction={() => {
-          localStorage.setItem('jibsalife.onboarding.done', 'true')
-          navigate('/login')
+          localStorage.setItem(ONBOARDING_DONE_KEY, 'true')
+          localStorage.setItem(PROFILE_SETUP_DONE_KEY, 'true')
+          navigate('/home')
         }}
       />
     )

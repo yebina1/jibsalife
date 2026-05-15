@@ -9,12 +9,11 @@ import xIcon from '../img/x-icon.png'
 import eyeIcon from '../img/eye-icon.png'
 import grayCheckIcon from '../img/gray-check.png'
 import blueCheckIcon from '../img/blue-check.png'
+import { hasAuthAccount, saveAuthAccount } from '../utils/authAccounts'
 import './Signup.css'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const PASSWORD_REGEX = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/
-
-type PetType = 'dog' | 'cat'
 
 type Terms = {
   all: boolean
@@ -35,8 +34,6 @@ function Signup() {
   const [passwordConfirm, setPasswordConfirm] = useState('')
   const [passwordConfirmError, setPasswordConfirmError] = useState('')
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false)
-  const [petType, setPetType] = useState<PetType | null>(null)
-  const [petName, setPetName] = useState('')
   const [terms, setTerms] = useState<Terms>(() => {
     try {
       const saved = sessionStorage.getItem('signup_terms')
@@ -63,6 +60,19 @@ function Signup() {
   }
 
   const handleEmailCheck = () => {
+    if (!EMAIL_REGEX.test(email)) {
+      setEmailError('?щ컮瑜??대찓?쇱쓣 ?낅젰??二쇱꽭??')
+      setEmailChecked(false)
+      return
+    }
+
+    if (hasAuthAccount(email)) {
+      setEmailError('이미 가입된 이메일입니다.')
+      setEmailChecked(false)
+      return
+    }
+
+    setEmailError('')
     setEmailChecked(true)
   }
 
@@ -93,9 +103,9 @@ function Signup() {
   const allRequiredChecked = terms.age && terms.service && terms.privacy
   const isFormValid =
     email.trim() !== '' &&
+    emailChecked &&
     password.length >= 8 &&
     password === passwordConfirm &&
-    petType !== null &&
     allRequiredChecked
 
   const handleTermToggle = (key: keyof Terms) => {
@@ -114,6 +124,16 @@ function Signup() {
   const handleSubmit = (e: { preventDefault(): void }) => {
     e.preventDefault()
     if (!isFormValid) return
+    if (hasAuthAccount(email)) {
+      setEmailError('이미 가입된 이메일입니다.')
+      setEmailChecked(false)
+      return
+    }
+
+    saveAuthAccount({
+      id: email,
+      password,
+    })
     sessionStorage.removeItem('signup_terms')
     navigate('/login')
   }
@@ -255,53 +275,6 @@ function Signup() {
           </div>
         </div>
 
-        {/* 반려동물 종류 */}
-        <div className="signup_section">
-          <span className="signup_label">반려동물 종류</span>
-          <div className="signup_pet_type_row">
-            <button
-              type="button"
-              className={`signup_pet_type_btn${petType === 'dog' ? ' is_active' : ''}`}
-              onClick={() => setPetType('dog')}
-            >
-              강아지
-            </button>
-            <button
-              type="button"
-              className={`signup_pet_type_btn${petType === 'cat' ? ' is_active' : ''}`}
-              onClick={() => setPetType('cat')}
-            >
-              고양이
-            </button>
-          </div>
-        </div>
-
-        {/* 반려동물 이름 */}
-        <div className="signup_section">
-          <span className="signup_label">
-            반려동물 이름{' '}
-            <span className="signup_label_opt">(선택)</span>
-          </span>
-          <div className="signup_name_field">
-            <Input
-              value={petName}
-              placeholder="반려동물 이름을 입력하세요."
-              ariaLabel="반려동물 이름"
-              className={`signup_input${petName ? ' signup_input_filled' : ''}`}
-              onChange={setPetName}
-            />
-            {petName && (
-              <button
-                type="button"
-                className="signup_name_clear_btn"
-                onClick={() => setPetName('')}
-                aria-label="반려동물 이름 지우기"
-              >
-                <img src={xIcon} alt="" width={12} height={12} />
-              </button>
-            )}
-          </div>
-        </div>
 
         {/* 약관동의 */}
         <div className="signup_section">

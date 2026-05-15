@@ -11,12 +11,9 @@ import Button from '../../components/html/Button'
 import { readProfilePoints } from '../../utils/profilePoints'
 import {
   MY_PROFILE_CHANGE_EVENT,
+  readMyProfileImage,
   readMyProfileName,
 } from '../../utils/myProfile'
-import {
-  PET_PROFILES_CHANGE_EVENT,
-  readSelectedPetProfile,
-} from '../../utils/petProfiles'
 import dogBadgeImage from '../../img/badge/dogbadge2.png'
 
 const createdPostsStorageKey = 'jibsalife.community.createdPosts'
@@ -228,7 +225,7 @@ function MyPage() {
   const [isLocating, setIsLocating] = useState(false)
   const [profilePoints, setProfilePoints] = useState(() => readProfilePoints())
   const [profileName, setProfileName] = useState(() => readMyProfileName())
-  const [profileImage, setProfileImage] = useState(() => readSelectedPetProfile().image)
+  const [profileImage, setProfileImage] = useState(() => readMyProfileImage())
   const [createdPostCount, setCreatedPostCount] = useState(readCreatedPostCount)
 
   useEffect(() => {
@@ -266,6 +263,7 @@ function MyPage() {
   useEffect(() => {
     const handleMyProfileChange = () => {
       setProfileName(readMyProfileName())
+      setProfileImage(readMyProfileImage())
     }
 
     window.addEventListener(MY_PROFILE_CHANGE_EVENT, handleMyProfileChange)
@@ -274,20 +272,6 @@ function MyPage() {
     return () => {
       window.removeEventListener(MY_PROFILE_CHANGE_EVENT, handleMyProfileChange)
       window.removeEventListener('storage', handleMyProfileChange)
-    }
-  }, [])
-
-  useEffect(() => {
-    const handlePetProfileChange = () => {
-      setProfileImage(readSelectedPetProfile().image)
-    }
-
-    window.addEventListener(PET_PROFILES_CHANGE_EVENT, handlePetProfileChange)
-    window.addEventListener('storage', handlePetProfileChange)
-
-    return () => {
-      window.removeEventListener(PET_PROFILES_CHANGE_EVENT, handlePetProfileChange)
-      window.removeEventListener('storage', handlePetProfileChange)
     }
   }, [])
 

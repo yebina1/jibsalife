@@ -1,5 +1,5 @@
 import './App.css'
-import { Navigate, Route, Routes } from 'react-router'
+import { Navigate, Route, Routes, useLocation } from 'react-router'
 import type { ReactNode } from 'react'
 import Layout from './layouts/Layout'
 import ScrollToTop from './components/ScrollToTop'
@@ -45,21 +45,45 @@ import PrivacyDetail from './pages/PrivacyDetail'
 
 const ONBOARDING_DONE_KEY = 'jibsalife.onboarding.done'
 const AUTH_LOGGED_IN_KEY = 'jibsalife.auth.loggedIn'
+const PROFILE_SETUP_DONE_KEY = 'jibsalife.onboarding.profile.done'
 
 function RootRedirect() {
-  if (localStorage.getItem(AUTH_LOGGED_IN_KEY) === 'true') return <Navigate to="/home" replace />
+  if (localStorage.getItem(AUTH_LOGGED_IN_KEY) === 'true') {
+    return localStorage.getItem(PROFILE_SETUP_DONE_KEY) === 'true'
+      ? <Navigate to="/home" replace />
+      : <Navigate to="/onboarding?setup=profile" replace />
+  }
   if (localStorage.getItem(ONBOARDING_DONE_KEY) === 'true') return <Navigate to="/login" replace />
   return <Navigate to="/onboarding" replace />
 }
 
 function OnboardingGuard({ children }: { children: ReactNode }) {
-  if (localStorage.getItem(AUTH_LOGGED_IN_KEY) === 'true') return <Navigate to="/home" replace />
+  const { search } = useLocation()
+  const isProfileSetup = new URLSearchParams(search).get('setup') === 'profile'
+  const isLoggedIn = localStorage.getItem(AUTH_LOGGED_IN_KEY) === 'true'
+  const isProfileSetupDone = localStorage.getItem(PROFILE_SETUP_DONE_KEY) === 'true'
+
+  if (isProfileSetup) {
+    if (!isLoggedIn) return <Navigate to="/login" replace />
+    if (isProfileSetupDone) return <Navigate to="/home" replace />
+    return <>{children}</>
+  }
+
+  if (isLoggedIn) {
+    return isProfileSetupDone
+      ? <Navigate to="/home" replace />
+      : <Navigate to="/onboarding?setup=profile" replace />
+  }
   if (localStorage.getItem(ONBOARDING_DONE_KEY) === 'true') return <Navigate to="/login" replace />
   return <>{children}</>
 }
 
 function LoginGuard({ children }: { children: ReactNode }) {
-  if (localStorage.getItem(AUTH_LOGGED_IN_KEY) === 'true') return <Navigate to="/home" replace />
+  if (localStorage.getItem(AUTH_LOGGED_IN_KEY) === 'true') {
+    return localStorage.getItem(PROFILE_SETUP_DONE_KEY) === 'true'
+      ? <Navigate to="/home" replace />
+      : <Navigate to="/onboarding?setup=profile" replace />
+  }
   return <>{children}</>
 }
 
