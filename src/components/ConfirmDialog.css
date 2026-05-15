@@ -48,7 +48,7 @@
 
 .confirm_dialog_vote_edit .confirm_dialog_msg {
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.025em;
 }
 
@@ -61,4 +61,63 @@
 
 .confirm_dialog_vote_edit .confirm_dialog_btns {
   gap: 8px;
+}
+
+/* vote submit variant */
+.alert.confirm_dialog_vote_submit {
+  width: min(100%, 343px);
+  min-height: 206px;
+  padding: 32px 20px 36px;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.16);
+  box-sizing: border-box;
+}
+
+.confirm_dialog_vote_submit .confirm_dialog_copy {
+  gap: 8px;
+  margin: 0 24px;
+  width: 100%;
+  min-height: 70px;
+  align-content: center;
+}
+
+.confirm_dialog_vote_submit .confirm_dialog_msg {
+  color: #111111;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+}
+
+.confirm_dialog_vote_submit .confirm_dialog_desc {
+  color: #505050;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.025em;
+  text-align: center;
+}
+
+.confirm_dialog_vote_submit .confirm_dialog_btns {
+  gap: 10px;
+}
+
+.confirm_dialog_vote_submit .confirm_dialog_btns .white_btn,
+.confirm_dialog_vote_submit .confirm_dialog_btns .purple_btn {
+  height: 48px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.confirm_dialog_vote_submit .confirm_dialog_btns .white_btn {
+  border-color: #D9D9D9;
+  color: #111111;
+  background: #D9D9D9;
+}
+
+.confirm_dialog_vote_submit .confirm_dialog_btns .purple_btn {
+  background: #6D59F8;
+  border-color: #6D59F8;
 }

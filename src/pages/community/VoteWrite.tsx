@@ -1,7 +1,7 @@
 import './CommunityWrite.css'
 import './VoteWrite.css'
 import { createPortal } from 'react-dom'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'
 import BackButton from '../../components/html/BackButton'
@@ -10,7 +10,9 @@ import Input from '../../components/html/Input'
 import ConfirmDialog from '../../components/ConfirmDialog'
 import communityWriteBg from '../../svg/community_write_bg.svg'
 import imageIcon from '../../svg/Image.svg'
-import peopleIcon from '../../svg/people.svg'
+import blueCheckIcon from '../../img/blue-check.png'
+import grayCheckIcon from '../../img/gray-check.png'
+import voteIcon from '../../img/vote-icon.png'
 import voteOIcon from '../../svg/vote_o.svg'
 import voteXIcon from '../../svg/vote_x.svg'
 import { saveUserVote } from '../../utils/savedVotes'
@@ -37,12 +39,14 @@ function VoteWrite() {
     { id: 2, image: null, label: '' },
   ])
   const [isVoteConfirmOpen, setIsVoteConfirmOpen] = useState(false)
+  const [pendingPhotoUploadIndex, setPendingPhotoUploadIndex] = useState<number | null>(null)
   const voteItemFileRefs = useRef<(HTMLInputElement | null)[]>([])
   const actionRowSlot = useActionRowSlot()
 
   const isVoteReady =
     voteType !== '' &&
     voteTitle.trim() !== '' &&
+    voteContent.trim() !== '' &&
     (voteType === 'OX' || voteItems.every((it) => it.image !== null || it.label.trim() !== ''))
 
   const handleVoteItemImageChange = (idx: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,6 +56,23 @@ function VoteWrite() {
     setVoteItems((prev) => prev.map((it, i) => i === idx ? { ...it, image: url } : it))
     e.target.value = ''
   }
+
+  const handlePhotoActionClick = () => {
+    const emptyItemIndex = voteItems.findIndex((item) => item.image === null)
+    setPendingPhotoUploadIndex(emptyItemIndex === -1 ? 0 : emptyItemIndex)
+
+    if (voteType !== '사진 투표') {
+      setVoteType('사진 투표')
+      setIsVoteTypeOpen(false)
+    }
+  }
+
+  useEffect(() => {
+    if (pendingPhotoUploadIndex === null || voteType !== '사진 투표') return
+
+    voteItemFileRefs.current[pendingPhotoUploadIndex]?.click()
+    setPendingPhotoUploadIndex(null)
+  }, [pendingPhotoUploadIndex, voteType])
 
   const handleVoteConfirm = () => {
     saveUserVote({
@@ -75,7 +96,7 @@ function VoteWrite() {
         rightContent={
           <Button
             type="button"
-            className={`s_purple_btn${!isVoteReady ? ' is_disabled' : ''}`}
+            className={`s_purple_btn vw_submit_btn${!isVoteReady ? ' is_disabled' : ''}`}
             disabled={!isVoteReady}
             onClick={() => setIsVoteConfirmOpen(true)}
           >
@@ -156,8 +177,10 @@ function VoteWrite() {
                 className={`vw_duration_btn${voteDuration === day ? ' active' : ''}`}
                 onClick={() => setVoteDuration(day)}
               >
-                <i
-                  className={`bx ${voteDuration === day ? 'bxs-check-circle' : 'bx-check-circle'} vw_duration_check_icon`}
+                <img
+                  src={voteDuration === day ? blueCheckIcon : grayCheckIcon}
+                  className="vw_duration_check_icon"
+                  alt=""
                   aria-hidden="true"
                 />
                 {day}일
@@ -167,7 +190,7 @@ function VoteWrite() {
 
           {/* 투표 항목 — 사진 투표 */}
           {voteType === '사진 투표' && (
-            <div className="vw_items_section">
+            <div className="vw_items_section vw_photo_items_section">
               <strong className="vw_items_title">투표 항목</strong>
               {voteItems.map((item, i) => (
                 <div key={item.id} className="vw_item">
@@ -210,7 +233,7 @@ function VoteWrite() {
 
           {/* 투표 항목 — OX */}
           {voteType === 'OX' && (
-            <div className="vw_items_section">
+            <div className="vw_items_section vw_ox_items_section">
               <strong className="vw_items_title">투표 항목</strong>
               <div className="vw_ox_grid">
                 <div className="vw_ox_item">
@@ -229,9 +252,16 @@ function VoteWrite() {
       {isVoteConfirmOpen && (
         <ConfirmDialog
           message="투표를 등록할까요?"
-          description="투표 게시글은 작성 후 수정할 수 없고 삭제만 가능해요."
+          description={(
+            <>
+              투표 게시글은 작성 후
+              <br />
+              수정할 수 없고 삭제만 가능해요.
+            </>
+          )}
           cancelLabel="취소"
           confirmLabel="확인"
+          dialogClassName="confirm_dialog_vote_submit"
           onCancel={() => setIsVoteConfirmOpen(false)}
           onConfirm={handleVoteConfirm}
         />
@@ -239,12 +269,12 @@ function VoteWrite() {
 
       {actionRowSlot && createPortal(
         <div className="cw_action_row">
-          <button type="button" className="p_regular">
+          <button type="button" className="p_regular" onClick={handlePhotoActionClick}>
             <img src={imageIcon} className="cw_action_icon" alt="" />
             사진
           </button>
           <button type="button" className="p_regular">
-            <img src={peopleIcon} className="cw_action_icon" alt="" />
+            <img src={voteIcon} className="cw_action_icon" alt="" />
             투표
           </button>
         </div>,
