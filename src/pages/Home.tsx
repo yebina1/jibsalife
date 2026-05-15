@@ -1,6 +1,6 @@
 import './Home.css'
 import { useEffect, useRef, useState, type ChangeEvent } from 'react'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import ChevronIcon from '../components/ChevronIcon'
 import PageHeader from '../components/PageHeader'
 import HeaderIcon from '../components/HeaderIcon'
@@ -277,6 +277,7 @@ function VoteHeartIcon({ active }: { active: boolean }) {
 
 function Home() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [profileSlides, setProfileSlides] = useState<ProfileSummarySlide[]>(readPetProfiles)
   const [summarySlideIndex, setSummarySlideIndex] = useState(getInitialSummarySlideIndex)
   const [dragOffset, setDragOffset] = useState(0)
@@ -291,6 +292,7 @@ function Home() {
     () => getInitialVoteState().hasModified,
   )
   const [rankingIndex, setRankingIndex] = useState(0)
+  const [isRankingAutoPlayEnabled, setIsRankingAutoPlayEnabled] = useState(true)
   const [isVoteRewardOpen, setIsVoteRewardOpen] = useState(false)
   const [confirmAction, setConfirmAction] = useState<'profile-edit' | 'profile-delete' | 'vote-edit' | null>(null)
   const [isPetIdModalOpen, setIsPetIdModalOpen] = useState(false)
@@ -299,6 +301,8 @@ function Home() {
   const [petIdForm, setPetIdForm] = useState<PetIdCardForm>(emptyPetIdForm)
   const [calendarRecords, setCalendarRecords] = useState<MissionHistoryRecord[]>(readCalendarRecords)
   const dragStateRef = useRef({ startX: 0 })
+  const rankingPointerRef = useRef({ startX: 0, startY: 0, isActive: false })
+  const rankingResumeTimeoutRef = useRef<number | null>(null)
   const summarySlides = [
     ...profileSlides,
     {
@@ -371,11 +375,75 @@ function Home() {
   }, [isPetIdModalOpen])
 
   useEffect(() => {
-    const timer = setInterval(() => {
+    if (!isRankingAutoPlayEnabled) return
+
+    const timer = window.setInterval(() => {
       setRankingIndex((prev) => (prev + 1) % 3)
     }, 2500)
-    return () => clearInterval(timer)
+
+    return () => window.clearInterval(timer)
+  }, [isRankingAutoPlayEnabled])
+
+  useEffect(() => {
+    return () => {
+      if (rankingResumeTimeoutRef.current !== null) {
+        window.clearTimeout(rankingResumeTimeoutRef.current)
+      }
+    }
   }, [])
+
+  useEffect(() => {
+    const handleScrollResume = () => {
+      if (rankingPointerRef.current.isActive) return
+      if (rankingResumeTimeoutRef.current !== null) {
+        window.clearTimeout(rankingResumeTimeoutRef.current)
+        rankingResumeTimeoutRef.current = null
+      }
+      setIsRankingAutoPlayEnabled(true)
+    }
+
+    window.addEventListener('scroll', handleScrollResume, { passive: true })
+    return () => window.removeEventListener('scroll', handleScrollResume)
+  }, [])
+
+  useEffect(() => {
+    const carousel = document.querySelector('.home_ranking_carousel')
+
+    if (!(carousel instanceof HTMLElement)) return
+
+    const handlePointerDown = (event: PointerEvent) => {
+      handleRankingPointerDown(event.clientX, event.clientY)
+    }
+
+    const handlePointerUp = (event: PointerEvent) => {
+      handleRankingPointerUp(event.clientX, event.clientY)
+    }
+
+    const handlePointerCancel = () => {
+      handleRankingPointerCancel()
+    }
+
+    carousel.addEventListener('pointerdown', handlePointerDown)
+    window.addEventListener('pointerup', handlePointerUp)
+    window.addEventListener('pointercancel', handlePointerCancel)
+
+    return () => {
+      carousel.removeEventListener('pointerdown', handlePointerDown)
+      window.removeEventListener('pointerup', handlePointerUp)
+      window.removeEventListener('pointercancel', handlePointerCancel)
+    }
+  }, [])
+
+  useEffect(() => {
+    const restoreScrollY = (location.state as { restoreScrollY?: number } | null)?.restoreScrollY
+
+    if (typeof restoreScrollY !== 'number') return
+
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: restoreScrollY, behavior: 'auto' })
+      navigate(location.pathname, { replace: true, state: null })
+    })
+  }, [location.pathname, location.state, navigate])
 
   const handleDragStart = (clientX: number) => {
     dragStateRef.current.startX = clientX
@@ -411,6 +479,56 @@ function Home() {
 
     setIsDragging(false)
     setDragOffset(0)
+  }
+
+  const scheduleRankingAutoPlayResume = () => {
+    if (rankingResumeTimeoutRef.current !== null) {
+      window.clearTimeout(rankingResumeTimeoutRef.current)
+    }
+
+    rankingResumeTimeoutRef.current = window.setTimeout(() => {
+      setIsRankingAutoPlayEnabled(true)
+      rankingResumeTimeoutRef.current = null
+    }, 2200)
+  }
+
+  const handleRankingPointerDown = (clientX: number, clientY: number) => {
+    rankingPointerRef.current = {
+      startX: clientX,
+      startY: clientY,
+      isActive: true,
+    }
+
+    if (rankingResumeTimeoutRef.current !== null) {
+      window.clearTimeout(rankingResumeTimeoutRef.current)
+      rankingResumeTimeoutRef.current = null
+    }
+
+    setIsRankingAutoPlayEnabled(false)
+  }
+
+  const handleRankingPointerUp = (clientX: number, clientY: number) => {
+    if (!rankingPointerRef.current.isActive) return
+
+    const deltaX = clientX - rankingPointerRef.current.startX
+    const deltaY = clientY - rankingPointerRef.current.startY
+    const isHorizontalSwipe = Math.abs(deltaX) > 36 && Math.abs(deltaX) > Math.abs(deltaY)
+
+    if (isHorizontalSwipe) {
+      setRankingIndex((prev) => {
+        if (deltaX < 0) return (prev + 1) % rankingCardsData.length
+        return (prev - 1 + rankingCardsData.length) % rankingCardsData.length
+      })
+    }
+
+    rankingPointerRef.current.isActive = false
+    scheduleRankingAutoPlayResume()
+  }
+
+  const handleRankingPointerCancel = () => {
+    if (!rankingPointerRef.current.isActive) return
+    rankingPointerRef.current.isActive = false
+    scheduleRankingAutoPlayResume()
   }
 
   const handlePetIdInputChange = (field: keyof PetIdCardForm, value: string) => {
@@ -787,6 +905,7 @@ function Home() {
                   navigate(item.path, {
                     state: {
                       previousPage: 'home',
+                      restoreScrollY: window.scrollY,
                     },
                   })
                 }

@@ -2,6 +2,7 @@ import './MyPostsPage.css'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'
+import HeaderIcon from '../../components/HeaderIcon'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
 import FloatingWriteButton from '../../components/FloatingWriteButton'
@@ -292,7 +293,20 @@ function MyPostsPage() {
 
   return (
     <>
-      <PageHeader title={UI.title} leftContent={<BackButton to="/mypage" />} />
+      <PageHeader
+        title={UI.title}
+        leftContent={<BackButton to="/mypage" />}
+        rightContent={
+          <>
+            <Button type="button" aria-label="캘린더" onClick={() => navigate('/mission')}>
+              <HeaderIcon type="calendar" />
+            </Button>
+            <Button type="button" aria-label="알림" onClick={() => navigate('/notification')}>
+              <HeaderIcon type="notification" />
+            </Button>
+          </>
+        }
+      />
 
       <main className="page myposts_page">
         <section className="myposts_intro">

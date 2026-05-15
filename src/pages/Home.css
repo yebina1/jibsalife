@@ -166,6 +166,12 @@
   overflow: hidden;
   height: 360px;
   margin-inline: calc(var(--layout-inline-padding) * -1);
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.home_ranking_carousel:active {
+  cursor: grabbing;
 }
 
 .home_ranking_card {
@@ -177,7 +183,10 @@
   aspect-ratio: 250 / 340;
   height: 340px;
   width: auto;
-  transition: transform 0.4s ease, opacity 0.4s ease;
+  will-change: transform, opacity;
+  transition:
+    transform 0.62s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.52s ease-out;
 }
 
 .home_ranking_card.is_center {
@@ -187,14 +196,14 @@
 }
 
 .home_ranking_card.is_left {
-  transform: translate(calc(-50% - 175px), calc(-50% + 20px)) scale(0.85);
-  opacity: 0.7;
+  transform: translate(calc(-50% - 172px), calc(-50% + 16px)) scale(0.87);
+  opacity: 0.74;
   z-index: 1;
 }
 
 .home_ranking_card.is_right {
-  transform: translate(calc(-50% + 175px), calc(-50% + 20px)) scale(0.85);
-  opacity: 0.7;
+  transform: translate(calc(-50% + 172px), calc(-50% + 16px)) scale(0.87);
+  opacity: 0.74;
   z-index: 1;
 }
 

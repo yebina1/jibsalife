@@ -12,6 +12,7 @@ type BackButtonProps = {
   icon?: React.ReactNode
   className?: string
   style?: CSSProperties
+  state?: unknown
   'aria-label'?: string
 }
 
@@ -24,6 +25,7 @@ export default function BackButton({
   icon,
   className,
   style,
+  state,
   'aria-label': ariaLabel,
 }: BackButtonProps) {
   const navigate = useNavigate()
@@ -34,7 +36,7 @@ export default function BackButton({
       return
     }
 
-    navigate(to, { replace })
+    navigate(to, { replace, state })
   }
 
   const computedStyle: CSSProperties = {
