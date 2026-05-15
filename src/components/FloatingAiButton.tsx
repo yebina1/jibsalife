@@ -2,13 +2,18 @@ import { useNavigate } from 'react-router'
 import FloatingButton from './FloatingButton'
 import aiChatIcon from '../img/aichat.svg'
 
-export default function FloatingAiButton() {
+type FloatingAiButtonProps = {
+  className?: string
+}
+
+export default function FloatingAiButton({ className }: FloatingAiButtonProps) {
   const navigate = useNavigate()
+  const buttonClassName = ['floating_button_ai_chat', className].filter(Boolean).join(' ')
 
   return (
     <FloatingButton
       placement="ai"
-      className="floating_button_ai_chat"
+      className={buttonClassName}
       aria-label="AI assistant"
       onClick={() => navigate('/health/qna')}
     >
