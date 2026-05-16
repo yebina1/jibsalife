@@ -7,11 +7,12 @@ import pungpungiImage from '../../img/pungpungi.png'
 import leeyoriImage from '../../img/leeyori.png'
 import galleryIcon from '../../img/gallery-icon.svg'
 import cameraFlipIcon from '../../img/camera-flip-icon.svg'
-import tutorialArrowVideo from '../../svg/health/arrow1.svg'
-import tutorialArrowPhoto from '../../svg/health/arrow2.svg'
-import tutorialArrowRecord from '../../svg/health/arrow3.svg'
-import tutorialArrowClose from '../../svg/health/arrow4.svg'
 import AddSheet from '../../components/AddSheet'
+import HealthCameraTutorial, {
+  type CameraTutorialStepId,
+  cameraTutorialStepOrder,
+  cameraTutorialStepDurations,
+} from './HealthCameraTutorial'
 import ChevronIcon from '../../components/ChevronIcon'
 import BackButton from '../../components/html/BackButton'
 import MissionRecordSheet from '../../components/MissionRecordSheet'
@@ -53,7 +54,6 @@ type PeriodDateTime = {
 }
 
 type PeriodField = 'start' | 'end'
-type CameraTutorialStepId = 'video' | 'photo' | 'record' | 'close'
 
 const categoryOptions: CategoryOption[] = [
   { id: 'meal', label: '식사 기록', color: '#ffd1a8' },
@@ -115,8 +115,6 @@ const periodHourOptions = Array.from({ length: 12 }, (_, index) => index + 1)
 const periodMinuteOptions = Array.from({ length: 60 }, (_, index) => index)
 const periodWheelLoops = [0, 1, 2]
 const periodWheelItemHeight = 44
-const cameraTutorialStepOrder: CameraTutorialStepId[] = ['video', 'photo', 'record', 'close']
-const cameraTutorialStepDurations = [2200, 2200, 2400, 2200]
 
 function getDateKey(year: number, month: number, day: number) {
   return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
@@ -968,70 +966,12 @@ function Health() {
       )}
 
       {isCameraTutorialVisible ? (
-        <button type="button" className="health_cam_tutorial_layer" onClick={activeCameraTutorialStep === 'close' ? undefined : advanceCameraTutorial} aria-label={activeCameraTutorialStep === 'close' ? '촬영 가이드' : '촬영 가이드 다음'}>
-          <span className="health_cam_tutorial_backdrop" aria-hidden="true" />
-          <span className="health_cam_tutorial_focus_box" aria-hidden="true">
-            <span />
-          </span>
-          <span
-            className={`health_cam_tabs_wrapper health_cam_tutorial_tabs_wrapper${activeCameraTutorialStep === 'close' ? ' is_hidden' : ''}`}
-            aria-hidden="true"
-          >
-            <span className="health_cam_tabs health_cam_tutorial_tabs">
-              <span className={`health_cam_tab${isCameraTutorialCameraTabActive ? ' is_active' : ''}`}>
-                카메라
-              </span>
-              <span className={`health_cam_tab${isCameraTutorialRecordTabActive ? ' is_active' : ''}`}>
-                기록
-              </span>
-            </span>
-          </span>
-
-          {activeCameraTutorialStep === 'video' ? (
-            <span className="health_cam_tutorial_callout health_cam_tutorial_callout_video">
-              <span className="health_cam_tutorial_text">
-                <span>동영상은<br/>
-                <span className="health_cam_tutorial_emphasis">흔들리지 않게</span> 해 주세요!</span>
-              </span>
-              <img src={tutorialArrowVideo} alt="" aria-hidden="true" />
-            </span>
-          ) : null}
-
-          {activeCameraTutorialStep === 'photo' ? (
-            <span className="health_cam_tutorial_callout health_cam_tutorial_callout_photo">
-              <span className="health_cam_tutorial_text">
-                사진은 <span className="health_cam_tutorial_emphasis">밝은</span> 곳에서
-                <br />
-                <span className="health_cam_tutorial_emphasis">선명</span>하게 촬영 해주세요!
-              </span>
-              <img src={tutorialArrowPhoto} alt="" aria-hidden="true" />
-            </span>
-          ) : null}
-
-          {activeCameraTutorialStep === 'record' ? (
-            <span className="health_cam_tutorial_callout health_cam_tutorial_callout_record">
-              <span className="health_cam_tutorial_text">
-                <span className="health_cam_tutorial_emphasis">기록</span>을 저장하거나
-                <br />
-                <span className="health_cam_tutorial_emphasis">AI 건강 리포트</span>를
-                <br />
-                받을 수 있어요!
-              </span>
-              <img src={tutorialArrowRecord} alt="" aria-hidden="true" />
-            </span>
-          ) : null}
-
-          {activeCameraTutorialStep === 'close' ? (
-            <span className="health_cam_tutorial_callout health_cam_tutorial_callout_close">
-              <span className="health_cam_tutorial_text">
-                <span className="health_cam_tutorial_emphasis">닫기</span>를 눌러
-                <br />
-                나갈 수 있어요!
-              </span>
-              <img src={tutorialArrowClose} alt="" aria-hidden="true" />
-            </span>
-          ) : null}
-        </button>
+        <HealthCameraTutorial
+          step={activeCameraTutorialStep}
+          isCameraTabActive={isCameraTutorialCameraTabActive}
+          isRecordTabActive={isCameraTutorialRecordTabActive}
+          onAdvance={advanceCameraTutorial}
+        />
       ) : null}
 
       <div style={{ backgroundColor: 'white', height: '34px', position: 'relative', width: '100%' }} aria-hidden="true">
