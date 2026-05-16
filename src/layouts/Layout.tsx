@@ -232,7 +232,7 @@ function Layout({
           <header ref={headerRef}>
             <StateBar />
             {/* 회원가입 페이지는 StateBar만, Header(집사인생 타이틀)는 표시 안 함 */}
-            {!isSignupPage && showHeader && header && <Header {...header} />}
+            {showHeader && header && <Header {...header} />}
             {showCommunityChrome ? (
               <>
                 <nav className="layout_community_tabs" aria-label="커뮤니티 카테고리">

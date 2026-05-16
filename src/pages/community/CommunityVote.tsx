@@ -6,7 +6,7 @@ import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
 import Title from '../../components/Title'
 import Button from '../../components/html/Button'
-import Alert from '../../components/Alert'
+import VoteRewardAlert from '../../components/VoteRewardAlert'
 import ConfirmDialog from '../../components/ConfirmDialog'
 import FloatingWriteButton from '../../components/FloatingWriteButton'
 import VoteMissionBanner from '../../components/VoteMissionBanner'
@@ -16,7 +16,6 @@ import timerIcon from '../../svg/timer.svg'
 import timerClosedIcon from '../../svg/timer_closed.svg'
 import boneImage from '../../img/bone.png'
 import voteBannerImage from '../../img/vote/vote_banner_img.png'
-import voteGoodImage from '../../img/vote-good.png'
 import { readVotedMissionIds } from '../../utils/communityVoteStatus'
 import { missionVotes, regularVoteItems } from './CommunityVoteData'
 import { readUserVotes, calcDeadlineText, type UserVote } from '../../utils/savedVotes'
@@ -528,24 +527,7 @@ function CommunityVote() {
         />
       ) : null}
       {isVoteCompleteOpen ? (
-        <Alert
-          dialogClassName="uvote_complete_dialog"
-          onClose={() => setIsVoteCompleteOpen(false)}
-        >
-          <div className="uvote_complete_content">
-            <span className="uvote_confetti c1" />
-            <span className="uvote_confetti c2" />
-            <span className="uvote_confetti c3" />
-            <span className="uvote_confetti c4" />
-            <span className="uvote_confetti c5" />
-            <span className="uvote_confetti c6" />
-            <span className="uvote_confetti c7" />
-            <span className="uvote_confetti c8" />
-            <strong className="uvote_complete_title">투표 완료!</strong>
-            <span className="uvote_complete_desc">소중한 의견 감사합니다 💗</span>
-            <img src={voteGoodImage} alt="" className="uvote_complete_image" />
-          </div>
-        </Alert>
+        <VoteRewardAlert rewardAmount={60} onClose={() => setIsVoteCompleteOpen(false)} />
       ) : null}
       <FloatingWriteButton showMenu />
     </>

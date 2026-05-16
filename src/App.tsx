@@ -88,6 +88,8 @@ function App() {
         </Route>
         <Route element={<Layout showHeader={false} showNav={false} showFooter={false} />}>
           <Route path="/login" element={<LoginGuard><Login /></LoginGuard>} />
+        </Route>
+        <Route element={<Layout showNav={false} />}>
           <Route path="/signup" element={<Signup />} />
         </Route>
         <Route element={<Layout showHeader={false} showNav={false} />}>
@@ -99,7 +101,7 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/mypage/posts" element={<MyPostsPage />} />
         </Route>
-        <Route element={<Layout showHeader={false} showNav={false} showFooter={false} hasContentPadding={false} />}>
+        <Route element={<Layout showNav={false} hasContentPadding={false} />}>
           <Route path="/signup/terms/service" element={<TermsDetail />} />
           <Route path="/signup/terms/privacy" element={<PrivacyDetail />} />
         </Route>

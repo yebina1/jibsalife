@@ -9,6 +9,9 @@ import {
 type StatusMessageState = {
   message: string
   placement: StateBarMessagePlacement
+  closeButton: boolean
+  actionLabel?: string
+  onAction?: () => void
 }
 
 function StatusMessageBar() {
@@ -36,7 +39,13 @@ function StatusMessageBar() {
         detail.placement ?? (detail.message.includes('알림') ? 'notification' : 'footer')
 
       clearMessageTimeout()
-      setToast({ message: detail.message, placement: resolvedPlacement })
+      setToast({
+        message: detail.message,
+        placement: resolvedPlacement,
+        closeButton: detail.closeButton ?? true,
+        actionLabel: detail.actionLabel,
+        onAction: detail.onAction,
+      })
       timeoutRef.current = window.setTimeout(() => {
         setToast(null)
         timeoutRef.current = null
@@ -64,14 +73,25 @@ function StatusMessageBar() {
     >
       <div className="status_message_bar_inner">
         <p className="status_message_bar_text">{toast.message}</p>
-        <button
-          type="button"
-          className="status_message_bar_close"
-          aria-label="닫기"
-          onClick={() => setToast(null)}
-        >
-          ×
-        </button>
+        {toast.actionLabel && toast.onAction && (
+          <button
+            type="button"
+            className="status_message_bar_badge"
+            onClick={() => { toast.onAction?.(); setToast(null) }}
+          >
+            {toast.actionLabel}
+          </button>
+        )}
+        {toast.closeButton && (
+          <button
+            type="button"
+            className="status_message_bar_close"
+            aria-label="닫기"
+            onClick={() => setToast(null)}
+          >
+            ×
+          </button>
+        )}
       </div>
     </div>
   )

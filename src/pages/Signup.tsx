@@ -1,12 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import Input from '../components/html/Input'
 import Button from '../components/html/Button'
 import Title from '../components/Title'
+import PageHeader from '../components/PageHeader'
+import BackButton from '../components/html/BackButton'
+import Alert from '../components/Alert'
 import helloIcon from '../svg/hello icon.svg'
 import loginPetImg from '../img/illust_login_pet.png'
 import xIcon from '../img/x-icon.png'
-import eyeIcon from '../img/eye-icon.png'
+import eyeOnIcon from '../svg/eye.svg'
+import eyeOffIcon from '../svg/eye_off.svg'
 import grayCheckIcon from '../img/gray-check.png'
 import blueCheckIcon from '../img/blue-check.png'
 import { hasAuthAccount, saveAuthAccount } from '../utils/authAccounts'
@@ -25,15 +29,25 @@ type Terms = {
 
 function Signup() {
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
+  const goingToTermsRef = useRef(false)
+  const [email, setEmail] = useState(() => {
+    try { return JSON.parse(sessionStorage.getItem('signup_form') ?? '{}').email ?? '' } catch { return '' }
+  })
   const [emailError, setEmailError] = useState('')
-  const [emailChecked, setEmailChecked] = useState(false)
-  const [password, setPassword] = useState('')
+  const [emailChecked, setEmailChecked] = useState<boolean>(() => {
+    try { return JSON.parse(sessionStorage.getItem('signup_form') ?? '{}').emailChecked ?? false } catch { return false }
+  })
+  const [password, setPassword] = useState(() => {
+    try { return JSON.parse(sessionStorage.getItem('signup_form') ?? '{}').password ?? '' } catch { return '' }
+  })
   const [passwordError, setPasswordError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [passwordConfirm, setPasswordConfirm] = useState('')
+  const [passwordConfirm, setPasswordConfirm] = useState(() => {
+    try { return JSON.parse(sessionStorage.getItem('signup_form') ?? '{}').passwordConfirm ?? '' } catch { return '' }
+  })
   const [passwordConfirmError, setPasswordConfirmError] = useState('')
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false)
+  const [isSignupCompleteOpen, setIsSignupCompleteOpen] = useState(false)
   const [terms, setTerms] = useState<Terms>(() => {
     try {
       const saved = sessionStorage.getItem('signup_terms')
@@ -43,8 +57,22 @@ function Signup() {
   })
 
   useEffect(() => {
+    sessionStorage.setItem('signup_form', JSON.stringify({ email, emailChecked, password, passwordConfirm }))
+  }, [email, emailChecked, password, passwordConfirm])
+
+  useEffect(() => {
     sessionStorage.setItem('signup_terms', JSON.stringify(terms))
   }, [terms])
+
+  useEffect(() => {
+    return () => {
+      if (!goingToTermsRef.current) {
+        sessionStorage.removeItem('signup_form')
+        sessionStorage.removeItem('signup_terms')
+      }
+      goingToTermsRef.current = false
+    }
+  }, [])
 
   const handleEmailChange = (value: string) => {
     setEmail(value)
@@ -135,22 +163,14 @@ function Signup() {
       password,
     })
     sessionStorage.removeItem('signup_terms')
-    navigate('/login')
+    sessionStorage.removeItem('signup_form')
+    setIsSignupCompleteOpen(true)
   }
 
   return (
-    <div className="signup_wrapper">
-      <header className="signup_header">
-        <button
-          type="button"
-          className="signup_header_back"
-          onClick={() => navigate('/login')}
-          aria-label="로그인으로 돌아가기"
-        >
-          <i className="bx bx-chevron-left signup_header_back_icon" aria-hidden="true" />
-          <span className="signup_header_title">회원가입</span>
-        </button>
-      </header>
+    <>
+      <PageHeader title="회원가입" leftContent={<BackButton to="/login" />} />
+      <div className="signup_wrapper">
       <div className="signup_page">
       <div className="signup_hero">
         <Title
@@ -219,18 +239,18 @@ function Signup() {
                     <button
                       type="button"
                       className="signup_pw_icon_btn"
-                      onClick={() => setPassword('')}
-                      aria-label="비밀번호 지우기"
+                      onClick={() => setShowPassword((v) => !v)}
+                      aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
                     >
-                      <img src={xIcon} alt="" width={12} height={12} />
+                      <img src={showPassword ? eyeOnIcon : eyeOffIcon} alt="" width={showPassword ? 18 : 16} height={showPassword ? 18 : 16} />
                     </button>
                     <button
                       type="button"
                       className="signup_pw_icon_btn"
-                      onClick={() => setShowPassword((v) => !v)}
-                      aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
+                      onClick={() => setPassword('')}
+                      aria-label="비밀번호 지우기"
                     >
-                      <img src={eyeIcon} alt="" width={16} height={16} />
+                      <img src={xIcon} alt="" width={12} height={12} />
                     </button>
                   </div>
                 )}
@@ -254,18 +274,18 @@ function Signup() {
                     <button
                       type="button"
                       className="signup_pw_icon_btn"
-                      onClick={() => setPasswordConfirm('')}
-                      aria-label="비밀번호 재입력 지우기"
+                      onClick={() => setShowPasswordConfirm((v) => !v)}
+                      aria-label={showPasswordConfirm ? '비밀번호 재입력 숨기기' : '비밀번호 재입력 보기'}
                     >
-                      <img src={xIcon} alt="" width={12} height={12} />
+                      <img src={showPasswordConfirm ? eyeOnIcon : eyeOffIcon} alt="" width={showPasswordConfirm ? 18 : 16} height={showPasswordConfirm ? 18 : 16} />
                     </button>
                     <button
                       type="button"
                       className="signup_pw_icon_btn"
-                      onClick={() => setShowPasswordConfirm((v) => !v)}
-                      aria-label={showPasswordConfirm ? '비밀번호 재입력 숨기기' : '비밀번호 재입력 보기'}
+                      onClick={() => setPasswordConfirm('')}
+                      aria-label="비밀번호 재입력 지우기"
                     >
-                      <img src={eyeIcon} alt="" width={16} height={16} />
+                      <img src={xIcon} alt="" width={12} height={12} />
                     </button>
                   </div>
                 )}
@@ -325,7 +345,7 @@ function Signup() {
               <button
                 type="button"
                 className="signup_terms_chevron_btn"
-                onClick={(e) => { e.stopPropagation(); navigate('/signup/terms/service') }}
+                onClick={(e) => { e.stopPropagation(); goingToTermsRef.current = true; navigate('/signup/terms/service') }}
                 aria-label="서비스 이용약관 상세 보기"
               >
                 <i className="bx bx-chevron-right signup_terms_chevron" aria-hidden="true" />
@@ -348,7 +368,7 @@ function Signup() {
               <button
                 type="button"
                 className="signup_terms_chevron_btn"
-                onClick={(e) => { e.stopPropagation(); navigate('/signup/terms/privacy') }}
+                onClick={(e) => { e.stopPropagation(); goingToTermsRef.current = true; navigate('/signup/terms/privacy') }}
                 aria-label="개인정보 수집 이용 상세 보기"
               >
                 <i className="bx bx-chevron-right signup_terms_chevron" aria-hidden="true" />
@@ -382,6 +402,17 @@ function Signup() {
       </form>
     </div>
     </div>
+    {isSignupCompleteOpen && (
+      <Alert onClose={() => navigate('/login')}>
+        <Title as="h3" title="회원가입이 완료되었습니다." className="signup_complete_title">
+          <p className="h4_regular">로그인 후 서비스를 이용해보세요.</p>
+        </Title>
+        <button type="button" className="purple_btn" onClick={() => navigate('/login')}>
+          로그인하기
+        </button>
+      </Alert>
+    )}
+    </>
   )
 }
 

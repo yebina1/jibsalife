@@ -1,4 +1,18 @@
-/* ── Back header ──────────────────────────────────────── */
+/* ── Alert ────────────────────────────────────────────── */
+
+.signup_complete_title {
+  gap: 12px;
+  align-items: center;
+  text-align: center;
+}
+
+/* ── Layout background override ───────────────────────── */
+.layout:has(.signup_wrapper),
+.layout:has(.signup_wrapper) .layout_content {
+  background: #ffffff;
+}
+
+/* ── Wrapper ──────────────────────────────────────────── */
 
 .signup_wrapper {
   display: flex;
@@ -8,42 +22,13 @@
   overflow-x: hidden;
 }
 
-.signup_header {
-  padding: 12px 0;
-}
-
-.signup_header_back {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.signup_header_back_icon {
-  font-size: 28px;
-  color: #111111;
-  line-height: 1;
-}
-
-.signup_header_title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #111111;
-  letter-spacing: -0.5px;
-  line-height: 1;
-}
-
 /* ── Page ─────────────────────────────────────────────── */
 
 .signup_page {
   display: flex;
   flex-direction: column;
   gap: 48px;
-  padding: 24px 0 48px;
+  padding-top: 24px;
 }
 
 /* ── Hero ─────────────────────────────────────────────── */
@@ -120,15 +105,9 @@
 /* ── Input override ────────────────────────────────────── */
 
 .signup_input.input_field {
-  height: 44px;
+  height: 54px;
   border-radius: 8px;
   font-size: 16px;
-  font-weight: 400;
-  line-height: 1.4;
-}
-
-.signup_input_filled.input_field {
-  font-weight: 600;
 }
 
 /* ── Email row ─────────────────────────────────────────── */
@@ -162,7 +141,7 @@
 
 .signup_check_btn {
   flex-shrink: 0;
-  height: 44px;
+  height: 54px;
   padding: 0 14px;
   border: 1px solid rgba(80, 80, 80, 0.28);
   border-radius: 8px;
@@ -229,8 +208,16 @@
   cursor: pointer;
 }
 
+.signup_pw_icon_btn:first-child img {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+
 .signup_pw_icon_btn img {
   flex-shrink: 0;
+  width: 16px;
+  height: 16px;
 }
 
 .signup_pw_error {

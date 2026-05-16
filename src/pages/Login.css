@@ -104,6 +104,16 @@
   flex-shrink: 0;
 }
 
+.login_input_eye img {
+  width: 18px;
+  height: 18px;
+}
+
+.login_input_clear img {
+  width: 16px;
+  height: 16px;
+}
+
 .login_error {
   display: block;
   width: 100%;

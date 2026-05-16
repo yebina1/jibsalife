@@ -6,7 +6,8 @@ import Title from '../components/Title'
 import loginPetImg from '../img/illust_login_pet.png'
 import helloIcon from '../svg/hello icon.svg'
 import xIcon from '../img/x-icon.png'
-import eyeIcon from '../img/eye-icon.png'
+import eyeOnIcon from '../svg/eye.svg'
+import eyeOffIcon from '../svg/eye_off.svg'
 import { findAuthAccount, markLoggedIn, shouldShowProfileSetupForAccount } from '../utils/authAccounts'
 import './Login.css'
 
@@ -72,7 +73,7 @@ function Login() {
               {password && (
                 <div className="login_input_actions">
                   <button type="button" className="login_input_eye" onClick={() => setShowPassword((p) => !p)}>
-                    <img src={eyeIcon} alt="" width={16} height={16} />
+                    <img src={showPassword ? eyeOnIcon : eyeOffIcon} alt="" width={showPassword ? 18 : 16} height={showPassword ? 18 : 16} />
                   </button>
                   {password && (
                     <button type="button" className="login_input_clear" onClick={() => { setPassword(''); setError('') }}>

@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router'
-import HomeIndicator from '../components/HomeIndicator'
+import PageHeader from '../components/PageHeader'
+import BackButton from '../components/html/BackButton'
 import './TermsDetail.css'
 import './PrivacyDetail.css'
 
@@ -70,21 +71,9 @@ function PrivacyDetail() {
   }
 
   return (
-    <div className="terms_wrapper">
-      <header className="terms_header">
-        <div className="terms_header_inner">
-          <button
-            type="button"
-            className="terms_back_btn"
-            onClick={() => navigate(-1)}
-            aria-label="이전 페이지로 돌아가기"
-          >
-            <i className="bx bx-chevron-left terms_back_icon" aria-hidden="true" />
-            <span className="terms_header_title">약관/동의서 상세</span>
-          </button>
-        </div>
-      </header>
-
+    <>
+      <PageHeader title="약관/동의서 상세" leftContent={<BackButton />} />
+      <div className="terms_wrapper">
       <div className="terms_body">
         <h1 className="terms_main_title">개인정보 처리 방침</h1>
         <p className="terms_effective_date">(2026. 05. 12 시행)</p>
@@ -124,9 +113,9 @@ function PrivacyDetail() {
         >
           확인
         </button>
-        <HomeIndicator />
       </div>
     </div>
+    </>
   )
 }
 

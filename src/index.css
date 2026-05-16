@@ -152,6 +152,13 @@ select {
   line-height: var(--app-line-height);
 }
 
+/* rg 16px */
+.h5_regular{
+  font-size: var(--font-title-h4);
+  font-weight: var(--font-weight-rg);
+  line-height: var(--app-line-height);
+}
+
 /* md 14px 145% */
 .point_medium{
   font-size: var(--font-point-md);
