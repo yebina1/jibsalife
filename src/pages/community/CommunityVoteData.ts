@@ -112,8 +112,8 @@ export const regularVoteItems: RegularVoteItem[] = [
     participants: 325984,
     voteType: 'ox',
     options: [
-      { id: 1, label: 'O' },
-      { id: 2, label: 'X' },
+      { id: 1, label: 'O', percentage: 68 },
+      { id: 2, label: 'X', percentage: 32 },
     ],
   },
   {

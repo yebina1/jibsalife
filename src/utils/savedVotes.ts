@@ -32,6 +32,13 @@ export function saveUserVote(vote: UserVote): void {
   } catch { /* noop */ }
 }
 
+export function deleteUserVote(voteId: number): void {
+  try {
+    const nextVotes = readUserVotes().filter((vote) => vote.id !== voteId)
+    localStorage.setItem(SAVED_VOTES_KEY, JSON.stringify(nextVotes))
+  } catch { /* noop */ }
+}
+
 export function calcDeadlineText(createdAt: string, voteDuration: number): string {
   const d = new Date(createdAt)
   d.setDate(d.getDate() + voteDuration)
