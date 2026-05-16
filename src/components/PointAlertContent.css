@@ -1,0 +1,10 @@
+.point_alert_content {
+  display: grid;
+  gap: 48px;
+  width: 100%;
+}
+
+.point_alert_confirm {
+  width: 100%;
+  border-radius: 12px;
+}

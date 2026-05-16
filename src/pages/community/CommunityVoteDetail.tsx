@@ -8,9 +8,7 @@ import Alert from '../../components/Alert'
 import VoteMissionBanner from '../../components/VoteMissionBanner'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
-import ConfettiEffect from '../../components/effect/ConfettiEffect'
-import RewardHero from '../../components/RewardHero'
-import RewardPointCard from '../../components/RewardPointCard'
+import PointAlertContent from '../../components/PointAlertContent'
 import { hasVotedMission, readVotedCandidate, writeVotedCandidate, writeVotedMissionId } from '../../utils/communityVoteStatus'
 import { isChallengeDayClaimed, markChallengeVoteCompleted, readCurrentDay } from '../../utils/challengeStatus'
 import { readProfilePoints, writeProfilePoints } from '../../utils/profilePoints'
@@ -218,19 +216,12 @@ function CommunityVoteDetail() {
 
       {isVoteCompleteOpen ? (
         <Alert onClose={goToResult}>
-          <ConfettiEffect contained />
-          <div className="cvd_reward_alert">
-              <RewardHero rewardAmount={VOTE_REWARD_AMOUNT} />
-              <RewardPointCard
-                currentPoints={currentPoints}
-                rewardAmount={VOTE_REWARD_AMOUNT}
-                rewardAlreadyApplied
-                onClick={() => navigate('/mypage')}
-              />
-              <Button type="button" className="purple_btn cvd_reward_confirm" onClick={goToResult}>
-                확인
-              </Button>
-          </div>
+          <PointAlertContent
+            currentPoints={currentPoints}
+            rewardAmount={VOTE_REWARD_AMOUNT}
+            onRewardCardClick={() => navigate('/mypage')}
+            onConfirm={goToResult}
+          />
         </Alert>
       ) : null}
     </>

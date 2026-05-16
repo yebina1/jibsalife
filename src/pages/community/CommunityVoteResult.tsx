@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'
 import BackButton from '../../components/html/BackButton'
+import HeaderIcon from '../../components/HeaderIcon'
 import Alert from '../../components/Alert'
 import Button from '../../components/html/Button'
 import ChevronIcon from '../../components/ChevronIcon'
@@ -76,7 +77,15 @@ function CommunityVoteResult() {
 
   return (
     <div className="cv_wrap">
-      <PageHeader title="투표 결과" leftContent={<BackButton />} />
+      <PageHeader 
+      title="투표 결과" 
+      leftContent={<BackButton />} 
+      rightContent={
+        <Button type="button" aria-label="notification" onClick={() => navigate('/notification')}>
+          <HeaderIcon type="notification" />
+        </Button>
+        }
+      />
 
       {/* 1위 */}
       <section className="cv_first_section">
