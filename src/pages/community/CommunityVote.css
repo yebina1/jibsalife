@@ -1,3 +1,24 @@
+.vote_mission_banner.cps_vote_banner {
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+}
+
+.vote_mission_banner.cps_vote_banner .vote_mission_banner_title {
+  display: grid;
+  grid-template-columns: max-content;
+}
+
+.vote_mission_banner.cps_vote_banner .vote_mission_banner_title h2,
+.vote_mission_banner.cps_vote_banner .vote_mission_banner_title p {
+  white-space: nowrap;
+}
+
+.vote_mission_banner.cps_vote_banner .vote_mission_banner_img {
+  min-width: 0;
+  width: auto;
+  height: 108px;
+}
+
 html:has(.cv2_page) {
   overflow-anchor: none;
 }
