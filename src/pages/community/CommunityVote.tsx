@@ -1,7 +1,8 @@
 ﻿import './Community.css'
 import './CommunityVote.css'
-import { type CSSProperties, useEffect, useMemo, useState } from 'react'
+import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
+import { MoreVertical } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
 import Title from '../../components/Title'
@@ -11,6 +12,8 @@ import ConfirmDialog from '../../components/ConfirmDialog'
 import FloatingWriteButton from '../../components/FloatingWriteButton'
 import VoteMissionBanner from '../../components/VoteMissionBanner'
 import OxVoteOptions from '../../components/OxVoteOptions'
+import voteOIcon from '../../svg/vote_o.svg'
+import voteXIcon from '../../svg/vote_x.svg'
 import crownIcon from '../../svg/crown.svg'
 import timerIcon from '../../svg/timer.svg'
 import timerClosedIcon from '../../svg/timer_closed.svg'
@@ -19,8 +22,21 @@ import voteBannerImage from '../../img/vote/vote_banner_img.png'
 import voteGoodImage from '../../img/vote-good.png'
 import { readVotedMissionIds } from '../../utils/communityVoteStatus'
 import { missionVotes, regularVoteItems } from './CommunityVoteData'
-import { readUserVotes, calcDeadlineText, type UserVote } from '../../utils/savedVotes'
+import { deleteUserVote, readUserVotes, calcDeadlineText, type UserVote } from '../../utils/savedVotes'
 import { readDefaultCommunityVotes, writeDefaultCommunityVotes } from '../../utils/defaultCommunityVotes'
+import {
+  deleteUserCommunityVoteSelection,
+  readUserCommunityVoteSelections,
+  writeUserCommunityVoteSelections,
+} from '../../utils/userCommunityVoteSelections'
+import {
+  addCommunityVoteResult,
+  deleteCommunityVoteResults,
+  getVotePercentage,
+  getVoteTotal,
+  readCommunityVoteResults,
+  type CommunityVoteResults,
+} from '../../utils/communityVoteResults'
 
 const topTabs = ['전체', '펫스토리', '챌린지', '투표'] as const
 const topTabRoutes: Record<string, string> = {
@@ -53,11 +69,20 @@ function CommunityVote() {
   const showRegular = sub === 'all' || sub === 'regular'
   const showResult = sub === 'all' || sub === 'result'
   const [votedIds] = useState(() => readVotedMissionIds())
-  const [savedVotes] = useState<UserVote[]>(() => readUserVotes())
-  const [voteSelections, setVoteSelections] = useState<Record<number, number>>(() => readDefaultCommunityVotes())
-  const [localVotedIds, setLocalVotedIds] = useState<Set<number>>(() => new Set(Object.keys(readDefaultCommunityVotes()).map(Number)))
+  const [savedVotes, setSavedVotes] = useState<UserVote[]>(() => readUserVotes())
+  const [voteSelections, setVoteSelections] = useState<Record<number, number>>(() => ({
+    ...readDefaultCommunityVotes(),
+    ...readUserCommunityVoteSelections(),
+  }))
+  const [localVotedIds, setLocalVotedIds] = useState<Set<number>>(() => new Set([
+    ...Object.keys(readDefaultCommunityVotes()).map(Number),
+    ...Object.keys(readUserCommunityVoteSelections()).map(Number),
+  ]))
+  const [voteResults, setVoteResults] = useState<CommunityVoteResults>(() => readCommunityVoteResults())
   const [editingVoteId, setEditingVoteId] = useState<number | null>(null)
+  const [deleteVoteId, setDeleteVoteId] = useState<number | null>(null)
   const [isVoteCompleteOpen, setIsVoteCompleteOpen] = useState(false)
+  const pendingDefaultVoteSelection = useRef<{ voteId: number; optionId: number } | null>(null)
   const sortedRegularVoteItems = useMemo(() => {
     return [...regularVoteItems].sort((a, b) => {
       if (sort === 'popular') {
@@ -86,10 +111,51 @@ function CommunityVote() {
   const saveDefaultVoteSelection = (voteId: number, optionId: number) => {
     setVoteSelections(prev => {
       const next = { ...prev, [voteId]: optionId }
-      writeDefaultCommunityVotes(next)
+      const nextDefaultSelections = {
+        ...readDefaultCommunityVotes(),
+        [voteId]: optionId,
+      }
+      writeDefaultCommunityVotes(nextDefaultSelections)
       return next
     })
     setLocalVotedIds(prev => new Set([...prev, voteId]))
+  }
+
+  const saveUserVoteSelection = (voteId: number, optionId: number) => {
+    setVoteSelections(prev => {
+      const next = { ...prev, [voteId]: optionId }
+      const nextUserSelections = {
+        ...readUserCommunityVoteSelections(),
+        [voteId]: optionId,
+      }
+      writeUserCommunityVoteSelections(nextUserSelections)
+      return next
+    })
+    setLocalVotedIds(prev => new Set([...prev, voteId]))
+  }
+
+  const submitUserVoteSelection = (voteId: number, optionId: number) => {
+    saveUserVoteSelection(voteId, optionId)
+    setVoteResults(addCommunityVoteResult(voteId, optionId))
+    setIsVoteCompleteOpen(true)
+  }
+
+  const handleDeleteUserVote = () => {
+    if (deleteVoteId === null) return
+    deleteUserVote(deleteVoteId)
+    setSavedVotes(readUserVotes())
+    setVoteResults(deleteCommunityVoteResults(deleteVoteId))
+    deleteUserCommunityVoteSelection(deleteVoteId)
+    setVoteSelections(prev => {
+      const { [deleteVoteId]: _deleted, ...next } = prev
+      return next
+    })
+    setLocalVotedIds(prev => {
+      const next = new Set(prev)
+      next.delete(deleteVoteId)
+      return next
+    })
+    setDeleteVoteId(null)
   }
 
   useEffect(() => {
@@ -97,6 +163,13 @@ function CommunityVote() {
 
     const timer = window.setTimeout(() => {
       setIsVoteCompleteOpen(false)
+      if (pendingDefaultVoteSelection.current) {
+        saveDefaultVoteSelection(
+          pendingDefaultVoteSelection.current.voteId,
+          pendingDefaultVoteSelection.current.optionId,
+        )
+        pendingDefaultVoteSelection.current = null
+      }
     }, 2500)
 
     return () => window.clearTimeout(timer)
@@ -282,29 +355,32 @@ function CommunityVote() {
               const voted = localVotedIds.has(vote.id)
               const deadline = calcDeadlineText(vote.createdAt, vote.voteDuration)
               const hasImages = vote.voteItems.some(it => it.image !== null)
-              const hasLabels = vote.voteType === '사진 투표' && vote.voteItems.some(it => it.label.trim() !== '')
+              const storedResult = voteResults[vote.id]
+              const resultForDisplay = getVoteTotal(storedResult) > 0
+                ? storedResult
+                : sel !== undefined
+                  ? { [sel]: 1 }
+                  : undefined
+              const participantCount = getVoteTotal(resultForDisplay)
 
-              const handleSelect = (itemId: number) => setVoteSelections(prev => ({ ...prev, [vote.id]: itemId }))
-              const handleSubmit = () => {
-                if (sel === undefined) return
-                if (voted) {
-                  setEditingVoteId(vote.id)
-                  return
-                }
-                saveDefaultVoteSelection(vote.id, sel)
-                setIsVoteCompleteOpen(true)
-              }
               const handleDirectVote = (itemId: number) => {
                 if (voted) {
                   setEditingVoteId(vote.id)
                   return
                 }
-                saveDefaultVoteSelection(vote.id, itemId)
-                setIsVoteCompleteOpen(true)
+                submitUserVoteSelection(vote.id, itemId)
               }
 
               return (
-                <div key={vote.id} className="uvote_card">
+                <div key={vote.id} className="uvote_card uvote_user_card">
+                  <button
+                    type="button"
+                    className="uvote_more_btn"
+                    aria-label="투표 더보기"
+                    onClick={() => setDeleteVoteId(vote.id)}
+                  >
+                    <MoreVertical size={22} strokeWidth={2.5} />
+                  </button>
                   <div className="uvote_card_header">
                     <p className="uvote_card_title">{vote.title}</p>
                     {vote.content && <p className="uvote_card_desc">{vote.content}</p>}
@@ -312,60 +388,81 @@ function CommunityVote() {
 
                   {/* 텍스트만 (이미지 없음) → 뼈다귀 카드 */}
                   {vote.voteType === '사진 투표' && !hasImages && (
-                    <div className="uvote_bone_wrap">
-                      <img src={boneImage} alt="" className="uvote_bone_image" aria-hidden="true" />
-                      <div className="uvote_bone_labels">
+                    <div
+                      className={`uvote_bone_result${sel ? ' is_revealed' : ''}${sel === vote.voteItems[0]?.id ? ' is_left_selected' : ''}${sel === vote.voteItems[1]?.id ? ' is_right_selected' : ''}`}
+                      aria-label={`${vote.voteItems[0]?.label} ${getVotePercentage(resultForDisplay, vote.voteItems[0]?.id)}%, ${vote.voteItems[1]?.label} ${getVotePercentage(resultForDisplay, vote.voteItems[1]?.id)}%`}
+                    >
+                      <div
+                        className="uvote_bone_track"
+                        role="group"
+                        aria-label="투표 항목 선택"
+                        style={{
+                          '--uvote-bone-left': `${getVotePercentage(resultForDisplay, vote.voteItems[0]?.id)}%`,
+                          '--uvote-bone-right': `${getVotePercentage(resultForDisplay, vote.voteItems[1]?.id)}%`,
+                        } as CSSProperties}
+                      >
+                        <span className="uvote_bone_base" aria-hidden="true" />
+                        <span className="uvote_bone_left_fill" aria-hidden="true" />
+                        <span className="uvote_bone_right_fill" aria-hidden="true" />
+                        {sel && (
+                          <>
+                            <span className="uvote_bone_percent uvote_bone_percent_left">{getVotePercentage(resultForDisplay, vote.voteItems[0]?.id)}%</span>
+                            <span className="uvote_bone_percent uvote_bone_percent_right">{getVotePercentage(resultForDisplay, vote.voteItems[1]?.id)}%</span>
+                          </>
+                        )}
                         <button
                           type="button"
-                          className={`uvote_bone_option${sel === vote.voteItems[0]?.id ? ' selected' : ''}`}
+                          className="uvote_bone_hit uvote_bone_hit_left"
+                          aria-label={`${vote.voteItems[0]?.label} 선택`}
                           onClick={() => handleDirectVote(vote.voteItems[0].id)}
-                        >
-                          {vote.voteItems[0]?.label}
-                        </button>
-                        <span className="uvote_bone_vs">vs</span>
+                        />
                         <button
                           type="button"
-                          className={`uvote_bone_option${sel === vote.voteItems[1]?.id ? ' selected' : ''}`}
+                          className="uvote_bone_hit uvote_bone_hit_right"
+                          aria-label={`${vote.voteItems[1]?.label} 선택`}
                           onClick={() => handleDirectVote(vote.voteItems[1].id)}
-                        >
-                          {vote.voteItems[1]?.label}
-                        </button>
+                        />
+                      </div>
+                      <div className="uvote_bone_result_labels">
+                        <span>{vote.voteItems[0]?.label}</span>
+                        <span>{vote.voteItems[1]?.label}</span>
                       </div>
                     </div>
                   )}
 
                   {/* 이미지 있는 사진 투표 → 사진 그리드 */}
                   {vote.voteType === '사진 투표' && hasImages && (
-                    <div className="uvote_photo_grid">
+                    <div className={`uvote_photo_grid${sel ? ' is_revealed' : ''}`}>
                       {vote.voteItems.map(item => {
                         const isSelected = sel === item.id
+                        const percentage = getVotePercentage(resultForDisplay, item.id)
                         return (
                           <button
                             key={item.id}
                             type="button"
                             className={`uvote_photo_option${isSelected ? ' selected' : ''}`}
                             onClick={() => {
-                              handleSelect(item.id)
-                              if (!hasLabels) handleDirectVote(item.id)
+                              handleDirectVote(item.id)
                             }}
                           >
                             <img src={item.image ?? boneImage} alt={item.label} className="uvote_photo_img" />
-                            {hasLabels && (
+                            {item.label.trim() !== '' && (
                               <span className="uvote_photo_label_row">
                                 <span className="uvote_photo_label">{item.label}</span>
                                 <span className={`uvote_photo_radio${isSelected ? ' checked' : ''}`} />
+                              </span>
+                            )}
+                            {sel && (
+                              <span className="uvote_photo_result_bar" aria-label={`${item.label} ${percentage}%`}>
+                                <span className="uvote_photo_result_fill" style={{ width: `${percentage}%` }}>
+                                  {percentage}%
+                                </span>
                               </span>
                             )}
                           </button>
                         )
                       })}
                     </div>
-                  )}
-
-                  {vote.voteType === '사진 투표' && hasImages && hasLabels && (
-                    <button type="button" className="uvote_submit_btn" disabled={sel === undefined} onClick={handleSubmit}>
-                      {voted ? '수정하기' : '투표하기'}
-                    </button>
                   )}
 
                   {vote.voteType === 'OX' && (
@@ -376,7 +473,7 @@ function CommunityVote() {
                   )}
 
 
-                  <p className="uvote_meta">{deadline} <span className="cv2_divider">|</span> 참여자 수 0명</p>
+                  <p className="uvote_meta">{deadline} <span className="cv2_divider">|</span> 참여자 수 {formatParticipants(participantCount)}명</p>
                 </div>
               )
             })}
@@ -389,7 +486,7 @@ function CommunityVote() {
                   setEditingVoteId(item.id)
                   return
                 }
-                saveDefaultVoteSelection(item.id, optionId)
+                pendingDefaultVoteSelection.current = { voteId: item.id, optionId }
                 setIsVoteCompleteOpen(true)
               }
               const selectBoneVote = (optionId: number) => {
@@ -397,7 +494,7 @@ function CommunityVote() {
                   setEditingVoteId(item.id)
                   return
                 }
-                saveDefaultVoteSelection(item.id, optionId)
+                pendingDefaultVoteSelection.current = { voteId: item.id, optionId }
                 setIsVoteCompleteOpen(true)
               }
 
@@ -444,10 +541,37 @@ function CommunityVote() {
                   )}
 
                   {item.voteType === 'ox' && (
-                    <OxVoteOptions
-                      selectedId={sel === 1 || sel === 2 ? sel : null}
-                      onSelect={selectDefaultVote}
-                    />
+                    sel ? (
+                      <div className="uvote_ox_result_grid">
+                        {item.options.map((option) => {
+                          const isO = option.id === 1
+                          return (
+                            <button
+                              key={option.id}
+                              type="button"
+                              className={`uvote_ox_result_card ${isO ? 'is_o' : 'is_x'}${sel === option.id ? ' selected' : ''}`}
+                              onClick={() => selectDefaultVote(option.id)}
+                            >
+                              <span
+                                className="uvote_ox_wave"
+                                style={{ height: `${option.percentage ?? 0}%` }}
+                                aria-hidden="true"
+                              />
+                              <img src={isO ? voteOIcon : voteXIcon} alt={option.label} className="uvote_ox_result_icon" />
+                              <span className="uvote_ox_percent">{option.percentage}%</span>
+                              <span className="uvote_ox_count">
+                                {formatParticipants(Math.round(item.participants * ((option.percentage ?? 0) / 100)))}명
+                              </span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    ) : (
+                      <OxVoteOptions
+                        selectedId={null}
+                        onSelect={selectDefaultVote}
+                      />
+                    )
                   )}
 
                   {item.voteType === 'bone-result' && (
@@ -525,6 +649,25 @@ function CommunityVote() {
           dialogClassName="confirm_dialog_vote_edit"
           onCancel={() => setEditingVoteId(null)}
           onConfirm={() => setEditingVoteId(null)}
+        />
+      ) : null}
+      {deleteVoteId !== null ? (
+        <ConfirmDialog
+          message="투표를 삭제할까요?"
+          description={(
+            <>
+              투표 게시글은 작성 후
+              <br />
+              수정할 수 없고 삭제만 가능해요.
+            </>
+          )}
+          cancelLabel="취소"
+          confirmLabel="확인"
+          accentColor="#FC7B9B"
+          cancelButtonStyle={{ backgroundColor: '#D9D9D9', border: 'none', color: '#111111' }}
+          dialogClassName="confirm_dialog_vote_delete"
+          onCancel={() => setDeleteVoteId(null)}
+          onConfirm={handleDeleteUserVote}
         />
       ) : null}
       {isVoteCompleteOpen ? (

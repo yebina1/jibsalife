@@ -18,6 +18,7 @@ import { saveUserVote } from '../../utils/savedVotes'
 import { useActionRowSlot } from '../../contexts/ActionRowContext'
 
 const VOTE_DURATION_OPTIONS = [3, 7, 10] as const
+const VOTE_ITEM_LABEL_MAX_LENGTH = 12
 type VoteDuration = (typeof VOTE_DURATION_OPTIONS)[number]
 
 const VOTE_TYPE_OPTIONS = ['사진 투표', 'OX'] as const
@@ -90,7 +91,10 @@ function VoteWrite() {
       content: voteContent,
       voteType: voteType as '사진 투표' | 'OX',
       voteDuration,
-      voteItems,
+      voteItems: voteItems.map((item) => ({
+        ...item,
+        label: item.label.trim().slice(0, VOTE_ITEM_LABEL_MAX_LENGTH),
+      })),
       createdAt: new Date().toISOString(),
     })
     setIsVoteConfirmOpen(false)
@@ -225,7 +229,8 @@ function VoteWrite() {
                     <Input
                       className="vw_item_label_input"
                       value={item.label}
-                      onChange={(v) => setVoteItems((prev) => prev.map((it, j) => j === i ? { ...it, label: v } : it))}
+                      maxLength={VOTE_ITEM_LABEL_MAX_LENGTH}
+                      onChange={(v) => setVoteItems((prev) => prev.map((it, j) => j === i ? { ...it, label: v.slice(0, VOTE_ITEM_LABEL_MAX_LENGTH) } : it))}
                       placeholder="내용을 입력해 주세요."
                     />
                     <button
