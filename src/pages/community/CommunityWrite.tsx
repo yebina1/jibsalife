@@ -273,7 +273,7 @@ function CommunityWrite() {
                     onClick={() => removeImage(idx)}
                     aria-label="사진 삭제"
                   >
-                    <i className="bx bxs-x-circle" aria-hidden="true" />
+                    <i className="bx bx-x" aria-hidden="true" />
                   </button>
                 </div>
               ))}
