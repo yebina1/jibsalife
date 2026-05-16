@@ -39,7 +39,7 @@
 .cdc_img {
   display: block;
   width: 156px;
-  height: auto;
+  height: 150px;
   object-fit: cover;
   border-radius: 8px;
 }

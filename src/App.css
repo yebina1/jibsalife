@@ -216,6 +216,10 @@
   box-shadow: 0 1px 4px rgba(17, 24, 39, 0.04);
 }
 
+.layout_community_subtab_scroll:not(.layout_community_vote_subtab_scroll) .s_white_radius_btn {
+  box-shadow: 0 1px 4px rgba(17, 24, 39, 0.04);
+}
+
 .layout_community_subtab_scroll::-webkit-scrollbar {
   display: none;
 }

@@ -340,7 +340,7 @@ function Layout({
         {!isNoLayoutPage && showFooter ? (
           <footer>
             <div ref={setActionRowSlot} />
-            {showNav && !isPetStoryDetailPage && !isKnowledgeDetailPage && !isVoteResultPage && !isPetStoryWritePage && !isVoteWritePage && <Nav />}
+            {showNav && !isPetStoryDetailPage && !isKnowledgeDetailPage && !isVoteDetailPage && !isVoteResultPage && !isPetStoryWritePage && !isVoteWritePage && <Nav />}
             <HomeIndicator />
           </footer>
         ) : null}

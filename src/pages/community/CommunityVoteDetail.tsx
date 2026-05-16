@@ -99,16 +99,10 @@ function CommunityVoteDetail() {
   return (
     <>
       <PageHeader
-        title="집사인생"
+        title="투표"
         leftContent={<BackButton />}
         rightContent={
           <>
-            <Button type="button" aria-label="검색" className="community_header_search">
-              <HeaderIcon type="search" />
-            </Button>
-            <Button type="button" aria-label="calendar" onClick={() => navigate('/mission')}>
-              <HeaderIcon type="calendar" />
-            </Button>
             <Button type="button" aria-label="notification" onClick={() => navigate('/notification')}>
               <HeaderIcon type="notification" />
             </Button>

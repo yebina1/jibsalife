@@ -23,13 +23,16 @@ import instaIcon from '../../svg/Instagram icon.svg'
 import goldMedalImg from '../../img/vote/gold_medal.png'
 import silverMedalImg from '../../img/vote/silver_medal.png'
 import bronzeMedalImg from '../../img/vote/bronze_medal.png'
-import voting1 from '../../img/vote/vote_result/voting1.png'
+import voting1 from '../../img/vote/vote_result/voting1.jpg'
 import votingProfile from '../../img/vote/vote_result/voting_istagram_profile.jpg'
-import voting2 from '../../img/vote/vote_result/voting2.png'
-import voting3 from '../../img/vote/vote_result/voting3.png'
+import voting2 from '../../img/vote/vote_result/voting2.jpg'
+import voting3 from '../../img/vote/vote_result/voting3.jpg'
 import voting4 from '../../img/vote/vote_result/voting4.jpg'
 import voting5 from '../../img/vote/vote_result/voting5.jpg'
 import voting6 from '../../img/vote/vote_result/voting6.jpg'
+import instagramImg1 from '../../img/vote/vote_result/instagram_img_1.jpg'
+import instagramImg2 from '../../img/vote/vote_result/instagram_img_2.jpg'
+import instagramImg3 from '../../img/vote/vote_result/instagram_img_3.jpg'
 
 const top2Rankings = [
   { rank: 2, name: '콩냥이', image: voting2, votes: 842, percentage: 26.1, medal: silverMedalImg },
@@ -81,10 +84,10 @@ function CommunityVoteResult() {
           as="h2"
           className="cv_first_title_row"
           beforeTitle={<img src={goldMedalImg} alt="금메달" className="cv_medal_title_icon" />}
-          title="콩이"
+          title="루루"
         />
         <div className="cv_first_img_wrap">
-          <img src={voting1} alt="1위 콩이" className="cv_first_img" />
+          <img src={voting1} alt="1위 루루" className="cv_first_img" />
         </div>
         <div className="cv_first_stats">
           <div className="cv_stats_row">
@@ -119,9 +122,9 @@ function CommunityVoteResult() {
         <section className="cv_preview_section">
           <Title as="h5" title="최근 게시물 미리보기" className="cv_preview_label" />
           <div className="cv_preview_grid">
-            <img src={voting2} alt="" aria-hidden="true" className="cv_preview_img" />
-            <img src={voting3} alt="" aria-hidden="true" className="cv_preview_img" />
-            <img src={voting4} alt="" aria-hidden="true" className="cv_preview_img" />
+            <img src={instagramImg1} alt="" aria-hidden="true" className="cv_preview_img" />
+            <img src={instagramImg2} alt="" aria-hidden="true" className="cv_preview_img" />
+            <img src={instagramImg3} alt="" aria-hidden="true" className="cv_preview_img" />
           </div>
         </section>
       </div>
