@@ -8,6 +8,10 @@ type LazyImageProps = {
   width?: number
   height?: number
   priority?: boolean
+  loading?: 'eager' | 'lazy'
+  fetchPriority?: 'high' | 'low' | 'auto'
+  decoding?: 'async' | 'sync' | 'auto'
+  showSkeleton?: boolean
   className?: string
   rootClassName?: string
   style?: CSSProperties
@@ -23,6 +27,10 @@ export default function LazyImage({
   width,
   height,
   priority = false,
+  loading,
+  fetchPriority,
+  decoding = 'async',
+  showSkeleton,
   className,
   rootClassName,
   style,
@@ -46,6 +54,9 @@ export default function LazyImage({
     ...style,
   }
   const hasImgStyle = Object.keys(resolvedImgStyle).length > 0
+  const resolvedLoading = loading ?? (priority ? 'eager' : 'lazy')
+  const resolvedFetchPriority = fetchPriority ?? (priority ? 'high' : 'auto')
+  const shouldShowSkeleton = showSkeleton ?? !priority
 
   const imgProps = {
     ref: imgRef,
@@ -53,9 +64,9 @@ export default function LazyImage({
     alt,
     ...(width !== undefined ? { width } : {}),
     ...(height !== undefined ? { height } : {}),
-    loading: priority ? ('eager' as const) : ('lazy' as const),
-    decoding: 'async' as const,
-    fetchPriority: priority ? ('high' as const) : ('auto' as const),
+    loading: resolvedLoading,
+    decoding,
+    fetchPriority: resolvedFetchPriority,
     className: ['lazy_img', className].filter(Boolean).join(' '),
     style: hasImgStyle ? resolvedImgStyle : undefined,
     onLoad: () => setLoaded(true),
@@ -63,10 +74,10 @@ export default function LazyImage({
 
   return (
     <div
-      className={['lazy_img_root', loaded ? 'is_loaded' : '', rootClassName].filter(Boolean).join(' ')}
+      className={['lazy_img_root', loaded ? 'is_loaded' : '', priority ? 'is_priority' : '', rootClassName].filter(Boolean).join(' ')}
       style={rootStyle}
     >
-      {!loaded && <span className="lazy_img_skeleton" aria-hidden="true" />}
+      {shouldShowSkeleton && !loaded ? <span className="lazy_img_skeleton" aria-hidden="true" /> : null}
       {webpSrc ? (
         <picture className="lazy_img_picture">
           <source srcSet={webpSrc} type="image/webp" />

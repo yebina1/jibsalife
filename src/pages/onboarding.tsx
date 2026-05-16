@@ -129,19 +129,22 @@ const onboardingDecorations = [
 const bestPoseVoteImages =
   voteDetails.find((voteDetail) => voteDetail.id === 'best-pose')?.candidates.map((candidate) => candidate.image) ?? []
 
-const onboardingPreloadImages = [
+const onboardingCriticalImageSources = [
   onboardingWelcomeImage,
   onboardingDogLoverImage,
   onboardingCatLoverImage,
   onboardingDogNameImage,
   onboardingCatNameImage,
+  onboardingCompleteImage,
+  ...onboardingDecorations,
+] as const
+
+const onboardingDeferredImageSources = [
   onboardingDogRecordImage,
   onboardingCatRecordImage,
   onboardingShareImage,
   onboardingDogChatImage,
   onboardingCatChatImage,
-  onboardingCompleteImage,
-  ...onboardingDecorations,
 ] as const
 
 const homePreloadImages = [
@@ -159,6 +162,21 @@ const homePreloadImages = [
   animalCardImage,
 ] as const
 
+const homeCriticalImageSources = [
+  defaultPetProfiles[0]?.image,
+  defaultPetProfiles[1]?.image,
+  weeklyRankFirstImage,
+  weeklyRankSecondImage,
+  weeklyRankThirdImage,
+  bannerIcon2Image,
+  knowledge1,
+  knowledge2,
+] as const
+
+const homeDeferredImageSources = homePreloadImages.filter(
+  (src): src is string => Boolean(src) && !homeCriticalImageSources.includes(src as (typeof homeCriticalImageSources)[number]),
+)
+
 const preloadedImages = new Set<string>()
 
 function getRandomNicknameSuggestion() {
@@ -170,7 +188,7 @@ function getRandomPetNameSuggestion(type: GuardianType = 'dog') {
   return suggestions[Math.floor(Math.random() * suggestions.length)]
 }
 
-function preloadImages(srcs: readonly string[]) {
+function preloadImages(srcs: readonly string[], highPriority = false) {
   if (typeof window === 'undefined') return
 
   srcs.forEach((src) => {
@@ -181,9 +199,13 @@ function preloadImages(srcs: readonly string[]) {
     link.rel = 'preload'
     link.as = 'image'
     link.href = src
+    if (highPriority) {
+      link.setAttribute('fetchpriority', 'high')
+    }
     document.head.appendChild(link)
 
     const image = new Image()
+    image.decoding = 'async'
     image.src = src
     image.decode?.().catch(() => {
       // Preload still warms the cache even if decoding is skipped.
@@ -211,9 +233,19 @@ function DecoratedOnboardingImage({
           src={decoration}
           alt=""
           aria-hidden="true"
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
         />
       ))}
-      <img className={`onboarding_visual_image ${imageClassName}`} src={src} alt={alt} />
+      <img
+        className={`onboarding_visual_image ${imageClassName}`}
+        src={src}
+        alt={alt}
+        loading="eager"
+        fetchPriority="high"
+        decoding="async"
+      />
     </div>
   )
 }
@@ -234,10 +266,15 @@ function Onboarding() {
 
   useEffect(() => {
     document.documentElement.classList.add('onboarding-active')
-    preloadImages([...onboardingPreloadImages, ...homePreloadImages])
+    preloadImages([...onboardingCriticalImageSources, ...homeCriticalImageSources], true)
+
+    const deferredTimer = window.setTimeout(() => {
+      preloadImages([...onboardingDeferredImageSources, ...homeDeferredImageSources])
+    }, 250)
 
     return () => {
       document.documentElement.classList.remove('onboarding-active')
+      window.clearTimeout(deferredTimer)
     }
   }, [])
 
@@ -324,6 +361,9 @@ function Onboarding() {
                 src={slideImage}
                 alt={slide.alt}
                 aria-hidden="true"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
               />
             )}
           </div>
@@ -353,7 +393,14 @@ function Onboarding() {
                   className={`onboarding_guardian_card${isSelected ? ' is_selected' : ''}`}
                   onClick={() => setGuardianType(option.type)}
                 >
-                  <img src={option.image} alt={option.label} aria-hidden="true" />
+                  <img
+                    src={option.image}
+                    alt={option.label}
+                    aria-hidden="true"
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
+                  />
                   <strong className="title_h4_semibold">{option.label}</strong>
                   <span className="onboarding_guardian_card_check" aria-hidden="true">
                     <i className="bx bx-check" />
@@ -398,6 +445,9 @@ function Onboarding() {
           src={selectedType === 'dog' ? onboardingDogNameImage : onboardingCatNameImage}
           alt="반려동물 이름 입력 안내 일러스트"
           aria-hidden="true"
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
         />
       }
       actionLabel="다음"

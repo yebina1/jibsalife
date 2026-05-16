@@ -110,6 +110,51 @@ const contentItems = [
   },
 ] as const
 
+const homeCriticalImageSources = [
+  homeRank1Photo,
+  homeRank2Photo,
+  homeRank3Photo,
+  homeRank1Icon,
+  homeRank2Icon,
+  homeRank3Icon,
+  lankingIconImg,
+  careIconImg,
+  ...bestPoseVoteItems.slice(0, 3).map((item) => item.image),
+  ...contentItems.slice(0, 2).map((item) => item.image),
+] as const
+
+const homeDeferredImageSources = [
+  ...bestPoseVoteItems.slice(3).map((item) => item.image),
+  ...contentItems.slice(2).map((item) => item.image),
+] as const
+
+const preloadedHomeImages = new Set<string>()
+
+function preloadHomeImages(srcs: readonly string[], highPriority = false) {
+  if (typeof window === 'undefined') return
+
+  srcs.forEach((src) => {
+    if (!src || preloadedHomeImages.has(src)) return
+    preloadedHomeImages.add(src)
+
+    const link = document.createElement('link')
+    link.rel = 'preload'
+    link.as = 'image'
+    link.href = src
+    if (highPriority) {
+      link.setAttribute('fetchpriority', 'high')
+    }
+    document.head.appendChild(link)
+
+    const image = new Image()
+    image.decoding = 'async'
+    image.src = src
+    image.decode?.().catch(() => {
+      // Warming the browser cache is still useful even if decode is skipped.
+    })
+  })
+}
+
 type SummaryStat = {
   label: string
   value: string
@@ -338,6 +383,16 @@ function Home() {
       window.removeEventListener(MISSION_HISTORY_RECORDS_CHANGE_EVENT, syncCalendarRecords)
       window.removeEventListener('storage', syncCalendarRecords)
     }
+  }, [])
+
+  useEffect(() => {
+    preloadHomeImages(homeCriticalImageSources, true)
+
+    const deferredTimer = window.setTimeout(() => {
+      preloadHomeImages(homeDeferredImageSources)
+    }, 250)
+
+    return () => window.clearTimeout(deferredTimer)
   }, [])
 
   useEffect(() => {
@@ -818,6 +873,7 @@ function Home() {
                   alt={card.photoAlt}
                   className="home_ranking_card_photo"
                   rootStyle={{ height: '100%' }}
+                  priority
                 />
                 <img
                   src={card.icon}
@@ -825,7 +881,8 @@ function Home() {
                   className="home_ranking_badge_icon"
                   width={57}
                   height={58}
-                  loading="lazy"
+                  loading="eager"
+                  fetchPriority="high"
                   decoding="async"
                 />
               </div>
@@ -838,7 +895,8 @@ function Home() {
               alt=""
               aria-hidden="true"
               className="home_ranking_banner_icon"
-              loading="lazy"
+              loading="eager"
+              fetchPriority="high"
               decoding="async"
             />
             <div className="home_ranking_banner_copy">
@@ -875,6 +933,7 @@ function Home() {
                       objectPosition={item.objectPosition}
                       objectFit="cover"
                       rootStyle={{ height: '100%' }}
+                      priority={index < 3}
                     />
                     <button
                       type="button"
@@ -908,6 +967,7 @@ function Home() {
         <HomeSummaryBanner
           text={`궁금한 점이 있다면\n수의사와 상담해 보세요.`}
           imageSrc={careIconImg}
+          imagePriority
           backgroundColor="#EDE9FE"
           ariaLabel="수의사 상담 배너"
           rotateImage={false}
@@ -938,6 +998,7 @@ function Home() {
                   alt={item.title}
                   objectPosition={item.objectPosition}
                   objectFit="cover"
+                  priority={item.id <= 2}
                 />
                 <span className="content_card_chip">{item.chip}</span>
                 <div className="content_overlay">

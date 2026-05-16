@@ -4,6 +4,7 @@ import './HomeSummaryBanner.css'
 type HomeSummaryBannerProps = {
   text: string
   imageSrc: string
+  imagePriority?: boolean
   backgroundColor?: string
   ariaLabel?: string
   rotateImage?: boolean
@@ -17,6 +18,7 @@ type HomeSummaryBannerProps = {
 function HomeSummaryBanner({
   text,
   imageSrc,
+  imagePriority = false,
   backgroundColor = '#43779E',
   ariaLabel = '배너',
   rotateImage = true,
@@ -47,6 +49,9 @@ function HomeSummaryBanner({
         src={imageSrc}
         alt={`${ariaLabel} 이미지`}
         aria-hidden="true"
+        loading={imagePriority ? 'eager' : 'lazy'}
+        fetchPriority={imagePriority ? 'high' : 'auto'}
+        decoding="async"
         style={{
           width: `${imageWidth}px`,
           height: `${imageHeight}px`,

@@ -9,7 +9,7 @@ function ProfileImage({ src, alt, className }: ProfileImageProps) {
 
   return (
     <span className={classNames}>
-      <img src={src} alt={alt} />
+      <img src={src} alt={alt} loading="eager" fetchPriority="high" decoding="async" />
     </span>
   )
 }
