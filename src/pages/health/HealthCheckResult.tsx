@@ -7,7 +7,11 @@ import BackButton from '../../components/html/BackButton'
 import HeaderIcon from '../../components/HeaderIcon'
 import Button from '../../components/html/Button'
 import dogSittingImage from '../../img/dog_sitting.png'
-import foodBowlImage from '../../img/food_bowl.png'
+import mealIcon from '../../img/icon_meal.png'
+import poopIcon from '../../img/icon_poop.png'
+import healthShieldIcon from '../../img/health_shield.png'
+import hospital3dImage from '../../img/hospital_3d.png'
+import consult3dImage from '../../img/consult_3d.png'
 import { readPetProfiles, readSelectedPetProfileId } from '../../utils/petProfiles'
 import { calculateHealthResult, readStoredHealthResultInput } from '../../utils/healthResultPolicy'
 
@@ -46,7 +50,7 @@ function HealthCheckResult() {
   return (
     <>
       <PageHeader
-        title="AI 건강 체크"
+        title="AI 건강 리포트"
         leftContent={<BackButton />}
         rightContent={
           <>
@@ -120,13 +124,13 @@ function HealthCheckResult() {
         {/* 식욕 / 배변 */}
         <section className="hcr_card hcr_status_pair_card">
           <div className="hcr_status_pair_item">
-            <img src={foodBowlImage} alt="" aria-hidden="true" className="hcr_status_pair_img" />
+            <img src={mealIcon} alt="" aria-hidden="true" className="hcr_status_pair_img" />
             <strong className="hcr_status_pair_label">식욕</strong>
             <span className="hcr_badge">정상</span>
           </div>
           <div className="hcr_status_pair_divider" aria-hidden="true" />
           <div className="hcr_status_pair_item">
-            <span className="hcr_status_pair_emoji" aria-hidden="true">💩</span>
+            <img src={poopIcon} alt="" aria-hidden="true" className="hcr_status_pair_img" />
             <strong className="hcr_status_pair_label">배변</strong>
             <span className="hcr_badge">정상</span>
           </div>
@@ -135,13 +139,7 @@ function HealthCheckResult() {
         {/* 병원 방문 권장 기준 */}
         <section className="hcr_card hcr_guide_card">
           <div className="hcr_guide_header">
-            <span className="hcr_guide_icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L3 7V12C3 16.55 6.84 20.74 12 22C17.16 20.74 21 16.55 21 12V7L12 2Z" fill="#6d59f8" />
-                <path d="M12 8V16" stroke="white" strokeWidth="2" strokeLinecap="round" />
-                <path d="M8 12H16" stroke="white" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-            </span>
+            <img src={healthShieldIcon} alt="" aria-hidden="true" className="hcr_guide_icon_img" />
             <h2 className="hcr_guide_title">병원 방문 권장 기준</h2>
           </div>
           <div className="hcr_guide_grid">
@@ -157,14 +155,14 @@ function HealthCheckResult() {
         {/* 하단 액션 버튼 */}
         <div className="hcr_actions">
           <button type="button" className="hcr_action hcr_action_hospital">
-            <span className="hcr_action_emoji" aria-hidden="true">🏥</span>
+            <img src={hospital3dImage} alt="" aria-hidden="true" className="hcr_action_img" />
             <div className="hcr_action_content">
               <span className="hcr_action_title">병원 찾기 &gt;</span>
               <span className="hcr_action_desc">내 주변 병원 검색<br />및 정보 확인</span>
             </div>
           </button>
           <button type="button" className="hcr_action hcr_action_vet">
-            <span className="hcr_action_emoji" aria-hidden="true">💬</span>
+            <img src={consult3dImage} alt="" aria-hidden="true" className="hcr_action_img" />
             <div className="hcr_action_content">
               <span className="hcr_action_title">수의사 상담 &gt;</span>
               <span className="hcr_action_desc">실시간 상담으로<br />전문가와 대화</span>
