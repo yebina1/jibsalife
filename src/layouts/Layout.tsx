@@ -34,7 +34,7 @@ const petStorySubTabs: { label: string; to: string; disabled?: boolean }[] = [
 const voteSubTabs = [
   { label: '전체', to: '/community/vote?sub=all' },
   { label: '멍스타', to: '/community/vote?sub=mission' },
-  { label: '일반투표', to: '/community/vote?sub=regular' },
+  { label: '집사투표', to: '/community/vote?sub=regular' },
   { label: '투표결과', to: '/community/vote?sub=result' },
 ] as const
 

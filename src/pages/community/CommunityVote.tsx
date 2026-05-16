@@ -15,6 +15,7 @@ import crownIcon from '../../svg/crown.svg'
 import timerIcon from '../../svg/timer.svg'
 import timerClosedIcon from '../../svg/timer_closed.svg'
 import boneImage from '../../img/bone.png'
+import voteBannerImage from '../../img/vote/vote_banner_img.png'
 import voteGoodImage from '../../img/vote-good.png'
 import { readVotedMissionIds } from '../../utils/communityVoteStatus'
 import { missionVotes, regularVoteItems } from './CommunityVoteData'
@@ -101,7 +102,8 @@ function CommunityVote() {
           timerColor="#E03C3C"
           timeText="02:18:35 남음"
           title={<>멍스타 모델 도전</>}
-          description="내 반려동물을 스타로!"
+          description="내 반려동물을 스타로 만들어 보세요!"
+          imageSrc={voteBannerImage}
         />
         {/* 탭 바 */}
         <section className="community_tab_bar" aria-label="커뮤니티 상위 카테고리">
@@ -222,7 +224,7 @@ function CommunityVote() {
         </section>}
 
         {showRegular && <section className="cv2_section">
-          <Title as="h4" className="cv2_section_title" title="일반 투표" />
+          <Title as="h4" className="cv2_section_title" title="집사 투표" />
           <div className="cv2_regular_list">
             {savedVotes.map((vote) => {
               const sel = voteSelections[vote.id]
