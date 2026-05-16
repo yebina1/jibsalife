@@ -28,6 +28,15 @@
   gap: 8px;
 }
 
+.state_bar_icons img {
+  display: block;
+  flex: 0 0 auto;
+  object-fit: contain;
+  image-rendering: auto;
+  backface-visibility: hidden;
+  transform-origin: center;
+}
+
 .state_bar_cellular {
   width: 18px;
   height: 11px;

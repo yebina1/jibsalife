@@ -171,11 +171,13 @@
 }
 
 .health_cam_tutorial_callout_video {
-  top: 238px;
-  left: 36px;
-  text-align: left;
-  width: 150px;
-  min-height: 168px;
+  top: clamp(346px, 44svh, 394px);
+  left: 50%;
+  width: 176px;
+  min-height: 150px;
+  text-align: center;
+  transform: translateX(-50%);
+  animation: healthCamTutorialFadeCentered 240ms ease;
 }
 
 .health_cam_tutorial_callout_video .health_cam_tutorial_text {
@@ -187,16 +189,19 @@
   height: 127px;
   aspect-ratio: 35 / 127;
   top: 76px;
-  left: 98px;
+  left: 30%;
   margin: 0;
+  transform: translateX(-50%) scaleX(-1);
 }
 
 .health_cam_tutorial_callout_photo {
-  top: 208px;
-  right: 18px;
-  text-align: right;
-  width: 176px;
-  min-height: 198px;
+  top: clamp(346px, 44svh, 394px);
+  left: 50%;
+  width: 192px;
+  min-height: 158px;
+  text-align: center;
+  transform: translateX(-50%);
+  animation: healthCamTutorialFadeCentered 240ms ease;
 }
 
 .health_cam_tutorial_callout_photo .health_cam_tutorial_text {
@@ -205,11 +210,12 @@
 
 .health_cam_tutorial_callout_photo img {
   width: 52px;
-  height: 175px;
+  height: 105px;
   aspect-ratio: 52 / 175;
   top: 78px;
-  right: 92px;
+  left: 70%;
   margin: 0;
+  transform: translateX(-50%) scaleX(-1);
 }
 
 .health_cam_tutorial_callout_record {
@@ -255,6 +261,54 @@
 
 .health_cam_tutorial_layer:focus-visible {
   outline: none;
+}
+
+@media (max-width: 420px) {
+  .health_cam_tutorial_callout_video {
+    top: clamp(360px, 46svh, 402px);
+    left: 50%;
+    width: 164px;
+  }
+
+  .health_cam_tutorial_callout_video img {
+    top: 74px;
+    left: 30%;
+  }
+
+  .health_cam_tutorial_callout_photo {
+    top: clamp(360px, 46svh, 402px);
+    left: 50%;
+    width: 176px;
+  }
+
+  .health_cam_tutorial_callout_photo img {
+    top: 80px;
+    left: 70%;
+  }
+}
+
+@media (max-width: 360px) {
+  .health_cam_tutorial_callout_video {
+    top: clamp(368px, 47svh, 408px);
+    left: 50%;
+    width: 154px;
+  }
+
+  .health_cam_tutorial_callout_video img {
+    top: 74px;
+    left: 30%;
+  }
+
+  .health_cam_tutorial_callout_photo {
+    top: clamp(368px, 47svh, 408px);
+    left: 50%;
+    width: 164px;
+  }
+
+  .health_cam_tutorial_callout_photo img {
+    top: 82px;
+    left: 70%;
+  }
 }
 
 @keyframes healthCamTutorialFade {

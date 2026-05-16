@@ -211,15 +211,15 @@
 /* ── Health camera UI (피그마 디자인) ───────────────────────────── */
 
 .health_cam_ui {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: -2px;
+  bottom: 0;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto auto;
-  width: 100%;
-  max-width: none;
   min-height: 100svh;
-  height: 100svh;
   height: 100dvh;
-  margin-top: 0;
-  margin-left: 0;
   gap: 0;
   padding: 0 0 calc(12px + env(safe-area-inset-bottom));
   overflow: hidden;
@@ -243,23 +243,27 @@
 .health_cam_img,
 .health_cam_video {
   display: block;
-  width: 100%;
+  width: calc(100% + 2px);
+  min-width: calc(100% + 2px);
   height: 100%;
   object-fit: cover;
+  transform: translateX(-1px);
 }
 
 .health_cam_img_fallback {
   position: absolute;
   inset: 0;
-  width: 100%;
+  width: calc(100% + 2px);
+  min-width: calc(100% + 2px);
   height: 100%;
   object-fit: cover;
   border-radius: 0;
+  transform: translateX(-1px);
 }
 
 .health_cam_overlay {
   position: absolute;
-  inset: 0;
+  inset: 0 -1px 0 -1px;
   background: rgba(0, 0, 0, 0.2);
   pointer-events: none;
 }
@@ -304,6 +308,7 @@
 /* 반려동물 변경하기 */
 
 .health_cam_pet_link {
+  position: relative;
   display: inline-flex;
   align-self: center;
   justify-self: center;
@@ -318,6 +323,10 @@
   font-family: inherit;
   line-height: 1.4;
   cursor: pointer;
+}
+
+.health_cam_pet_default_label {
+  display: inline-flex;
 }
 
 /* 줌 버튼 — 각각 독립된 원형 버튼 */
@@ -1046,7 +1055,20 @@
   }
 }
 
-.health_cam_pet_link > span:nth-of-type(2),
+.health_cam_pet_link > span:not(.health_cam_pet_default_label),
+.health_cam_pet_legacy_label {
+  display: none;
+}
+
+.health_cam_pet_link.has_selected_pet .health_cam_pet_default_label {
+  display: none;
+}
+
+.health_cam_pet_link.has_selected_pet > span:not(.health_cam_pet_default_label),
+.health_cam_pet_link.has_selected_pet .health_cam_pet_legacy_label {
+  display: inline-flex;
+}
+
 .health_cam_pet_legacy_label {
   display: none;
 }

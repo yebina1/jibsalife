@@ -381,7 +381,10 @@
 
 .layout_camera .layout_content {
   min-height: 100dvh;
+  height: 100dvh;
   padding: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 .layout_content > .page {

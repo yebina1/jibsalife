@@ -97,6 +97,7 @@
   position: relative;
   width: 104px;
   height: 108px;
+  isolation: isolate;
 }
 
 .floating_button_ai_chat .floating_ai_chat_base {
@@ -105,13 +106,21 @@
   bottom: 0;
   z-index: 1;
   width: 76px;
-  height: 80px;
+  height: auto;
+  aspect-ratio: 64 / 67;
+  object-fit: contain;
+  image-rendering: auto;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  transform-origin: center;
 }
 
 .floating_button_ai_chat .floating_ai_chat_bubble_image {
   position: absolute;
   width: 30px;
-  height: 27px;
+  height: auto;
+  aspect-ratio: 30 / 27;
+  object-fit: contain;
   pointer-events: none;
 }
 
@@ -120,17 +129,21 @@
   right: 2px;
   z-index: 3;
   pointer-events: none;
+  image-rendering: auto;
+  backface-visibility: hidden;
+  transform-origin: center;
+  will-change: transform;
   animation: floating-ai-bubble-bounce 1.35s ease-in-out infinite;
 }
 
 @keyframes floating-ai-bubble-bounce {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 
   45% {
-    transform: translateY(-8px);
+    transform: translate3d(0, -8px, 0);
   }
 }
 
@@ -144,6 +157,9 @@
   width: 24px;
   height: 24px;
   object-fit: contain;
+  image-rendering: auto;
+  backface-visibility: hidden;
+  transform-origin: center;
 }
 
 .floating_button_icon_frame {

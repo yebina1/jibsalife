@@ -1,195 +1,396 @@
-.health_check_loading_notification {
-  position: relative;
-}
-
-.health_check_loading_notification::after {
-  position: absolute;
-  top: 2px;
-  right: 1px;
-  display: none;
-  width: 7px;
-  height: 7px;
-  border: 2px solid #ffffff;
-  border-radius: 50%;
-  background: #ff2828;
-  content: '';
-}
-
-.health_check_loading_notification.is_active::after {
-  display: block;
+.health_check_loading_shell {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  overflow: hidden;
 }
 
 .health_check_loading_page {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: center;
-  height: calc(
-    100dvh - var(--layout-header-height, 104px) - var(--layout-footer-height, 90px) -
-      var(--layout-content-padding-y, 48px)
+  flex: 1;
+  min-height: calc(
+    100dvh - var(--layout-header-height, 104px) - var(--layout-footer-height, 90px)
   );
-  min-height: 0;
-  padding-top: 16px;
-  padding-bottom: 0;
-  overflow: hidden;
+  padding: 24px 16px;
   box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .health_check_loading {
   display: flex;
   width: 100%;
-  max-width: 440px;
-  min-height: 100%;
-  margin-right: auto;
-  margin-left: auto;
+  max-width: 343px;
+  margin: 0 auto;
   flex-direction: column;
   align-items: center;
+  gap: 48px;
   color: #111111;
-  text-align: center;
 }
 
 .health_check_loading_intro {
   display: flex;
+  width: 100%;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 20px;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
 }
 
 .health_check_loading_intro h1 {
   margin: 0;
-  color: #000000;
-  font-size: 25px;
-  font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: 0;
+  color: var(--font-black, #111111);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 140%;
+  letter-spacing: -0.45px;
 }
 
 .health_check_loading_intro p {
   margin: 0;
-  color: #9b9b9b;
-  font-size: 17px;
+  color: #505050;
+  font-size: 14px;
   font-weight: 400;
-  line-height: 1.35;
-  letter-spacing: 0;
+  line-height: 145%;
+  letter-spacing: -0.35px;
 }
 
-.health_check_loading .progress_circle {
-  width: min(210px, calc(100vw - 146px), calc(100dvh - 450px));
-  min-width: 168px;
-  margin-right: auto;
-  margin-bottom: 0;
-  margin-left: auto;
-  background: conic-gradient(#bca8ff var(--progress), #cfe4ef 0);
+.health_check_loading_progress {
+  display: flex;
+  width: 100%;
+  justify-content: center;
 }
 
-.health_check_loading .progress_circle::before {
-  inset: 19px;
+.health_check_loading_ring {
+  --health-progress-value: 25;
+  width: 220px;
+  height: 220px;
+}
+
+.health_check_loading_ring_visual {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  background: conic-gradient(
+    from 270deg,
+    #6d59f8 0deg calc(var(--health-progress-value) * 3.6deg),
+    #d9d9de calc(var(--health-progress-value) * 3.6deg) 360deg
+  );
+}
+
+.health_check_loading_ring_visual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(#ffffff, #ffffff) center / 4px 100% no-repeat,
+    linear-gradient(#ffffff, #ffffff) center / 100% 4px no-repeat;
+}
+
+.health_check_loading_ring_visual::after {
+  content: '';
+  position: absolute;
+  inset: 55px;
+  z-index: 2;
+  border-radius: 50%;
   background: #ffffff;
 }
 
-.health_check_loading .progress_circle_inner {
+.health_check_loading_ring_icon {
   position: absolute;
-  inset: 0;
-  display: grid;
-  width: 100%;
-  height: 100%;
-  place-items: center;
+  z-index: 3;
+  display: block;
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
 }
 
-.health_check_loading .progress_circle_value {
+.health_check_loading_ring_icon.is_top_left {
+  top: 31px;
+  left: 38px;
+}
+
+.health_check_loading_ring_icon.is_top_right {
+  top: 31px;
+  right: 38px;
+}
+
+.health_check_loading_ring_icon.is_bottom_right {
+  right: 38px;
+  bottom: 31px;
+}
+
+.health_check_loading_ring_icon.is_bottom_left {
+  bottom: 31px;
+  left: 38px;
+}
+
+.health_check_loading_center {
+  position: absolute;
   top: 50%;
-  left: calc(100% + 10px);
+  left: 50%;
+  z-index: 4;
+  display: flex;
+  width: 110px;
+  height: 110px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border-radius: 50%;
+  background: #ffffff;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.health_check_loading_center strong {
+  color: var(--font-black, #111111);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.55px;
+}
+
+.health_check_loading_center span {
+  color: #505050;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.3px;
+}
+
+.health_check_loading_marker {
+  position: absolute;
+  z-index: 3;
+  width: 24px;
+  height: 24px;
+  border-radius: 2px;
+  background: #ffffff;
+  clip-path: polygon(0 50%, 100% 0, 100% 100%);
+  transition:
+    top 0.36s ease,
+    left 0.36s ease,
+    transform 0.36s ease;
+}
+
+.health_check_loading_marker.is_step_0 {
+  top: 52px;
+  left: 52px;
+  transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.health_check_loading_marker.is_step_1 {
+  top: 52px;
+  left: 168px;
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.health_check_loading_marker.is_step_2 {
+  top: 168px;
+  left: 168px;
+  transform: translate(-50%, -50%) rotate(0deg);
+}
+
+.health_check_loading_marker.is_step_3 {
+  top: 168px;
+  left: 52px;
+  transform: translate(-50%, -50%) rotate(270deg);
+}
+
+.health_check_loading_cards {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.health_check_loading_card {
+  display: flex;
+  min-width: 0;
+  min-height: 116px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 12px 2px;
+  border: 1px solid #e5e5ec;
+  border-radius: 12px;
+  background: #ffffff;
+  box-sizing: border-box;
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.health_check_loading_card_waiting {
+  background: #ffffff;
+}
+
+.health_check_loading_card_done {
+  background: #f0eeff;
+  border-color: #c4b8ff;
+}
+
+.health_check_loading_card_done img {
+  opacity: 0.55;
+}
+
+.health_check_loading_card_done strong {
+  color: #6d59f8;
+}
+
+.health_check_loading_card img {
   display: block;
-  color: #a1a1a8;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.health_check_loading_card strong {
+  color: var(--font-black, #111111);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 140%;
+  letter-spacing: -0.3px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.health_check_loading_card_status {
+  display: inline-flex;
+  min-width: 56px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  border: 1px solid #d9d9de;
+  border-radius: 8px;
+  color: #767676;
   font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0;
-  transform: translateY(-50%);
+  line-height: 1.4;
+  letter-spacing: -0.3px;
+  background: #f5f5f9;
+  box-sizing: border-box;
 }
 
-.health_check_loading_logo {
-  display: block;
-  width: 96px;
-  height: auto;
-  max-width: 58%;
-  transform: translate(18px, 0);
+.health_check_loading_card_done .health_check_loading_card_status {
+  background: #6d59f8;
+  border-color: #6d59f8;
+  color: #ffffff;
 }
 
-.health_check_loading_steps {
-  display: grid;
-  width: 100%;
-  grid-template-columns: max-content;
-  justify-content: center;
-  gap: 8px;
-  margin: 18px 0 0;
-  padding: 0;
-  color: #9b9b9b;
-  font-size: 14px;
+
+.health_check_loading_notice {
+  margin: 0;
+  color: var(--point-dark-red, #a10803);
+  font-size: 12px;
   font-weight: 400;
-  line-height: 1.25;
-  letter-spacing: 0;
-  list-style: none;
-  text-align: left;
-}
-
-.health_check_loading_steps li {
-  display: grid;
-  grid-template-columns: 6px max-content;
-  align-items: center;
-  gap: 8px;
-  justify-content: start;
-}
-
-.health_check_loading_steps li::before {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-  content: '';
-}
-
-.health_check_loading_steps li.active {
-  color: #111111;
+  line-height: 140%;
+  letter-spacing: -0.3px;
+  text-align: center;
 }
 
 @media (max-width: 420px) {
   .health_check_loading_page {
-    padding-top: 14px;
-    padding-bottom: 0;
+    padding: 24px 16px 16px;
   }
 
-  .health_check_loading_intro {
-    gap: 8px;
-    margin-bottom: 16px;
+  .health_check_loading {
+    gap: 40px;
   }
 
-  .health_check_loading_intro h1 {
-    font-size: 23px;
+  .health_check_loading_ring {
+    width: min(220px, calc(100vw - 110px));
+    height: min(220px, calc(100vw - 110px));
   }
 
-  .health_check_loading_intro p {
-    font-size: 16px;
+  .health_check_loading_ring_visual::after {
+    inset: 25%;
   }
 
-  .health_check_loading .progress_circle {
-    width: min(196px, calc(100vw - 160px), calc(100dvh - 440px));
-    min-width: 156px;
-    margin-bottom: 0;
+  .health_check_loading_ring_icon {
+    width: 24.5%;
+    height: 24.5%;
   }
 
-  .health_check_loading_logo {
-    width: 88px;
-    transform: translate(10px, 0);
+  .health_check_loading_ring_icon.is_top_left {
+    top: 14.1%;
+    left: 17.3%;
   }
 
-  .health_check_loading_steps {
-    gap: 7px;
-    margin-top: 16px;
-    font-size: 13px;
+  .health_check_loading_ring_icon.is_top_right {
+    top: 14.1%;
+    right: 17.3%;
   }
 
-  .health_check_loading_notice {
-    margin-top: 14px;
-    font-size: 12px;
+  .health_check_loading_ring_icon.is_bottom_right {
+    right: 17.3%;
+    bottom: 14.1%;
+  }
+
+  .health_check_loading_ring_icon.is_bottom_left {
+    bottom: 14.1%;
+    left: 17.3%;
+  }
+
+  .health_check_loading_center {
+    width: 50%;
+    height: 50%;
+  }
+
+  .health_check_loading_marker {
+    width: 10.9%;
+    height: 10.9%;
+  }
+
+  .health_check_loading_marker.is_step_0 {
+    top: 23.6%;
+    left: 23.6%;
+  }
+
+  .health_check_loading_marker.is_step_1 {
+    top: 23.6%;
+    left: 76.4%;
+  }
+
+  .health_check_loading_marker.is_step_2 {
+    top: 76.4%;
+    left: 76.4%;
+  }
+
+  .health_check_loading_marker.is_step_3 {
+    top: 76.4%;
+    left: 23.6%;
+  }
+
+  .health_check_loading_cards {
+    gap: 6px;
+  }
+
+  .health_check_loading_card {
+    min-height: 108px;
+    padding: 10px 2px;
+  }
+
+  .health_check_loading_card img {
+    width: 56px;
+    height: 56px;
+  }
+
+  .health_check_loading_card strong {
+    font-size: 11px;
+  }
+
+  .health_check_loading_card_status {
+    min-width: 48px;
+    height: 26px;
+    font-size: 11px;
   }
 }

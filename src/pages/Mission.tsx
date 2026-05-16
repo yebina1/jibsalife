@@ -428,6 +428,7 @@ function Mission() {
   const [isCategoryEditOpen, setIsCategoryEditOpen] = useState(false)
   const [isRepeatPickerOpen, setIsRepeatPickerOpen] = useState(false)
   const [isPetSwitchOpen, setIsPetSwitchOpen] = useState(false)
+  const [hasExplicitPetSelection, setHasExplicitPetSelection] = useState(false)
   const [isPeriodPickerOpen, setIsPeriodPickerOpen] = useState(false)
   const [isPeriodDatePickerOpen, setIsPeriodDatePickerOpen] = useState(false)
   const [addTitle, setAddTitle] = useState('')
@@ -996,6 +997,7 @@ function Mission() {
 
   const selectPetProfile = (profileId: number) => {
     setSelectedPetProfileId(profileId)
+    setHasExplicitPetSelection(true)
     writeSelectedPetProfileId(profileId)
     setHistoryItems([
       ...readMissionActivityRecords().map(toMissionHistoryRecord),
@@ -1259,7 +1261,11 @@ function Mission() {
       <main className={`page mission_page${isWeeklyCalendar ? ' is_condensed' : ''}`}>
         <section className="mission_profile_header">
           <h2>{petName}의 히스토리</h2>
-          <Button type="button" className="mission_pet_switch_button" onClick={() => setIsPetSwitchOpen(true)}>
+          <Button
+            type="button"
+            className={`mission_pet_switch_button${hasExplicitPetSelection ? ' has_selected_pet' : ''}`}
+            onClick={() => setIsPetSwitchOpen(true)}
+          >
             <span>반려동물 선택하기</span>
             <span>
               현재 반려동물 · <strong>{petName}</strong>

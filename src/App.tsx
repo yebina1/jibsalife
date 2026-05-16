@@ -118,7 +118,8 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/place" element={<Place />} />
           <Route path="/mission" element={<Mission />} />
-          <Route path="/health/check" element={<HealthCheckAnalysis />} />
+          <Route path="/health/check" element={<HealthCheckLoading />} />
+          <Route path="/health/check-analysis" element={<HealthCheckAnalysis />} />
           <Route path="/health/report" element={<HealthReport />} />
           <Route path="/health/hospital" element={<HealthHospitalRecommend />} />
           <Route path="/health/camera" element={<HealthCameraCapture />} />

@@ -3,13 +3,10 @@ import { useNavigate } from 'react-router'
 import { ChevronRight, Dog } from 'lucide-react'
 import '../Mission.css'
 import './Health.css'
-import pungpungiImage from '../../img/pungpungi.png'
-import leeyoriImage from '../../img/leeyori.png'
 import galleryIcon from '../../img/gallery-icon.svg'
 import cameraFlipIcon from '../../img/camera-flip-icon.svg'
 import AddSheet from '../../components/AddSheet'
 import HealthCameraTutorial, {
-  type CameraTutorialStepId,
   cameraTutorialStepOrder,
   cameraTutorialStepDurations,
 } from './HealthCameraTutorial'
@@ -19,6 +16,7 @@ import MissionRecordSheet from '../../components/MissionRecordSheet'
 import StateBar from '../../components/StateBar'
 import {
   readPetProfiles,
+  readSelectedPetProfileId,
   writeSelectedPetProfileId,
   PET_PROFILES_CHANGE_EVENT,
   type PetProfileSummary,
@@ -267,7 +265,8 @@ function Health() {
   const [showPetModal, setShowPetModal] = useState(false)
   const [showCalendarPetSwitch, setShowCalendarPetSwitch] = useState(false)
   const [pets, setPets] = useState<PetProfileSummary[]>(readPetProfiles)
-  const [selectedPetId, setSelectedPetId] = useState<number | null>(null)
+  const [selectedPetId, setSelectedPetId] = useState<number | null>(() => readSelectedPetProfileId())
+  const [hasExplicitPetSelection, setHasExplicitPetSelection] = useState(false)
 
   // 메모 바텀시트 state
   const [showMemoSheet, setShowMemoSheet] = useState(false)
@@ -339,8 +338,10 @@ function Health() {
   }
 
   const handleCapture = () => {
+    const selectedProfileImage = selectedPetImage || pets[0]?.image || null
+
     if (!isMobile) {
-      setCapturedImage(pungpungiImage)
+      if (selectedProfileImage) setCapturedImage(selectedProfileImage)
       return
     }
 
@@ -348,7 +349,7 @@ function Health() {
       const video = videoRef.current
       if (!video || video.videoWidth === 0 || video.videoHeight === 0) {
         console.error('비디오 스트림 준비 안됨')
-        setCapturedImage(pungpungiImage)
+        if (selectedProfileImage) setCapturedImage(selectedProfileImage)
         return
       }
       const canvas = document.createElement('canvas')
@@ -420,6 +421,7 @@ function Health() {
   const handleSelectPet = (pet: PetProfileSummary) => {
     writeSelectedPetProfileId(pet.id)
     setSelectedPetId(pet.id)
+    setHasExplicitPetSelection(true)
     setShowPetModal(false)
     setShowCalendarPetSwitch(false)
   }
@@ -770,8 +772,10 @@ function Health() {
     setSelectedCategoryId(categoryOptions[(idx + 1) % categoryOptions.length].id)
   }
 
-  const selectedPetName = pets.find((p) => p.id === selectedPetId)?.name || ''
   const effectiveSelectedPetId = selectedPetId ?? pets[0]?.id ?? null
+  const selectedPetProfile = pets.find((pet) => pet.id === effectiveSelectedPetId) ?? pets[0] ?? null
+  const selectedPetName = selectedPetProfile?.name ?? ''
+  const selectedPetImage = selectedPetProfile?.image ?? ''
   const activeCameraTutorialStep =
     cameraTutorialStepIndex !== null ? cameraTutorialStepOrder[cameraTutorialStepIndex] ?? null : null
   const isCameraTutorialCameraTabActive =
@@ -833,7 +837,7 @@ function Health() {
         ) : isCameraAvailable ? (
           <video ref={videoRef} className="health_cam_video" autoPlay muted playsInline />
         ) : (
-          <img className="health_cam_img health_cam_img_fallback" src={leeyoriImage} alt="" aria-hidden="true" />
+          <div className="health_cam_img health_cam_img_fallback" aria-hidden="true" />
         )}
         <div className="health_cam_overlay" aria-hidden="true" />
         <BackButton
@@ -841,6 +845,7 @@ function Health() {
           iconColor="#fff"
           size={36}
           className={`health_cam_close_btn${activeCameraTutorialStep === 'close' ? ' is_tutorial_target' : ''}`}
+          onClick={isCameraTutorialVisible ? () => setCameraTutorialStepIndex(null) : undefined}
           icon={
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <line x1="18" y1="6" x2="6" y2="18" />
@@ -860,25 +865,20 @@ function Health() {
             justifyContent: 'center',
           }}
           aria-label="닫기"
-          onClick={isCameraTutorialVisible ? () => setCameraTutorialStepIndex(null) : undefined}
         />
       </section>
 
       <div className="health_cam_ctrl">
         <button
           type="button"
-          className="health_cam_pet_link"
+          className={`health_cam_pet_link${hasExplicitPetSelection ? ' has_selected_pet' : ''}`}
           onClick={() => setShowCalendarPetSwitch(true)}
         >
+          <span className="health_cam_pet_default_label">반려동물 선택하기</span>
           {selectedPetName ? (
-            <>
-              <span>
-                현재 반려동물 · <span className="health_cam_pet_name">{selectedPetName}</span>
-              </span>
-              <span className="health_cam_pet_legacy_label" aria-hidden="true">
-              현재 반려동물 · <span style={{ fontWeight: 700 }}>{selectedPetName}</span>
-              </span>
-            </>
+            <span>
+              현재 반려동물 · <span className="health_cam_pet_name">{selectedPetName}</span>
+            </span>
           ) : (
             <>
             <span>반려동물 선택하기</span>
