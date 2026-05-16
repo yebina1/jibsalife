@@ -73,6 +73,12 @@
   overflow: hidden;
 }
 
+.cw_page_vote .cw_form:has(.vw_ox_items_section) {
+  flex: 0 0 auto;
+  min-height: 0;
+  padding-bottom: 38px;
+}
+
 .cw_page_vote .cw_section {
   border-bottom-color: #E5E5EC;
 }
@@ -82,6 +88,26 @@
   color: #111111;
   font-size: 14px;
   font-weight: 600;
+}
+
+.cw_page_vote .cw_board_toggle.is_open {
+  border-color: #e5e5ec;
+  border-bottom-color: transparent;
+  border-radius: 8px 8px 0 0;
+  box-shadow: none;
+}
+
+.cw_page_vote .cw_board_menu {
+  top: calc(100% - 1px);
+  border-radius: 0 0 8px 8px;
+  border-color: #e5e5ec;
+  border-top: 0;
+  box-shadow: none;
+}
+
+.cw_page_vote .cw_board_option {
+  padding: 14px 17px;
+  font-size: 14px;
 }
 
 .cw_page_vote .cw_placeholder {
@@ -106,13 +132,42 @@
 }
 
 .cw_page_vote .cw_content_section {
+  position: relative;
   flex: 1 1 auto;
   min-height: 338px;
-  background-position: center 54px;
-  background-size: 98px auto;
+  background: none;
+}
+
+.cw_page_vote .cw_form:has(.vw_ox_items_section) .cw_content_section {
+  flex: 0 0 auto;
+  min-height: 178px;
+}
+
+.cw_page_vote .cw_content_section::before {
+  content: "";
+  position: absolute;
+  top: 58px;
+  left: 50%;
+  width: 98px;
+  height: 103px;
+  background-image: var(--cw-write-bg-image);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 1;
+  pointer-events: none;
+  transform: translateX(-50%);
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.cw_page_vote .cw_content_section.is_bg_hidden::before {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-4px);
 }
 
 .cw_page_vote .cw_content_textarea.input_field {
+  position: relative;
+  z-index: 1;
   min-height: 112px;
   padding: 12px 17px;
   color: #111111;
@@ -125,8 +180,9 @@
   display: flex;
   align-items: center;
   gap: 18px;
-  width: 100%;
+  width: calc(100% + 32px);
   min-height: 55px;
+  margin: 0 -16px;
   padding: 0 17px;
   box-sizing: border-box;
   flex-wrap: nowrap;
@@ -255,9 +311,27 @@
   border-radius: 50%;
   background: #F4F4F8;
   color: #111111;
-  font-size: 46px;
-  font-weight: 300;
+  font-size: 0;
+  font-weight: 400;
   line-height: 1;
+  position: relative;
+}
+
+.vw_item_image_plus::before,
+.vw_item_image_plus::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;
+  height: 3px;
+  border-radius: 999px;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+}
+
+.vw_item_image_plus::after {
+  transform: translate(-50%, -50%) rotate(90deg);
 }
 
 .vw_item_label_row {
@@ -305,25 +379,3 @@
   color: #111111;
 }
 
-/* OX 투표 항목 */
-.vw_ox_grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.vw_ox_item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  aspect-ratio: 1;
-  border: 1.5px solid #E5E5EC;
-  border-radius: 12px;
-  background: #F5F5FA;
-}
-
-.vw_ox_icon {
-  width: 56px;
-  height: 56px;
-  object-fit: contain;
-}

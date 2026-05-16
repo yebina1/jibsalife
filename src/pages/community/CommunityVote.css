@@ -363,36 +363,6 @@ html:has(.cv2_page) {
   cursor: not-allowed;
 }
 
-/* OX 투표 */
-.uvote_ox_grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.uvote_ox_option {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  aspect-ratio: 1;
-  border: 1.5px solid #E5E5EC;
-  border-radius: 12px;
-  background: #F5F5FA;
-  cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
-}
-
-.uvote_ox_option.selected {
-  border-color: #6D59F8;
-  background: #EFEDFF;
-}
-
-.uvote_ox_icon {
-  width: 56px;
-  height: 56px;
-  object-fit: contain;
-}
-
 /* 텍스트만 뼈다귀 카드 */
 .uvote_bone_wrap {
   display: flex;

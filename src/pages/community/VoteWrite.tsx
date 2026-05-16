@@ -1,20 +1,19 @@
 import './CommunityWrite.css'
 import './VoteWrite.css'
 import { createPortal } from 'react-dom'
-import { useEffect, useRef, useState } from 'react'
+import { type CSSProperties, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
 import Input from '../../components/html/Input'
 import ConfirmDialog from '../../components/ConfirmDialog'
+import OxVoteOptions from '../../components/OxVoteOptions'
 import communityWriteBg from '../../svg/community_write_bg.svg'
 import imageIcon from '../../svg/Image.svg'
 import blueCheckIcon from '../../img/blue-check.png'
 import grayCheckIcon from '../../img/gray-check.png'
 import voteIcon from '../../img/vote-icon.png'
-import voteOIcon from '../../svg/vote_o.svg'
-import voteXIcon from '../../svg/vote_x.svg'
 import { saveUserVote } from '../../utils/savedVotes'
 import { useActionRowSlot } from '../../contexts/ActionRowContext'
 
@@ -33,6 +32,7 @@ function VoteWrite() {
   const [isVoteTypeOpen, setIsVoteTypeOpen] = useState(false)
   const [voteTitle, setVoteTitle] = useState('')
   const [voteContent, setVoteContent] = useState('')
+  const [isContentFocused, setIsContentFocused] = useState(false)
   const [voteDuration, setVoteDuration] = useState<VoteDuration>(3)
   const [voteItems, setVoteItems] = useState<VoteItem[]>([
     { id: 1, image: null, label: '' },
@@ -47,7 +47,7 @@ function VoteWrite() {
     voteType !== '' &&
     voteTitle.trim() !== '' &&
     voteContent.trim() !== '' &&
-    (voteType === 'OX' || voteItems.every((it) => it.image !== null || it.label.trim() !== ''))
+    (voteType === 'OX' || voteItems.every((it) => it.image !== null && it.label.trim() !== ''))
 
   const handleVoteItemImageChange = (idx: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -113,7 +113,7 @@ function VoteWrite() {
             <div className="cw_board_select">
               <button
                 type="button"
-                className="cw_board_toggle"
+                className={`cw_board_toggle${isVoteTypeOpen ? ' is_open' : ''}`}
                 onClick={() => setIsVoteTypeOpen((p) => !p)}
                 aria-haspopup="listbox"
                 aria-expanded={isVoteTypeOpen}
@@ -124,7 +124,7 @@ function VoteWrite() {
                 <i className="bx bx-chevron-down cw_chevron_icon" aria-hidden="true" />
               </button>
               {isVoteTypeOpen && (
-                <div className="cw_board_menu" role="listbox">
+                <div className="cw_board_menu open" role="listbox">
                   {VOTE_TYPE_OPTIONS.map((opt) => (
                     <button
                       key={opt}
@@ -154,8 +154,8 @@ function VoteWrite() {
 
           {/* 투표 내용 */}
           <div
-            className="cw_section cw_section_no_bottom_space cw_content_section"
-            style={{ backgroundImage: `url(${communityWriteBg})` }}
+            className={`cw_section cw_section_no_bottom_space cw_content_section${isContentFocused || voteContent.trim() !== '' ? ' is_bg_hidden' : ''}`}
+            style={{ '--cw-write-bg-image': `url(${communityWriteBg})` } as CSSProperties}
           >
             <Input
               className="cw_content_textarea"
@@ -164,6 +164,8 @@ function VoteWrite() {
               placeholder={'사소한 고민부터 진지한 고민까지, 무엇이든 남겨보세요.\n예) 목줄끼고 산책 하시나요, 안 하시나요?'}
               multiline
               rows={4}
+              onFocus={() => setIsContentFocused(true)}
+              onBlur={() => setIsContentFocused(false)}
             />
           </div>
 
@@ -235,14 +237,7 @@ function VoteWrite() {
           {voteType === 'OX' && (
             <div className="vw_items_section vw_ox_items_section">
               <strong className="vw_items_title">투표 항목</strong>
-              <div className="vw_ox_grid">
-                <div className="vw_ox_item">
-                  <img src={voteOIcon} alt="O" className="vw_ox_icon" />
-                </div>
-                <div className="vw_ox_item">
-                  <img src={voteXIcon} alt="X" className="vw_ox_icon" />
-                </div>
-              </div>
+              <OxVoteOptions />
             </div>
           )}
 
