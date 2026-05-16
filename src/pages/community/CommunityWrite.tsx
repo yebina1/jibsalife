@@ -214,7 +214,7 @@ function CommunityWrite() {
             <div className="cw_board_select" ref={boardSelectRef}>
               <button
                 type="button"
-                className="cw_board_toggle"
+                className={`cw_board_toggle${isBoardOpen ? ' is_open' : ''}`}
                 onClick={() => setIsBoardOpen((p) => !p)}
                 aria-haspopup="listbox"
                 aria-expanded={isBoardOpen}

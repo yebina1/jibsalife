@@ -1,4 +1,5 @@
 import './CommunityKnowledgeDetail.css'
+import { createPortal } from 'react-dom'
 import { type ReactNode, useEffect, useRef, useState } from 'react'
 import { markKnowledgeLiked } from '../../utils/challengeStatus'
 import { useLocation, useNavigate, useParams } from 'react-router'
@@ -29,6 +30,8 @@ import springAllergy4 from '../../img/petstory/Knowledge/spring_allergy_4.png'
 import profileImage from '../../img/pink_dog_profile.jpg'
 import addIcon from '../../svg/add icon.svg'
 import emojiIcon from '../../svg/emoji.svg'
+import commentIcon from '../../svg/nav communicate.svg'
+import { useActionRowSlot } from '../../contexts/ActionRowContext'
 import { MY_PROFILE_NAME } from '../../utils/myProfile'
 import { petStoryDetailComments } from './CommunityPetStoryDetailData'
 
@@ -446,6 +449,7 @@ function readStoredViewCount(knowledgeId: string, fallback: number): number {
 
 function CommunityKnowledgeDetail() {
   const navigate = useNavigate()
+  const actionRowSlot = useActionRowSlot()
   const location = useLocation()
   const { knowledgeId = defaultKnowledgeId } = useParams()
   const knowledgeCommentsPagePath = getKnowledgeCommentsPagePath(knowledgeId)
@@ -715,7 +719,7 @@ function CommunityKnowledgeDetail() {
                     <span>좋아요 {comment.likes || ''}</span>
                   </button>
                   <button type="button" onClick={() => setIsCommentFormVisible(true)}>
-                    <i className="bx bx-message-rounded-dots" aria-hidden="true" />
+                    <img src={commentIcon} alt="" aria-hidden="true" />
                     <span>답글쓰기</span>
                   </button>
                 </div>
@@ -736,43 +740,46 @@ function CommunityKnowledgeDetail() {
 
       </main>
 
-      <footer className="community_knowledge_detail_footer" aria-label="댓글 작성 및 반응">
-        <CommentInputForm
-          className={`cpsdetail_comment_form ${isCommentFormVisible ? 'is_visible' : 'is_hidden'}`}
-          iconButtonClassName="cpsdetail_form_icon"
-          inputWrapClassName="cpsdetail_comment_input"
-          placeholder="메시지를 입력해 주세요."
-          addIcon={addIcon}
-          emojiIcon={emojiIcon}
-          onSubmit={addComment}
-        />
-        <div className="community_knowledge_detail_actions">
-          <div className="community_knowledge_detail_reactions">
-            <LikeButton
+      {actionRowSlot && createPortal(
+        <div className="community_knowledge_detail_footer" aria-label="댓글 작성 및 반응">
+          <CommentInputForm
+            className={`cpsdetail_comment_form ${isCommentFormVisible ? 'is_visible' : 'is_hidden'}`}
+            iconButtonClassName="cpsdetail_form_icon"
+            inputWrapClassName="cpsdetail_comment_input"
+            placeholder="메시지를 입력해 주세요."
+            addIcon={addIcon}
+            emojiIcon={emojiIcon}
+            onSubmit={addComment}
+          />
+          <div className="community_knowledge_detail_actions">
+            <div className="community_knowledge_detail_reactions">
+              <LikeButton
+                type="button"
+                liked={isKnowledgeLiked}
+                className="community_knowledge_detail_like"
+                iconClassName="community_knowledge_detail_like_icon"
+                countClassName="community_knowledge_detail_like_count"
+                aria-label="좋아요"
+                onClick={toggleKnowledgeLike}
+              >
+                {knowledgeLikeCount}
+              </LikeButton>
+              <button type="button" aria-label="댓글" onClick={openCommentsPage}>
+                <CommentIcon />
+                {commentCount}
+              </button>
+            </div>
+            <button
               type="button"
-              liked={isKnowledgeLiked}
-              className="community_knowledge_detail_like"
-              iconClassName="community_knowledge_detail_like_icon"
-              countClassName="community_knowledge_detail_like_count"
-              aria-label="좋아요"
-              onClick={toggleKnowledgeLike}
+              className="community_knowledge_detail_cta"
+              onClick={() => navigate('/community/petstory')}
             >
-              {knowledgeLikeCount}
-            </LikeButton>
-            <button type="button" aria-label="댓글" onClick={openCommentsPage}>
-              <CommentIcon />
-              {commentCount}
+              관련 제품 보기
             </button>
           </div>
-          <button
-            type="button"
-            className="community_knowledge_detail_cta"
-            onClick={() => navigate('/community/petstory')}
-          >
-            관련 제품 보기
-          </button>
-        </div>
-      </footer>
+        </div>,
+        actionRowSlot
+      )}
     </>
   )
 }

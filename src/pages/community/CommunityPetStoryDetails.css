@@ -544,10 +544,16 @@
 }
 
 
+.cpsdetail_comment_actions button img {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
 .cpsdetail_comment_actions button svg {
   flex-shrink: 0;
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   fill: none;
   stroke: #111;
   stroke-width: 1.8;

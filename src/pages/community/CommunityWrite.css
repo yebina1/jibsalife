@@ -108,17 +108,24 @@
   color: #A1A9B6;
 }
 
+.cw_board_toggle.is_open {
+  border-radius: 8px 8px 0 0;
+  box-shadow: none;
+  border-bottom: 1px solid #505050;
+}
+
 .cw_board_menu {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% - 1px);
   left: 0;
   z-index: 10;
   width: 100%;
   overflow: hidden;
   border: 1px solid #e5e5ec;
-  border-radius: 12px;
+  border-top: 0;
+  border-radius: 0 0 8px 8px;
   background: #ffffff;
-  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.08);
+  box-shadow: none;
   transform-origin: top;
   transform: scaleY(0);
   opacity: 0;

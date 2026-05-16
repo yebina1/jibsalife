@@ -1,5 +1,6 @@
 .layout_knowledge_detail:has(.community_knowledge_detail_page) {
   padding-top: var(--layout-header-height);
+  --layout-footer-height: 148px;
 }
 
 .layout_content:has(.community_knowledge_detail_page) {
@@ -316,25 +317,17 @@
 }
 
 .community_knowledge_detail_footer {
-  position: fixed;
-  right: 50%;
-  bottom: var(--layout-footer-height, 90px);
-  z-index: 120;
-  width: min(100%, var(--layout-max-width, 1440px));
-  box-sizing: border-box;
+  width: 100%;
   background: #ffffff;
-  transform: translateX(50%);
 }
 
 .community_knowledge_detail_actions {
-  position: relative;
-  z-index: 2;
   display: grid;
   width: 100%;
   grid-template-columns: 156px minmax(0, 1fr);
   align-items: center;
   gap: 16px;
-  padding: 12px 16px calc(env(safe-area-inset-bottom, 0px) + 12px);
+  padding: 12px 16px;
   box-sizing: border-box;
   border-top: 1px solid #e8e8ee;
   background: #ffffff;
