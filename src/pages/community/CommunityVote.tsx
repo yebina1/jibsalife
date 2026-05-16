@@ -6,6 +6,8 @@ import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
 import Title from '../../components/Title'
 import Button from '../../components/html/Button'
+import Alert from '../../components/Alert'
+import ConfirmDialog from '../../components/ConfirmDialog'
 import FloatingWriteButton from '../../components/FloatingWriteButton'
 import VoteMissionBanner from '../../components/VoteMissionBanner'
 import OxVoteOptions from '../../components/OxVoteOptions'
@@ -13,6 +15,7 @@ import crownIcon from '../../svg/crown.svg'
 import timerIcon from '../../svg/timer.svg'
 import timerClosedIcon from '../../svg/timer_closed.svg'
 import boneImage from '../../img/bone.png'
+import voteGoodImage from '../../img/vote-good.png'
 import { readVotedMissionIds } from '../../utils/communityVoteStatus'
 import { missionVotes, regularVoteItems } from './CommunityVoteData'
 import { readUserVotes, calcDeadlineText, type UserVote } from '../../utils/savedVotes'
@@ -47,6 +50,8 @@ function CommunityVote() {
   const [savedVotes] = useState<UserVote[]>(() => readUserVotes())
   const [voteSelections, setVoteSelections] = useState<Record<number, number>>({})
   const [localVotedIds, setLocalVotedIds] = useState<Set<number>>(new Set())
+  const [editingVoteId, setEditingVoteId] = useState<number | null>(null)
+  const [isVoteCompleteOpen, setIsVoteCompleteOpen] = useState(false)
   const sortedRegularVoteItems = useMemo(() => {
     return [...regularVoteItems].sort((a, b) => {
       if (sort === 'popular') {
@@ -227,10 +232,19 @@ function CommunityVote() {
               const hasLabels = vote.voteType === '사진 투표' && vote.voteItems.some(it => it.label.trim() !== '')
 
               const handleSelect = (itemId: number) => setVoteSelections(prev => ({ ...prev, [vote.id]: itemId }))
-              const handleSubmit = () => { if (sel !== undefined) setLocalVotedIds(prev => new Set([...prev, vote.id])) }
+              const handleSubmit = () => {
+                if (sel === undefined) return
+                if (voted) {
+                  setEditingVoteId(vote.id)
+                  return
+                }
+                setLocalVotedIds(prev => new Set([...prev, vote.id]))
+                setIsVoteCompleteOpen(true)
+              }
               const handleDirectVote = (itemId: number) => {
                 setVoteSelections(prev => ({ ...prev, [vote.id]: itemId }))
                 setLocalVotedIds(prev => new Set([...prev, vote.id]))
+                setIsVoteCompleteOpen(true)
               }
 
               return (
@@ -301,10 +315,7 @@ function CommunityVote() {
                   {vote.voteType === 'OX' && (
                     <OxVoteOptions
                       selectedId={sel === 1 || sel === 2 ? sel : null}
-                      onSelect={(id) => {
-                        handleSelect(id)
-                        setLocalVotedIds(prev => new Set([...prev, vote.id]))
-                      }}
+                      onSelect={handleDirectVote}
                     />
                   )}
 
@@ -344,6 +355,45 @@ function CommunityVote() {
           </div>
         </section>}
       </main>
+      {editingVoteId !== null ? (
+        <ConfirmDialog
+          message="투표를 수정할까요?"
+          description={(
+            <>
+              투표는 기간 내 1회만 수정할 수 있어요.
+              <br />
+              정말 수정하시겠어요?
+            </>
+          )}
+          cancelLabel="취소"
+          confirmLabel="수정"
+          accentColor="#FF88C5"
+          cancelButtonStyle={{ backgroundColor: '#D9D9D9', border: 'none', color: '#111111' }}
+          dialogClassName="confirm_dialog_vote_edit"
+          onCancel={() => setEditingVoteId(null)}
+          onConfirm={() => setEditingVoteId(null)}
+        />
+      ) : null}
+      {isVoteCompleteOpen ? (
+        <Alert
+          dialogClassName="uvote_complete_dialog"
+          onClose={() => setIsVoteCompleteOpen(false)}
+        >
+          <div className="uvote_complete_content">
+            <span className="uvote_confetti c1" />
+            <span className="uvote_confetti c2" />
+            <span className="uvote_confetti c3" />
+            <span className="uvote_confetti c4" />
+            <span className="uvote_confetti c5" />
+            <span className="uvote_confetti c6" />
+            <span className="uvote_confetti c7" />
+            <span className="uvote_confetti c8" />
+            <strong className="uvote_complete_title">투표 완료!</strong>
+            <span className="uvote_complete_desc">소중한 의견 감사합니다 💗</span>
+            <img src={voteGoodImage} alt="" className="uvote_complete_image" />
+          </div>
+        </Alert>
+      ) : null}
       <FloatingWriteButton showMenu />
     </>
   )
