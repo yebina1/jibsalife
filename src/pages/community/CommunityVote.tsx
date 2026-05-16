@@ -8,14 +8,13 @@ import Title from '../../components/Title'
 import Button from '../../components/html/Button'
 import FloatingWriteButton from '../../components/FloatingWriteButton'
 import VoteMissionBanner from '../../components/VoteMissionBanner'
+import OxVoteOptions from '../../components/OxVoteOptions'
 import crownIcon from '../../svg/crown.svg'
 import timerIcon from '../../svg/timer.svg'
 import timerClosedIcon from '../../svg/timer_closed.svg'
 import { readVotedMissionIds } from '../../utils/communityVoteStatus'
 import { missionVotes, regularVoteItems } from './CommunityVoteData'
 import { readUserVotes, calcDeadlineText, type UserVote } from '../../utils/savedVotes'
-import voteOIcon from '../../svg/vote_o.svg'
-import voteXIcon from '../../svg/vote_x.svg'
 
 const topTabs = ['전체', '펫스토리', '챌린지', '투표'] as const
 const topTabRoutes: Record<string, string> = {
@@ -303,18 +302,13 @@ function CommunityVote() {
                   )}
 
                   {vote.voteType === 'OX' && (
-                    <div className="uvote_ox_grid">
-                      {([{ id: 1, icon: voteOIcon, alt: 'O' }, { id: 2, icon: voteXIcon, alt: 'X' }] as const).map(ox => (
-                        <button
-                          key={ox.id}
-                          type="button"
-                          className={`uvote_ox_option${sel === ox.id ? ' selected' : ''}`}
-                          onClick={() => { handleSelect(ox.id); setLocalVotedIds(prev => new Set([...prev, vote.id])) }}
-                        >
-                          <img src={ox.icon} alt={ox.alt} className="uvote_ox_icon" />
-                        </button>
-                      ))}
-                    </div>
+                    <OxVoteOptions
+                      selectedId={sel === 1 || sel === 2 ? sel : null}
+                      onSelect={(id) => {
+                        handleSelect(id)
+                        setLocalVotedIds(prev => new Set([...prev, vote.id]))
+                      }}
+                    />
                   )}
 
 
