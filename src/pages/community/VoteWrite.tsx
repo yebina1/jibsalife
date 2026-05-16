@@ -15,6 +15,8 @@ import keyboardIcon from '../../svg/keyboard.svg'
 import blueCheckIcon from '../../img/blue-check.png'
 import grayCheckIcon from '../../img/gray-check.png'
 import { saveUserVote } from '../../utils/savedVotes'
+import { showStateBarMessage } from '../../utils/stateBarMessage'
+import { addUserNotification } from '../../utils/userNotifications'
 import { useActionRowSlot } from '../../contexts/ActionRowContext'
 
 const VOTE_DURATION_OPTIONS = [3, 7, 10] as const
@@ -98,6 +100,8 @@ function VoteWrite() {
       createdAt: new Date().toISOString(),
     })
     setIsVoteConfirmOpen(false)
+    addUserNotification({ title: '커뮤니티', content: '투표글이 등록되었습니다.', path: '/community/vote' })
+    showStateBarMessage('투표글이 등록되었습니다.')
     navigate('/community/vote')
   }
 

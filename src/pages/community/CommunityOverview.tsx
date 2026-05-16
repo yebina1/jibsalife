@@ -14,6 +14,8 @@ import MissionVoteSection from '../../components/MissionVoteSection'
 import PetStoryPreviewSection from '../../components/PetStoryPreviewSection'
 import FloatingWriteButton from '../../components/FloatingWriteButton'
 import bannerImg from '../../img/Community_Overview_banner_img.png'
+import { showStateBarMessage } from '../../utils/stateBarMessage'
+import { addUserNotification } from '../../utils/userNotifications'
 
 
 function CommunityOverview() {
@@ -81,7 +83,12 @@ function CommunityOverview() {
           onComplete={() => {
             const points = calculateChallengeRewardPoints()
             claimChallengeDay(currentDay)
-            navigate(`/community/challenge/reward?amount=${points}`)
+            addUserNotification({ title: '챌린지', content: '오늘의 챌린지가 참여되었습니다. 포인트 받아주세요.', path: `/community/challenge/reward?amount=${points}` })
+            showStateBarMessage('오늘의 챌린지가 참여되었습니다. 포인트 받아주세요.', 5000, {
+              actionLabel: '받기',
+              onAction: () => navigate(`/community/challenge/reward?amount=${points}`),
+              closeButton: false,
+            })
           }}
         />
         <section className="co_challenge_card">

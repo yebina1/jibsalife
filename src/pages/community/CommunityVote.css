@@ -943,6 +943,15 @@ html:has(.cv2_page) {
   margin-top: 12px;
 }
 
+.uvote_complete_reward_btn {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 46px;
+  margin-top: 14px;
+  border-radius: 10px;
+}
+
 .uvote_confetti {
   position: absolute;
   top: 54px;

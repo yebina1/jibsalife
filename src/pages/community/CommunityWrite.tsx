@@ -8,6 +8,8 @@ import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
 import Input from '../../components/html/Input'
 import { MY_PROFILE_NAME } from '../../utils/myProfile'
+import { showStateBarMessage } from '../../utils/stateBarMessage'
+import { addUserNotification } from '../../utils/userNotifications'
 import communityWriteBg from '../../svg/community_write_bg.svg'
 import imageIcon from '../../svg/Image.svg'
 import tagsIcon from '../../svg/tags.svg'
@@ -187,6 +189,8 @@ function CommunityWrite() {
       window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(updated))
     } catch { /* noop */ }
 
+    addUserNotification({ title: '커뮤니티', content: '게시글이 등록되었습니다.', path: '/community/petstory' })
+    showStateBarMessage('게시글이 등록되었습니다.')
     navigate('/community/petstory')
   }
 

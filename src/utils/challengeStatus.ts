@@ -72,9 +72,21 @@ function checkDay1(): boolean {
   } catch { return false }
 }
 
-// Day 3 (index 2): 투표 참여 — votedMissionIds 존재
+// Day 3 (index 2): vote/mission action completed
+const VOTE_COMPLETED_KEY = 'jibsalife.challenge.voteCompleted'
+
+export function markChallengeVoteCompleted() {
+  if (typeof window === 'undefined') return false
+  const today = todayKey()
+  const isNewCompletion = window.localStorage.getItem(VOTE_COMPLETED_KEY) !== today
+  window.localStorage.setItem(VOTE_COMPLETED_KEY, today)
+  dispatch()
+  return isNewCompletion
+}
+
 function checkDay2(): boolean {
-  return readVotedMissionIds().length > 0
+  if (typeof window === 'undefined') return false
+  return window.localStorage.getItem(VOTE_COMPLETED_KEY) === todayKey() || readVotedMissionIds().length > 0
 }
 
 // Day 4 (index 3): 건강 리포트 확인 — HealthReport.tsx 작업 완료 후 markHealthReportViewed() 연결 예정

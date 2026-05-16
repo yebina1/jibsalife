@@ -3,6 +3,8 @@ import './CommunityChallenge.css'
 import { useEffect, useRef, useState } from 'react'
 import { checkChallengeDayDone, CHALLENGE_STATUS_CHANGED_EVENT, readCurrentDay, saveCurrentDay } from '../../utils/challengeStatus'
 import { useNavigate } from 'react-router'
+import { showStateBarMessage } from '../../utils/stateBarMessage'
+import { addUserNotification } from '../../utils/userNotifications'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
 import Button from '../../components/html/Button'
@@ -259,7 +261,12 @@ function CommunityChallenge() {
     const next = new Set([...participatedDays, currentDay])
     setParticipatedDays(next)
     saveParticipatedDays(next)
-    navigate(`/community/challenge/reward?amount=${points}`)
+    addUserNotification({ title: '챌린지', content: '오늘의 챌린지가 참여되었습니다. 포인트 받아주세요.', path: `/community/challenge/reward?amount=${points}` })
+    showStateBarMessage('오늘의 챌린지가 참여되었습니다. 포인트 받아주세요.', 5000, {
+      actionLabel: '받기',
+      onAction: () => navigate(`/community/challenge/reward?amount=${points}`),
+      closeButton: false,
+    })
   }
 
   const handleDayEnd = () => {

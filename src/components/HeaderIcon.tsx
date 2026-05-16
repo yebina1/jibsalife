@@ -1,3 +1,6 @@
+import notificationActiveIcon from '../svg/notification.svg'
+import { shouldShowNotificationDot } from '../utils/notificationState'
+
 type HeaderIconType = 'calendar' | 'notification' | 'search' | 'settings'
 
 type HeaderIconProps = {
@@ -34,6 +37,17 @@ function HeaderIcon({ type, size }: HeaderIconProps) {
         <path d="M15.8 4.25h-3.6l-.55 2.65a7.9 7.9 0 0 0-1.85.76L7.55 6.2 5 8.75l1.46 2.25a8 8 0 0 0-.77 1.86L3.1 13.45v3.6l2.59.59c.19.65.45 1.27.77 1.86L5 21.75l2.55 2.55 2.25-1.46c.58.32 1.2.58 1.85.76l.55 2.65h3.6l.55-2.65a7.9 7.9 0 0 0 1.85-.76l2.25 1.46L23 21.75l-1.46-2.25c.32-.59.58-1.21.77-1.86l2.59-.59v-3.6l-2.59-.59A8 8 0 0 0 21.54 11L23 8.75 20.45 6.2 18.2 7.66a7.9 7.9 0 0 0-1.85-.76l-.55-2.65Z" />
         <circle cx="14" cy="15.25" r="4.15" />
       </svg>
+    )
+  }
+
+  if (shouldShowNotificationDot()) {
+    return (
+      <img
+        src={notificationActiveIcon}
+        className="header_icon"
+        aria-hidden="true"
+        style={sizeStyle ?? { width: 28, height: 28 }}
+      />
     )
   }
 

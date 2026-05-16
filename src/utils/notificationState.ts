@@ -2,6 +2,7 @@ import { MISSION_ACTIVITY_RECORDS_CHANGE_EVENT } from './missionActivityRecords'
 import {
   MISSION_HISTORY_RECORDS_CHANGE_EVENT,
 } from './missionHistoryRecords'
+import { readUserNotifications } from './userNotifications'
 
 export { MISSION_ACTIVITY_RECORDS_CHANGE_EVENT, MISSION_HISTORY_RECORDS_CHANGE_EVENT }
 
@@ -39,5 +40,7 @@ export function shouldShowNotificationDot() {
 
   const readIds = readNotificationReadIds()
 
-  return notificationIds.some((id) => !readIds.has(id))
+  if (notificationIds.some((id) => !readIds.has(id))) return true
+
+  return readUserNotifications().some((n) => !readIds.has(n.id))
 }

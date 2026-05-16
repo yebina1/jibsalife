@@ -8,9 +8,10 @@ type RewardPointCardProps = {
   currentPoints: number
   rewardAmount: number
   onClick: () => void
+  rewardAlreadyApplied?: boolean
 }
 
-function RewardPointCard({ currentPoints, rewardAmount, onClick }: RewardPointCardProps) {
+function RewardPointCard({ currentPoints, rewardAmount, onClick, rewardAlreadyApplied = false }: RewardPointCardProps) {
   return (
     <button type="button" className="community_reward_point_card" onClick={onClick}>
       <div className="community_reward_point_icon" aria-hidden="true">
@@ -20,7 +21,7 @@ function RewardPointCard({ currentPoints, rewardAmount, onClick }: RewardPointCa
         as="h3"
         className="community_reward_point_copy"
         beforeTitle={<span className="p_regular">지금까지 모은 포인트</span>}
-        title={formatProfilePoints(currentPoints + Math.max(0, rewardAmount))}
+        title={formatProfilePoints(rewardAlreadyApplied ? currentPoints : currentPoints + Math.max(0, rewardAmount))}
       />
       <span className="community_reward_point_arrow" aria-hidden="true">
         <ChevronIcon direction="right" size="sm" />

@@ -1,6 +1,6 @@
 ﻿import './Community.css'
 import './CommunityVote.css'
-import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
+import { type CSSProperties, useMemo, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import { MoreVertical } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
@@ -21,6 +21,10 @@ import boneImage from '../../img/bone.png'
 import voteGoodImage from '../../img/vote-good.png'
 import voteBannerImage from '../../img/vote/vote_banner_img.png'
 import { readVotedMissionIds } from '../../utils/communityVoteStatus'
+import { isChallengeDayClaimed, markChallengeVoteCompleted, readCurrentDay } from '../../utils/challengeStatus'
+import { readProfilePoints, writeProfilePoints } from '../../utils/profilePoints'
+import { showStateBarMessage } from '../../utils/stateBarMessage'
+import { addUserNotification } from '../../utils/userNotifications'
 import { missionVotes, regularVoteItems } from './CommunityVoteData'
 import { deleteUserVote, readUserVotes, calcDeadlineText, type UserVote } from '../../utils/savedVotes'
 import { readDefaultCommunityVotes, writeDefaultCommunityVotes } from '../../utils/defaultCommunityVotes'
@@ -47,6 +51,9 @@ const topTabRoutes: Record<string, string> = {
 }
 
 type VoteSort = 'latest' | 'popular' | 'deadline'
+
+const VOTE_REWARD_AMOUNT = 60
+const VOTE_REWARD_CLAIMED_KEY_PREFIX = 'jibsalife.community.voteRewardClaimed'
 
 function parseDeadline(deadline: string) {
   const match = deadline.match(/(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일/)
@@ -82,6 +89,8 @@ function CommunityVote() {
   const [editingVoteId, setEditingVoteId] = useState<number | null>(null)
   const [deleteVoteId, setDeleteVoteId] = useState<number | null>(null)
   const [isVoteCompleteOpen, setIsVoteCompleteOpen] = useState(false)
+  const [completedVoteId, setCompletedVoteId] = useState<number | null>(null)
+  const [claimedVoteRewardIds, setClaimedVoteRewardIds] = useState<Set<number>>(() => new Set())
   const pendingDefaultVoteSelection = useRef<{ voteId: number; optionId: number } | null>(null)
   const sortedRegularVoteItems = useMemo(() => {
     return [...regularVoteItems].sort((a, b) => {
@@ -106,6 +115,28 @@ function CommunityVote() {
 
   const openMissionVote = (voteId: string) => {
     navigate(`/community/vote/detail?voteId=${voteId}`)
+  }
+
+  const showChallengeMissionCompleteToast = () => {
+    const currentDay = readCurrentDay()
+    if (currentDay !== 2 || isChallengeDayClaimed(currentDay)) return
+
+    showStateBarMessage('오늘의 챌린지가 참여되었습니다.\n포인트 받아주세요.', 5000, {
+      actionLabel: '받기',
+      onAction: () => navigate('/community/challenge'),
+      closeButton: false,
+    })
+  }
+
+  const openVoteCompleteDialog = (voteId: number) => {
+    if (markChallengeVoteCompleted()) {
+      showChallengeMissionCompleteToast()
+    }
+    if (window.localStorage.getItem(`${VOTE_REWARD_CLAIMED_KEY_PREFIX}.${voteId}`) === 'true') {
+      setClaimedVoteRewardIds(prev => new Set([...prev, voteId]))
+    }
+    setCompletedVoteId(voteId)
+    setIsVoteCompleteOpen(true)
   }
 
   const saveDefaultVoteSelection = (voteId: number, optionId: number) => {
@@ -137,7 +168,7 @@ function CommunityVote() {
   const submitUserVoteSelection = (voteId: number, optionId: number) => {
     saveUserVoteSelection(voteId, optionId)
     setVoteResults(addCommunityVoteResult(voteId, optionId))
-    setIsVoteCompleteOpen(true)
+    openVoteCompleteDialog(voteId)
   }
 
   const handleDeleteUserVote = () => {
@@ -158,22 +189,32 @@ function CommunityVote() {
     setDeleteVoteId(null)
   }
 
-  useEffect(() => {
-    if (!isVoteCompleteOpen) return
+  const closeVoteCompleteDialog = () => {
+    setIsVoteCompleteOpen(false)
+    if (pendingDefaultVoteSelection.current) {
+      saveDefaultVoteSelection(
+        pendingDefaultVoteSelection.current.voteId,
+        pendingDefaultVoteSelection.current.optionId,
+      )
+      pendingDefaultVoteSelection.current = null
+    }
+  }
 
-    const timer = window.setTimeout(() => {
-      setIsVoteCompleteOpen(false)
-      if (pendingDefaultVoteSelection.current) {
-        saveDefaultVoteSelection(
-          pendingDefaultVoteSelection.current.voteId,
-          pendingDefaultVoteSelection.current.optionId,
-        )
-        pendingDefaultVoteSelection.current = null
-      }
-    }, 2500)
+  const claimVoteReward = () => {
+    if (completedVoteId === null || claimedVoteRewardIds.has(completedVoteId)) return
 
-    return () => window.clearTimeout(timer)
-  }, [isVoteCompleteOpen])
+    const storageKey = `${VOTE_REWARD_CLAIMED_KEY_PREFIX}.${completedVoteId}`
+    if (window.localStorage.getItem(storageKey) === 'true') {
+      setClaimedVoteRewardIds(prev => new Set([...prev, completedVoteId]))
+      return
+    }
+
+    const nextPoints = readProfilePoints() + VOTE_REWARD_AMOUNT
+    writeProfilePoints(nextPoints)
+    window.localStorage.setItem(storageKey, 'true')
+    setClaimedVoteRewardIds(prev => new Set([...prev, completedVoteId]))
+    closeVoteCompleteDialog()
+  }
 
   return (
     <>
@@ -245,7 +286,14 @@ function CommunityVote() {
                 </p>
               </Title>
               {vote.buttonType === 'notify' ? (
-                <button type="button" className="cv2_outline_btn">
+                <button
+                  type="button"
+                  className="cv2_outline_btn"
+                  onClick={() => {
+                    showStateBarMessage('투표 알림이 설정되었습니다.')
+                    addUserNotification({ title: '투표', content: '투표 알림이 설정되었습니다.', path: '/community/vote' })
+                  }}
+                >
                   알림받기
                 </button>
               ) : (
@@ -487,7 +535,7 @@ function CommunityVote() {
                   return
                 }
                 pendingDefaultVoteSelection.current = { voteId: item.id, optionId }
-                setIsVoteCompleteOpen(true)
+                openVoteCompleteDialog(item.id)
               }
               const selectBoneVote = (optionId: number) => {
                 if (voted) {
@@ -495,7 +543,7 @@ function CommunityVote() {
                   return
                 }
                 pendingDefaultVoteSelection.current = { voteId: item.id, optionId }
-                setIsVoteCompleteOpen(true)
+                openVoteCompleteDialog(item.id)
               }
 
               return (
@@ -671,7 +719,7 @@ function CommunityVote() {
         />
       ) : null}
       {isVoteCompleteOpen ? (
-        <Alert dialogClassName="uvote_complete_dialog" onClose={() => setIsVoteCompleteOpen(false)}>
+        <Alert dialogClassName="uvote_complete_dialog" onClose={closeVoteCompleteDialog}>
           <div className="uvote_complete_content">
             <span className="uvote_confetti c1" />
             <span className="uvote_confetti c2" />
@@ -684,6 +732,14 @@ function CommunityVote() {
             <strong className="uvote_complete_title">투표 완료!</strong>
             <span className="uvote_complete_desc">소중한 의견 감사합니다 💗</span>
             <img src={voteGoodImage} alt="" className="uvote_complete_image" />
+            <Button
+              type="button"
+              className="purple_btn uvote_complete_reward_btn"
+              onClick={claimVoteReward}
+              disabled={completedVoteId !== null && claimedVoteRewardIds.has(completedVoteId)}
+            >
+              {completedVoteId !== null && claimedVoteRewardIds.has(completedVoteId) ? '포인트 받기 완료' : '포인트 받기'}
+            </Button>
           </div>
         </Alert>
       ) : null}

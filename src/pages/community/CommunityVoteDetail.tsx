@@ -12,10 +12,13 @@ import ConfettiEffect from '../../components/effect/ConfettiEffect'
 import RewardHero from '../../components/RewardHero'
 import RewardPointCard from '../../components/RewardPointCard'
 import { hasVotedMission, readVotedCandidate, writeVotedCandidate, writeVotedMissionId } from '../../utils/communityVoteStatus'
-import { readProfilePoints } from '../../utils/profilePoints'
+import { isChallengeDayClaimed, markChallengeVoteCompleted, readCurrentDay } from '../../utils/challengeStatus'
+import { readProfilePoints, writeProfilePoints } from '../../utils/profilePoints'
+import { showStateBarMessage } from '../../utils/stateBarMessage'
 import { voteDetails, type CommunityVoteId } from './CommunityVoteData'
 
 const VOTE_REWARD_AMOUNT = 60
+const VOTE_REWARD_CLAIMED_KEY_PREFIX = 'jibsalife.community.voteDetailRewardClaimed'
 
 function CommunityVoteDetail() {
   const navigate = useNavigate()
@@ -28,7 +31,10 @@ function CommunityVoteDetail() {
   const [selectedId, setSelectedId] = useState<number | null>(() => readVotedCandidate(voteId))
   const [isVoteCompleteOpen, setIsVoteCompleteOpen] = useState(false)
   const [isEditAlertOpen, setIsEditAlertOpen] = useState(false)
-  const [currentPoints] = useState(() => readProfilePoints())
+  const [currentPoints, setCurrentPoints] = useState(() => readProfilePoints())
+  const [isVoteRewardClaimed, setIsVoteRewardClaimed] = useState(() => (
+    window.localStorage.getItem(`${VOTE_REWARD_CLAIMED_KEY_PREFIX}.${voteId}`) === 'true'
+  ))
 
   const selectCandidate = (candidateId: number) => {
     setSelectedId(candidateId)
@@ -45,8 +51,36 @@ function CommunityVoteDetail() {
     } else {
       writeVotedMissionId(voteId)
       writeVotedCandidate(voteId, selectedId)
+      if (markChallengeVoteCompleted()) {
+        showChallengeMissionCompleteToast()
+      }
+      claimVoteReward()
       setIsVoteCompleteOpen(true)
     }
+  }
+
+  const showChallengeMissionCompleteToast = () => {
+    const currentDay = readCurrentDay()
+    if (currentDay !== 2 || isChallengeDayClaimed(currentDay)) return
+
+    showStateBarMessage('오늘의 챌린지가 참여되었습니다.\n포인트 받아주세요.', 5000, {
+      actionLabel: '받기',
+      onAction: () => navigate('/community/challenge'),
+      closeButton: false,
+    })
+  }
+
+  const claimVoteReward = () => {
+    if (isVoteRewardClaimed) {
+      setCurrentPoints(readProfilePoints())
+      return
+    }
+
+    const nextPoints = readProfilePoints() + VOTE_REWARD_AMOUNT
+    writeProfilePoints(nextPoints)
+    window.localStorage.setItem(`${VOTE_REWARD_CLAIMED_KEY_PREFIX}.${voteId}`, 'true')
+    setCurrentPoints(nextPoints)
+    setIsVoteRewardClaimed(true)
   }
 
   const handleEditConfirm = () => {
@@ -196,7 +230,8 @@ function CommunityVoteDetail() {
               <RewardPointCard
                 currentPoints={currentPoints}
                 rewardAmount={VOTE_REWARD_AMOUNT}
-                onClick={() => {}}
+                rewardAlreadyApplied
+                onClick={() => navigate('/mypage')}
               />
               <Button type="button" className="purple_btn cvd_reward_confirm" onClick={goToResult}>
                 확인

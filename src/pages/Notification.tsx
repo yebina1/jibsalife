@@ -8,6 +8,11 @@ import {
   readNotificationReadIds,
   saveNotificationReadIds,
 } from '../utils/notificationState'
+import {
+  readUserNotifications,
+  formatRelativeTime,
+  type UserNotificationItem,
+} from '../utils/userNotifications'
 
 type NotificationItem = {
   id: number
@@ -18,7 +23,7 @@ type NotificationItem = {
   path: string
 }
 
-const notificationItems: NotificationItem[] = [
+const staticNotificationItems: NotificationItem[] = [
   {
     id: 1,
     title: '오늘의 챌린지 참여하고 포인트 받자!',
@@ -53,6 +58,17 @@ const notificationItems: NotificationItem[] = [
   },
 ]
 
+function toNotificationItem(item: UserNotificationItem): NotificationItem {
+  return {
+    id: item.id,
+    title: item.title,
+    content: item.content,
+    time: formatRelativeTime(item.createdAt),
+    isRead: false,
+    path: item.path,
+  }
+}
+
 function readInitialReadIds(): Set<number> {
   return readNotificationReadIds()
 }
@@ -60,6 +76,10 @@ function readInitialReadIds(): Set<number> {
 function Notification() {
   const navigate = useNavigate()
   const [readIds, setReadIds] = useState<Set<number>>(readInitialReadIds)
+  const notificationItems: NotificationItem[] = [
+    ...readUserNotifications().map(toNotificationItem),
+    ...staticNotificationItems,
+  ]
 
   const handleItemClick = (item: NotificationItem) => {
     setReadIds((prev) => {
