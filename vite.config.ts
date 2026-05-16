@@ -3,6 +3,20 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  build: {
+    // 4KB 미만 소형 이미지는 인라인 처리 (기본값), 대형 이미지는 별도 파일로 분리
+    assetsInlineLimit: 4096,
+    rollupOptions: {
+      output: {
+        // 이미지 파일을 assets/images/ 에 분류하여 캐시 관리 편의성 향상
+        assetFileNames: (assetInfo) => {
+          const imgExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.avif']
+          const isImage = imgExtensions.some((ext) => assetInfo.name?.endsWith(ext))
+          return isImage ? 'assets/images/[name]-[hash][extname]' : 'assets/[name]-[hash][extname]'
+        },
+      },
+    },
+  },
   plugins: [
     react(),
     VitePWA({

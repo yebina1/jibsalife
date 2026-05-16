@@ -21,7 +21,17 @@ function Splash() {
   return (
     <main className="splash_page" aria-label="집사인생 시작 화면">
       <div className="splash_content">
-        <img src={loginPetImg} alt="" aria-hidden="true" className="splash_image" />
+        <img
+          src={loginPetImg}
+          alt=""
+          aria-hidden="true"
+          className="splash_image"
+          width={180}
+          height={180}
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
+        />
         <div className="splash_copy">
           <h1>집사인생</h1>
           <p>우리 아이의 하루를 기록해요</p>

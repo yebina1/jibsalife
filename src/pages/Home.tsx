@@ -34,6 +34,7 @@ import { voteDetails } from './community/CommunityVoteData'
 import { writeVotedCandidate, writeVotedMissionId } from '../utils/communityVoteStatus'
 import { readProfilePoints } from '../utils/profilePoints'
 import { showStateBarMessage } from '../utils/stateBarMessage'
+import LazyImage from '../components/LazyImage'
 import knowledge1 from '../img/petstory/Knowledge/knowledge1.png'
 import knowledge3 from '../img/petstory/Knowledge/knowledge3.png'
 import knowledge4 from '../img/petstory/Knowledge/knowledge4.png'
@@ -812,14 +813,34 @@ function Home() {
           <div className="home_ranking_carousel" aria-label="주간 인기 반려동물 랭킹">
             {rankingCardsData.map((card, i) => (
               <div key={card.rank} className={`home_ranking_card ${card.rankClass} ${getRankingCardPositionClass(i, rankingIndex)}`}>
-                <img src={card.photo} alt={card.photoAlt} className="home_ranking_card_photo" />
-                <img src={card.icon} alt={card.iconAlt} className="home_ranking_badge_icon" />
+                <LazyImage
+                  src={card.photo}
+                  alt={card.photoAlt}
+                  className="home_ranking_card_photo"
+                  rootStyle={{ height: '100%' }}
+                />
+                <img
+                  src={card.icon}
+                  alt={card.iconAlt}
+                  className="home_ranking_badge_icon"
+                  width={57}
+                  height={58}
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
             ))}
           </div>
 
           <div className="home_ranking_banner">
-            <img src={lankingIconImg} alt="" aria-hidden="true" className="home_ranking_banner_icon" />
+            <img
+              src={lankingIconImg}
+              alt=""
+              aria-hidden="true"
+              className="home_ranking_banner_icon"
+              loading="lazy"
+              decoding="async"
+            />
             <div className="home_ranking_banner_copy">
               <p>이번주엔 루루가 제일 인기 많았대!</p>
               <span>(다들 너무 귀여워서 고르기 힘들어요…)</span>
@@ -848,10 +869,12 @@ function Home() {
               return (
                 <article key={item.id} className="best_pose_vote_card">
                   <div className="best_pose_vote_card_media">
-                    <img
+                    <LazyImage
                       src={item.image}
                       alt={`${displayName} 포즈 사진`}
-                      style={{ objectPosition: item.objectPosition }}
+                      objectPosition={item.objectPosition}
+                      objectFit="cover"
+                      rootStyle={{ height: '100%' }}
                     />
                     <button
                       type="button"
@@ -910,7 +933,12 @@ function Home() {
                   })
                 }
               >
-                <img src={item.image} alt={item.title} style={{ objectPosition: item.objectPosition }} />
+                <LazyImage
+                  src={item.image}
+                  alt={item.title}
+                  objectPosition={item.objectPosition}
+                  objectFit="cover"
+                />
                 <span className="content_card_chip">{item.chip}</span>
                 <div className="content_overlay">
                   <p className="p_semibold">{item.title}</p>
