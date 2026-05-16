@@ -126,9 +126,12 @@
   font-weight: 500;
 }
 
-.cw_page_vote .cw_title_input::placeholder,
+.cw_page_vote .cw_title_input::placeholder {
+  color: rgba(80, 80, 80, 0.6);
+}
+
 .cw_page_vote .cw_content_textarea::placeholder {
-  color: #999999;
+  color: rgba(80, 80, 80, 0.6);
 }
 
 .cw_page_vote .cw_content_section {

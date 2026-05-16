@@ -11,9 +11,9 @@ import ConfirmDialog from '../../components/ConfirmDialog'
 import OxVoteOptions from '../../components/OxVoteOptions'
 import communityWriteBg from '../../svg/community_write_bg.svg'
 import imageIcon from '../../svg/Image.svg'
+import keyboardIcon from '../../svg/keyboard.svg'
 import blueCheckIcon from '../../img/blue-check.png'
 import grayCheckIcon from '../../img/gray-check.png'
-import voteIcon from '../../img/vote-icon.png'
 import { saveUserVote } from '../../utils/savedVotes'
 import { useActionRowSlot } from '../../contexts/ActionRowContext'
 
@@ -40,6 +40,7 @@ function VoteWrite() {
   ])
   const [isVoteConfirmOpen, setIsVoteConfirmOpen] = useState(false)
   const [pendingPhotoUploadIndex, setPendingPhotoUploadIndex] = useState<number | null>(null)
+  const contentTextareaRef = useRef<HTMLTextAreaElement>(null)
   const voteItemFileRefs = useRef<(HTMLInputElement | null)[]>([])
   const actionRowSlot = useActionRowSlot()
 
@@ -47,7 +48,7 @@ function VoteWrite() {
     voteType !== '' &&
     voteTitle.trim() !== '' &&
     voteContent.trim() !== '' &&
-    (voteType === 'OX' || voteItems.every((it) => it.image !== null && it.label.trim() !== ''))
+    (voteType === 'OX' || voteItems.every((it) => it.label.trim() !== ''))
 
   const handleVoteItemImageChange = (idx: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -64,6 +65,14 @@ function VoteWrite() {
     if (voteType !== '사진 투표') {
       setVoteType('사진 투표')
       setIsVoteTypeOpen(false)
+    }
+  }
+
+  const handleKeyboardToggle = () => {
+    if (isContentFocused) {
+      contentTextareaRef.current?.blur()
+    } else {
+      contentTextareaRef.current?.focus()
     }
   }
 
@@ -157,12 +166,12 @@ function VoteWrite() {
             className={`cw_section cw_section_no_bottom_space cw_content_section${isContentFocused || voteContent.trim() !== '' ? ' is_bg_hidden' : ''}`}
             style={{ '--cw-write-bg-image': `url(${communityWriteBg})` } as CSSProperties}
           >
-            <Input
-              className="cw_content_textarea"
+            <textarea
+              ref={contentTextareaRef}
+              className="input_field cw_content_textarea"
               value={voteContent}
-              onChange={setVoteContent}
+              onChange={(event) => setVoteContent(event.target.value)}
               placeholder={'사소한 고민부터 진지한 고민까지, 무엇이든 남겨보세요.\n예) 목줄끼고 산책 하시나요, 안 하시나요?'}
-              multiline
               rows={4}
               onFocus={() => setIsContentFocused(true)}
               onBlur={() => setIsContentFocused(false)}
@@ -268,9 +277,8 @@ function VoteWrite() {
             <img src={imageIcon} className="cw_action_icon" alt="" />
             사진
           </button>
-          <button type="button" className="p_regular">
-            <img src={voteIcon} className="cw_action_icon" alt="" />
-            투표
+          <button type="button" className="keyboard" onClick={handleKeyboardToggle}>
+            <img src={keyboardIcon} className="cw_action_icon" alt="키보드" />
           </button>
         </div>,
         actionRowSlot

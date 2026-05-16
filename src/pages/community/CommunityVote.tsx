@@ -12,6 +12,7 @@ import OxVoteOptions from '../../components/OxVoteOptions'
 import crownIcon from '../../svg/crown.svg'
 import timerIcon from '../../svg/timer.svg'
 import timerClosedIcon from '../../svg/timer_closed.svg'
+import boneImage from '../../img/bone.png'
 import { readVotedMissionIds } from '../../utils/communityVoteStatus'
 import { missionVotes, regularVoteItems } from './CommunityVoteData'
 import { readUserVotes, calcDeadlineText, type UserVote } from '../../utils/savedVotes'
@@ -242,11 +243,7 @@ function CommunityVote() {
                   {/* 텍스트만 (이미지 없음) → 뼈다귀 카드 */}
                   {vote.voteType === '사진 투표' && !hasImages && (
                     <div className="uvote_bone_wrap">
-                      <div className="uvote_bone_shape">
-                        <div className="uvote_bone_cap" />
-                        <div className="uvote_bone_bar" />
-                        <div className="uvote_bone_cap" />
-                      </div>
+                      <img src={boneImage} alt="" className="uvote_bone_image" aria-hidden="true" />
                       <div className="uvote_bone_labels">
                         <button
                           type="button"
@@ -282,7 +279,7 @@ function CommunityVote() {
                               if (!hasLabels) handleDirectVote(item.id)
                             }}
                           >
-                            <img src={item.image!} alt={item.label} className="uvote_photo_img" />
+                            <img src={item.image ?? boneImage} alt={item.label} className="uvote_photo_img" />
                             {hasLabels && (
                               <span className="uvote_photo_label_row">
                                 <span className="uvote_photo_label">{item.label}</span>
