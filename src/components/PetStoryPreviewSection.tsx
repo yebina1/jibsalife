@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import Title from './Title'
 import { dailyPosts } from '../pages/community/CommunityPetStory'
+import dailyThumbnail from '../img/petstory/daily/daily_thumbnail.jpg'
 import commentIcon from '../svg/nav communicate.svg'
 import sharingIcon from '../svg/sharing.svg'
 import { MY_PROFILE_NAME } from '../utils/myProfile'
@@ -13,6 +14,7 @@ type CreatedPost = {
   id: number
   tag: string
   title: string
+  content?: string
   author: string
   createdAt: string
   likes: number
@@ -20,12 +22,15 @@ type CreatedPost = {
   shares?: number
   views?: number
   image: string | null
+  images?: string[]
+  tags?: string[]
 }
 
 type PreviewPost = {
   id: number
   tag: string
   title: string
+  content?: string
   author: string
   createdAt: string
   likes: number
@@ -33,6 +38,8 @@ type PreviewPost = {
   shares?: number
   views?: number
   image: string | null
+  images?: string[]
+  tags?: string[]
 }
 
 function loadCreatedPosts(): CreatedPost[] {
@@ -93,9 +100,12 @@ function PetStoryPreviewSection() {
           id: post.id,
           tag: post.tag,
           title: post.title,
+          content: post.content,
           author: post.author,
           time: getRelativeTimeText(post.createdAt, nowTime),
           image: post.image,
+          images: post.images,
+          tags: post.tags,
           likes: post.likes,
           comments: post.comments,
           shares: post.shares ?? 10,
@@ -111,12 +121,10 @@ function PetStoryPreviewSection() {
       {latestPosts.map((post) => (
         <article
           key={post.id}
-          className={`cpsd_item${post.image == null ? ' cpsd_item_featured' : ''}`}
+          className="cpsd_item"
           onClick={() => handleClick(post)}
         >
-          {post.image != null && (
-            <img src={post.image} alt={post.title} className="cpsd_thumb" />
-          )}
+          <img src={post.image ?? dailyThumbnail} alt={post.title} className="cpsd_thumb" />
           <Title
             as="h5"
             className="cpsd_body"

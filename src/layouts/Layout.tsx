@@ -24,11 +24,12 @@ const communityTabs = [
   { label: '투표', to: '/community/vote' },
 ] as const
 
-const petStorySubTabs = [
+const petStorySubTabs: { label: string; to: string; disabled?: boolean }[] = [
   { label: '전체', to: '/community/petstory' },
   { label: '일상', to: '/community/petstory/daily' },
   { label: '반려상식', to: '/community/petstory/knowledge' },
-] as const
+  { label: '자랑하기', to: '/community/petstory/brag', disabled: true },
+]
 
 const voteSubTabs = [
   { label: '전체', to: '/community/vote?sub=all' },
@@ -314,8 +315,9 @@ function Layout({
                           <Button
                             key={tab.to}
                             type="button"
-                            className={`${subtabButtonClassName}${isActive ? ' layout_community_subtab_active' : ''}`}
-                            onClick={() => { navigate(tab.to); setIsCommunitySortOpen(false) }}
+                            className={`${subtabButtonClassName}${isActive ? ' layout_community_subtab_active' : ''}${'disabled' in tab && tab.disabled ? ' is_disabled' : ''}`}
+                            disabled={'disabled' in tab && tab.disabled}
+                            onClick={('disabled' in tab && tab.disabled) ? undefined : () => { navigate(tab.to); setIsCommunitySortOpen(false) }}
                           >
                             {tab.label}
                           </Button>

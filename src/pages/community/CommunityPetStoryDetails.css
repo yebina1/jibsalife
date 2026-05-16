@@ -301,8 +301,22 @@
   gap: 4px;
 }
 
-.cpsdetail_recommend_tags span {
-  color: #1F80E8;
+.cpsdetail_sympathy_text {
+  color: #505050;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.cpsdetail_post_tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.cpsdetail_post_tag {
+  color: #6D59F8;
   font-size: 14px;
   font-weight: 500;
   line-height: 1.45;
@@ -344,7 +358,7 @@
 }
 
 .cpsdetail_recommend_tags .cpsdetail_like_tag_btn .cpsdetail_like_tag_count {
-  color: #111111;
+  color: #111;
 }
 
 .cpsdetail_reaction_row {

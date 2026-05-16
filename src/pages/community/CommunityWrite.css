@@ -130,12 +130,14 @@
   transform: scaleY(1);
   opacity: 1;
   pointer-events: auto;
+  padding: 8px;
 }
 
 .cw_board_option {
   display: block;
   width: 100%;
   padding: 14px 16px;
+  border-radius: 6px;
   border: 0;
   background: transparent;
   color: #111111;
@@ -151,7 +153,7 @@
 }
 
 .cw_board_option.active {
-  color: #6D59F8;
+  background: #F5F3FF;
   font-weight: 600;
 }
 
@@ -206,6 +208,26 @@
 
 .cw_image_gallery::-webkit-scrollbar {
   display: none;
+}
+
+.cw_image_gallery.cw_image_gallery_scrollable {
+  overflow-x: scroll;
+  scrollbar-width: thin;
+  padding-bottom: 8px;
+}
+
+.cw_image_gallery.cw_image_gallery_scrollable::-webkit-scrollbar {
+  display: block;
+  height: 4px;
+}
+
+.cw_image_gallery.cw_image_gallery_scrollable::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cw_image_gallery.cw_image_gallery_scrollable::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 2px;
 }
 
 .cw_gallery_item {

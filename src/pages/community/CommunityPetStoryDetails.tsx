@@ -537,6 +537,14 @@ function CommunityPetStoryDetails() {
             <Title as="h4" className="cpsdetail_post_title" title={post.title} />
             <p className="cpsdetail_content p_regular">{content}</p>
 
+            {post.tags?.length ? (
+              <div className="cpsdetail_post_tags">
+                {post.tags.map((tag) => (
+                  <span key={tag} className="cpsdetail_post_tag">#{tag}</span>
+                ))}
+              </div>
+            ) : null}
+
             {galleryImages.length > 0 ? (
               galleryImages.length > 1 ? (
                 <div className="cpsdetail_gallery_wrap">
@@ -600,16 +608,7 @@ function CommunityPetStoryDetails() {
           ) : null}
 
           <div className="cpsdetail_recommend_tags">
-            {post.tags?.length ? (
-              <div className="cpsdetail_recommend_tags_content">
-                <strong>추천태그</strong>
-                <div>
-                  {post.tags.map((tag) => (
-                    <span key={tag}>{tag}</span>
-                  ))}
-                </div>
-              </div>
-            ) : null}
+            <span className="cpsdetail_sympathy_text">{likeCount}명이 공감했어요.</span>
             <LikeButton
               className="white_btn cpsdetail_like_tag_btn"
               liked={isLiked}

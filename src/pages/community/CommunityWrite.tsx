@@ -108,21 +108,37 @@ function CommunityWrite() {
   }
   handleKeyboardToggleRef.current = handleKeyboardToggle
 
+  const extractTags = (text: string): string[] => {
+    const matches = [...text.matchAll(/#([가-힣ㄱ-ㅣa-zA-Z0-9_]+)/g)]
+    return [...new Set(matches.map((m) => m[1]))]
+  }
+
+  const stripTags = (text: string): string =>
+    text
+      .replace(/#[가-힣ㄱ-ㅣa-zA-Z0-9_]+/g, '')
+      .split('\n')
+      .map((l) => l.replace(/[ \t]+/g, ' ').trim())
+      .join('\n')
+      .trim()
+
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault()
     const trimmedTitle = title.trim()
     const trimmedContent = content.trim()
     if (!trimmedTitle || !trimmedContent || !board) return
 
+    const extractedTags = extractTags(trimmedContent)
+    const strippedContent = stripTags(trimmedContent)
+
     if (editPost) {
       const updatedPost = {
         ...editPost,
         tag: board,
         title: trimmedTitle,
-        content: trimmedContent,
+        content: strippedContent,
         image: images[0] ?? null,
         images,
-        tags: [],
+        tags: extractedTags,
       }
       try {
         const saved = window.localStorage.getItem(createdPostsStorageKey)
@@ -161,7 +177,7 @@ function CommunityWrite() {
       createdAt: now.toISOString(),
       image: images[0] ?? null,
       images,
-      tags: [],
+      tags: extractedTags,
     }
 
     try {
@@ -247,7 +263,7 @@ function CommunityWrite() {
           </div>
 
           {images.length > 0 && (
-            <div className="cw_image_gallery">
+            <div className={`cw_image_gallery${images.length >= 2 ? ' cw_image_gallery_scrollable' : ''}`}>
               {images.map((url, idx) => (
                 <div key={idx} className="cw_gallery_item">
                   <img src={url} alt="" className="cw_gallery_image" />
