@@ -12,6 +12,10 @@ import poseVote3 from '../../img/vote/pose_vote/pose_vote3.png'
 import poseVote4 from '../../img/vote/pose_vote/pose_vote4.png'
 import poseVote5 from '../../img/vote/pose_vote/pose_vote5.png'
 import poseVote6 from '../../img/vote/pose_vote/pose_vote6.png'
+import birthPhoto1 from '../../img/birth-01.png'
+import birthPhoto2 from '../../img/birth-02.png'
+import chickenIcon from '../../img/chicken.png'
+import sweetPotatoIcon from '../../img/sweet-potato.png'
 
 export type CommunityVoteId = 'mission' | 'subscriber' | 'best-pose'
 
@@ -33,6 +37,28 @@ export type MissionVote = {
   subText?: string
 }
 
+export type DefaultVoteOption = {
+  id: number
+  label: string
+  color?: string
+  image?: string
+  icon?: string
+  percentage?: number
+}
+
+export type RegularVoteItem = {
+  id: number
+  title: string
+  description: string
+  deadline: string
+  participants: number
+  voteType: 'photo' | 'ox' | 'bone-result'
+  options: DefaultVoteOption[]
+  modified?: boolean
+  done?: boolean
+  resultOnly?: boolean
+}
+
 export type VoteDetail = {
   id: CommunityVoteId
   timeText: string
@@ -46,66 +72,69 @@ export type VoteDetail = {
 export const missionVotes: MissionVote[] = [
   {
     id: 'best-pose',
-    sectionTitle: '멍스타 미션 투표',
-    title: '이달의 BEST 포즈는?',
+    sectionTitle: '멍스터 미션 투표',
+    title: '이달의 BEST 포즈상',
     participants: 22,
     timeText: '7시간 남음',
     organizer: '운영자',
   },
   {
     id: 'subscriber',
-    sectionTitle: '멍스타 미션 투표',
-    title: '집사일기 멍스타 모델 도전하기',
+    sectionTitle: '멍스터 미션 투표',
+    title: '집사일기 멍스터 모델 도전하기',
     participants: 10,
     timeText: '02:18:35 남음',
     organizer: '운영자',
     buttonType: 'notify',
-    subText: '선착순 10명 한정 오픈 예정',
+    subText: '선착순 10명 지정 오픈 예정',
   },
 ]
 
-export const regularVoteItems = [
+export const regularVoteItems: RegularVoteItem[] = [
   {
     id: 1,
-    title: '이번 생일파티에 쓸 사진 골라주세요',
-    description: '우리 꼬미 생일 파티에 쓸 사진 골라주세요',
-    deadline: '2026년 4월 30일까지',
-    participants: 10,
-    done: false,
+    title: '이번 생일파티 때 찍은 사진 골라주세요',
+    description: '우리 꼬미 어떤 사진이 더 귀여울까요?',
+    deadline: '2026년 7월 30일까지',
+    participants: 325984,
+    voteType: 'photo',
     modified: true,
+    options: [
+      { id: 1, label: '생일파티 실내 사진', color: '#FFD6D9', image: birthPhoto1, percentage: 20 },
+      { id: 2, label: '생일파티 실외 사진', color: '#C7E9F8', image: birthPhoto2, percentage: 80 },
+    ],
   },
   {
     id: 2,
-    title: '침대 올라오면 봐준다 vs 절대 안 된다',
-    description: '현실 집사 밸런스 게임',
-    deadline: '2026년 4월 30일까지',
-    participants: 22,
-    done: false,
-    resultOnly: true,
+    title: '반려동물은 보호자 퇴근 시간을 기억한다?',
+    description: '',
+    deadline: '2026년 7월 30일까지',
+    participants: 325984,
+    voteType: 'ox',
+    options: [
+      { id: 1, label: 'O' },
+      { id: 2, label: 'X' },
+    ],
   },
   {
     id: 3,
-    title: '간식은 하루에 몇 번 정도 주시나요?',
-    description: '다들 어떻게 관리하시는지 궁금해요!',
-    deadline: '2026년 4월 30일까지',
-    participants: 8,
-    done: false,
-    modified: true,
+    title: '좋아하는 간식 재료는?',
+    description: '',
+    deadline: '2026년 7월 30일까지',
+    participants: 325984,
+    voteType: 'bone-result',
+    resultOnly: true,
+    options: [
+      { id: 1, label: '닭가슴살', percentage: 40, icon: chickenIcon },
+      { id: 2, label: '고구마', percentage: 60, icon: sweetPotatoIcon },
+    ],
   },
-  {
-    id: 4,
-    title: '우리 아이 사진이 사람 사진보다 많다',
-    description: '집사들의 OX 투표',
-    deadline: '2026년 4월 30일까지',
-    participants: 4,
-    done: false,
-  },
-] as const
+]
 
 const dogStarCandidates = [
   { id: 1, name: '콩이', image: dogStarVote1 },
   { id: 2, name: '공심이', image: dogStarVote2 },
-  { id: 3, name: '뽕뽕이', image: dogStarVote3 },
+  { id: 3, name: '뽀뽀', image: dogStarVote3 },
   { id: 4, name: '도라', image: dogStarVote4 },
   { id: 5, name: '봉이', image: dogStarVote5 },
   { id: 6, name: '바둑이', image: dogStarVote6 },
@@ -113,10 +142,10 @@ const dogStarCandidates = [
 
 const poseCandidates = [
   { id: 1, name: '쿠키', image: poseVote1 },
-  { id: 2, name: '호두', image: poseVote2 },
-  { id: 3, name: '이불리', image: poseVote3 },
-  { id: 4, name: '라운이', image: poseVote4 },
-  { id: 5, name: '봄이', image: poseVote5 },
+  { id: 2, name: '몽두', image: poseVote2 },
+  { id: 3, name: '해피', image: poseVote3 },
+  { id: 4, name: '다운이', image: poseVote4 },
+  { id: 5, name: '보이', image: poseVote5 },
   { id: 6, name: '바둑이', image: poseVote6 },
 ] as const
 
@@ -124,7 +153,7 @@ export const voteDetails: VoteDetail[] = [
   {
     id: 'mission',
     timeText: '7시간 남음',
-    bannerTitleLines: ['5월 3주차', '멍스타 미션 투표'],
+    bannerTitleLines: ['5월 3주차', '멍스터 미션 투표'],
     bannerDescription: '밥 먹는 사진 중 BEST를 골라주세요!',
     bannerBackgroundColor: '#FFE9BB',
     bannerImage: dogStarBanner,
@@ -133,8 +162,8 @@ export const voteDetails: VoteDetail[] = [
   {
     id: 'subscriber',
     timeText: '7시간 남음',
-    bannerTitleLines: ['5월 3주차', '멍스타 도전하기'],
-    bannerDescription: '우리 아이의 멍스타 순간에 도전해보세요!',
+    bannerTitleLines: ['5월 3주차', '멍스터 도전하기'],
+    bannerDescription: '우리 아이도 멍스터 시간에 도전해보세요!',
     bannerBackgroundColor: '#FFE9BB',
     bannerImage: dogStarBanner,
     candidates: dogStarCandidates,
@@ -142,7 +171,7 @@ export const voteDetails: VoteDetail[] = [
   {
     id: 'best-pose',
     timeText: '7시간 남음',
-    bannerTitleLines: ['이달의', 'Best 포즈는?'],
+    bannerTitleLines: ['이달의', 'Best 포즈상'],
     bannerDescription: '포즈가 돋보이는 BEST를 골라주세요!',
     bannerBackgroundColor: '#A7D8F8',
     bannerImage: bestPoseBanner,

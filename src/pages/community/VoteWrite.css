@@ -56,7 +56,7 @@
 }
 
 .page.cw_page_vote {
-  padding-block: 8px 0;
+  padding-block: 8px 18px;
 }
 
 .cw_page_vote .cw_form {
@@ -233,7 +233,7 @@
   align-items: center;
   gap: 18px;
   min-height: 52px;
-  padding: 13px 20px 12px;
+  padding: 13px 20px 18px;
   border-top: 0;
 }
 
@@ -245,8 +245,8 @@
 }
 
 .layout:has(.cw_page_vote) .cw_action_icon {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   object-fit: contain;
 }
 

@@ -1,6 +1,6 @@
 ﻿import './Community.css'
 import './CommunityVote.css'
-import { useMemo, useState } from 'react'
+import { type CSSProperties, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
@@ -20,6 +20,7 @@ import voteGoodImage from '../../img/vote-good.png'
 import { readVotedMissionIds } from '../../utils/communityVoteStatus'
 import { missionVotes, regularVoteItems } from './CommunityVoteData'
 import { readUserVotes, calcDeadlineText, type UserVote } from '../../utils/savedVotes'
+import { readDefaultCommunityVotes, writeDefaultCommunityVotes } from '../../utils/defaultCommunityVotes'
 
 const topTabs = ['전체', '펫스토리', '챌린지', '투표'] as const
 const topTabRoutes: Record<string, string> = {
@@ -39,6 +40,10 @@ function parseDeadline(deadline: string) {
   return new Date(Number(year), Number(month) - 1, Number(day)).getTime()
 }
 
+function formatParticipants(count: number) {
+  return count.toLocaleString('ko-KR')
+}
+
 function CommunityVote() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -49,8 +54,8 @@ function CommunityVote() {
   const showResult = sub === 'all' || sub === 'result'
   const [votedIds] = useState(() => readVotedMissionIds())
   const [savedVotes] = useState<UserVote[]>(() => readUserVotes())
-  const [voteSelections, setVoteSelections] = useState<Record<number, number>>({})
-  const [localVotedIds, setLocalVotedIds] = useState<Set<number>>(new Set())
+  const [voteSelections, setVoteSelections] = useState<Record<number, number>>(() => readDefaultCommunityVotes())
+  const [localVotedIds, setLocalVotedIds] = useState<Set<number>>(() => new Set(Object.keys(readDefaultCommunityVotes()).map(Number)))
   const [editingVoteId, setEditingVoteId] = useState<number | null>(null)
   const [isVoteCompleteOpen, setIsVoteCompleteOpen] = useState(false)
   const sortedRegularVoteItems = useMemo(() => {
@@ -63,18 +68,39 @@ function CommunityVote() {
         return parseDeadline(a.deadline) - parseDeadline(b.deadline) || b.id - a.id
       }
 
-      return b.id - a.id
+      return a.id - b.id
     })
   }, [sort])
 
   const activeMissionVotes = missionVotes.filter(v => v.buttonType !== 'result')
   const resultMissionVotes = missionVotes.filter(v => v.buttonType === 'result')
-  const activeRegularItems = sortedRegularVoteItems.filter(item => !('resultOnly' in item && item.resultOnly))
-  const resultRegularItems = sortedRegularVoteItems.filter(item => 'resultOnly' in item && item.resultOnly)
+  const activeRegularItems = sortedRegularVoteItems
+  const resultRegularItems = sub === 'result'
+    ? sortedRegularVoteItems.filter(item => 'resultOnly' in item && item.resultOnly)
+    : []
 
   const openMissionVote = (voteId: string) => {
     navigate(`/community/vote/detail?voteId=${voteId}`)
   }
+
+  const saveDefaultVoteSelection = (voteId: number, optionId: number) => {
+    setVoteSelections(prev => {
+      const next = { ...prev, [voteId]: optionId }
+      writeDefaultCommunityVotes(next)
+      return next
+    })
+    setLocalVotedIds(prev => new Set([...prev, voteId]))
+  }
+
+  useEffect(() => {
+    if (!isVoteCompleteOpen) return
+
+    const timer = window.setTimeout(() => {
+      setIsVoteCompleteOpen(false)
+    }, 2500)
+
+    return () => window.clearTimeout(timer)
+  }, [isVoteCompleteOpen])
 
   return (
     <>
@@ -207,16 +233,41 @@ function CommunityVote() {
           ))}
           <div className="cv2_regular_list">
             {resultRegularItems.map((item) => (
-              <div key={item.id} className="cv2_regular_item">
-                <Title as="h5" className="cv2_regular_body" title={item.title}>
-                  <p>{item.description}</p>
-                  <p className="cv2_regular_meta">
-                    {item.deadline} <span className="cv2_divider">|</span> 참여자 수 {item.participants}명
-                  </p>
-                </Title>
-                <button type="button" className="cv2_result_btn" disabled>
-                  결과보기
-                </button>
+              <div key={item.id} className="uvote_card uvote_default_card">
+                <div className="uvote_card_header">
+                  <p className="uvote_card_title">{item.title}</p>
+                  {item.description && <p className="uvote_card_desc">{item.description}</p>}
+                </div>
+                {item.voteType === 'bone-result' && (
+                  <div className="uvote_bone_result is_revealed is_right_selected" aria-label={`${item.options[0]?.label} ${item.options[0]?.percentage}%, ${item.options[1]?.label} ${item.options[1]?.percentage}%`}>
+                    <div
+                      className="uvote_bone_track"
+                      style={{
+                        '--uvote-bone-left': `${item.options[0]?.percentage ?? 50}%`,
+                        '--uvote-bone-right': `${item.options[1]?.percentage ?? 50}%`,
+                      } as CSSProperties}
+                    >
+                      <span className="uvote_bone_base" aria-hidden="true" />
+                      <span className="uvote_bone_left_fill" aria-hidden="true" />
+                      <span className="uvote_bone_right_fill" aria-hidden="true" />
+                      <span className="uvote_bone_percent uvote_bone_percent_left">{item.options[0]?.percentage}%</span>
+                      <span className="uvote_bone_percent uvote_bone_percent_right">{item.options[1]?.percentage}%</span>
+                    </div>
+                    <div className="uvote_bone_result_labels">
+                      <span>
+                        {item.options[0]?.label}
+                        {item.options[0]?.icon && <img src={item.options[0].icon} alt="" aria-hidden="true" />}
+                      </span>
+                      <span>
+                        {item.options[1]?.label}
+                        {item.options[1]?.icon && <img src={item.options[1].icon} alt="" aria-hidden="true" />}
+                      </span>
+                    </div>
+                  </div>
+                )}
+                <p className="uvote_meta">
+                  {item.deadline} <span className="cv2_divider">|</span> 참여자 수 {formatParticipants(item.participants)}명
+                </p>
               </div>
             ))}
           </div>
@@ -240,12 +291,15 @@ function CommunityVote() {
                   setEditingVoteId(vote.id)
                   return
                 }
-                setLocalVotedIds(prev => new Set([...prev, vote.id]))
+                saveDefaultVoteSelection(vote.id, sel)
                 setIsVoteCompleteOpen(true)
               }
               const handleDirectVote = (itemId: number) => {
-                setVoteSelections(prev => ({ ...prev, [vote.id]: itemId }))
-                setLocalVotedIds(prev => new Set([...prev, vote.id]))
+                if (voted) {
+                  setEditingVoteId(vote.id)
+                  return
+                }
+                saveDefaultVoteSelection(vote.id, itemId)
                 setIsVoteCompleteOpen(true)
               }
 
@@ -327,33 +381,130 @@ function CommunityVote() {
               )
             })}
 
-            {activeRegularItems.map((item) => (
-              <div key={item.id} className="cv2_regular_item">
-                <Title as="h5" className="cv2_regular_body" title={item.title}>
-                  <p>{item.description}</p>
-                  <p className="cv2_regular_meta">
-                    {item.deadline} <span className="cv2_divider">|</span> 참여자 수 {item.participants}명
+            {activeRegularItems.map((item) => {
+              const sel = voteSelections[item.id]
+              const voted = localVotedIds.has(item.id)
+              const selectDefaultVote = (optionId: number) => {
+                if (voted) {
+                  setEditingVoteId(item.id)
+                  return
+                }
+                saveDefaultVoteSelection(item.id, optionId)
+                setIsVoteCompleteOpen(true)
+              }
+              const selectBoneVote = (optionId: number) => {
+                if (voted) {
+                  setEditingVoteId(item.id)
+                  return
+                }
+                saveDefaultVoteSelection(item.id, optionId)
+                setIsVoteCompleteOpen(true)
+              }
+
+              return (
+                <div key={item.id} className="uvote_card uvote_default_card">
+                  <div className="uvote_card_header">
+                    <p className="uvote_card_title">{item.title}</p>
+                    {item.description && <p className="uvote_card_desc">{item.description}</p>}
+                  </div>
+
+                  {item.voteType === 'photo' && (
+                    <div className={`uvote_photo_grid${sel ? ' is_revealed' : ''}`}>
+                      {item.options.map((option, index) => {
+                        const isSelected = sel === option.id
+                        return (
+                          <button
+                            key={option.id}
+                            type="button"
+                            className={`uvote_photo_option${isSelected ? ' selected' : ''}`}
+                            onClick={() => selectDefaultVote(option.id)}
+                          >
+                            <span className="uvote_photo_fill" style={{ backgroundColor: option.color }}>
+                              {option.image && <img src={option.image} alt="" aria-hidden="true" />}
+                              <span className="uvote_photo_rank">{index + 1}</span>
+                            </span>
+                            <span className="uvote_photo_label_row">
+                              <span className="uvote_photo_label">{option.label}</span>
+                              <span className={`uvote_photo_radio${isSelected ? ' checked' : ''}`} />
+                            </span>
+                            {sel && (
+                              <span className="uvote_photo_result_bar" aria-label={`${option.label} ${option.percentage}%`}>
+                                <span
+                                  className="uvote_photo_result_fill"
+                                  style={{ width: `${option.percentage ?? 0}%` }}
+                                >
+                                  {option.percentage}%
+                                </span>
+                              </span>
+                            )}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
+
+                  {item.voteType === 'ox' && (
+                    <OxVoteOptions
+                      selectedId={sel === 1 || sel === 2 ? sel : null}
+                      onSelect={selectDefaultVote}
+                    />
+                  )}
+
+                  {item.voteType === 'bone-result' && (
+                    <div
+                      className={`uvote_bone_result${sel ? ' is_revealed' : ''}${sel === item.options[0]?.id ? ' is_left_selected' : ''}${sel === item.options[1]?.id ? ' is_right_selected' : ''}`}
+                      aria-label={`${item.options[0]?.label} ${item.options[0]?.percentage}%, ${item.options[1]?.label} ${item.options[1]?.percentage}%`}
+                    >
+                      <div
+                        className="uvote_bone_track"
+                        role="group"
+                        aria-label="간식 재료 선택"
+                        style={{
+                          '--uvote-bone-left': `${item.options[0]?.percentage ?? 50}%`,
+                          '--uvote-bone-right': `${item.options[1]?.percentage ?? 50}%`,
+                        } as CSSProperties}
+                      >
+                        <span className="uvote_bone_base" aria-hidden="true" />
+                        <span className="uvote_bone_left_fill" aria-hidden="true" />
+                        <span className="uvote_bone_right_fill" aria-hidden="true" />
+                        {sel && (
+                          <>
+                            <span className="uvote_bone_percent uvote_bone_percent_left">{item.options[0]?.percentage}%</span>
+                            <span className="uvote_bone_percent uvote_bone_percent_right">{item.options[1]?.percentage}%</span>
+                          </>
+                        )}
+                        <button
+                          type="button"
+                          className="uvote_bone_hit uvote_bone_hit_left"
+                          aria-label={`${item.options[0]?.label} 선택`}
+                          onClick={() => selectBoneVote(item.options[0].id)}
+                        />
+                        <button
+                          type="button"
+                          className="uvote_bone_hit uvote_bone_hit_right"
+                          aria-label={`${item.options[1]?.label} 선택`}
+                          onClick={() => selectBoneVote(item.options[1].id)}
+                        />
+                      </div>
+                      <div className="uvote_bone_result_labels">
+                        <span>
+                          {item.options[0]?.label}
+                          {item.options[0]?.icon && <img src={item.options[0].icon} alt="" aria-hidden="true" />}
+                        </span>
+                        <span>
+                          {item.options[1]?.label}
+                          {item.options[1]?.icon && <img src={item.options[1].icon} alt="" aria-hidden="true" />}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  <p className="uvote_meta">
+                    {item.deadline} <span className="cv2_divider">|</span> 참여자 수 {formatParticipants(item.participants)}명
                   </p>
-                </Title>
-                <button
-                  type="button"
-                  className={
-                    item.done
-                      ? 'cv2_done_btn'
-                      : 'modified' in item && item.modified
-                        ? 'cv2_outline_btn'
-                        : 'cv2_vote_btn'
-                  }
-                  disabled
-                >
-                  {item.done
-                    ? '투표완료'
-                    : 'modified' in item && item.modified
-                      ? '수정하기'
-                      : '투표하기'}
-                </button>
-              </div>
-            ))}
+                </div>
+              )
+            })}
           </div>
         </section>}
       </main>
