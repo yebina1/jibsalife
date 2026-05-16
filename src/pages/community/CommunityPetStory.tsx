@@ -8,6 +8,7 @@ import HeaderIcon from '../../components/HeaderIcon'
 import Button from '../../components/html/Button'
 import FloatingWriteButton from '../../components/FloatingWriteButton'
 import LikeButton from '../../components/LikeButton'
+import PetStoryFeedItem from '../../components/PetStoryFeedItem'
 import knowledge1 from '../../img/petstory/Knowledge/knowledge1.png'
 import knowledge2 from '../../img/petstory/Knowledge/knowledge2.png'
 import knowledge3 from '../../img/petstory/Knowledge/knowledge3.png'
@@ -19,8 +20,6 @@ import life3 from '../../img/petstory/daily/daily_3.png'
 import life4 from '../../img/petstory/daily/daily_4.png'
 import life5 from '../../img/petstory/daily/daily_5.jpg'
 import life6 from '../../img/petstory/daily/daily_6.jpg'
-import commentIcon from '../../svg/nav communicate.svg'
-import sharingIcon from '../../svg/sharing.svg'
 import { MY_PROFILE_NAME } from '../../utils/myProfile'
 import { petStoryDetailCommentCount } from './CommunityPetStoryDetailData'
 import VoteMissionBanner from '../../components/VoteMissionBanner'
@@ -38,22 +37,6 @@ export const dailyPosts = [
   { id: 6, tag: '일상', title: '말숙이랑 벚꽃', author: '말망', createdAt: '2026-04-27T12:00:00', likes: 16, comments: 5, shares: 3, views: 215, image: life5 },
   { id: 7, tag: '일상', title: '귀여우면 다야?', author: '크림빵', createdAt: '2026-04-11T18:00:00', likes: 44, comments: 15, shares: 11, views: 143, image: life6 },
 ]
-
-function HeartIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M12 20.2 5.2 13.8a4.55 4.55 0 0 1 6.43-6.43L12 7.74l.37-.37a4.55 4.55 0 1 1 6.43 6.43Z" />
-    </svg>
-  )
-}
-
-function CommentIcon() {
-  return <img src={commentIcon} alt="" aria-hidden="true" />
-}
-
-function ShareIcon() {
-  return <img src={sharingIcon} alt="" aria-hidden="true" />
-}
 
 type SortOption = '인기순' | '최신순' | '댓글순' | '공유순'
 const createdPostsStorageKey = 'jibsalife.community.createdPosts'
@@ -89,6 +72,7 @@ type PetStoryFeedPost = {
   likes: number
   comments: number
   shares?: number
+  views?: number
   createdAt?: string
   isCreated?: boolean
   path?: string
@@ -133,7 +117,7 @@ const postData: CommunityPost[] = [
 ]
 
 const knowledgeFeedItems = [
-  { id: 1, tag: '산책', title: '강아지 산책 안 하면 생기는 문제점', image: knowledge1, likes: 8, comments: 3, viewsText: '1.2k', objectPosition: '61% center', path: '/community/petstory/knowledge/walkproblems', createdAt: '2026-05-02T09:00:00' },
+  { id: 1, tag: '산책', title: '강아지 산책 안 하면 생기는 문제점', image: knowledge1, likes: 8, comments: 3, viewsText: '1201', objectPosition: '61% center', path: '/community/petstory/knowledge/walkproblems', createdAt: '2026-05-02T09:00:00' },
   { id: 2, tag: '건강', title: '고양이 점프의 숨겨진 비밀', image: knowledge2, likes: 8, comments: 3, viewsText: '968', objectPosition: '64% center', path: '/community/petstory/knowledge/catjumpsecret', createdAt: '2026-05-01T10:00:00' },
   { id: 3, tag: '일상', title: '고양이에게 절대 주면 안 되는 음식 7가지', titleLines: ['고양이에게 절대 주면', '안 되는 음식 7가지'], image: knowledge3, likes: 8, comments: 3, viewsText: '860', objectPosition: '43% center', path: '/community/petstory/knowledge/forbiddenfoods', createdAt: '2026-04-30T11:00:00' },
   { id: 4, tag: '일상', title: '봄철 강아지 알레르기 증상과 관리법', titleLines: ['봄철 강아지 알레르기', '증상과 관리법'], image: knowledge4, likes: 8, comments: 3, viewsText: '482', objectPosition: '48% center', path: '/community/petstory/knowledge/springallergy', createdAt: '2026-04-29T12:00:00' },
@@ -163,6 +147,19 @@ function buildKnowledgeViewCountMap(): Record<string, number | null> {
   knowledgeFeedItems.forEach(item => {
     const id = getKnowledgeIdFromPath(item.path)
     map[id] = readKnowledgeViewCount(id)
+  })
+  return map
+}
+
+function buildDailyViewCountMap(): Record<number, number | null> {
+  const map: Record<number, number | null> = {}
+  dailyPosts.forEach(post => {
+    try {
+      const saved = window.localStorage.getItem(`jibsalife.community.views.${post.id}`)
+      map[post.id] = saved !== null ? parseInt(saved, 10) : null
+    } catch {
+      map[post.id] = null
+    }
   })
   return map
 }
@@ -221,6 +218,7 @@ function CommunityPetStory() {
   const [createdPosts] = useState<CommunityPost[]>(loadCreatedPosts)
   const [nowTime, setNowTime] = useState(() => Date.now())
   const [knowledgeViewCounts, setKnowledgeViewCounts] = useState<Record<string, number | null>>(buildKnowledgeViewCountMap)
+  const [dailyViewCounts, setDailyViewCounts] = useState<Record<number, number | null>>(buildDailyViewCountMap)
 
   const isOverview = pathname === '/community/petstory'
   const isKnowledge = pathname === '/community/petstory/knowledge'
@@ -234,6 +232,7 @@ function CommunityPetStory() {
     const sync = () => {
       setLikedPostIds(loadLikedPostIds())
       setKnowledgeViewCounts(buildKnowledgeViewCountMap())
+      setDailyViewCounts(buildDailyViewCountMap())
     }
     window.addEventListener('focus', sync)
     window.addEventListener('pageshow', sync)
@@ -369,6 +368,7 @@ function CommunityPetStory() {
         likes: post.likes,
         comments: post.comments,
         shares: post.shares,
+        views: post.views,
         createdAt: post.createdAt,
       })),
     ]
@@ -501,39 +501,25 @@ function CommunityPetStory() {
         {isDaily ? (
           <div className="cpsd_feed">
               {dailyFeedPosts.map((post) => (
-                <article
+                <PetStoryFeedItem
                   key={post.id}
-                  className="cpsd_item"
+                  postId={post.id}
+                  tag={post.tag}
+                  title={post.title}
+                  description={post.content}
+                  author={post.author}
+                  time={getPostTimeText(post)}
+                  image={post.image}
+                  likes={post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}
+                  comments={getPostCommentCount(post)}
+                  views={dailyViewCounts[post.id] ?? post.views ?? post.viewsText ?? 120}
+                  liked={likedPostIds.includes(post.id)}
                   onClick={() => openPostDetail(post)}
-                >
-                  <img src={post.image ?? dailyThumbnail} alt={post.title} className="cpsd_thumb" />
-                  <Title
-                    as="h5"
-                    className="cpsd_body"
-                    headingClassName="cpsd_title"
-                    title={<><span className="community_post_tag">{post.tag}</span><span className="cpsd_title_text">{post.title}</span></>}
-                  >
-                    <div className="cpsd_meta">
-                      <p className="cpsd_author">{post.author}</p>
-                      <span className="cpsd_meta_divider" aria-hidden="true">|</span>
-                      <p className="cpsd_time">{getPostTimeText(post)}</p>
-                    </div>
-                    <div className="cpsd_actions">
-                      <div className={`cpsd_like_stat${likedPostIds.includes(post.id) ? ' active' : ''}`}>
-                        <span className="cpsd_action_icon"><HeartIcon /></span>
-                        <span>{post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}</span>
-                      </div>
-                      <div className="cpsd_comment_stat">
-                        <span className="cpsd_action_icon"><CommentIcon /></span>
-                        <span>{getPostCommentCount(post)}</span>
-                      </div>
-                      <div className="cpsd_share_stat">
-                        <span className="cpsd_action_icon"><ShareIcon /></span>
-                        <span>{post.shares ?? 10}</span>
-                      </div>
-                    </div>
-                  </Title>
-                </article>
+                  onLikeClick={(event) => {
+                    event.stopPropagation()
+                    toggleLike(post.id)
+                  }}
+                />
               ))}
             </div>
         ) : isKnowledge ? (
@@ -577,9 +563,20 @@ function CommunityPetStory() {
         ) : isOverview ? (
           <section className="community_feed">
               {overviewPosts.map((post) => (
-                <article
+                <PetStoryFeedItem
                   key={post.id}
-                  className="cpsd_item"
+                  postId={post.id}
+                  tag={post.tag}
+                  title={post.title}
+                  description={post.content}
+                  author={post.author}
+                  time={getPostTimeText(post)}
+                  image={post.image}
+                  imageObjectPosition={post.objectPosition}
+                  likes={post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}
+                  comments={getPostCommentCount(post)}
+                  views={dailyViewCounts[post.id] ?? post.views ?? post.viewsText ?? 120}
+                  liked={likedPostIds.includes(post.id)}
                   onClick={() => {
                     if (post.path) {
                       openKnowledgeDetail({
@@ -598,39 +595,11 @@ function CommunityPetStory() {
                     }
                     openPostDetail(post)
                   }}
-                >
-                  <img src={post.image ?? dailyThumbnail} alt={post.title} className="cpsd_thumb" />
-                  <Title
-                    as="h5"
-                    className="cpsd_body"
-                    headingClassName="cpsd_title"
-                    title={<><span className="community_post_tag">{post.tag}</span><span className="cpsd_title_text">{post.title}</span></>}
-                  >
-                    <div className="cpsd_meta">
-                      <p className="cpsd_author">{post.author}</p>
-                      {getPostTimeText(post) && (
-                        <>
-                          <span className="cpsd_meta_divider" aria-hidden="true">|</span>
-                          <p className="cpsd_time">{getPostTimeText(post)}</p>
-                        </>
-                      )}
-                    </div>
-                    <div className="cpsd_actions">
-                      <div className={`cpsd_like_stat${likedPostIds.includes(post.id) ? ' active' : ''}`}>
-                        <span className="cpsd_action_icon"><HeartIcon /></span>
-                        <span>{post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}</span>
-                      </div>
-                      <div className="cpsd_comment_stat">
-                        <span className="cpsd_action_icon"><CommentIcon /></span>
-                        <span>{getPostCommentCount(post)}</span>
-                      </div>
-                      <div className="cpsd_share_stat">
-                        <span className="cpsd_action_icon"><ShareIcon /></span>
-                        <span>{post.shares ?? 10}</span>
-                      </div>
-                    </div>
-                  </Title>
-                </article>
+                  onLikeClick={(event) => {
+                    event.stopPropagation()
+                    toggleLike(post.id)
+                  }}
+                />
               ))}
             </section>
         ) : (

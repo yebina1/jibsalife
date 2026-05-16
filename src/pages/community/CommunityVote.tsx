@@ -122,7 +122,7 @@ function CommunityVote() {
     if (currentDay !== 2 || isChallengeDayClaimed(currentDay)) return
 
     showStateBarMessage('오늘의 챌린지가 참여되었습니다.\n포인트 받아주세요.', 5000, {
-      actionLabel: '받기',
+      actionLabel: '이동하기',
       onAction: () => navigate('/community/challenge'),
       closeButton: false,
     })

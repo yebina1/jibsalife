@@ -1,4 +1,4 @@
-import './Community.css'
+﻿import './Community.css'
 import './CommunityOverview.css'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
@@ -25,7 +25,7 @@ function CommunityOverview() {
   const [completed, setCompleted] = useState(() => isChallengeDayClaimed(readCurrentDay()))
 
   useEffect(() => {
-    // currentDay는 자정(onDayEnd)에만 진행 — 완료 시에는 같은 날 유지해서 스탬프 표시
+    // currentDay 변경과 외부 완료 이벤트를 반영해 카드 상태를 갱신한다.
     const refresh = () => {
       setMissionDone(checkChallengeDayDone(currentDay))
       setCompleted(isChallengeDayClaimed(currentDay))
@@ -84,8 +84,8 @@ function CommunityOverview() {
             const points = calculateChallengeRewardPoints()
             claimChallengeDay(currentDay)
             addUserNotification({ title: '챌린지', content: '오늘의 챌린지가 참여되었습니다. 포인트 받아주세요.', path: `/community/challenge/reward?amount=${points}` })
-            showStateBarMessage('오늘의 챌린지가 참여되었습니다. 포인트 받아주세요.', 5000, {
-              actionLabel: '받기',
+            showStateBarMessage('오늘의 챌린지가 참여되었습니다.\n포인트 받아주세요.', 5000, {
+              actionLabel: '이동하기',
               onAction: () => navigate(`/community/challenge/reward?amount=${points}`),
               closeButton: false,
             })
@@ -94,10 +94,10 @@ function CommunityOverview() {
         <section className="co_challenge_card">
           <div className="co_vote_header">
             <Title as="h4" title="투표">
-              <p>멍스타 반려동물을 투표해주세요!</p>
+              <p>멋진 반려동물에게 투표해주세요!</p>
             </Title>
             <button type="button" className="co_vote_more_btn" onClick={() => navigate('/community/vote')}>
-              더보기 &gt;
+              더보기&gt;
             </button>
           </div>
           <MissionVoteSection />
@@ -105,10 +105,10 @@ function CommunityOverview() {
         <section className="co_challenge_card co_petstory_card">
           <div className="co_vote_header">
             <Title as="h4" title="펫스토리">
-              <p>반려일상을 공유해요</p>
+              <p>반려 일상을 공유해요</p>
             </Title>
             <button type="button" className="co_vote_more_btn" onClick={() => navigate('/community/petstory')}>
-              더보기 &gt;
+              더보기&gt;
             </button>
           </div>
           <PetStoryPreviewSection />

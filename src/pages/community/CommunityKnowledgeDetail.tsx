@@ -66,7 +66,7 @@ const knowledgeDetailFallbackItems: Record<string, NonNullable<KnowledgeDetailSt
     id: 1,
     title: '강아지 산책 안 하면 생기는 문제점',
     image: knowledge1,
-    viewsText: '1.2k',
+    viewsText: '1201',
     likes: 8,
     comments: 3,
     createdAt: '2026-05-02T09:00:00',

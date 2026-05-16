@@ -18,25 +18,38 @@ function FloatingWriteButton({
   const navigate = useNavigate()
   const [isExpanded, setIsExpanded] = useState(true)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isVisible, setIsVisible] = useState(true)
 
   useEffect(() => {
-    let lastScrollY = window.scrollY
+    const scrollContainer = document.querySelector('.layout_content') as HTMLElement | null
+    const isScrollableContainer = () => {
+      if (!scrollContainer) return false
+      const overflowY = window.getComputedStyle(scrollContainer).overflowY
+      return scrollContainer.scrollHeight > scrollContainer.clientHeight && (overflowY === 'auto' || overflowY === 'scroll')
+    }
+    const getScrollY = () => isScrollableContainer() ? scrollContainer!.scrollTop : window.scrollY
+    let lastScrollY = getScrollY()
     const collapseTimer = window.setTimeout(() => {
       setIsExpanded(false)
     }, 3000)
 
     const handleScroll = () => {
-      const currentScrollY = window.scrollY
+      const currentScrollY = getScrollY()
       if (currentScrollY > lastScrollY) {
         setIsExpanded(false)
+        setIsVisible(false)
         if (showMenu) setIsMenuOpen(false)
+      } else if (currentScrollY < lastScrollY) {
+        setIsVisible(true)
       }
       lastScrollY = currentScrollY
     }
 
+    scrollContainer?.addEventListener('scroll', handleScroll, { passive: true })
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => {
       window.clearTimeout(collapseTimer)
+      scrollContainer?.removeEventListener('scroll', handleScroll)
       window.removeEventListener('scroll', handleScroll)
     }
   }, [showMenu])
@@ -58,7 +71,7 @@ function FloatingWriteButton({
       {showMenu && isMenuOpen && (
         <div className="floating_write_backdrop" onClick={() => setIsMenuOpen(false)} />
       )}
-      <div className="floating_write_container">
+      <div className={`floating_write_container${isVisible ? '' : ' is_hidden'}`}>
         {showMenu && (
           <div className={`floating_write_menu${isMenuOpen ? ' is_open' : ''}`}>
             <Button

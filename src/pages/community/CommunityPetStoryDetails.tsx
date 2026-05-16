@@ -73,6 +73,7 @@ const fallbackPosts: DetailPost[] = [
     image: null,
     likes: 20,
     comments: 0,
+    views: 1340,
   },
   {
     id: 2,
@@ -85,6 +86,7 @@ const fallbackPosts: DetailPost[] = [
     images: [life1, life5],
     likes: 20,
     comments: 4,
+    views: 980,
   },
   {
     id: 3,
@@ -97,6 +99,7 @@ const fallbackPosts: DetailPost[] = [
     images: [life2, life6],
     likes: 20,
     comments: 4,
+    views: 762,
   },
   {
     id: 4,
@@ -109,6 +112,7 @@ const fallbackPosts: DetailPost[] = [
     images: [life3, life1],
     likes: 16,
     comments: 4,
+    views: 524,
   },
   {
     id: 5,
@@ -121,6 +125,7 @@ const fallbackPosts: DetailPost[] = [
     images: [life4, life5],
     likes: 7,
     comments: 4,
+    views: 318,
     place: {
       name: '우다다 애견풀빌라',
       address: '부산광역시 금정구',
@@ -137,6 +142,7 @@ const fallbackPosts: DetailPost[] = [
     images: [life5, life4],
     likes: 4,
     comments: 4,
+    views: 215,
   },
   {
     id: 7,
@@ -149,6 +155,7 @@ const fallbackPosts: DetailPost[] = [
     images: [life6, life3],
     likes: 4,
     comments: 4,
+    views: 143,
   },
 ]
 
@@ -337,10 +344,10 @@ function CommunityPetStoryDetails() {
   useEffect(() => {
     if (viewIncrementedForRef.current === post.id) return
     viewIncrementedForRef.current = post.id
-    const next = readViewCount(post.id) + 1
+    const next = readViewCount(post.id, post.views ?? 0) + 1
     window.localStorage.setItem(`jibsalife.community.views.${post.id}`, String(next))
     setViewCount(next)
-  }, [post.id])
+  }, [post.id, post.views])
 
   useEffect(() => {
     window.localStorage.setItem(`jibsalife.community.comments.${post.id}`, JSON.stringify(visibleComments))
@@ -782,6 +789,8 @@ function CommunityPetStoryDetails() {
         <PostMoreSheet
           type="other"
           onClose={() => setMoreSheetOpen(false)}
+          onReport={() => setMoreSheetOpen(false)}
+          onBlock={() => setMoreSheetOpen(false)}
         />
       ) : null}
 

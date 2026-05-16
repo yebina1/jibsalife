@@ -206,6 +206,13 @@
   bottom: 118px;
   z-index: 120;
   height: 56px;
+  opacity: 1;
+  transition: opacity 220ms ease;
+}
+
+.floating_write_container.is_hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* 컨테이너 안에서 버튼은 독립 고정 해제 */

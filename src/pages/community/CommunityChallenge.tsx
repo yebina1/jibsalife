@@ -1,10 +1,10 @@
-import './Community.css'
+﻿import './Community.css'
 import './CommunityChallenge.css'
 import { useEffect, useRef, useState } from 'react'
-import { checkChallengeDayDone, CHALLENGE_STATUS_CHANGED_EVENT, readCurrentDay, saveCurrentDay } from '../../utils/challengeStatus'
+import { checkChallengeDayDone, CHALLENGE_STATUS_CHANGED_EVENT, isDemoChallengeAccount, readCurrentDay, saveCurrentDay } from '../../utils/challengeStatus'
 import { useNavigate } from 'react-router'
-import { showStateBarMessage } from '../../utils/stateBarMessage'
 import { addUserNotification } from '../../utils/userNotifications'
+import { AUTH_CURRENT_USER_STORAGE_KEY } from '../../utils/authAccounts'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
 import Button from '../../components/html/Button'
@@ -27,12 +27,12 @@ import pointIcon from '../../svg/point.svg'
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const challengeCardItems = [
-  { id: 1, title: '제일 귀엽게 밥을 먹는 귀염둥이는?', participants: 22, deadline: '05.10 마감', image: day1Img, status: 'active' },
+  { id: 1, title: '가장 크게 밥을 먹는 반려동물은?', participants: 22, deadline: '05.10 마감', image: day1Img, status: 'active' },
   { id: 2, title: '가장 말썽꾸러기 같은 아이는?', participants: 17, deadline: '05.10 마감', image: day2Img, status: 'active' },
   { id: 3, title: '제일 웃는 얼굴이 예쁜 아이는?', participants: 31, deadline: '05.10 마감', image: day3Img, status: 'active' },
-  { id: 4, title: '제일 호기심 많아 보이는 아이는?', participants: 14, deadline: '05.10 마감', image: day4Img, status: 'active' },
+  { id: 4, title: '제일 인기 많아 보이는 아이는?', participants: 14, deadline: '05.10 마감', image: day4Img, status: 'active' },
   { id: 5, title: '제일 반갑게 맞아주는 아이는?', participants: 26, deadline: '05.10 마감', image: day5Img, status: 'active' },
-  { id: 6, title: '하루 종일 뛰어놀 것 같은 아이는?', participants: 19, deadline: '05.10 마감', image: day6Img, status: 'complete' },
+  { id: 6, title: '하루 종일 놀아도 즐거운 아이는?', participants: 19, deadline: '05.10 마감', image: day6Img, status: 'complete' },
 ] as const
 
 type CommunityChallengePreviewProps = {
@@ -71,9 +71,14 @@ export function CommunityChallengePreview({ onNavigate }: CommunityChallengePrev
 const TOTAL_DAYS = 7
 const PARTICIPATED_DAYS_KEY = 'jibsalife.challenge.participatedDays'
 
+function getParticipatedDaysStorageKey() {
+  const currentUserId = localStorage.getItem(AUTH_CURRENT_USER_STORAGE_KEY)
+  return currentUserId ? `${PARTICIPATED_DAYS_KEY}.${currentUserId}` : PARTICIPATED_DAYS_KEY
+}
+
 function readParticipatedDays(): Set<number> {
   try {
-    const stored = localStorage.getItem(PARTICIPATED_DAYS_KEY)
+    const stored = localStorage.getItem(getParticipatedDaysStorageKey())
     if (!stored) return new Set()
     const parsed = JSON.parse(stored)
     if (Array.isArray(parsed)) return new Set(parsed.filter((n): n is number => typeof n === 'number'))
@@ -82,18 +87,18 @@ function readParticipatedDays(): Set<number> {
 }
 
 function saveParticipatedDays(days: Set<number>) {
-  localStorage.setItem(PARTICIPATED_DAYS_KEY, JSON.stringify([...days]))
+  localStorage.setItem(getParticipatedDaysStorageKey(), JSON.stringify([...days]))
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const challengeDays = [
-  { day: 1, image: day1Img, description: <>내 반려동물의<br />산책을 기록해주세요</> },
-  { day: 2, image: day2Img, description: <>커뮤니티에 댓글을<br />3회 이상 남겨주세요</> },
-  { day: 3, image: day3Img, description: <>1회 이상 <br/>투표에 참여해보세요</> },
-  { day: 4, image: day4Img, description: <>내 반려동물의<br />건강 리포트를 확인해주세요</> },
-  { day: 5, image: day5Img, description: <>반려상식에<br />좋아요를 남겨주세요</> },
-  { day: 6, image: day6Img, description: <>내 반려동물의<br />식사량을 기록해주세요</> },
-  { day: 7, image: day7Img, description: <>커뮤니티에 <br />게시글을 작성해주세요</> },
+  { day: 1, image: day1Img, description: <>우리 반려동물<br />산책을 기록해주세요</> },
+  { day: 2, image: day2Img, description: <>커뮤니티 댓글을<br />3개 이상 남겨주세요</> },
+  { day: 3, image: day3Img, description: <>1개 이상<br />투표에 참여해보세요</> },
+  { day: 4, image: day4Img, description: <>우리 반려동물<br />건강 리포트를 확인해주세요</> },
+  { day: 5, image: day5Img, description: <>반려 지식 글에<br />좋아요를 눌러주세요</> },
+  { day: 6, image: day6Img, description: <>우리 반려동물<br />식사량을 기록해주세요</> },
+  { day: 7, image: day7Img, description: <>커뮤니티에<br />게시글을 작성해주세요</> },
 ]
 
 function CommunityChallenge() {
@@ -101,13 +106,14 @@ function CommunityChallenge() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const cardRefs = useRef<(HTMLDivElement | null)[]>([])
   const [participatedDays, setParticipatedDays] = useState<Set<number>>(() => readParticipatedDays())
-  // currentDay는 자정(handleDayEnd)에만 진행 — 완료 후 리마운트해도 같은 날 유지
+  // 기본 시작일은 계정 종류에 따라 달라진다. 더미 계정은 Day 3, 일반 계정은 Day 1부터 시작한다.
   const [currentDay, setCurrentDay] = useState<number>(() => readCurrentDay())
   const visibleIndexRef = useRef(currentDay)
   const [visibleIndex, setVisibleIndex] = useState(currentDay)
   const [missionDone, setMissionDone] = useState(() => checkChallengeDayDone(currentDay))
+  const defaultCompletedDayCutoff = isDemoChallengeAccount() ? 2 : 0
 
-  // 초기 마운트 시 currentDay 카드로 즉시 이동
+  // 처음 진입하면 현재 챌린지 카드가 가운데 보이도록 이동한다.
   useEffect(() => {
     const card = cardRefs.current[currentDay]
     const container = scrollContainerRef.current
@@ -119,7 +125,7 @@ function CommunityChallenge() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // 스크롤 시 중앙에 가장 가까운 카드로 dot 업데이트
+  // 스크롤 위치와 가장 가까운 카드를 기준으로 dot 상태를 갱신한다.
   useEffect(() => {
     const el = scrollContainerRef.current
     if (!el) return
@@ -141,7 +147,7 @@ function CommunityChallenge() {
     return () => el.removeEventListener('scroll', onScroll)
   }, [])
 
-  // 마우스 드래그 스크롤 (터치는 CSS snap이 처리)
+  // 데스크톱 마우스 드래그 스크롤을 지원하고, 놓으면 가장 가까운 카드로 스냅한다.
   useEffect(() => {
     const el = scrollContainerRef.current
     if (!el) return
@@ -160,7 +166,7 @@ function CommunityChallenge() {
       })
       const target = cardRefs.current[closestIdx]
       if (!target) return
-      // smooth scroll 완료 후 CSS snap 복원 (scrollend 미지원 브라우저는 500ms 후 fallback)
+      // 부드러운 스크롤이 끝나면 CSS snap을 복원한다. scrollend 미지원 브라우저는 타이머로 보정한다.
       const restore = () => {
         el.style.scrollSnapType = ''
         el.removeEventListener('scrollend', restore)
@@ -202,22 +208,20 @@ function CommunityChallenge() {
     }
   }, [])
 
-  // 포인트 계산용 streak (handleComplete에서 사용)
+  // 보상 계산에 사용할 연속 참여 일수를 계산한다.
   let consecutive = 0
   for (let i = currentDay - 1; i >= 0; i--) {
-    if (i < 2 || participatedDays.has(i)) consecutive++
+    if (i < defaultCompletedDayCutoff || participatedDays.has(i)) consecutive++
     else break
   }
 
-  // 활성화된 stamp 수 (index 0,1 항상 + participatedDays)
-  const activeStampCount = 2 + [...participatedDays].filter(d => d >= 2).length
+  const activeStampCount = defaultCompletedDayCutoff + [...participatedDays].filter(d => d >= defaultCompletedDayCutoff).length
 
-  // index 2 이후만 미완료 체크 (0,1은 항상 완료)
   const hasMissed =
-    currentDay > 2 &&
-    Array.from({ length: currentDay - 2 }, (_, i) => i + 2).some((i) => !participatedDays.has(i))
+    currentDay > defaultCompletedDayCutoff &&
+    Array.from({ length: currentDay - defaultCompletedDayCutoff }, (_, i) => i + defaultCompletedDayCutoff).some((i) => !participatedDays.has(i))
 
-  const rewardTitle = hasMissed ? '집사 챌린지 다시 시작!' : `${activeStampCount}일 연속 성공 중!`
+  const rewardTitle = hasMissed ? '집사 챌린지 다시 시작!' : `${activeStampCount}일 연속 성공 중`
 
   const rewardDesc =
     activeStampCount === 2 ? (
@@ -231,18 +235,18 @@ function CommunityChallenge() {
     )
 
   const getStampClass = (i: number) => {
-    if (i < 2) return 'cc_stamp_active'
+    if (i < defaultCompletedDayCutoff) return 'cc_stamp_active'
     if (participatedDays.has(i)) return 'cc_stamp_active'
     if (i === currentDay) return 'cc_stamp_today'
     return ''
   }
 
-  // currentDay 바뀔 때마다 해당 날 완료 여부 재계산
+  // currentDay가 바뀔 때마다 해당 일차의 미션 완료 여부를 다시 계산한다.
   useEffect(() => {
     setMissionDone(checkChallengeDayDone(currentDay))
   }, [currentDay])
 
-  // 다른 페이지에서 미션 완료 시 storage 이벤트 또는 커스텀 이벤트로 감지
+  // 다른 페이지에서 미션이 완료되면 storage/focus/custom event로 상태를 동기화한다.
   useEffect(() => {
     const refresh = () => setMissionDone(checkChallengeDayDone(currentDay))
     window.addEventListener(CHALLENGE_STATUS_CHANGED_EVENT, refresh)
@@ -262,11 +266,7 @@ function CommunityChallenge() {
     setParticipatedDays(next)
     saveParticipatedDays(next)
     addUserNotification({ title: '챌린지', content: '오늘의 챌린지가 참여되었습니다. 포인트 받아주세요.', path: `/community/challenge/reward?amount=${points}` })
-    showStateBarMessage('오늘의 챌린지가 참여되었습니다. 포인트 받아주세요.', 5000, {
-      actionLabel: '받기',
-      onAction: () => navigate(`/community/challenge/reward?amount=${points}`),
-      closeButton: false,
-    })
+    navigate(`/community/challenge/reward?amount=${points}`)
   }
 
   const handleDayEnd = () => {
@@ -298,7 +298,7 @@ function CommunityChallenge() {
 
       <main className="page cc_page">
         <section className="cc_progress_section">
-          <strong className="cc_title">7일 챌린지 완주까지 D-{Math.max(1, 7 - [...participatedDays].filter(d => d >= 2).length)}</strong>
+          <strong className="cc_title">7일 챌린지 완주까지 D-{Math.max(1, TOTAL_DAYS - activeStampCount)}</strong>
           <img src={cheerGroupImg} alt="" className="cc_cheer_img" />
           <div className="cc_stamp_row">
             {Array.from({ length: TOTAL_DAYS }).map((_, i) => (
@@ -328,13 +328,13 @@ function CommunityChallenge() {
         />
         <section className="cc_day_list_section">
           <Title as="h4" title="챌린지 목록">
-            <p>Tip! 매일 자정에 새로운 챌린지가 열려요!</p>
+            <p>Tip! 매일 자정에 새로운 챌린지가 열려요</p>
           </Title>
           <div className="cc_day_scroll_wrapper">
           <div className="cc_day_scroll" ref={scrollContainerRef}>
             {challengeDays.map((item, i) => {
               const status =
-                i < 2
+                i < defaultCompletedDayCutoff
                   ? 'completed'
                   : participatedDays.has(i)
                     ? 'completed'
