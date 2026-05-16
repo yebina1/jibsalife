@@ -28,9 +28,12 @@
   position: absolute;
   display: block;
   object-fit: contain;
+  image-rendering: auto;
+  backface-visibility: hidden;
+  transform: translateZ(0);
   transform-origin: center;
 }
 
 .home_summary_banner_image.is_rotated {
-  transform: rotate(-32.91deg);
+  transform: translateZ(0) rotate(-32.91deg);
 }

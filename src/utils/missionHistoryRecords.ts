@@ -61,6 +61,14 @@ const LEEYORI_MISSION_HISTORY_RECORDS: MissionHistoryRecord[] = [
   { id: 209, title: '증상 기록', detail: '귀 주변 긁음', time: '16:25', color: '#A28BFA', date: '2026-05-12' },
   { id: 210, title: '활동 기록', detail: '창가 휴식 많음', time: '17:50', color: '#162447', date: '2026-05-13' },
   { id: 211, title: '산책 기록', detail: '하네스 적응 산책 7분', time: '18:20', color: '#A4CE95', date: '2026-05-13' },
+  { id: 212, title: '식사 기록', detail: '사료 120g', time: '08:00', color: '#F2B472', date: '2026-05-13' },
+  { id: 213, title: '배변 · 배뇨 기록', detail: '정상 변', time: '09:30', color: '#BEE3F8', date: '2026-05-13' },
+  { id: 214, title: '식사 기록', detail: '사료 120g', time: '08:00', color: '#F2B472', date: '2026-05-14' },
+  { id: 215, title: '활동 기록', detail: '활발함', time: '15:00', color: '#162447', date: '2026-05-14' },
+  { id: 216, title: '배변 · 배뇨 기록', detail: '정상 변', time: '09:30', color: '#BEE3F8', date: '2026-05-14' },
+  { id: 217, title: '식사 기록', detail: '사료 120g', time: '08:00', color: '#F2B472', date: '2026-05-15' },
+  { id: 218, title: '활동 기록', detail: '활발함', time: '15:00', color: '#162447', date: '2026-05-15' },
+  { id: 219, title: '증상 기록', detail: '재채기', time: '14:00', color: '#A28BFA', date: '2026-05-15' },
 ]
 
 const PUNGPUNGI_MISSION_HISTORY_RECORDS: MissionHistoryRecord[] = [
@@ -80,6 +88,15 @@ const PUNGPUNGI_MISSION_HISTORY_RECORDS: MissionHistoryRecord[] = [
   { id: 314, title: '증상 기록', detail: '식욕 감소', time: '19:36', color: '#A28BFA', date: '2026-05-12' },
   { id: 315, title: '배변 · 배뇨 기록', detail: '평소보다 배변 적음', time: '10:10', color: '#BEE3F8', date: '2026-05-13' },
   { id: 316, title: '식사 기록', detail: '사료 80g', time: '16:00', color: '#F2B472', date: '2026-05-13' },
+  { id: 317, title: '식사 기록', detail: '사료 120g', time: '08:00', color: '#F2B472', date: '2026-05-13' },
+  { id: 318, title: '산책 기록', detail: '산책 30분', time: '18:30', color: '#A4CE95', date: '2026-05-13' },
+  { id: 319, title: '배변 · 배뇨 기록', detail: '정상 변', time: '09:30', color: '#BEE3F8', date: '2026-05-13' },
+  { id: 320, title: '식사 기록', detail: '사료 120g', time: '08:00', color: '#F2B472', date: '2026-05-14' },
+  { id: 321, title: '활동 기록', detail: '활발함', time: '15:00', color: '#162447', date: '2026-05-14' },
+  { id: 322, title: '배변 · 배뇨 기록', detail: '정상 변', time: '09:30', color: '#BEE3F8', date: '2026-05-14' },
+  { id: 323, title: '식사 기록', detail: '사료 120g', time: '08:00', color: '#F2B472', date: '2026-05-15' },
+  { id: 324, title: '활동 기록', detail: '활발함', time: '15:00', color: '#162447', date: '2026-05-15' },
+  { id: 325, title: '증상 기록', detail: '재채기', time: '14:00', color: '#A28BFA', date: '2026-05-15' },
 ]
 
 const DEFAULT_MISSION_HISTORY_RECORD_MAP = new Map(
@@ -196,9 +213,13 @@ export function readMissionHistoryRecordsWithDefaults() {
     return [...defaultRecords, ...customRecords]
   }
 
-  return storedRecords.map((record) =>
+  const storedIds = new Set(storedRecords.map((r) => r.id))
+  const missingDefaults = defaultRecords.filter((r) => !storedIds.has(r.id))
+  const mapped = storedRecords.map((record) =>
     defaultRecordMap.get(record.id) ?? DEFAULT_MISSION_HISTORY_RECORD_MAP.get(record.id) ?? record
   )
+
+  return [...mapped, ...missingDefaults]
 }
 
 export function writeStoredMissionHistoryRecords(records: MissionHistoryRecord[]) {

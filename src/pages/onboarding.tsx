@@ -329,6 +329,10 @@ function Onboarding() {
     const slide = introSlideByStep[step as (typeof introStepOrder)[number]]
     const isWelcomeStep = step === 'welcome'
     const progress = 'progress' in slide ? slide.progress : undefined
+    const featureImageClassName =
+      slide.step === 'daily'
+        ? 'onboarding_visual_image onboarding_visual_image_feature onboarding_visual_image_feature_tall'
+        : 'onboarding_visual_image onboarding_visual_image_feature onboarding_visual_image_feature_wide'
     const slideImage =
       'dogImage' in slide
         ? selectedType === 'dog'
@@ -357,7 +361,7 @@ function Onboarding() {
               />
             ) : (
               <img
-                className="onboarding_visual_image onboarding_visual_image_feature"
+                className={featureImageClassName}
                 src={slideImage}
                 alt={slide.alt}
                 aria-hidden="true"

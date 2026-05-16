@@ -212,14 +212,16 @@
 
 .health_cam_ui {
   display: grid;
-  grid-template-rows: auto auto auto auto auto;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
   width: 100%;
   max-width: none;
+  min-height: 100svh;
+  height: 100svh;
   height: 100dvh;
   margin-top: 0;
   margin-left: 0;
   gap: 0;
-  padding: 0 0 12px;
+  padding: 0 0 calc(12px + env(safe-area-inset-bottom));
   overflow: hidden;
   background: #ffffff;
   font-family: 'Pretendard', sans-serif;
@@ -231,7 +233,8 @@
 .health_cam_view {
   position: relative;
   width: 100%;
-  height: 457px;
+  height: 100%;
+  min-height: 320px;
   flex-shrink: 0;
   overflow: hidden;
   background: #000000;
@@ -270,30 +273,33 @@
 }
 
 .health_cam_tutorial_layer {
-  position: absolute;
-  inset: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: -4px;
+  bottom: 0;
   z-index: 12;
   padding: 0;
   border: 0;
-  background: transparent;
+  background: rgba(14, 14, 14, 0.9);
   cursor: pointer;
 }
 
 .health_cam_tutorial_backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(14, 14, 14, 0.8);
+  display: none;
 }
 
 .health_cam_tutorial_focus_box {
   position: absolute;
-  top: 113px;
-  left: 50%;
-  width: min(calc(100% - 52px), 320px);
-  height: 262px;
-  border-radius: 18px;
-  box-shadow: 0 0 0 9999px rgba(14, 14, 14, 0.8);
-  transform: translateX(-50%);
+  height: 300px;
+  top: 140px;
+  right: 24px;
+  bottom: clamp(248px, 34svh, 292px);
+  left: 24px;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  overflow: visible;
 }
 
 .health_cam_tutorial_focus_box::before,
@@ -305,43 +311,45 @@
   height: 28px;
   border: 0 solid rgba(255, 255, 255, 0.78);
   content: '';
+  z-index: 1;
 }
 
 .health_cam_tutorial_focus_box::before {
-  top: 0;
-  left: 0;
+  top: 2px;
+  left: 2px;
   border-top-width: 6px;
   border-left-width: 6px;
-  border-top-left-radius: 4px;
+  border-top-left-radius: 10px;
 }
 
 .health_cam_tutorial_focus_box::after {
-  top: 0;
-  right: 0;
+  top: 2px;
+  right: 2px;
   border-top-width: 6px;
   border-right-width: 6px;
-  border-top-right-radius: 4px;
+  border-top-right-radius: 10px;
 }
 
 .health_cam_tutorial_focus_box span {
   position: absolute;
   inset: 0;
+  border-radius: inherit;
 }
 
 .health_cam_tutorial_focus_box span::before {
-  bottom: 0;
-  left: 0;
+  bottom: 2px;
+  left: 2px;
   border-bottom-width: 6px;
   border-left-width: 6px;
-  border-bottom-left-radius: 4px;
+  border-bottom-left-radius: 10px;
 }
 
 .health_cam_tutorial_focus_box span::after {
-  right: 0;
-  bottom: 0;
+  right: 2px;
+  bottom: 2px;
   border-right-width: 6px;
   border-bottom-width: 6px;
-  border-bottom-right-radius: 4px;
+  border-bottom-right-radius: 10px;
 }
 
 .health_cam_tabs_wrapper.health_cam_tutorial_tabs_wrapper {
@@ -353,6 +361,11 @@
   pointer-events: none;
   padding: 0 !important;
   background: transparent !important;
+}
+
+.health_cam_tutorial_tabs_wrapper.is_hidden,
+.health_cam_tabs_wrapper.is_hidden {
+  display: none;
 }
 
 .health_cam_tabs.health_cam_tutorial_tabs {
@@ -484,7 +497,7 @@
 }
 
 .health_cam_tutorial_callout_video .health_cam_tutorial_text {
-  display: none;
+  display: block;
 }
 
 .health_cam_tutorial_text_overlay_video {
@@ -537,7 +550,7 @@
 }
 
 .health_cam_tutorial_mode_hint_photo {
-  bottom: -24px;
+  bottom:px;
   right: 18px;
 }
 
@@ -597,8 +610,8 @@
 }
 
 .health_cam_tutorial_callout_record {
-  right: 16px;
-  bottom: 150px;
+  right: 56px;
+  bottom: 130px;
   text-align: right;
   width: 174px;
   min-height: 126px;
@@ -606,15 +619,15 @@
 
 .health_cam_tutorial_callout_record img {
   width: 20px;
-  height: 59px;
+  height: 59;
   aspect-ratio: 20 / 59;
   top: 82px;
-  right: 94px;
+  right: 44px;
   margin: 0;
 }
 
 .health_cam_tutorial_callout_close {
-  top: 74px;
+  top: 84px;
   left: 50%;
   right: auto;
   text-align: center;
@@ -624,7 +637,7 @@
 }
 
 .health_cam_tutorial_callout_close .health_cam_tutorial_text {
-  display: none;
+  display: block;
 }
 
 .health_cam_tutorial_text_overlay_close {
@@ -674,8 +687,8 @@
   width: 68px;
   height: 19px;
   aspect-ratio: 68 / 19;
-  top: 10px;
-  right: -10px;
+  top: 5px;
+  right: -37px;
   margin: 0;
 }
 
@@ -698,15 +711,17 @@
 }
 
 .health_cam_tutorial_callout_video {
-  top: 224px;
+  top: 434px;
   left: 52px;
   width: 160px;
-  min-height: 150px;
+  min-height: 150px;;
 }
 
 .health_cam_tutorial_callout_video img {
-  top: 58px;
-  left: 88px;
+  width:50%;
+  height:60%;
+  top: 60px;
+  left: 58px;
 }
 
 .health_cam_tutorial_text_rendered_video {
@@ -731,15 +746,17 @@
 }
 
 .health_cam_tutorial_callout_photo {
-  top: 214px;
-  right: 28px;
+  top: 434px;
+  right: 78px;
   width: 168px;
   min-height: 188px;
 }
 
 .health_cam_tutorial_callout_photo img {
-  top: 72px;
-  right: 72px;
+  width:50%;
+  height:50%;
+  top: 57px;
+  right: 32px;
 }
 
 .health_cam_tutorial_text_rendered_photo {
@@ -765,6 +782,17 @@
 
 .health_cam_tutorial_callout_close {
   animation: healthCamTutorialFadeCentered 240ms ease;
+}
+
+.health_cam_tutorial_text_rendered_video > span:last-child,
+.health_cam_tutorial_text_rendered_photo > span:last-child {
+  display: block !important;
+}
+
+.health_cam_tutorial_text_rendered_video::after,
+.health_cam_tutorial_text_rendered_photo::after {
+  content: none !important;
+  display: none !important;
 }
 
 .health_cam_tutorial_callout_close .health_cam_tutorial_text,
@@ -812,9 +840,21 @@
 }
 
 .health_cam_mode.is_tutorial_label {
-  color: #dbd2ff;
-  font-size: 18px;
-  font-weight: 700;
+  color: #dbd2ff !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+}
+
+.health_cam_tutorial_text_overlay,
+.health_cam_tutorial_text_rendered {
+  display: none !important;
+}
+
+.health_cam_tutorial_callout_video .health_cam_tutorial_text,
+.health_cam_tutorial_callout_photo .health_cam_tutorial_text,
+.health_cam_tutorial_callout_record .health_cam_tutorial_text,
+.health_cam_tutorial_callout_close .health_cam_tutorial_text {
+  display: block !important;
 }
 
 .health_cam_close_btn.is_tutorial_target {
@@ -1517,11 +1557,11 @@
 @media (min-width: 768px) {
   /* 카메라 그리드: 뷰 영역이 남은 세로 공간을 모두 채움 */
   .health_cam_ui {
-    grid-template-rows: auto 1fr auto auto auto;
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
   }
 
   .health_cam_view {
-    height: auto;
+    height: 100%;
   }
 
   /* BottomSheet: 전체 너비 하단 시트 */

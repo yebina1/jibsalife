@@ -796,7 +796,7 @@ function Health() {
     const timeoutId = window.setTimeout(() => {
       setCameraTutorialStepIndex((currentStep) => {
         if (currentStep === null) return null
-        return currentStep < cameraTutorialStepOrder.length - 1 ? currentStep + 1 : null
+        return currentStep < cameraTutorialStepOrder.length - 1 ? currentStep + 1 : currentStep
       })
     }, cameraTutorialStepDurations[cameraTutorialStepIndex] ?? 2200)
 
@@ -947,7 +947,7 @@ function Health() {
           </button>
         </div>
       ) : (
-        <div className="health_cam_tabs_wrapper">
+        <div className={`health_cam_tabs_wrapper${activeCameraTutorialStep === 'close' ? ' is_hidden' : ''}`}>
           <div className="health_cam_tabs" role="tablist" aria-label="건강 체크 탭">
             <button
               type="button"
@@ -973,7 +973,10 @@ function Health() {
           <span className="health_cam_tutorial_focus_box" aria-hidden="true">
             <span />
           </span>
-          <span className="health_cam_tabs_wrapper health_cam_tutorial_tabs_wrapper" aria-hidden="true">
+          <span
+            className={`health_cam_tabs_wrapper health_cam_tutorial_tabs_wrapper${activeCameraTutorialStep === 'close' ? ' is_hidden' : ''}`}
+            aria-hidden="true"
+          >
             <span className="health_cam_tabs health_cam_tutorial_tabs">
               <span className={`health_cam_tab${isCameraTutorialCameraTabActive ? ' is_active' : ''}`}>
                 카메라
@@ -986,22 +989,9 @@ function Health() {
 
           {activeCameraTutorialStep === 'video' ? (
             <span className="health_cam_tutorial_callout health_cam_tutorial_callout_video">
-              <span className="health_cam_tutorial_mode_hint health_cam_tutorial_mode_hint_video" aria-hidden="true">
-                VIDEO
-              </span>
               <span className="health_cam_tutorial_text">
-                동영상은
-                <br />
-                <span className="health_cam_tutorial_emphasis">흔들리지 않게</span> 해 주세요!
-              </span>
-              <span className="health_cam_tutorial_text_overlay health_cam_tutorial_text_overlay_video" aria-hidden="true">
-                <span>동영상은</span>
-                <span className="health_cam_tutorial_emphasis">흔들리지 않게</span>
-                <span>해 주세요!</span>
-              </span>
-              <span className="health_cam_tutorial_text_rendered health_cam_tutorial_text_rendered_video" aria-hidden="true">
-                <span>동영상은</span>
-                <span><span className="health_cam_tutorial_emphasis">흔들리지 않게</span> 해 주세요!</span>
+                <span>동영상은<br/>
+                <span className="health_cam_tutorial_emphasis">흔들리지 않게</span> 해 주세요!</span>
               </span>
               <img src={tutorialArrowVideo} alt="" aria-hidden="true" />
             </span>
@@ -1009,22 +999,10 @@ function Health() {
 
           {activeCameraTutorialStep === 'photo' ? (
             <span className="health_cam_tutorial_callout health_cam_tutorial_callout_photo">
-              <span className="health_cam_tutorial_mode_hint health_cam_tutorial_mode_hint_photo" aria-hidden="true">
-                PHOTO
-              </span>
               <span className="health_cam_tutorial_text">
                 사진은 <span className="health_cam_tutorial_emphasis">밝은</span> 곳에서
                 <br />
                 <span className="health_cam_tutorial_emphasis">선명</span>하게 촬영 해주세요!
-              </span>
-              <span className="health_cam_tutorial_text_overlay health_cam_tutorial_text_overlay_photo" aria-hidden="true">
-                <span>사진 촬영은</span>
-                <span><span className="health_cam_tutorial_emphasis">밝은 곳</span>에서</span>
-                <span><span className="health_cam_tutorial_emphasis">선명하게</span> 해 주세요!</span>
-              </span>
-              <span className="health_cam_tutorial_text_rendered health_cam_tutorial_text_rendered_photo" aria-hidden="true">
-                <span>사진 촬영은 <span className="health_cam_tutorial_emphasis">밝은 곳</span>에서</span>
-                <span><span className="health_cam_tutorial_emphasis">선명하게</span> 해 주세요!</span>
               </span>
               <img src={tutorialArrowPhoto} alt="" aria-hidden="true" />
             </span>
@@ -1049,10 +1027,6 @@ function Health() {
                 <span className="health_cam_tutorial_emphasis">닫기</span>를 눌러
                 <br />
                 나갈 수 있어요!
-              </span>
-              <span className="health_cam_tutorial_text_rendered health_cam_tutorial_text_rendered_close" aria-hidden="true">
-                <span><span className="health_cam_tutorial_emphasis">닫기</span>를 눌러</span>
-                <span>나갈 수 있어요!</span>
               </span>
               <img src={tutorialArrowClose} alt="" aria-hidden="true" />
             </span>

@@ -38,6 +38,7 @@
   display: block;
   width: 100%;
   object-fit: contain;
+  image-rendering: auto;
 }
 
 .onboarding_decorated_image {
@@ -154,8 +155,24 @@
 }
 
 .onboarding_visual_image_feature {
-  width: 317px;
-  height: 217px;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.onboarding_visual_image_feature_tall {
+  width: auto;
+  max-width: min(168px, calc(100vw - 32px));
+  height: 220px;
+}
+
+.onboarding_visual_image_feature_wide {
+  width: 100%;
+  max-width: 317px;
+  height: auto;
+  max-height: 217px;
 }
 
 .onboarding_visual_image_complete {
@@ -568,8 +585,8 @@
   }
 
   .onboarding_visual_image_feature {
-    width: 317px;
-    height: 217px;
+    width: auto;
+    height: auto;
   }
 
   .onboarding_guardian_grid {
@@ -812,12 +829,25 @@
   }
 
   .onboarding_page .onboarding_layout:has(.onboarding_layout_indicators) .onboarding_visual_image_feature {
-    width: 213px;
-    height: 315px;
+    width: auto;
+    height: auto;
   }
 
   /* Steps 5 & 6 have landscape images — override portrait box when dot 2 or 3 is active */
   .onboarding_page .onboarding_layout:has(.onboarding_layout_indicators span:nth-child(n+2).is_active) .onboarding_visual_image_feature {
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+    max-height: 315px;
+  }
+
+  .onboarding_page .onboarding_layout:has(.onboarding_layout_indicators) .onboarding_visual_image_feature_tall {
+    width: auto;
+    max-width: 205px;
+    height: 315px;
+  }
+
+  .onboarding_page .onboarding_layout:has(.onboarding_layout_indicators) .onboarding_visual_image_feature_wide {
     width: 100%;
     max-width: 520px;
     height: auto;

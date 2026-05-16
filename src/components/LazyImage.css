@@ -3,7 +3,6 @@
   position: relative;
   overflow: hidden;
   width: 100%;
-  background: #f6f6f8;
 }
 
 /* WebP picture 요소가 레이아웃에 영향을 주지 않도록 처리 */
@@ -46,20 +45,12 @@
   transition: opacity 0.15s ease;
 }
 
-.lazy_img_root.is_priority .lazy_img {
-  opacity: 0.85;
-}
-
 .lazy_img_root.is_loaded .lazy_img {
   opacity: 1;
 }
 
 .lazy_img_root.is_loaded .lazy_img_skeleton {
   display: none;
-}
-
-.lazy_img_root.is_priority {
-  background: #f6f6f8;
 }
 
 /* 모바일 성능: will-change는 실제 애니메이션 중에만 적용 */
