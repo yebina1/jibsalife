@@ -1,7 +1,7 @@
 {
-  "name": "JIBSALIFE",
-  "short_name": "JIBSALIFE",
-  "description": "JIBSALIFE",
+  "name": "집사인생",
+  "short_name": "집사인생",
+  "description": "반려생활 커뮤니티 기반 AI 케어 플랫폼",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#6D59F8",

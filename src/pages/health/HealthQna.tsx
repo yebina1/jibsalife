@@ -44,6 +44,19 @@ type PendingOtherRecord = {
 }
 
 const HEALTH_QNA_STORAGE_KEY = 'jibsalife.health.qna.history'
+
+const DUMMY_RESPONSES = [
+  '최근 기록을 보니 식사량이 안정적이에요. 꾸준히 기록해 주시면 더 정확하게 파악할 수 있어요 🐾',
+  '산책은 규칙적으로 하고 있군요! 활동량이 유지되면 소화도 잘 되고 스트레스 해소에도 도움이 돼요.',
+  '배변 상태가 정상이라면 지금 식단을 유지해 주세요. 변화가 생기면 꼭 기록해 두세요.',
+  '오늘 기록해 주신 내용 잘 확인했어요. 이상 신호가 보이면 병원 상담을 권해드려요.',
+  '반려동물의 컨디션은 매일 조금씩 다를 수 있어요. 꾸준한 기록이 건강 관리의 시작이에요 🌿',
+  '식욕이 평소와 다르다면 하루 이틀 더 지켜보시고, 계속되면 병원에 방문해 보세요.',
+  '활동량이 줄었다면 날씨나 환경 변화 때문일 수도 있어요. 며칠 관찰 후 변화가 없으면 상담받아 보세요.',
+  '물 섭취량도 함께 체크해 주시면 더 좋아요. 충분한 수분 섭취는 건강 유지에 중요하답니다 💧',
+]
+
+let dummyResponseIndex = 0
 const DEFAULT_CHIPS = ['식사', '배변·배뇨', '증상', '활동', '캘린더', '커뮤니티', '투표', '주변병원'] as const
 const WALK_TIME_OPTIONS = ['10분 미만', '10~30분', '30~60분', '60분 이상'] as const
 
@@ -368,6 +381,8 @@ function HealthQna() {
       }
     )
 
+      if (!res.ok) throw new Error(`server error ${res.status}`)
+
       const data = await res.json()
 
       setChatCount((count) => count + 1)
@@ -378,14 +393,15 @@ function HealthQna() {
         text: data.answer,
       }
 
-    } catch (error) {
+    } catch {
 
-    console.error(error)
+    const dummyText = DUMMY_RESPONSES[dummyResponseIndex % DUMMY_RESPONSES.length]
+    dummyResponseIndex++
 
     return {
       id: buildMessageId(),
       sender: 'bot' as const,
-      text: '답변 생성 중 오류가 발생했어요.',
+      text: dummyText,
     }
   }
 }
