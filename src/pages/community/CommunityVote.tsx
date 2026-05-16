@@ -1,4 +1,4 @@
-﻿import './Community.css'
+﻿import './CommunityShared.css'
 import './CommunityVote.css'
 import { type CSSProperties, useMemo, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'

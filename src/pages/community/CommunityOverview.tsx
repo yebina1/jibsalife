@@ -1,4 +1,4 @@
-﻿import './Community.css'
+﻿import './CommunityShared.css'
 import './CommunityOverview.css'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'

@@ -63,16 +63,6 @@
   line-clamp: 2;
 }
 
-.pet_story_feed_item_description {
-  margin: 0;
-  color: #525252;
-  font-size: 20px;
-  font-weight: 500;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .pet_story_feed_item_meta {
   display: flex;
   align-items: center;
@@ -196,7 +186,6 @@
     font-size: 20px;
   }
 
-  .pet_story_feed_item_description,
   .pet_story_feed_item_meta p {
     font-size: 14px;
   }

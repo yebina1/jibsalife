@@ -1,5 +1,4 @@
-﻿import './Community.css'
-import './CommunityVoteDetail.css'
+﻿import './CommunityVoteDetail.css'
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'

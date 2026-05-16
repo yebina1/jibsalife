@@ -12,7 +12,6 @@ type PetStoryFeedItemProps = {
   postId?: number | string
   tag: string
   title: string
-  description?: string
   author: string
   time?: string
   image?: string | null
@@ -35,7 +34,6 @@ function PetStoryFeedItem({
   postId,
   tag,
   title,
-  description,
   author,
   time,
   image,
@@ -74,9 +72,7 @@ function PetStoryFeedItem({
             author={<p className="pet_story_feed_item_author">{author}</p>}
             time={time ? <p className="pet_story_feed_item_time">{time}</p> : null}
             metaClassName="pet_story_feed_item_meta"
-          >
-            {description && <p className="pet_story_feed_item_description">{description}</p>}
-          </Title>
+          />
           {image && (
             <img
               src={image}

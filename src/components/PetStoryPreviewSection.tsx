@@ -114,7 +114,6 @@ function PetStoryPreviewSection() {
           postId={post.id}
           tag={post.tag}
           title={post.title}
-          description={post.content ?? post.title}
           author={post.author}
           time={getRelativeTimeText(post.createdAt, nowTime)}
           image={post.image ?? dailyThumbnail}

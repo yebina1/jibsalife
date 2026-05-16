@@ -6,11 +6,9 @@ import HeaderIcon from '../../components/HeaderIcon'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
 import FloatingWriteButton from '../../components/FloatingWriteButton'
-import PostMoreSheet from '../../components/PostMoreSheet'
 import ConfirmDialog from '../../components/ConfirmDialog'
+import PetStoryFeedItem from '../../components/PetStoryFeedItem'
 import { readMyProfileName } from '../../utils/myProfile'
-import commentIcon from '../../svg/nav communicate.svg'
-import sharingIcon from '../../svg/sharing.svg'
 import emptyPostImage from '../../img/mypage/empty_post_.png'
 
 const createdPostsStorageKey = 'jibsalife.community.createdPosts'
@@ -51,6 +49,7 @@ type MyPost = {
 
 type MyPostCard = MyPost & {
   dateLabel: string
+  timeLabel: string
   commentCount: number
   viewCount: number
 }
@@ -59,8 +58,8 @@ const dummyPosts: MyPost[] = [
   {
     id: 900001,
     tag: '일상',
-    title: '오늘 산책하다가 웃는 표정이 너무 귀여워서 기록해봤어요.',
-    content: '날씨가 좋아서 공원 한 바퀴 돌았는데 표정이 정말 밝았어요. 다음에도 같은 코스로 가보려고요.',
+    title: '오늘 산책하다가 잠든 척해서 너무 귀여웠어요.',
+    content: '날씨가 좋아서 공원 한 바퀴 돌았는데, 벤치에 앉자마자 꾸벅꾸벅 졸더라고요. 다음에도 같은 코스로 가보려고요.',
     author: '',
     date: '2026.05.15',
     likes: 14,
@@ -74,8 +73,8 @@ const dummyPosts: MyPost[] = [
   {
     id: 900002,
     tag: '일상',
-    title: '식사량이 줄어들 때 먼저 확인해본 것들 정리',
-    content: '사료 종류, 급여 시간, 간식량부터 하나씩 체크해보니 원인을 조금 더 빨리 찾을 수 있었어요.',
+    title: '식사량이 줄어서 먼저 확인해본 것들 정리',
+    content: '사료 종류, 급여 시간, 간식량까지 하나씩 체크해보니 원인을 조금 더 빨리 찾을 수 있었어요.',
     author: '',
     date: '2026.05.13',
     likes: 22,
@@ -90,7 +89,7 @@ const dummyPosts: MyPost[] = [
     id: 900003,
     tag: '일상',
     title: '배변 기록 남기기 시작하고 나서 달라진 점',
-    content: '패턴이 보여서 상태 변화를 훨씬 빨리 알아차릴 수 있었고 병원 상담할 때도 도움이 됐어요.',
+    content: '패턴을 보면서 상태 변화를 조금 더 빨리 알아차릴 수 있었고 병원 상담할 때도 도움이 되었어요.',
     author: '',
     date: '2026.05.11',
     likes: 9,
@@ -168,30 +167,25 @@ function formatDateLabel(post: MyPost) {
   return `${year}.${month}.${day}`
 }
 
-function HeartIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M12 20.2 5.2 13.8a4.55 4.55 0 0 1 6.43-6.43L12 7.74l.37-.37a4.55 4.55 0 1 1 6.43 6.43Z" />
-    </svg>
-  )
-}
+function formatRelativeTimeText(createdAt?: string) {
+  if (!createdAt) return ''
 
-function CommentIcon() {
-  return <img src={commentIcon} alt="" aria-hidden="true" />
-}
+  const createdTime = new Date(createdAt).getTime()
+  if (!Number.isFinite(createdTime)) return ''
 
-function ShareIcon() {
-  return <img src={sharingIcon} alt="" aria-hidden="true" />
-}
+  const diffSeconds = Math.max(0, Math.floor((Date.now() - createdTime) / 1000))
+  const diffMinutes = Math.floor(diffSeconds / 60)
+  const diffHours = Math.floor(diffMinutes / 60)
+  const diffDays = Math.floor(diffHours / 24)
+  const diffMonths = Math.floor(diffDays / 30)
+  const diffYears = Math.floor(diffMonths / 12)
 
-function MoreIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <circle cx="12" cy="5" r="1.8" />
-      <circle cx="12" cy="12" r="1.8" />
-      <circle cx="12" cy="19" r="1.8" />
-    </svg>
-  )
+  if (diffSeconds < 60) return '방금 전'
+  if (diffMinutes < 60) return `${diffMinutes}분 전`
+  if (diffHours <= 23) return `${diffHours}시간 전`
+  if (diffDays <= 31) return `${diffDays}일 전`
+  if (diffMonths <= 12) return `${Math.max(1, diffMonths)}달 전`
+  return `${Math.max(1, diffYears)}년 전`
 }
 
 function MyPostsPage() {
@@ -221,6 +215,7 @@ function MyPostsPage() {
       posts.map((post) => ({
         ...post,
         dateLabel: formatDateLabel(post),
+        timeLabel: formatRelativeTimeText(post.createdAt) || formatDateLabel(post),
         commentCount: readCommentCount(post.id, post.comments ?? 0),
         viewCount: readViewCount(post.id, post.views ?? 0),
       })),
@@ -256,9 +251,7 @@ function MyPostsPage() {
     setActiveMorePostId(null)
   }
 
-  const handleEditPost = () => {
-    if (!activeMorePost) return
-
+  const handleEditPost = (post: MyPostCard) => {
     try {
       window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(posts))
     } catch {
@@ -267,15 +260,15 @@ function MyPostsPage() {
 
     navigate('/community/petstory/write', {
       state: {
-        editPost: activeMorePost,
+        editPost: post,
         returnTo: '/mypage/posts',
       },
     })
     closeMoreSheet()
   }
 
-  const handleDeletePost = () => {
-    if (!activeMorePost) return
+  const handleDeletePost = (post: MyPostCard) => {
+    setActiveMorePostId(post.id)
     setIsDeleteConfirmOpen(true)
   }
 
@@ -325,84 +318,31 @@ function MyPostsPage() {
         {postCards.length > 0 ? (
           <section className="myposts_list" aria-label={UI.listLabel}>
             {postCards.map((post) => (
-              <article
+              <PetStoryFeedItem
                 key={post.id}
-                className="myposts_card"
+                postId={post.id}
+                tag={post.tag}
+                title={post.title}
+                author={post.author ?? readMyProfileName()}
+                time={post.timeLabel}
+                image={post.image}
+                likes={post.likes ?? 0}
+                comments={post.commentCount}
+                views={post.viewCount}
+                isOwn
                 onClick={() => openPost(post)}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault()
-                    openPost(post)
-                  }
-                }}
-                role="button"
-                tabIndex={0}
-              >
-                <div className="myposts_card_body">
-                  <div className="myposts_card_header">
-                    <div className="myposts_card_header_main">
-                      <span className="myposts_tag">{post.tag}</span>
-                    </div>
-                    <button
-                      type="button"
-                      className="myposts_more_button"
-                      aria-label="게시글 더보기"
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        setActiveMorePostId(post.id)
-                      }}
-                    >
-                      <MoreIcon />
-                    </button>
-                  </div>
-                  <div className="myposts_text">
-                    <strong className="myposts_title">{post.title}</strong>
-                    {post.content ? <p className="myposts_excerpt">{post.content}</p> : null}
-                  </div>
-                  <div className="myposts_footer">
-                    <div className="myposts_meta">
-                      <span className="myposts_meta_item" aria-label={`${UI.likes} ${post.likes ?? 0}`}>
-                        <span className="myposts_meta_icon"><HeartIcon /></span>
-                        <span>{post.likes ?? 0}</span>
-                      </span>
-                      <span className="myposts_meta_item" aria-label={`${UI.comments} ${post.commentCount}`}>
-                        <span className="myposts_meta_icon"><CommentIcon /></span>
-                        <span>{post.commentCount}</span>
-                      </span>
-                      <span className="myposts_meta_item" aria-label={`${UI.shares} ${post.shares ?? 0}`}>
-                        <span className="myposts_meta_icon"><ShareIcon /></span>
-                        <span>{post.shares ?? 0}</span>
-                      </span>
-                    </div>
-                    <div className="myposts_meta_side">
-                      {post.dateLabel ? <span className="myposts_meta_text">{post.dateLabel}</span> : null}
-                      <span className="myposts_meta_text" aria-label={`${UI.views} ${post.viewCount}`}>
-                        {`${UI.views} ${post.viewCount.toLocaleString('ko-KR')}`}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                {post.image ? (
-                  <img className="myposts_thumb" src={post.image} alt="" aria-hidden="true" />
-                ) : null}
-              </article>
+                onEdit={() => handleEditPost(post)}
+                onDelete={() => handleDeletePost(post)}
+              />
             ))}
           </section>
         ) : (
           <section className="myposts_empty" aria-label={UI.emptyLabel}>
-            <strong>{'아직 작성한 게시글이 없어요'}</strong>
+            <strong>{UI.emptyTitle}</strong>
             <img className="myposts_empty_img" src={emptyPostImage} alt="" aria-hidden="true" />
           </section>
         )}
       </main>
-      {activeMorePost ? (
-        <PostMoreSheet
-          type="own"
-          onClose={closeMoreSheet}
-          onDelete={handleDeletePost}
-          onEdit={handleEditPost}
-        />
-      ) : null}
       {isDeleteConfirmOpen ? (
         <ConfirmDialog
           message="삭제하시겠습니까?"

@@ -1,5 +1,4 @@
-import './Community.css'
-import './CommunityVoteResult.css'
+﻿import './CommunityVoteResult.css'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import PageHeader from '../../components/PageHeader'

@@ -1,4 +1,4 @@
-﻿import './Community.css'
+﻿import './CommunityShared.css'
 import './CommunityPetStory.css'
 import Title from '../../components/Title'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -506,7 +506,6 @@ function CommunityPetStory() {
                   postId={post.id}
                   tag={post.tag}
                   title={post.title}
-                  description={post.content}
                   author={post.author}
                   time={getPostTimeText(post)}
                   image={post.image}
@@ -568,7 +567,6 @@ function CommunityPetStory() {
                   postId={post.id}
                   tag={post.tag}
                   title={post.title}
-                  description={post.content}
                   author={post.author}
                   time={getPostTimeText(post)}
                   image={post.image}

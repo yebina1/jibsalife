@@ -1,4 +1,4 @@
-﻿import './Community.css'
+﻿import './CommunityShared.css'
 import './CommunityChallenge.css'
 import { useEffect, useRef, useState } from 'react'
 import { checkChallengeDayDone, CHALLENGE_STATUS_CHANGED_EVENT, isDemoChallengeAccount, readCurrentDay, saveCurrentDay } from '../../utils/challengeStatus'
