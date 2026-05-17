@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import './RewardHero.css'
 
 function CheckIcon() {
@@ -17,9 +18,15 @@ function CheckIcon() {
 
 type RewardHeroProps = {
   rewardAmount: number
+  title?: ReactNode
+  subtitle?: ReactNode
 }
 
-function RewardHero({ rewardAmount }: RewardHeroProps) {
+function RewardHero({
+  rewardAmount,
+  title = '참여 완료!',
+  subtitle,
+}: RewardHeroProps) {
   return (
     <section className="community_reward_hero">
       <div className="community_reward_circle" aria-hidden="true">
@@ -29,9 +36,13 @@ function RewardHero({ rewardAmount }: RewardHeroProps) {
       </div>
 
       <strong className="community_reward_hero_heading">
-        참여 완료!
+        {title}
         <span>
-          <span>{rewardAmount} 포인트</span>를 받았어요.
+          {subtitle ?? (
+            <>
+              <span>{rewardAmount.toLocaleString()} 포인트</span>를 받았어요.
+            </>
+          )}
         </span>
       </strong>
     </section>

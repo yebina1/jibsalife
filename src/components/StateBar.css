@@ -51,3 +51,22 @@
   width: 25px;
   height: 12px;
 }
+
+.state_bar_top_toast {
+  position: fixed;
+  top: var(--layout-status-bar-height, 41px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  background: rgba(17, 17, 17, 0.85);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: var(--app-line-height);
+  padding: 10px 16px;
+  border-radius: 10px;
+  white-space: pre-line;
+  text-align: center;
+  pointer-events: none;
+}

@@ -1,5 +1,6 @@
 import { AUTH_CURRENT_USER_STORAGE_KEY, isDemoAccount } from './authAccounts'
 import { readVotedMissionIds } from './communityVoteStatus'
+import { getCommunityCreatedPostsStorageKey } from './communityCreatedPosts'
 
 export const CHALLENGE_STATUS_CHANGED_EVENT = 'challenge-status-changed'
 
@@ -176,7 +177,7 @@ function checkDay6(): boolean {
   if (typeof window === 'undefined') return false
 
   try {
-    const stored = window.localStorage.getItem('jibsalife.community.createdPosts')
+    const stored = window.localStorage.getItem(getCommunityCreatedPostsStorageKey())
     if (!stored) return false
     const posts = JSON.parse(stored)
     return Array.isArray(posts) && posts.length > 0

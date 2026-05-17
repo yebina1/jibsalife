@@ -1,3 +1,5 @@
+import { getUserScopedStorageKey } from './userScopedStorage'
+
 export type ChatbotRecordCategory = '식사' | '배변' | '증상' | '활동'
 export type ChatbotFeedbackType = 'like' | 'dislike'
 
@@ -49,7 +51,7 @@ export function readChatbotDataStore(): ChatbotDataStore {
   if (typeof window === 'undefined') return EMPTY_CHATBOT_DATA_STORE
 
   try {
-    const savedValue = window.localStorage.getItem(CHATBOT_DATA_STORAGE_KEY)
+    const savedValue = window.localStorage.getItem(getUserScopedStorageKey(CHATBOT_DATA_STORAGE_KEY))
     if (!savedValue) return EMPTY_CHATBOT_DATA_STORE
 
     const parsedValue = JSON.parse(savedValue)
@@ -83,7 +85,7 @@ export function readChatbotDataStore(): ChatbotDataStore {
 function writeChatbotDataStore(nextStore: ChatbotDataStore) {
   if (typeof window === 'undefined') return
 
-  window.localStorage.setItem(CHATBOT_DATA_STORAGE_KEY, JSON.stringify(nextStore))
+  window.localStorage.setItem(getUserScopedStorageKey(CHATBOT_DATA_STORAGE_KEY), JSON.stringify(nextStore))
 }
 
 export function appendChatbotRecord(

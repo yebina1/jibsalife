@@ -14,6 +14,8 @@ import eyeOffIcon from '../svg/eye_off.svg'
 import grayCheckIcon from '../img/gray-check.png'
 import blueCheckIcon from '../img/blue-check.png'
 import { hasAuthAccount, saveAuthAccount } from '../utils/authAccounts'
+import { markSignupWelcomeRewardPending } from '../utils/profilePoints'
+import { seedSignupNotificationsForUser } from '../utils/userNotifications'
 import './Signup.css'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -162,6 +164,8 @@ function Signup() {
       id: email,
       password,
     })
+    markSignupWelcomeRewardPending(email)
+    seedSignupNotificationsForUser(email)
     sessionStorage.removeItem('signup_terms')
     sessionStorage.removeItem('signup_form')
     setIsSignupCompleteOpen(true)

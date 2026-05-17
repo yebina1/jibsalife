@@ -1,5 +1,6 @@
 import leeyoriImage from '../img/leeyori.png'
 import pungpungiImage from '../img/pungpungi.png'
+import { getUserScopedStorageKey, isCurrentDemoUser } from './userScopedStorage'
 
 export type PetProfileSummary = {
   id: number
@@ -39,6 +40,17 @@ export const defaultPetProfiles: PetProfileSummary[] = [
   },
 ]
 
+const emptySelectedPetProfile: PetProfileSummary = {
+  id: 0,
+  type: 'profile',
+  name: '반려동물',
+  breed: '',
+  image: defaultPetProfiles[0].image,
+  birthDate: '',
+  weight: '',
+  sex: '',
+}
+
 function normalizeProfileImage(image: unknown, fallbackImage: string) {
   if (typeof image !== 'string') return fallbackImage
 
@@ -74,22 +86,22 @@ export function readPetProfiles() {
     return defaultPetProfiles
   }
 
-  const savedValue = window.localStorage.getItem(PET_PROFILES_STORAGE_KEY)
+  const savedValue = window.localStorage.getItem(getUserScopedStorageKey(PET_PROFILES_STORAGE_KEY))
   if (!savedValue) {
-    return defaultPetProfiles
+    return isCurrentDemoUser() ? defaultPetProfiles : []
   }
 
   try {
     const parsedValue = JSON.parse(savedValue) as Partial<PetProfileSummary>[]
     if (!Array.isArray(parsedValue) || parsedValue.length === 0) {
-      return defaultPetProfiles
+      return isCurrentDemoUser() ? defaultPetProfiles : []
     }
 
     return parsedValue.map((profile, index) =>
       normalizePetProfile(profile, defaultPetProfiles[index] ?? defaultPetProfiles[0]),
     )
   } catch {
-    return defaultPetProfiles
+    return isCurrentDemoUser() ? defaultPetProfiles : []
   }
 }
 
@@ -98,19 +110,19 @@ export function writePetProfiles(nextProfiles: PetProfileSummary[]) {
     return
   }
 
-  window.localStorage.setItem(PET_PROFILES_STORAGE_KEY, JSON.stringify(nextProfiles))
+  window.localStorage.setItem(getUserScopedStorageKey(PET_PROFILES_STORAGE_KEY), JSON.stringify(nextProfiles))
   window.dispatchEvent(new CustomEvent(PET_PROFILES_CHANGE_EVENT, { detail: nextProfiles }))
 }
 
 export function readSelectedPetProfileId() {
   const profiles = readPetProfiles()
-  const fallbackProfile = profiles[0] ?? defaultPetProfiles[0]
+  const fallbackProfile = profiles[0] ?? (isCurrentDemoUser() ? defaultPetProfiles[0] : emptySelectedPetProfile)
 
   if (typeof window === 'undefined') {
     return fallbackProfile.id
   }
 
-  const savedValue = Number(window.localStorage.getItem(SELECTED_PET_PROFILE_ID_STORAGE_KEY))
+  const savedValue = Number(window.localStorage.getItem(getUserScopedStorageKey(SELECTED_PET_PROFILE_ID_STORAGE_KEY)))
   return Number.isFinite(savedValue) && profiles.some((profile) => profile.id === savedValue)
     ? savedValue
     : fallbackProfile.id
@@ -121,14 +133,16 @@ export function writeSelectedPetProfileId(profileId: number) {
     return
   }
 
-  window.localStorage.setItem(SELECTED_PET_PROFILE_ID_STORAGE_KEY, String(profileId))
+  window.localStorage.setItem(getUserScopedStorageKey(SELECTED_PET_PROFILE_ID_STORAGE_KEY), String(profileId))
   window.dispatchEvent(new CustomEvent(PET_PROFILES_CHANGE_EVENT, { detail: readPetProfiles() }))
 }
 
 export function readSelectedPetProfile() {
   const profiles = readPetProfiles()
   const selectedId = readSelectedPetProfileId()
-  return profiles.find((profile) => profile.id === selectedId) ?? profiles[0] ?? defaultPetProfiles[0]
+  return profiles.find((profile) => profile.id === selectedId)
+    ?? profiles[0]
+    ?? (isCurrentDemoUser() ? defaultPetProfiles[0] : emptySelectedPetProfile)
 }
 
 export function readSelectedPetProfileName() {

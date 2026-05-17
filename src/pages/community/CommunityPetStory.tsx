@@ -21,12 +21,17 @@ import life3 from '../../img/petstory/daily/daily_3.png'
 import life4 from '../../img/petstory/daily/daily_4.png'
 import life5 from '../../img/petstory/daily/daily_5.jpg'
 import life6 from '../../img/petstory/daily/daily_6.jpg'
-import { MY_PROFILE_NAME } from '../../utils/myProfile'
+import { readMyProfileName } from '../../utils/myProfile'
+import {
+  readCommunityCreatedPosts,
+  writeCommunityCreatedPosts,
+} from '../../utils/communityCreatedPosts'
 import { petStoryDetailCommentCount } from './CommunityPetStoryDetailData'
 import VoteMissionBanner from '../../components/VoteMissionBanner'
 import petstoryOverviewImg from '../../img/petstory/petstory_overview.png'
 import petstoryDailyImg from '../../img/petstory/daily/petstory_daily.png'
 import petstoryKnowledgeImg from '../../img/petstory/Knowledge/petstory_Knowledge.png'
+import ConfirmDialog from '../../components/ConfirmDialog'
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const dailyPosts = [
@@ -39,7 +44,6 @@ export const dailyPosts = [
 ]
 
 type SortOption = '인기순' | '최신순' | '댓글순' | '공유순'
-const createdPostsStorageKey = 'jibsalife.community.createdPosts'
 const likedPostsStorageKey = 'jibsalife.community.likedPostIds'
 
 type CommunityPost = {
@@ -81,19 +85,17 @@ type PetStoryFeedPost = {
 }
 
 function loadCreatedPosts(): CommunityPost[] {
-  if (typeof window === 'undefined') return []
-  try {
-    const saved = window.localStorage.getItem(createdPostsStorageKey)
-    const parsed = saved ? JSON.parse(saved) : []
-    return Array.isArray(parsed)
-      ? (parsed as CommunityPost[]).map((post) => ({
-          ...post,
-          author: post.author === '나' ? MY_PROFILE_NAME : post.author,
-        }))
-      : []
-  } catch {
-    return []
-  }
+  const profileName = readMyProfileName()
+
+  return readCommunityCreatedPosts().map((post) => ({
+    ...post,
+    date: post.date ?? '',
+    likes: post.likes ?? 0,
+    comments: post.comments ?? 0,
+    shares: post.shares ?? 0,
+    createdAt: post.createdAt ?? new Date(0).toISOString(),
+    author: post.author === '나' || !post.author ? profileName : post.author,
+  }))
 }
 
 function loadLikedPostIds(): number[] {
@@ -216,10 +218,11 @@ function CommunityPetStory() {
   const selectedSort = sortByParam[sortParam] ?? '최신순'
 
   const [likedPostIds, setLikedPostIds] = useState<number[]>(loadLikedPostIds)
-  const [createdPosts] = useState<CommunityPost[]>(loadCreatedPosts)
+  const [createdPosts, setCreatedPosts] = useState<CommunityPost[]>(loadCreatedPosts)
   const [nowTime, setNowTime] = useState(() => Date.now())
   const [knowledgeViewCounts, setKnowledgeViewCounts] = useState<Record<string, number | null>>(buildKnowledgeViewCountMap)
   const [dailyViewCounts, setDailyViewCounts] = useState<Record<number, number | null>>(buildDailyViewCountMap)
+  const [deleteTargetPostId, setDeleteTargetPostId] = useState<number | null>(null)
 
   const isOverview = pathname === '/community/petstory'
   const isKnowledge = pathname === '/community/petstory/knowledge'
@@ -232,14 +235,17 @@ function CommunityPetStory() {
   useEffect(() => {
     const sync = () => {
       setLikedPostIds(loadLikedPostIds())
+      setCreatedPosts(loadCreatedPosts())
       setKnowledgeViewCounts(buildKnowledgeViewCountMap())
       setDailyViewCounts(buildDailyViewCountMap())
     }
     window.addEventListener('focus', sync)
     window.addEventListener('pageshow', sync)
+    window.addEventListener('storage', sync)
     return () => {
       window.removeEventListener('focus', sync)
       window.removeEventListener('pageshow', sync)
+      window.removeEventListener('storage', sync)
     }
   }, [])
 
@@ -255,6 +261,33 @@ function CommunityPetStory() {
     () => createdPosts.filter((post) => post.tag === '일상'),
     [createdPosts],
   )
+  const currentProfileName = readMyProfileName()
+  const isOwnPost = useCallback(
+    (postAuthor: string) => postAuthor === currentProfileName,
+    [currentProfileName],
+  )
+  const handleEditCreatedPost = useCallback(
+    (post: PetStoryFeedPost) => {
+      navigate('/community/petstory/write', {
+        state: {
+          editPost: post,
+          returnTo: pathname,
+        },
+      })
+    },
+    [navigate, pathname],
+  )
+  const handleRequestDeleteCreatedPost = useCallback((postId: number) => {
+    setDeleteTargetPostId(postId)
+  }, [])
+  const confirmDeleteCreatedPost = useCallback(() => {
+    if (deleteTargetPostId === null) return
+
+    const nextPosts = readCommunityCreatedPosts().filter((post) => post.id !== deleteTargetPostId)
+    writeCommunityCreatedPosts(nextPosts)
+    setCreatedPosts(loadCreatedPosts())
+    setDeleteTargetPostId(null)
+  }, [deleteTargetPostId])
   const isCreatedPost = useCallback(
     (postId: number) => visibleCreatedPosts.some((post) => post.id === postId),
     [visibleCreatedPosts],
@@ -514,11 +547,14 @@ function CommunityPetStory() {
                   comments={getPostCommentCount(post)}
                   views={dailyViewCounts[post.id] ?? post.views ?? post.viewsText ?? 120}
                   liked={likedPostIds.includes(post.id)}
+                  isOwn={isOwnPost(post.author)}
                   onClick={() => openPostDetail(post)}
                   onLikeClick={(event) => {
                     event.stopPropagation()
                     toggleLike(post.id)
                   }}
+                  onEdit={() => handleEditCreatedPost(post)}
+                  onDelete={() => handleRequestDeleteCreatedPost(post.id)}
                 />
               ))}
             </div>
@@ -576,6 +612,7 @@ function CommunityPetStory() {
                   comments={getPostCommentCount(post)}
                   views={dailyViewCounts[post.id] ?? post.views ?? post.viewsText ?? 120}
                   liked={likedPostIds.includes(post.id)}
+                  isOwn={post.path ? false : isOwnPost(post.author)}
                   onClick={() => {
                     if (post.path) {
                       openKnowledgeDetail({
@@ -598,6 +635,8 @@ function CommunityPetStory() {
                     event.stopPropagation()
                     toggleLike(post.id)
                   }}
+                  onEdit={() => handleEditCreatedPost(post)}
+                  onDelete={() => handleRequestDeleteCreatedPost(post.id)}
                 />
               ))}
             </section>
@@ -660,6 +699,15 @@ function CommunityPetStory() {
 
         {!isKnowledge && <FloatingWriteButton showMenu />}
       </main>
+      {deleteTargetPostId !== null ? (
+        <ConfirmDialog
+          message="삭제하시겠습니까?"
+          onCancel={() => setDeleteTargetPostId(null)}
+          onConfirm={confirmDeleteCreatedPost}
+          cancelLabel="아니요"
+          confirmLabel="네"
+        />
+      ) : null}
     </>
   )
 }

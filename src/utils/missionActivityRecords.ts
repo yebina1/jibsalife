@@ -1,3 +1,5 @@
+import { getUserScopedStorageKey } from './userScopedStorage'
+
 export type MissionActivityRecord = {
   id: number
   title: string
@@ -93,7 +95,7 @@ export function readMissionActivityRecords(): MissionActivityRecord[] {
   if (typeof window === 'undefined') return []
 
   try {
-    const savedValue = window.localStorage.getItem(MISSION_ACTIVITY_RECORDS_STORAGE_KEY)
+    const savedValue = window.localStorage.getItem(getUserScopedStorageKey(MISSION_ACTIVITY_RECORDS_STORAGE_KEY))
     if (!savedValue) return []
 
     const parsedValue = JSON.parse(savedValue)
@@ -128,7 +130,7 @@ function writeMissionRecord(title: string, detail: string, color: string) {
   }
   const nextRecords = [nextRecord, ...readMissionActivityRecords()].slice(0, 100)
 
-  window.localStorage.setItem(MISSION_ACTIVITY_RECORDS_STORAGE_KEY, JSON.stringify(nextRecords))
+  window.localStorage.setItem(getUserScopedStorageKey(MISSION_ACTIVITY_RECORDS_STORAGE_KEY), JSON.stringify(nextRecords))
   window.dispatchEvent(new CustomEvent(MISSION_ACTIVITY_RECORDS_CHANGE_EVENT, { detail: nextRecord }))
 
   return nextRecord

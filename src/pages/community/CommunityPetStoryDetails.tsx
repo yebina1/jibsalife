@@ -19,10 +19,9 @@ import life6 from '../../img/petstory/daily/daily_6.jpg'
 import addIcon from '../../svg/add icon.svg'
 import emojiIcon from '../../svg/emoji.svg'
 import commentIcon from '../../svg/nav communicate.svg'
-import { MY_PROFILE_IMAGE, MY_PROFILE_NAME } from '../../utils/myProfile'
+import { MY_PROFILE_IMAGE, MY_PROFILE_NAME, readMyProfileName } from '../../utils/myProfile'
+import { readCommunityCreatedPosts, writeCommunityCreatedPosts } from '../../utils/communityCreatedPosts'
 import { petStoryDetailComments } from './CommunityPetStoryDetailData'
-
-const createdPostsStorageKey = 'jibsalife.community.createdPosts'
 const likedPostsStorageKey = 'jibsalife.community.likedPostIds'
 const likedCommentIdsStorageKey = 'jibsalife.community.likedCommentIds'
 
@@ -160,20 +159,16 @@ const fallbackPosts: DetailPost[] = [
 ]
 
 function readCreatedPosts() {
-  if (typeof window === 'undefined') return []
+  const profileName = readMyProfileName()
 
-  try {
-    const saved = window.localStorage.getItem(createdPostsStorageKey)
-    const parsed = saved ? JSON.parse(saved) : []
-    return Array.isArray(parsed)
-      ? (parsed as DetailPost[]).map((post) => ({
-          ...post,
-          author: post.author === '나' ? MY_PROFILE_NAME : post.author,
-        }))
-      : []
-  } catch {
-    return []
-  }
+  return readCommunityCreatedPosts().map((post) => ({
+    ...post,
+    author: post.author === '나' || !post.author ? profileName : post.author,
+    date: post.date ?? '',
+    likes: post.likes ?? 0,
+    comments: post.comments ?? 0,
+    shares: post.shares ?? 0,
+  }))
 }
 
 function readLikedPostIds() {
@@ -288,7 +283,7 @@ function CommunityPetStoryDetails() {
   const detailState = (location.state as { post?: DetailPost; previousPage?: string; returnTo?: string; restoreScrollY?: number } | null) ?? null
   const statePost = detailState?.post
   const fallbackPost = findFallbackPost(postId)
-  const post = statePost
+  const post: DetailPost = statePost
     ? { ...statePost, place: statePost.place ?? fallbackPost.place }
     : fallbackPost
   const backDestination = detailState?.returnTo ?? (detailState?.previousPage === 'home' ? '/home' : '/community/petstory')
@@ -329,9 +324,10 @@ function CommunityPetStoryDetails() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const viewIncrementedForRef = useRef<number | null>(null)
   const lastScrollTopRef = useRef(0)
+  const currentProfileName = readMyProfileName()
   const content = post.content?.trim() || fallbackPost.content || '함께 나누고 싶은 반려 생활 이야기를 남겼어요.'
   const isLiked = likedPostIds.includes(post.id)
-  const likeCount = post.likes + (isLiked ? 1 : 0)
+  const likeCount = (post.likes ?? 0) + (isLiked ? 1 : 0)
   const topLevelCommentCount = visibleComments.filter((comment) => !comment.parentId).length
   const editCommentText = editCommentId !== null ? editCommentInitialText : undefined
 
@@ -389,14 +385,9 @@ function CommunityPetStoryDetails() {
   const handleDelete = () => {
     if (moreTarget === 'post') {
       try {
-        const saved = window.localStorage.getItem(createdPostsStorageKey)
-        if (saved) {
-          const parsed = JSON.parse(saved)
-          if (Array.isArray(parsed)) {
-            const updated = parsed.filter((p: { id: number }) => p.id !== post.id)
-            window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(updated))
-          }
-        }
+        writeCommunityCreatedPosts(
+          readCommunityCreatedPosts().filter((createdPost) => createdPost.id !== post.id),
+        )
       } catch {
         // Ignore localStorage write failures and continue navigation.
       }
@@ -437,7 +428,7 @@ function CommunityPetStoryDetails() {
       ...current,
       {
         id: Date.now(),
-        author: MY_PROFILE_NAME,
+        author: currentProfileName,
         text,
         createdAt: new Date().toISOString(),
         likes: 0,
@@ -535,7 +526,7 @@ function CommunityPetStoryDetails() {
                 </p>
               </Title>
             </div>
-            <button type="button" className="cpsdetail_more" aria-label="더보기" onClick={() => { setMoreTarget('post'); setMoreSheetOpen(post.author === MY_PROFILE_NAME ? 'own' : 'other') }}>
+            <button type="button" className="cpsdetail_more" aria-label="더보기" onClick={() => { setMoreTarget('post'); setMoreSheetOpen(post.author === currentProfileName ? 'own' : 'other') }}>
               <MoreIcon />
             </button>
           </header>
@@ -655,7 +646,7 @@ function CommunityPetStoryDetails() {
             const renderComment = (comment: DetailComment, isReply = false) => {
               const replyCount = repliesMap[comment.id]?.length ?? 0
               return (
-              <article key={comment.id} className={`cpsdetail_comment${isReply ? ' cpsdetail_reply' : ''}${comment.author === MY_PROFILE_NAME ? ' cpsdetail_my_comment' : ''}`}>
+              <article key={comment.id} className={`cpsdetail_comment${isReply ? ' cpsdetail_reply' : ''}${comment.author === currentProfileName ? ' cpsdetail_my_comment' : ''}`}>
                 <AvatarIcon />
                 <div className="cpsdetail_comment_body">
                   <div className="cpsdetail_comment_head">
@@ -667,7 +658,7 @@ function CommunityPetStoryDetails() {
                     }>
                       <p>{comment.createdAt ? formatRelativeTime(comment.createdAt) : (comment.time ?? '11시간 전')}</p>
                     </Title>
-                    <button type="button" className="cpsdetail_more" aria-label="댓글 더보기" onClick={() => { setMoreTarget({ commentId: comment.id }); setMoreSheetOpen(comment.author === MY_PROFILE_NAME ? 'own' : 'other') }}>
+                    <button type="button" className="cpsdetail_more" aria-label="댓글 더보기" onClick={() => { setMoreTarget({ commentId: comment.id }); setMoreSheetOpen(comment.author === currentProfileName ? 'own' : 'other') }}>
                       <MoreIcon />
                     </button>
                   </div>
@@ -770,7 +761,7 @@ function CommunityPetStoryDetails() {
           onEdit={() => {
             setMoreSheetOpen(false)
             if (moreTarget === 'post') {
-              navigate('/community/petstory/write', { state: { editPost: post } })
+              navigate('/community/petstory/write', { state: { editPost: post, returnTo: backDestination } })
             } else if (moreTarget && typeof moreTarget === 'object') {
               const editingComment = visibleComments.find((c) => c.id === moreTarget.commentId)
               const mentionMatch = editingComment?.parentId ? editingComment.text.match(/^@(\S+)\s*/) : null

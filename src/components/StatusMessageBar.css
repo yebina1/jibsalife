@@ -18,9 +18,10 @@
 }
 
 .status_message_bar_sheet {
-  top: calc(var(--layout-status-bar-height) + 184px);
-  bottom: auto;
-  width: min(calc(100% - 32px), 460px);
+  top: auto;
+  bottom: clamp(360px, 42vh, 430px);
+  z-index: 360;
+  width: min(calc(100% - 72px), 540px);
   transform: translateX(-50%);
 }
 
@@ -38,6 +39,12 @@
 .status_message_bar_notification .status_message_bar_inner,
 .status_message_bar_sheet .status_message_bar_inner {
   gap: 12px;
+}
+
+.status_message_bar_sheet .status_message_bar_inner {
+  border-radius: 24px;
+  background: #F1F1F5;
+  box-shadow: 0 8px 24px rgba(17, 17, 17, 0.14);
 }
 
 .status_message_bar_text {

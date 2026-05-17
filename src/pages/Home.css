@@ -1085,6 +1085,12 @@
 }
 
 @media (min-width: 1200px) {
+  .summary_slider {
+    width: calc(100% + 32px);
+    margin-inline: -16px;
+    padding-inline: 16px;
+  }
+
   .best_pose_vote_strip {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 24px 12px;
@@ -1117,6 +1123,55 @@
   .content_overlay p {
     font-size: 18px;
     line-height: 1.35;
+  }
+
+  .home_ranking_carousel {
+    height: clamp(430px, 34vw, 500px);
+  }
+
+  .home_ranking_card {
+    aspect-ratio: 300 / 408;
+    height: clamp(396px, 31vw, 472px);
+    border-radius: 18px;
+  }
+
+  .home_ranking_card.is_left {
+    transform: translate(calc(-50% - clamp(218px, 16vw, 292px)), calc(-50% + 18px)) scale(0.91);
+  }
+
+  .home_ranking_card.is_right {
+    transform: translate(calc(-50% + clamp(218px, 16vw, 292px)), calc(-50% + 18px)) scale(0.91);
+  }
+
+  .home_ranking_badge_icon {
+    top: 12px;
+    left: 12px;
+    width: 64px;
+    height: 65px;
+  }
+
+  .home_ranking_banner {
+    gap: 24px;
+    padding: 18px 22px;
+  }
+
+  .home_ranking_banner_copy {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .home_ranking_banner_copy p {
+    white-space: nowrap;
+  }
+
+  .home_ranking_banner_copy span {
+    white-space: nowrap;
+  }
+
+  .home_ranking_banner_icon {
+    width: 46px;
   }
 }
 

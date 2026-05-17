@@ -14,10 +14,12 @@ import {
   readMyProfileImage,
   readMyProfileName,
 } from '../../utils/myProfile'
+import { isCurrentDemoUser } from '../../utils/userScopedStorage'
+import {
+  getCommunityCreatedPostsStorageKey,
+  getDefaultCreatedPostCount,
+} from '../../utils/communityCreatedPosts'
 import dogBadgeImage from '../../img/badge/dogbadge2.png'
-
-const createdPostsStorageKey = 'jibsalife.community.createdPosts'
-const defaultCreatedPostCount = 3
 const activityItems = [
   { label: '활동 내역', icon: 'activity' },
   { label: '저장한 장소', icon: 'pin' },
@@ -70,14 +72,14 @@ function readCreatedPostCount() {
   if (typeof window === 'undefined') return 0
 
   try {
-    const saved = window.localStorage.getItem(createdPostsStorageKey)
+    const saved = window.localStorage.getItem(getCommunityCreatedPostsStorageKey())
     const parsed = saved ? JSON.parse(saved) : null
 
     if (saved !== null) {
       return Array.isArray(parsed) ? parsed.length : 0
     }
 
-    return defaultCreatedPostCount
+    return getDefaultCreatedPostCount()
   } catch {
     return 0
   }
@@ -221,6 +223,7 @@ function MyPageIcon({ type }: { type: string }) {
 
 function MyPage() {
   const navigate = useNavigate()
+  const isDemoUser = isCurrentDemoUser()
   const [savedLocation, setSavedLocation] = useState<SavedLocation | null>(null)
   const [locationMessage, setLocationMessage] = useState(DEFAULT_LOCATION_MESSAGE)
   const [isLocating, setIsLocating] = useState(false)
@@ -292,9 +295,21 @@ function MyPage() {
     }
   }, [])
 
-  const myProfileStats = myProfileStatTemplate.map((stat) =>
-    stat.label === '게시글' ? { label: stat.label, value: String(createdPostCount) } : stat,
-  )
+  const myProfileStats = myProfileStatTemplate.map((stat) => {
+    if (stat.label === '게시글') {
+      return { label: stat.label, value: String(createdPostCount) }
+    }
+
+    if (!isDemoUser) {
+      if (stat.label === '쿠폰') {
+        return { label: stat.label, value: '0장' }
+      }
+
+      return { label: stat.label, value: '0' }
+    }
+
+    return stat
+  })
 
   const handleLocationSetting = () => {
     if (!navigator.geolocation) {
@@ -394,13 +409,15 @@ function MyPage() {
               image={profileImage}
               imageAlt="프로필 이미지"
               name={profileName}
-              breed="구독중"
+              breed={isDemoUser ? '구독중' : ''}
               details={`포인트: ${profilePoints.toLocaleString()}`}
               careGuideLabel={
-                <span className="mypage_profile_badges">
-                  <span>보유 뱃지</span>
-                  <img src={dogBadgeImage} alt="" aria-hidden="true" />
-                </span>
+                isDemoUser ? (
+                  <span className="mypage_profile_badges">
+                    <span>보유 뱃지</span>
+                    <img src={dogBadgeImage} alt="" aria-hidden="true" />
+                  </span>
+                ) : undefined
               }
               stats={myProfileStats}
               clickableStatLabels={clickableMyProfileStatLabels}

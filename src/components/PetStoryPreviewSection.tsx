@@ -2,10 +2,9 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { dailyPosts } from '../pages/community/CommunityPetStory'
 import { MY_PROFILE_NAME } from '../utils/myProfile'
+import { getCommunityCreatedPostsStorageKey } from '../utils/communityCreatedPosts'
 import PetStoryFeedItem from './PetStoryFeedItem'
 import dailyThumbnail from '../img/petstory/daily/daily_thumbnail.jpg'
-
-const createdPostsStorageKey = 'jibsalife.community.createdPosts'
 
 type CreatedPost = {
   id: number
@@ -42,7 +41,7 @@ type PreviewPost = {
 function loadCreatedPosts(): CreatedPost[] {
   if (typeof window === 'undefined') return []
   try {
-    const saved = window.localStorage.getItem(createdPostsStorageKey)
+    const saved = window.localStorage.getItem(getCommunityCreatedPostsStorageKey())
     const parsed = saved ? JSON.parse(saved) : []
     return Array.isArray(parsed)
       ? (parsed as CreatedPost[])

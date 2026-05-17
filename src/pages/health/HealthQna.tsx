@@ -517,7 +517,7 @@ function HealthQna() {
             <Button
               type="button"
               aria-label="알림"
-              onClick={() => navigate('/mission')}
+              onClick={() => navigate('/notification')}
             >
               <HeaderIcon type="notification" />
             </Button>

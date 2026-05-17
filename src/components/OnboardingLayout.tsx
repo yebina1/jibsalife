@@ -28,13 +28,7 @@ type OnboardingLayoutProps = {
 }
 
 function OnboardingLayout({
-  step,
-  totalSteps,
   topCenterLabel,
-  topActionLabel,
-  topActionInline = false,
-  reserveTopActionSpace = false,
-  onTopAction,
   title,
   subtitle,
   visual,
@@ -54,39 +48,15 @@ function OnboardingLayout({
     ? `onboarding_layout_action ${actionClassName}`
     : 'onboarding_layout_action'
 
-  const hasTopAction = Boolean(topActionLabel || reserveTopActionSpace)
   const sectionClassName = [
     'onboarding_layout',
     tappable ? 'is_tappable' : '',
-    hasTopAction ? 'has_top_action' : '',
-    topActionInline ? 'has_inline_top_action' : '',
   ]
     .filter(Boolean)
     .join(' ')
 
-  const topActionNode = topActionLabel ? (
-    <button
-      type="button"
-      className="onboarding_layout_top_action caption_medium"
-      onClick={onTopAction}
-    >
-      {topActionLabel}
-    </button>
-  ) : reserveTopActionSpace ? (
-    <span
-      className="onboarding_layout_top_action onboarding_layout_top_action_placeholder caption_medium"
-      aria-hidden="true"
-    >
-      건너뛰기
-    </span>
-  ) : null
-
   return (
     <section className={sectionClassName}>
-      {!topActionInline && hasTopAction ? (
-        <div className="onboarding_layout_topbar">{topActionNode}</div>
-      ) : null}
-
       <div
         className="onboarding_layout_content"
         style={contentGap ? { ['--onboarding-content-gap' as string]: `${contentGap}px` } : undefined}
@@ -109,17 +79,6 @@ function OnboardingLayout({
             <p className="onboarding_layout_progress onboarding_layout_progress_label">
               <span className="title_h4_semibold">{topCenterLabel}</span>
             </p>
-          ) : typeof step === 'number' && typeof totalSteps === 'number' ? (
-            <div className={`onboarding_layout_progress_row${topActionInline ? ' has_inline_action' : ''}`}>
-              <p className="onboarding_layout_progress" aria-label={`온보딩 진행도 ${step} / ${totalSteps}`}>
-                <span className="onboarding_layout_progress_current title_h4_semibold">{step}</span>
-                <span className="onboarding_layout_progress_divider h4_regular">/</span>
-                <span className="onboarding_layout_progress_total h4_regular">{totalSteps}</span>
-              </p>
-              {topActionInline && hasTopAction ? (
-                <span className="onboarding_layout_top_action_inline_slot">{topActionNode}</span>
-              ) : null}
-            </div>
           ) : null}
 
           <Title as="h2" className="onboarding_layout_copy" title={title}>

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import './Notification.css'
 import BackButton from '../components/html/BackButton'
@@ -19,44 +19,8 @@ type NotificationItem = {
   title: string
   content: string
   time: string
-  isRead: boolean
   path: string
 }
-
-const staticNotificationItems: NotificationItem[] = [
-  {
-    id: 1,
-    title: '오늘의 챌린지 참여하고 포인트 받자!',
-    content: '챌린지 참여 시 포인트를 받을 수 있어요.',
-    time: '2시간 전',
-    isRead: false,
-    path: '/community/challenge',
-  },
-  {
-    id: 2,
-    title: '커뮤니티',
-    content: '게시글에 댓글이 달렸어요.',
-    time: '11시간 전',
-    isRead: false,
-    path: '/community',
-  },
-  {
-    id: 3,
-    title: '커뮤니티',
-    content: '게시글에 댓글이 달렸어요.',
-    time: '8시간 전',
-    isRead: false,
-    path: '/community',
-  },
-  {
-    id: 4,
-    title: '커뮤니티',
-    content: '게시글에 댓글이 달렸어요.',
-    time: '3일 전',
-    isRead: true,
-    path: '/community',
-  },
-]
 
 function toNotificationItem(item: UserNotificationItem): NotificationItem {
   return {
@@ -64,7 +28,6 @@ function toNotificationItem(item: UserNotificationItem): NotificationItem {
     title: item.title,
     content: item.content,
     time: formatRelativeTime(item.createdAt),
-    isRead: false,
     path: item.path,
   }
 }
@@ -76,10 +39,10 @@ function readInitialReadIds(): Set<number> {
 function Notification() {
   const navigate = useNavigate()
   const [readIds, setReadIds] = useState<Set<number>>(readInitialReadIds)
-  const notificationItems: NotificationItem[] = [
-    ...readUserNotifications().map(toNotificationItem),
-    ...staticNotificationItems,
-  ]
+  const notificationItems = useMemo(
+    () => readUserNotifications().map(toNotificationItem),
+    [],
+  )
 
   const handleItemClick = (item: NotificationItem) => {
     setReadIds((prev) => {

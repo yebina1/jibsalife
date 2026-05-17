@@ -1,6 +1,6 @@
 export const STATE_BAR_MESSAGE_EVENT = 'state-bar-message'
 
-export type StateBarMessagePlacement = 'footer' | 'notification' | 'sheet'
+export type StateBarMessagePlacement = 'footer' | 'notification' | 'sheet' | 'top'
 
 export type StateBarMessageDetail = {
   message: string

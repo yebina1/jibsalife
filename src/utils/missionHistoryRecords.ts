@@ -1,5 +1,6 @@
 import type { MissionActivityRecord } from './missionActivityRecords'
 import { readSelectedPetProfileId } from './petProfiles'
+import { getUserScopedStorageKey, isCurrentDemoUser } from './userScopedStorage'
 
 export type MissionHistoryRecord = {
   id: number
@@ -47,6 +48,10 @@ export const DEFAULT_MISSION_HISTORY_RECORDS: MissionHistoryRecord[] = [
   { id: 123, title: '식사 기록', detail: '사료 120g', time: '08:00', color: '#F2B472', date: '2026-05-15' },
   { id: 124, title: '활동 기록', detail: '활발함', time: '15:00', color: '#162447', date: '2026-05-15' },
   { id: 125, title: '증상 기록', detail: '재채기', time: '14:00', color: '#A28BFA', date: '2026-05-15' },
+  { id: 126, title: '식사 기록', detail: '사료 110g', time: '08:10', color: '#F2B472', date: '2026-05-16' },
+  { id: 127, title: '산책 기록', detail: '산책 25분', time: '17:20', color: '#A4CE95', date: '2026-05-16' },
+  { id: 128, title: '배변 · 배뇨 기록', detail: '정상 변', time: '09:20', color: '#BEE3F8', date: '2026-05-17' },
+  { id: 129, title: '활동 기록', detail: '활동 보통', time: '15:40', color: '#162447', date: '2026-05-17' },
 ]
 
 const LEEYORI_MISSION_HISTORY_RECORDS: MissionHistoryRecord[] = [
@@ -69,6 +74,10 @@ const LEEYORI_MISSION_HISTORY_RECORDS: MissionHistoryRecord[] = [
   { id: 217, title: '식사 기록', detail: '사료 120g', time: '08:00', color: '#F2B472', date: '2026-05-15' },
   { id: 218, title: '활동 기록', detail: '활발함', time: '15:00', color: '#162447', date: '2026-05-15' },
   { id: 219, title: '증상 기록', detail: '재채기', time: '14:00', color: '#A28BFA', date: '2026-05-15' },
+  { id: 220, title: '식사 기록', detail: '건식 사료 40g', time: '08:10', color: '#F2B472', date: '2026-05-16' },
+  { id: 221, title: '산책 기록', detail: '실내 놀이 12분', time: '18:00', color: '#A4CE95', date: '2026-05-16' },
+  { id: 222, title: '배변 · 배뇨 기록', detail: '정상 변', time: '09:00', color: '#BEE3F8', date: '2026-05-17' },
+  { id: 223, title: '활동 기록', detail: '캣타워 놀이 10분', time: '19:10', color: '#162447', date: '2026-05-17' },
 ]
 
 const PUNGPUNGI_MISSION_HISTORY_RECORDS: MissionHistoryRecord[] = [
@@ -97,6 +106,10 @@ const PUNGPUNGI_MISSION_HISTORY_RECORDS: MissionHistoryRecord[] = [
   { id: 323, title: '식사 기록', detail: '사료 120g', time: '08:00', color: '#F2B472', date: '2026-05-15' },
   { id: 324, title: '활동 기록', detail: '활발함', time: '15:00', color: '#162447', date: '2026-05-15' },
   { id: 325, title: '증상 기록', detail: '재채기', time: '14:00', color: '#A28BFA', date: '2026-05-15' },
+  { id: 326, title: '식사 기록', detail: '사료 105g', time: '08:15', color: '#F2B472', date: '2026-05-16' },
+  { id: 327, title: '산책 기록', detail: '산책 35분', time: '17:10', color: '#A4CE95', date: '2026-05-16' },
+  { id: 328, title: '배변 · 배뇨 기록', detail: '정상 변', time: '09:25', color: '#BEE3F8', date: '2026-05-17' },
+  { id: 329, title: '활동 기록', detail: '활동 좋음', time: '16:10', color: '#162447', date: '2026-05-17' },
 ]
 
 const DEFAULT_MISSION_HISTORY_RECORD_MAP = new Map(
@@ -122,7 +135,7 @@ const LEGACY_DEFAULT_MISSION_HISTORY_COLORS = new Set([
 ])
 
 function getMissionHistoryStorageKey() {
-  return `${MISSION_HISTORY_RECORDS_STORAGE_KEY}.${readSelectedPetProfileId()}`
+  return `${getUserScopedStorageKey(MISSION_HISTORY_RECORDS_STORAGE_KEY)}.${readSelectedPetProfileId()}`
 }
 
 function getDefaultMissionHistoryRecords() {
@@ -195,7 +208,7 @@ export function readMissionHistoryRecordsWithDefaults() {
   const defaultRecordIds = getDefaultMissionHistoryRecordIds()
   const defaultRecordMap = getDefaultMissionHistoryRecordMap()
 
-  if (storedRecords.length === 0) return defaultRecords
+  if (storedRecords.length === 0) return isCurrentDemoUser() ? defaultRecords : []
 
   const hasCurrentDefaults = storedRecords.some((record) =>
     defaultRecordIds.has(record.id)

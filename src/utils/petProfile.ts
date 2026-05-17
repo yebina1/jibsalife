@@ -1,3 +1,5 @@
+import { getUserScopedStorageKey } from './userScopedStorage'
+
 const PET_PROFILE_STORAGE_KEY = 'jibsalife.pet-profile'
 
 type PetProfileStore = {
@@ -13,7 +15,7 @@ export function readPetProfile() {
     return defaultPetProfile
   }
 
-  const savedValue = window.localStorage.getItem(PET_PROFILE_STORAGE_KEY)
+  const savedValue = window.localStorage.getItem(getUserScopedStorageKey(PET_PROFILE_STORAGE_KEY))
   if (!savedValue) {
     return defaultPetProfile
   }
@@ -33,7 +35,7 @@ export function writePetProfile(nextProfile: PetProfileStore) {
     return
   }
 
-  window.localStorage.setItem(PET_PROFILE_STORAGE_KEY, JSON.stringify(nextProfile))
+  window.localStorage.setItem(getUserScopedStorageKey(PET_PROFILE_STORAGE_KEY), JSON.stringify(nextProfile))
 }
 
 export function readPetProfileName() {

@@ -40,7 +40,7 @@ function HomeSummaryBanner({
         {lines.map((line, index) => (
           <Fragment key={`${line}-${index}`}>
             {line}
-            {index < lines.length - 1 ? <br /> : null}
+            {index < lines.length - 1 ? <br className="home_summary_banner_break" /> : null}
           </Fragment>
         ))}
       </p>

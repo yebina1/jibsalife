@@ -7,9 +7,13 @@ import PageHeader from '../../components/PageHeader'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
 import Input from '../../components/html/Input'
-import { MY_PROFILE_NAME } from '../../utils/myProfile'
+import { readMyProfileName } from '../../utils/myProfile'
 import { showStateBarMessage } from '../../utils/stateBarMessage'
 import { addUserNotification } from '../../utils/userNotifications'
+import {
+  readCommunityCreatedPosts,
+  writeCommunityCreatedPosts,
+} from '../../utils/communityCreatedPosts'
 import communityWriteBg from '../../svg/community_write_bg.svg'
 import imageIcon from '../../svg/Image.svg'
 import tagsIcon from '../../svg/tags.svg'
@@ -17,7 +21,6 @@ import locationIcon from '../../svg/location.svg'
 import keyboardIcon from '../../svg/keyboard.svg'
 import PostMoreSheet from '../../components/PostMoreSheet'
 
-const createdPostsStorageKey = 'jibsalife.community.createdPosts'
 
 const boardOptions = ['일상'] as const
 type BoardOption = (typeof boardOptions)[number]
@@ -143,15 +146,13 @@ function CommunityWrite() {
         tags: extractedTags,
       }
       try {
-        const saved = window.localStorage.getItem(createdPostsStorageKey)
-        const existing = saved ? JSON.parse(saved) : []
-        const updated = Array.isArray(existing)
-          ? existing.some((p: { id: number }) => p.id === editPost.id)
-            ? existing.map((p: { id: number }) => (p.id === editPost.id ? updatedPost : p))
-            : [updatedPost, ...existing]
-          : [updatedPost]
-        window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(updated))
+        const existing = readCommunityCreatedPosts()
+        const updated = existing.some((p) => p.id === editPost.id)
+          ? existing.map((p) => (p.id === editPost.id ? updatedPost : p))
+          : [updatedPost, ...existing]
+        writeCommunityCreatedPosts(updated)
       } catch { /* noop */ }
+      showStateBarMessage('게시글이 수정되었어요.')
       navigate(`/community/petstory/detail/${editPost.id}`, {
         state: {
           post: updatedPost,
@@ -171,7 +172,7 @@ function CommunityWrite() {
       tag: board,
       title: trimmedTitle,
       content: trimmedContent,
-      author: MY_PROFILE_NAME,
+      author: readMyProfileName(),
       date: `${year}.${month}.${day}`,
       likes: 0,
       comments: 0,
@@ -183,10 +184,8 @@ function CommunityWrite() {
     }
 
     try {
-      const saved = window.localStorage.getItem(createdPostsStorageKey)
-      const existing = saved ? JSON.parse(saved) : []
-      const updated = Array.isArray(existing) ? [newPost, ...existing] : [newPost]
-      window.localStorage.setItem(createdPostsStorageKey, JSON.stringify(updated))
+      const existing = readCommunityCreatedPosts()
+      writeCommunityCreatedPosts([newPost, ...existing])
     } catch { /* noop */ }
 
     addUserNotification({ title: '커뮤니티', content: '게시글이 등록되었습니다.', path: '/community/petstory' })

@@ -24,6 +24,10 @@
   max-width: 170px;
 }
 
+.home_summary_banner_break {
+  display: inline;
+}
+
 .home_summary_banner_image {
   position: absolute;
   display: block;
@@ -36,4 +40,14 @@
 
 .home_summary_banner_image.is_rotated {
   transform: translateZ(0) rotate(-32.91deg);
+}
+
+@media (min-width: 1200px) {
+  .home_summary_banner_text {
+    max-width: none;
+  }
+
+  .home_summary_banner_break {
+    display: none;
+  }
 }

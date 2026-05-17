@@ -16,7 +16,7 @@ import onboardingCompleteImage from '../img/onboarding/onboarding7.png'
 import { markCurrentUserProfileSetupDone } from '../utils/authAccounts'
 import { writeMyProfile } from '../utils/myProfile'
 import { writePetProfile } from '../utils/petProfile'
-import { defaultPetProfiles } from '../utils/petProfiles'
+import { defaultPetProfiles, writePetProfiles, writeSelectedPetProfileId } from '../utils/petProfiles'
 import { voteDetails } from './community/CommunityVoteData'
 import knowledge1 from '../img/petstory/Knowledge/knowledge1.png'
 import knowledge2 from '../img/petstory/Knowledge/knowledge2.png'
@@ -316,6 +316,19 @@ function Onboarding() {
     if (trimmedPetName.length < 1) return
 
     writePetProfile({ name: trimmedPetName })
+    writePetProfiles([
+      {
+        id: 1,
+        type: 'profile',
+        name: trimmedPetName,
+        breed: '',
+        image: selectedType === 'dog' ? onboardingDogNameImage : onboardingCatNameImage,
+        birthDate: '',
+        weight: '',
+        sex: '',
+      },
+    ])
+    writeSelectedPetProfileId(1)
     setStep('complete')
   }
 

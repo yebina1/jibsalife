@@ -11,6 +11,7 @@ import Button from '../components/html/Button'
 import Alert from '../components/Alert'
 import ConfirmDialog from '../components/ConfirmDialog'
 import ConfettiEffect from '../components/effect/ConfettiEffect'
+import PointAlertContent from '../components/PointAlertContent'
 import RewardHero from '../components/RewardHero'
 import RewardPointCard from '../components/RewardPointCard'
 import {
@@ -33,7 +34,7 @@ import {
 import { voteDetails } from './community/CommunityVoteData'
 import { writeVotedCandidate, writeVotedMissionId } from '../utils/communityVoteStatus'
 import { isChallengeDayClaimed, markChallengeVoteCompleted, readCurrentDay } from '../utils/challengeStatus'
-import { readProfilePoints } from '../utils/profilePoints'
+import { consumeSignupWelcomeReward, readProfilePoints } from '../utils/profilePoints'
 import { showStateBarMessage } from '../utils/stateBarMessage'
 import LazyImage from '../components/LazyImage'
 import knowledge1 from '../img/petstory/Knowledge/knowledge1.png'
@@ -241,6 +242,14 @@ function createSummaryStats(records: MissionHistoryRecord[]): SummaryStat[] {
   ]
 }
 
+function countRecordedDays(records: MissionHistoryRecord[]) {
+  return new Set(
+    records
+      .map((record) => record.date)
+      .filter((date) => typeof date === 'string' && date.trim().length > 0),
+  ).size
+}
+
 function formatTodaySummaryDate() {
   const today = new Date()
   const year = today.getFullYear()
@@ -340,6 +349,8 @@ function Home() {
   const [rankingIndex, setRankingIndex] = useState(0)
   const [isRankingAutoPlayEnabled, setIsRankingAutoPlayEnabled] = useState(true)
   const [isVoteRewardOpen, setIsVoteRewardOpen] = useState(false)
+  const [isSignupWelcomeOpen, setIsSignupWelcomeOpen] = useState(false)
+  const [currentPoints, setCurrentPoints] = useState(readProfilePoints)
   const [confirmAction, setConfirmAction] = useState<'profile-edit' | 'profile-delete' | 'vote-edit' | null>(null)
   const [isPetIdModalOpen, setIsPetIdModalOpen] = useState(false)
   const [editingProfileId, setEditingProfileId] = useState<number | null>(null)
@@ -359,7 +370,7 @@ function Home() {
 
   const todaySummaryDate = formatTodaySummaryDate()
   const todaySummaryStats = createSummaryStats(calendarRecords)
-  const currentPoints = readProfilePoints()
+  const recordedDayCount = countRecordedDays(calendarRecords)
 
   useEffect(() => {
     return () => {
@@ -383,6 +394,24 @@ function Home() {
       window.removeEventListener(MISSION_HISTORY_RECORDS_CHANGE_EVENT, syncCalendarRecords)
       window.removeEventListener('storage', syncCalendarRecords)
     }
+  }, [])
+
+  useEffect(() => {
+    const reward = consumeSignupWelcomeReward()
+    if (!reward) return
+
+    setCurrentPoints(reward.currentPoints)
+    setIsSignupWelcomeOpen(true)
+  }, [])
+
+  useEffect(() => {
+    const handleProfilePointsChange = (event: Event) => {
+      const nextPoints = (event as CustomEvent<number>).detail
+      setCurrentPoints(typeof nextPoints === 'number' ? nextPoints : readProfilePoints())
+    }
+
+    window.addEventListener('profile-points-change', handleProfilePointsChange)
+    return () => window.removeEventListener('profile-points-change', handleProfilePointsChange)
   }, [])
 
   useEffect(() => {
@@ -781,6 +810,20 @@ function Home() {
     }
   }
 
+  const handleHealthReportClick = () => {
+    if (recordedDayCount === 0) {
+      showStateBarMessage('아직 기록이 없어요', 3000, { placement: 'footer' })
+      return
+    }
+
+    if (recordedDayCount < 7) {
+      showStateBarMessage('리포트는 7일 이상 기록 후 확인할 수 있어요', 3000, { placement: 'footer' })
+      return
+    }
+
+    navigate('/health/report')
+  }
+
   return (
     <>
       <PageHeader
@@ -848,7 +891,7 @@ function Home() {
                     stats={todaySummaryStats}
                     onEdit={() => openPetIdModal(slide)}
                     onStatEdit={() => navigate('/mission')}
-                    onCareGuideClick={() => navigate('/health/report')}
+                    onCareGuideClick={handleHealthReportClick}
                   />
                 ),
               )}
@@ -1211,6 +1254,26 @@ function Home() {
                 확인
               </Button>
             </div>
+          </Alert>
+        ) : null}
+
+        {isSignupWelcomeOpen ? (
+          <Alert onClose={() => setIsSignupWelcomeOpen(false)}>
+            <PointAlertContent
+              currentPoints={currentPoints}
+              rewardAmount={1000}
+              onRewardCardClick={() => navigate('/mypage')}
+              onConfirm={() => setIsSignupWelcomeOpen(false)}
+              heroTitle={'\u{1F389} 가입을 환영해요!'} 
+              heroSubtitle={
+                <>
+                  <span>1,000 포인트</span> 지급됐어요!
+                </>
+              }
+              messageBody={
+                '매일 건강을 기록하면 이상 신호 감지와 건강 리포트를 받을 수 있어요.\n프로필에서 반려동물 정보를 추가 입력해보세요!'
+              }
+            />
           </Alert>
         ) : null}
 
