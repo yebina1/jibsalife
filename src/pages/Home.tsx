@@ -812,7 +812,11 @@ function Home() {
       showStateBarMessage('리포트는 7일 이상 기록 후 확인할 수 있어요', 3000, { placement: 'footer' })
       return
     }
-    navigate('/health/report')
+    navigate('/health/result', {
+      state: {
+        returnTo: '/home',
+      },
+    })
   }
 
   return (

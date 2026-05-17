@@ -142,6 +142,7 @@ function MyPostsPage() {
   const openPost = (post: MyPostCard) => {
     navigate(`/community/petstory/detail/${post.id}`, {
       state: {
+        returnTo: '/mypage/posts',
         post: {
           id: post.id,
           tag: post.tag,
@@ -264,7 +265,7 @@ function MyPostsPage() {
           confirmLabel="네"
         />
       ) : null}
-      <FloatingWriteButton showMenu />
+      <FloatingWriteButton showMenu returnTo="/mypage/posts" />
     </>
   )
 }

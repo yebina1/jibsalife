@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import './Health.css'
 import './HealthCheckLoading.css'
 import PageHeader from '../../components/PageHeader'
@@ -54,6 +54,8 @@ function getActiveMarkerStep(progress: number): ProgressMarkerStep {
 
 function HealthCheckLoading() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const loadingState = (location.state as { returnTo?: string } | null) ?? null
   const [progress, setProgress] = useState(0)
   const [isComplete, setIsComplete] = useState(false)
 
@@ -185,7 +187,12 @@ function HealthCheckLoading() {
             <button
               type="button"
               className="health_check_loading_confirm_btn"
-              onClick={() => navigate('/health/result', { replace: true })}
+              onClick={() =>
+                navigate('/health/result', {
+                  replace: true,
+                  state: loadingState?.returnTo ? { returnTo: loadingState.returnTo } : undefined,
+                })
+              }
             >
               확인
             </button>

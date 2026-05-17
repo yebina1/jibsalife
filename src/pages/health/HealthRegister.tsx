@@ -933,7 +933,11 @@ function HealthRegister() {
     writeHealthCheckMissionHistoryRecord('AI 건강 기록')
     window.sessionStorage.removeItem(HEALTH_REGISTER_DRAFT_KEY)
 
-    navigate('/health/check-loading')
+    navigate('/health/check-loading', {
+      state: {
+        returnTo: `/health/register?section=${preferredSection ?? 'photo'}`,
+      },
+    })
   }
 
   const handleBrowseDemo = () => {

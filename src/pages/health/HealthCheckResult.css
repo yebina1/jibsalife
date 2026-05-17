@@ -117,6 +117,7 @@ letter-spacing: var(--app-line-height);
   align-items: stretch;
   gap: 8px;
   height: 144px;
+  width: 100%;
 }
 
 .hcr_chart_yaxis {
@@ -173,11 +174,12 @@ letter-spacing: var(--app-line-height);
   flex: 1;
   display: flex;
   align-items: flex-end;
+  justify-content: center;
   height: 100%;
 }
 
 .hcr_chart_bar {
-  width: 24px;
+  width: clamp(24px, 3vw, 36px);
   border-radius: 4px 4px 0 0;
   background: #c7bffe;
   min-height: 4px;
@@ -185,6 +187,10 @@ letter-spacing: var(--app-line-height);
 
 .hcr_chart_bar.is_today {
   background: #6d59f8;
+}
+
+.hcr_chart_bar.is_hidden {
+  opacity: 0;
 }
 
 .hcr_chart_xlabels {
@@ -226,12 +232,21 @@ letter-spacing: var(--app-line-height);
   gap: 0;
 }
 
+.hcr_status_pair_card.is_single {
+  justify-content: center;
+}
+
 .hcr_status_pair_item {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
+}
+
+.hcr_status_pair_card.is_single .hcr_status_pair_item {
+  width: 100%;
+  flex: 1 1 100%;
 }
 
 .hcr_status_pair_img {
@@ -389,6 +404,39 @@ letter-spacing: var(--app-line-height);
   font-weight: 400;
   line-height: 1.45;
 letter-spacing: var(--app-line-height);
+}
+
+@media (min-width: 768px) {
+  .hcr_chart {
+    gap: 12px;
+  }
+
+  .hcr_guide_item {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .hcr_action {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .hcr_action_content {
+    align-items: center;
+    text-align: center;
+  }
+
+  .hcr_action_desc {
+    white-space: nowrap;
+  }
+
+  .hcr_action_desc br {
+    display: none;
+  }
+
+  .hcr_pet_msg br {
+    display: none;
+  }
 }
 
 /* ─── Notice ─────────────────────────────────────────────── */

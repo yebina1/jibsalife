@@ -5,6 +5,7 @@ import FloatingButton from './FloatingButton'
 
 type FloatingWriteButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'onClick'> & {
   showMenu?: boolean
+  returnTo?: string
   onClick?: React.MouseEventHandler<HTMLButtonElement>
 }
 
@@ -12,6 +13,7 @@ function FloatingWriteButton({
   'aria-label': ariaLabel = '글쓰기',
   className,
   showMenu = false,
+  returnTo,
   onClick,
   ...props
 }: FloatingWriteButtonProps) {
@@ -84,7 +86,12 @@ function FloatingWriteButton({
             <Button
               type="button"
               className="light_purple_radius_btn"
-              onClick={() => { setIsMenuOpen(false); navigate('/community/petstory/write') }}
+              onClick={() => {
+                setIsMenuOpen(false)
+                navigate('/community/petstory/write', {
+                  state: returnTo ? { returnTo } : undefined,
+                })
+              }}
             >
               일상 공유하기
             </Button>

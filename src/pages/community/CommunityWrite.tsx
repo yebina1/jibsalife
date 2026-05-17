@@ -190,7 +190,7 @@ function CommunityWrite() {
 
     addUserNotification({ title: '커뮤니티', content: '게시글이 등록되었습니다.', path: '/community/petstory' })
     showStateBarMessage('게시글이 등록되었습니다.')
-    navigate('/community/petstory')
+    navigate(backTarget ?? '/community/petstory')
   }
 
   return (

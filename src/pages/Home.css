@@ -83,8 +83,9 @@
 }
 
 .summary_slider {
-  margin-inline: -16px;
-  padding: 6px 16px 0;
+  width: min(100%, 406px);
+  margin-inline: auto;
+  padding: 6px 0 0;
   overflow: hidden;
   touch-action: pan-y;
   user-select: none;
@@ -1086,9 +1087,10 @@
 
 @media (min-width: 1200px) {
   .summary_slider {
-    width: calc(100% + 32px);
-    margin-inline: -16px;
-    padding-inline: 16px;
+    width: clamp(390px, 42vw, 438px);
+    max-width: 100%;
+    margin-inline: 0;
+    padding-inline: 0;
   }
 
   .best_pose_vote_strip {
@@ -1126,21 +1128,21 @@
   }
 
   .home_ranking_carousel {
-    height: clamp(430px, 34vw, 500px);
+    height: clamp(440px, 36vw, 540px);
   }
 
   .home_ranking_card {
     aspect-ratio: 300 / 408;
-    height: clamp(396px, 31vw, 472px);
+    height: clamp(408px, 32vw, 500px);
     border-radius: 18px;
   }
 
   .home_ranking_card.is_left {
-    transform: translate(calc(-50% - clamp(218px, 16vw, 292px)), calc(-50% + 18px)) scale(0.91);
+    transform: translate(calc(-50% - clamp(248px, 19vw, 392px)), calc(-50% + 18px)) scale(0.91);
   }
 
   .home_ranking_card.is_right {
-    transform: translate(calc(-50% + clamp(218px, 16vw, 292px)), calc(-50% + 18px)) scale(0.91);
+    transform: translate(calc(-50% + clamp(248px, 19vw, 392px)), calc(-50% + 18px)) scale(0.91);
   }
 
   .home_ranking_badge_icon {
