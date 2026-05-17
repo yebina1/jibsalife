@@ -242,14 +242,6 @@ function createSummaryStats(records: MissionHistoryRecord[]): SummaryStat[] {
   ]
 }
 
-function countRecordedDays(records: MissionHistoryRecord[]) {
-  return new Set(
-    records
-      .map((record) => record.date)
-      .filter((date) => typeof date === 'string' && date.trim().length > 0),
-  ).size
-}
-
 function formatTodaySummaryDate() {
   const today = new Date()
   const year = today.getFullYear()
@@ -370,8 +362,6 @@ function Home() {
 
   const todaySummaryDate = formatTodaySummaryDate()
   const todaySummaryStats = createSummaryStats(calendarRecords)
-  const recordedDayCount = countRecordedDays(calendarRecords)
-
   useEffect(() => {
     return () => {
       if (petIdPhoto?.startsWith('blob:')) {
@@ -811,16 +801,6 @@ function Home() {
   }
 
   const handleHealthReportClick = () => {
-    if (recordedDayCount === 0) {
-      showStateBarMessage('아직 기록이 없어요', 3000, { placement: 'footer' })
-      return
-    }
-
-    if (recordedDayCount < 7) {
-      showStateBarMessage('리포트는 7일 이상 기록 후 확인할 수 있어요', 3000, { placement: 'footer' })
-      return
-    }
-
     navigate('/health/report')
   }
 
@@ -886,7 +866,7 @@ function Home() {
                     key={slide.id}
                     image={slide.image}
                     name={slide.name}
-                    breed={slide.breed}
+                    breed={slide.breed || '-'}
                     details={createProfileDetails(slide)}
                     stats={todaySummaryStats}
                     onEdit={() => openPetIdModal(slide)}
@@ -1267,7 +1247,7 @@ function Home() {
               heroTitle={'\u{1F389} 가입을 환영해요!'} 
               heroSubtitle={
                 <>
-                  <span>1,000 포인트</span> 지급됐어요!
+                  <span>1,000 포인트</span> 지급됐어요.
                 </>
               }
               messageBody={

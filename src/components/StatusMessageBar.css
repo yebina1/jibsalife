@@ -19,7 +19,7 @@
 
 .status_message_bar_sheet {
   top: auto;
-  bottom: clamp(360px, 42vh, 430px);
+  bottom: clamp(420px, 52vh, 500px);
   z-index: 360;
   width: min(calc(100% - 72px), 540px);
   transform: translateX(-50%);

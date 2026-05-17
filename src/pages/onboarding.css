@@ -13,7 +13,7 @@
 
 .onboarding_page .onboarding_layout {
   padding-bottom: var(--onboarding-action-reserved-space);
-  scroll-padding-bottom: var(--onboarding-action-reserved-space);
+  scroll-padding-bottom: var(--onboarding-action-reserved-space);ㄴ
 }
 
 .onboarding_page .onboarding_layout_action {
@@ -38,7 +38,7 @@
   display: block;
   width: 100%;
   object-fit: contain;
-  image-rendering: auto;
+  image-rendering: auto;`
 }
 
 .onboarding_decorated_image {
@@ -183,6 +183,24 @@
 
 .onboarding_action_start {
   width: 100%;
+}
+
+.onboarding_page .onboarding_layout:has(.onboarding_action_start) {
+  justify-content: flex-start;
+}
+
+.onboarding_page .onboarding_layout:has(.onboarding_action_start) .onboarding_layout_content {
+  width: 100%;
+  height: 100%;
+}
+
+.onboarding_page .onboarding_layout:has(.onboarding_action_start) .onboarding_layout_header {
+  position: fixed;
+  top: calc(var(--layout-status-bar-height) + 116px);
+  left: 50%;
+  z-index: 30;
+  width: min(340px, calc(100vw - 48px));
+  transform: translateX(-50%);
 }
 
 .onboarding_page .onboarding_layout:has(.onboarding_action_start) .onboarding_layout_body {

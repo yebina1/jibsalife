@@ -34,6 +34,7 @@ import onboardingDecoration3 from '../svg/onboarding/paw3.svg'
 import onboardingDecoration4 from '../svg/onboarding/paw4.svg'
 import onboardingDecoration5 from '../svg/onboarding/paw5.svg'
 import onboardingDecoration6 from '../svg/onboarding/paw6.svg'
+import defaultPetThumbnail from '../img/petstory/daily/daily_thumbnail.jpg'
 import './onboarding.css'
 
 type GuardianType = 'dog' | 'cat'
@@ -322,7 +323,7 @@ function Onboarding() {
         type: 'profile',
         name: trimmedPetName,
         breed: '',
-        image: selectedType === 'dog' ? onboardingDogNameImage : onboardingCatNameImage,
+        image: defaultPetThumbnail,
         birthDate: '',
         weight: '',
         sex: '',

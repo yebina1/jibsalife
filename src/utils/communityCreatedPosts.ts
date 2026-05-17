@@ -1,6 +1,7 @@
 import { getUserScopedStorageKey, isCurrentDemoUser } from './userScopedStorage'
 
 export const COMMUNITY_CREATED_POSTS_STORAGE_KEY = 'jibsalife.community.createdPosts'
+export const COMMUNITY_CREATED_POSTS_CHANGE_EVENT = 'jibsalife.community.createdPosts.change'
 
 export type CommunityCreatedPost = {
   id: number
@@ -30,12 +31,12 @@ export const demoCommunityCreatedPosts: CommunityCreatedPost[] = [
     title: '오늘 산책하다가 처음 본 루트가 너무 좋아요.',
     content:
       '주말 공원에 들렀다가 벤치도 햇살도 딱 좋아서 걷자마자 기분이 좋아졌어요. 다음에도 같은 코스로 가보려고요.',
-    date: '2026.05.15',
+    date: '2026.04.28',
     likes: 14,
     comments: 3,
     shares: 1,
     views: 0,
-    createdAt: '2026-05-15T10:20:00',
+    createdAt: '2026-04-28T10:20:00',
     image: null,
     tags: ['산책', '일상'],
   },
@@ -45,12 +46,12 @@ export const demoCommunityCreatedPosts: CommunityCreatedPost[] = [
     title: '식사량이 줄어서 체크해 본 것들 정리',
     content:
       '사료 종류, 급여 시간, 간식 여부까지 하나씩 체크해보니까 원인을 조금 더 빨리 찾을 수 있었어요.',
-    date: '2026.05.13',
+    date: '2026.04.22',
     likes: 22,
     comments: 5,
     shares: 4,
     views: 0,
-    createdAt: '2026-05-13T18:05:00',
+    createdAt: '2026-04-22T18:05:00',
     image: null,
     tags: ['식사', '건강'],
   },
@@ -60,12 +61,12 @@ export const demoCommunityCreatedPosts: CommunityCreatedPost[] = [
     title: '배변 기록 해두고 나서 달라진 점',
     content:
       '해두고 나서 보니까 상태 변화를 조금 더 빨리 알아챌 수 있었고 병원 상담할 때도 훨씬 수월했어요.',
-    date: '2026.05.11',
+    date: '2026.04.16',
     likes: 9,
     comments: 2,
     shares: 0,
     views: 0,
-    createdAt: '2026-05-11T08:40:00',
+    createdAt: '2026-04-16T08:40:00',
     image: null,
     tags: ['배변', '기록'],
   },
@@ -104,11 +105,20 @@ export function readCommunityCreatedPosts(): CommunityCreatedPost[] {
       )
     }
 
-    const mergedById = new Map<number, CommunityCreatedPost>()
-    defaults.forEach((post) => mergedById.set(post.id, post))
-    storedPosts.forEach((post) => mergedById.set(post.id, post))
+    if (saved !== null) {
+      const normalizedDefaultsById = new Map(defaults.map((post) => [post.id, post]))
 
-    return [...mergedById.values()].sort(
+      return storedPosts
+        .map((post) => {
+          const defaultPost = normalizedDefaultsById.get(post.id)
+          return defaultPost ? { ...defaultPost, ...post } : post
+        })
+        .sort(
+          (a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime(),
+        )
+    }
+
+    return [...defaults].sort(
       (a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime(),
     )
   } catch {
@@ -119,4 +129,5 @@ export function readCommunityCreatedPosts(): CommunityCreatedPost[] {
 export function writeCommunityCreatedPosts(posts: CommunityCreatedPost[]) {
   if (typeof window === 'undefined') return
   window.localStorage.setItem(getCommunityCreatedPostsStorageKey(), JSON.stringify(posts))
+  window.dispatchEvent(new Event(COMMUNITY_CREATED_POSTS_CHANGE_EVENT))
 }

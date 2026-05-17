@@ -10,6 +10,7 @@ import ConfirmDialog from '../../components/ConfirmDialog'
 import PetStoryFeedItem from '../../components/PetStoryFeedItem'
 import { readMyProfileName } from '../../utils/myProfile'
 import {
+  COMMUNITY_CREATED_POSTS_CHANGE_EVENT,
   readCommunityCreatedPosts,
   writeCommunityCreatedPosts,
   type CommunityCreatedPost,
@@ -114,11 +115,13 @@ function MyPostsPage() {
     window.addEventListener('focus', syncPosts)
     window.addEventListener('pageshow', syncPosts)
     window.addEventListener('storage', syncPosts)
+    window.addEventListener(COMMUNITY_CREATED_POSTS_CHANGE_EVENT, syncPosts)
 
     return () => {
       window.removeEventListener('focus', syncPosts)
       window.removeEventListener('pageshow', syncPosts)
       window.removeEventListener('storage', syncPosts)
+      window.removeEventListener(COMMUNITY_CREATED_POSTS_CHANGE_EVENT, syncPosts)
     }
   }, [])
 

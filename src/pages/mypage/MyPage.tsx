@@ -16,8 +16,8 @@ import {
 } from '../../utils/myProfile'
 import { isCurrentDemoUser } from '../../utils/userScopedStorage'
 import {
-  getCommunityCreatedPostsStorageKey,
-  getDefaultCreatedPostCount,
+  COMMUNITY_CREATED_POSTS_CHANGE_EVENT,
+  readCommunityCreatedPosts,
 } from '../../utils/communityCreatedPosts'
 import dogBadgeImage from '../../img/badge/dogbadge2.png'
 const activityItems = [
@@ -69,20 +69,7 @@ function pickAddressPart(...values: Array<string | undefined>) {
 }
 
 function readCreatedPostCount() {
-  if (typeof window === 'undefined') return 0
-
-  try {
-    const saved = window.localStorage.getItem(getCommunityCreatedPostsStorageKey())
-    const parsed = saved ? JSON.parse(saved) : null
-
-    if (saved !== null) {
-      return Array.isArray(parsed) ? parsed.length : 0
-    }
-
-    return getDefaultCreatedPostCount()
-  } catch {
-    return 0
-  }
+  return readCommunityCreatedPosts().length
 }
 
 async function reverseGeocodeLocation(latitude: number, longitude: number) {
@@ -287,11 +274,13 @@ function MyPage() {
     window.addEventListener('focus', syncCreatedPostCount)
     window.addEventListener('pageshow', syncCreatedPostCount)
     window.addEventListener('storage', syncCreatedPostCount)
+    window.addEventListener(COMMUNITY_CREATED_POSTS_CHANGE_EVENT, syncCreatedPostCount)
 
     return () => {
       window.removeEventListener('focus', syncCreatedPostCount)
       window.removeEventListener('pageshow', syncCreatedPostCount)
       window.removeEventListener('storage', syncCreatedPostCount)
+      window.removeEventListener(COMMUNITY_CREATED_POSTS_CHANGE_EVENT, syncCreatedPostCount)
     }
   }, [])
 

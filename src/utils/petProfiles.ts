@@ -59,9 +59,9 @@ function normalizeProfileImage(image: unknown, fallbackImage: string) {
 
   const isUploadedImage = trimmedImage.startsWith('data:image/')
   const isExternalImage = /^https?:\/\//.test(trimmedImage)
-  const isCurrentBundledImage = trimmedImage === fallbackImage
+  const isBundledAsset = trimmedImage.startsWith('/')
 
-  if (isUploadedImage || isExternalImage || isCurrentBundledImage) {
+  if (isUploadedImage || isExternalImage || isBundledAsset) {
     return trimmedImage
   }
 
@@ -73,7 +73,7 @@ function normalizePetProfile(value: Partial<PetProfileSummary>, fallback: PetPro
     id: typeof value.id === 'number' ? value.id : fallback.id,
     type: 'profile',
     name: typeof value.name === 'string' && value.name.trim() ? value.name : fallback.name,
-    breed: typeof value.breed === 'string' && value.breed.trim() ? value.breed : fallback.breed,
+    breed: typeof value.breed === 'string' ? value.breed : fallback.breed,
     image: normalizeProfileImage(value.image, fallback.image),
     birthDate: typeof value.birthDate === 'string' ? value.birthDate : fallback.birthDate,
     weight: typeof value.weight === 'string' ? value.weight : fallback.weight,

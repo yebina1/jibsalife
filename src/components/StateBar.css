@@ -54,7 +54,7 @@
 
 .state_bar_top_toast {
   position: fixed;
-  top: var(--layout-status-bar-height, 41px);
+  top: 8px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1;
@@ -69,4 +69,5 @@
   white-space: pre-line;
   text-align: center;
   pointer-events: none;
+  max-width: calc(100% - 32px);
 }

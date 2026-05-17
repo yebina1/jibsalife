@@ -391,7 +391,7 @@ function CommunityPetStoryDetails() {
       } catch {
         // Ignore localStorage write failures and continue navigation.
       }
-      navigate('/community/petstory')
+      navigate(backDestination)
     } else if (moreTarget && typeof moreTarget === 'object') {
       setVisibleComments((current) => current.filter((c) => c.id !== moreTarget.commentId))
     }
