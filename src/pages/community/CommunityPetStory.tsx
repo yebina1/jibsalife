@@ -507,7 +507,7 @@ function CommunityPetStory() {
                   title={post.title}
                   author={post.author}
                   time={getPostTimeText(post)}
-                  image={post.image}
+                  image={post.image ?? dailyThumbnail}
                   likes={post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}
                   comments={getPostCommentCount(post)}
                   views={dailyViewCounts[post.id] ?? post.views ?? post.viewsText ?? 120}
@@ -568,7 +568,7 @@ function CommunityPetStory() {
                   title={post.title}
                   author={post.author}
                   time={getPostTimeText(post)}
-                  image={post.image}
+                  image={post.image ?? dailyThumbnail}
                   imageObjectPosition={post.objectPosition}
                   likes={post.likes + (likedPostIds.includes(post.id) ? 1 : 0)}
                   comments={getPostCommentCount(post)}

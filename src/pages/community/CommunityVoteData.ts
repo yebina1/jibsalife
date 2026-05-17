@@ -14,8 +14,6 @@ import poseVote5 from '../../img/vote/pose_vote/pose_vote5.png'
 import poseVote6 from '../../img/vote/pose_vote/pose_vote6.png'
 import birthPhoto1 from '../../img/birth-01.png'
 import birthPhoto2 from '../../img/birth-02.png'
-import chickenIcon from '../../img/chicken.png'
-import sweetPotatoIcon from '../../img/sweet-potato.png'
 
 export type CommunityVoteId = 'mission' | 'subscriber' | 'best-pose'
 
@@ -125,8 +123,8 @@ export const regularVoteItems: RegularVoteItem[] = [
     participants: 325984,
     voteType: 'bone-result',
     options: [
-      { id: 1, label: '닭가슴살', votes: 130394, icon: chickenIcon },
-      { id: 2, label: '고구마', votes: 195590, icon: sweetPotatoIcon },
+      { id: 1, label: '닭가슴살', votes: 130394, icon: '🍗' },
+      { id: 2, label: '고구마', votes: 195590, icon: '🍠' },
     ],
   },
 ]

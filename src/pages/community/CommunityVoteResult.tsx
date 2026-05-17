@@ -8,6 +8,7 @@ import Alert from '../../components/Alert'
 import Button from '../../components/html/Button'
 import ChevronIcon from '../../components/ChevronIcon'
 import ConfettiEffect from '../../components/effect/ConfettiEffect'
+import GoldConfettiEffect from '../../components/effect/GoldConfettiEffect'
 import RewardHero from '../../components/RewardHero'
 import RewardPointCard from '../../components/RewardPointCard'
 import Title from '../../components/Title'
@@ -20,9 +21,9 @@ import {
   writeProfilePoints,
 } from '../../utils/profilePoints'
 import instaIcon from '../../svg/Instagram icon.svg'
-import goldMedalImg from '../../img/vote/gold_medal.png'
-import silverMedalImg from '../../img/vote/silver_medal.png'
-import bronzeMedalImg from '../../img/vote/bronze_medal.png'
+import icon1st from '../../img/home/1st-icon.png'
+import icon2nd from '../../img/home/2nd-icon.png'
+import icon3rd from '../../img/home/3rd-icon.png'
 import voting1 from '../../img/vote/vote_result/voting1.jpg'
 import votingProfile from '../../img/vote/vote_result/voting_istagram_profile.jpg'
 import voting2 from '../../img/vote/vote_result/voting2.jpg'
@@ -35,8 +36,8 @@ import instagramImg2 from '../../img/vote/vote_result/instagram_img_2.jpg'
 import instagramImg3 from '../../img/vote/vote_result/instagram_img_3.jpg'
 
 const top2Rankings = [
-  { rank: 2, name: '콩냥이', image: voting2, votes: 842, percentage: 26.1, medal: silverMedalImg },
-  { rank: 3, name: '모카', image: voting3, votes: 615, percentage: 19.1, medal: bronzeMedalImg },
+  { rank: 2, name: '콩냥이', image: voting2, votes: 842, percentage: 26.1, medal: icon2nd },
+  { rank: 3, name: '모카', image: voting3, votes: 615, percentage: 19.1, medal: icon3rd },
 ]
 
 const otherRankings = [
@@ -76,6 +77,7 @@ function CommunityVoteResult() {
 
   return (
     <div className="cv_wrap">
+      <GoldConfettiEffect />
       <PageHeader 
       title="투표 결과" 
       leftContent={<BackButton />} 
@@ -88,26 +90,29 @@ function CommunityVoteResult() {
 
       {/* 1위 */}
       <section className="cv_first_section">
-        <Title
-          as="h2"
-          className="cv_first_title_row"
-          beforeTitle={<img src={goldMedalImg} alt="금메달" className="cv_medal_title_icon" />}
-          title="루루"
-        />
+        <div className="cv_first_top">
+          <Title
+            as="h2"
+            className="cv_first_title_row"
+            beforeTitle={<img src={icon1st} alt="1위" className="cv_medal_title_icon" />}
+            title="루루"
+          />
+          <div className="cv_first_stats">
+            <div className="cv_stats_row">
+              <span className="cv_votes_label">득표수 <strong>1,248표</strong></span>
+              <span className="cv_percent_label">(88.7%)</span>
+            </div>
+            <div className="cv_progress_bar">
+              <div className="cv_progress_fill" style={{ width: '88.7%' }} />
+            </div>
+          </div>
+        </div>
         <div className="cv_first_img_wrap">
           <img src={voting1} alt="1위 루루" className="cv_first_img" />
         </div>
-        <div className="cv_first_stats">
-          <div className="cv_stats_row">
-            <span className="cv_votes_label">득표수 <strong>1,248표</strong></span>
-            <span className="cv_percent_label">(88.7%)</span>
-          </div>
-          <div className="cv_progress_bar">
-            <div className="cv_progress_fill" style={{ width: '88.7%' }} />
-          </div>
-        </div>
       </section>
 
+      <div className="cv_content_wrap">
       {/* SNS 프로필 카드 */}
       <div className="cv_profile_card">
         <div className="cv_profile_row">
@@ -189,6 +194,7 @@ function CommunityVoteResult() {
         >
           결과 공유하기
         </Button>
+      </div>
       </div>
 
       {isCompleteAlertOpen ? (

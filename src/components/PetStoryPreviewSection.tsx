@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router'
 import { dailyPosts } from '../pages/community/CommunityPetStory'
 import { MY_PROFILE_NAME } from '../utils/myProfile'
 import PetStoryFeedItem from './PetStoryFeedItem'
+import dailyThumbnail from '../img/petstory/daily/daily_thumbnail.jpg'
 
 const createdPostsStorageKey = 'jibsalife.community.createdPosts'
 
@@ -115,7 +116,7 @@ function PetStoryPreviewSection() {
           title={post.title}
           author={post.author}
           time={getRelativeTimeText(post.createdAt, nowTime)}
-          image={post.image}
+          image={post.image ?? dailyThumbnail}
           likes={post.likes}
           comments={post.comments}
           views={post.views ?? 120}
