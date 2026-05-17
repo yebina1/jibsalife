@@ -14,8 +14,6 @@ import poseVote5 from '../../img/vote/pose_vote/pose_vote5.png'
 import poseVote6 from '../../img/vote/pose_vote/pose_vote6.png'
 import birthPhoto1 from '../../img/birth-01.png'
 import birthPhoto2 from '../../img/birth-02.png'
-import chickenIcon from '../../img/chicken.png'
-import sweetPotatoIcon from '../../img/sweet-potato.png'
 
 export type CommunityVoteId = 'mission' | 'subscriber' | 'best-pose'
 
@@ -82,12 +80,12 @@ export const missionVotes: MissionVote[] = [
   {
     id: 'subscriber',
     sectionTitle: '멍스터 미션 투표',
-    title: '집사일기 멍스터 모델 도전하기',
+    title: '집사일기 멍스타 모델 도전하기',
     participants: 10,
     timeText: '02:18:35 남음',
     organizer: '운영자',
     buttonType: 'notify',
-    subText: '선착순 10명 지정 오픈 예정',
+    subText: '선착순 6명 지정 오픈 예정',
   },
 ]
 
@@ -115,19 +113,6 @@ export const regularVoteItems: RegularVoteItem[] = [
     options: [
       { id: 1, label: 'O', votes: 221670 },
       { id: 2, label: 'X', votes: 104314 },
-    ],
-  },
-  {
-    id: 3,
-    title: '좋아하는 간식 재료는?',
-    description: '',
-    deadline: '2026년 7월 30일까지',
-    participants: 325984,
-    voteType: 'bone-result',
-    resultOnly: true,
-    options: [
-      { id: 1, label: '닭가슴살', votes: 130394, icon: chickenIcon },
-      { id: 2, label: '고구마', votes: 195590, icon: sweetPotatoIcon },
     ],
   },
 ]

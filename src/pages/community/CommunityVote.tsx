@@ -1,6 +1,6 @@
 ﻿import './CommunityShared.css'
 import './CommunityVote.css'
-import { type CSSProperties, useMemo, useRef, useState } from 'react'
+import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import { MoreVertical } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
@@ -69,6 +69,15 @@ function formatParticipants(count: number) {
   return count.toLocaleString('ko-KR')
 }
 
+const SUBSCRIBER_TIMER_DURATION = 12 * 60 * 60
+
+function formatTimer(seconds: number) {
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  const s = seconds % 60
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} 남음`
+}
+
 function CommunityVote() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -97,7 +106,25 @@ function CommunityVote() {
   const [completedVoteId, setCompletedVoteId] = useState<number | null>(null)
   const [claimedVoteRewardIds, setClaimedVoteRewardIds] = useState<Set<number>>(() => new Set())
   const [notifiedVoteIds, setNotifiedVoteIds] = useState<Set<string>>(() => new Set())
+  const [subscriberTimer, setSubscriberTimer] = useState(SUBSCRIBER_TIMER_DURATION)
   const pendingDefaultVoteSelection = useRef<{ voteId: number; optionId: number } | null>(null)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSubscriberTimer(prev => {
+        if (prev <= 1) {
+          showStateBarMessage(
+            '멍스타 모델 지원 오픈!\n지금 바로 우리 아이를 지원해보세요.',
+            5000,
+            { placement: 'footer' },
+          )
+          return SUBSCRIBER_TIMER_DURATION
+        }
+        return prev - 1
+      })
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
   const sortedRegularVoteItems = useMemo(() => {
     return [...regularVoteItems].sort((a, b) => {
       if (sort === 'popular') {
@@ -246,7 +273,7 @@ function CommunityVote() {
           className="cps_vote_banner"
           backgroundColor="#FFD6D9"
           timerColor="#E03C3C"
-          timeText="02:18:35 남음"
+          timeText={formatTimer(subscriberTimer)}
           title={<>멍스타 모델 도전</>}
           description="내 반려동물을 스타로 만들어 보세요!"
           imageSrc={voteBannerImage}
@@ -281,7 +308,7 @@ function CommunityVote() {
                 beforeTitle={
                   <span className={`cv2_timer ${vote.buttonType === 'notify' ? 'cv2_timer_closed' : 'cv2_timer_active'}`}>
                     <img src={vote.buttonType === 'notify' ? timerClosedIcon : timerIcon} alt="" aria-hidden="true" />
-                    {vote.timeText}
+                    {vote.id === 'subscriber' ? formatTimer(subscriberTimer) : vote.timeText}
                   </span>
                 }
                 title={vote.title}
@@ -303,6 +330,7 @@ function CommunityVote() {
                         return next
                       })
                       showStateBarMessage('투표 알림이 해제되었습니다.', 3000, { placement: 'footer' })
+                      addUserNotification({ title: '투표', content: '투표 알림이 해제되었습니다.', path: '/community/vote' })
                     } else {
                       showStateBarMessage('투표 알림이 설정되었습니다.', 3000, { placement: 'footer' })
                       addUserNotification({ title: '투표', content: '투표 알림이 설정되었습니다.', path: '/community/vote' })

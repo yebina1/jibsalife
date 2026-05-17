@@ -32,6 +32,7 @@ import {
 } from '../utils/petProfiles'
 import { voteDetails } from './community/CommunityVoteData'
 import { writeVotedCandidate, writeVotedMissionId } from '../utils/communityVoteStatus'
+import { isChallengeDayClaimed, markChallengeVoteCompleted, readCurrentDay } from '../utils/challengeStatus'
 import { readProfilePoints } from '../utils/profilePoints'
 import { showStateBarMessage } from '../utils/stateBarMessage'
 import LazyImage from '../components/LazyImage'
@@ -769,6 +770,15 @@ function Home() {
     }))
     setVotedCardId(selectedCardId)
     setIsVoteRewardOpen(false)
+
+    const currentDay = readCurrentDay()
+    if (markChallengeVoteCompleted() && currentDay === 2 && !isChallengeDayClaimed(currentDay)) {
+      showStateBarMessage('오늘의 챌린지가 참여되었습니다.\n포인트 받아주세요.', 5000, {
+        actionLabel: '이동하기',
+        onAction: () => navigate('/community/challenge'),
+        closeButton: false,
+      })
+    }
   }
 
   return (

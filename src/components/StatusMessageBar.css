@@ -61,11 +61,11 @@
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  min-height: 28px;
-  padding: 0 10px;
+  padding: 10px;
+  border: none;
   border-radius: 8px;
-  background: #6d59f8;
-  color: #ffffff;
+  background: #fff;
+  color: #6d59f8;
   font-family: var(--app-font-family);
   font-size: 14px;
   font-weight: 600;
