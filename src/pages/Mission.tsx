@@ -22,7 +22,14 @@ import {
   MISSION_ACTIVITY_RECORDS_CHANGE_EVENT,
   readMissionActivityRecords,
 } from '../utils/missionActivityRecords'
-import { markWalkRecorded, markMealRecorded } from '../utils/challengeStatus'
+import {
+  markWalkRecorded,
+  markMealRecorded,
+  getCurrentChallengeDay,
+  checkChallengeDayDone,
+  isChallengeDayClaimed,
+  claimChallengeDay,
+} from '../utils/challengeStatus'
 import {
   MISSION_HISTORY_RECORDS_CHANGE_EVENT,
   readMissionHistoryRecordsWithDefaults,
@@ -922,6 +929,23 @@ function Mission() {
       content: `${petName}의 기록이 저장되었어요.`,
       path: '/mission',
     })
+
+    if (selectedCategory.id === 'walk' || selectedCategory.id === 'meal') {
+      const challengeDay = getCurrentChallengeDay()
+      if (checkChallengeDayDone(challengeDay) && !isChallengeDayClaimed(challengeDay)) {
+        claimChallengeDay(challengeDay)
+        addUserNotification({
+          title: '챌린지',
+          content: '오늘의 챌린지가 참여되었습니다. 포인트 받아주세요.',
+          path: '/community/challenge',
+        })
+        showStateBarMessage('오늘의 챌린지가 참여되었습니다.\n포인트 받아주세요.', 5000, {
+          actionLabel: '이동하기',
+          onAction: () => navigate('/community/challenge'),
+        })
+      }
+    }
+
     requestCloseMissionSheet()
   }
 

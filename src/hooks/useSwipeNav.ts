@@ -1,6 +1,18 @@
 import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router'
 
+function isInsideHorizontalScroll(target: EventTarget | null): boolean {
+  let node = target instanceof Element ? target : null
+  while (node && node !== document.body) {
+    if (node.scrollWidth > node.clientWidth) {
+      const overflow = window.getComputedStyle(node).overflowX
+      if (overflow === 'auto' || overflow === 'scroll') return true
+    }
+    node = node.parentElement
+  }
+  return false
+}
+
 export function useSwipeNav(leftSwipe?: string, rightSwipe?: string) {
   const navigate = useNavigate()
   const startX = useRef<number | null>(null)
@@ -10,6 +22,7 @@ export function useSwipeNav(leftSwipe?: string, rightSwipe?: string) {
     if (!leftSwipe && !rightSwipe) return
 
     const onStart = (e: TouchEvent) => {
+      if (isInsideHorizontalScroll(e.target)) return
       startX.current = e.touches[0].clientX
       startY.current = e.touches[0].clientY
     }

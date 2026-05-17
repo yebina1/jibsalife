@@ -3,7 +3,7 @@ import './CommunityOverview.css'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useSwipeNav } from '../../hooks/useSwipeNav'
-import { checkChallengeDayDone, readCurrentDay, saveCurrentDay, claimChallengeDay, calculateChallengeRewardPoints, isChallengeDayClaimed, CHALLENGE_STATUS_CHANGED_EVENT } from '../../utils/challengeStatus'
+import { checkChallengeDayDone, readCurrentDay, saveCurrentDay, claimChallengeDay, isChallengeDayClaimed, CHALLENGE_STATUS_CHANGED_EVENT } from '../../utils/challengeStatus'
 import { challengeDays } from './CommunityChallenge'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
@@ -83,12 +83,11 @@ function CommunityOverview() {
             })
           }}
           onComplete={() => {
-            const points = calculateChallengeRewardPoints()
             claimChallengeDay(currentDay)
-            addUserNotification({ title: '챌린지', content: '오늘의 챌린지가 참여되었습니다. 포인트 받아주세요.', path: `/community/challenge/reward?amount=${points}` })
+            addUserNotification({ title: '챌린지', content: '오늘의 챌린지가 참여되었습니다. 포인트 받아주세요.', path: '/community/challenge' })
             showStateBarMessage('오늘의 챌린지가 참여되었습니다.\n포인트 받아주세요.', 5000, {
               actionLabel: '이동하기',
-              onAction: () => navigate(`/community/challenge/reward?amount=${points}`),
+              onAction: () => navigate('/community/challenge'),
               closeButton: false,
             })
           }}

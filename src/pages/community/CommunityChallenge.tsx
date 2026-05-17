@@ -267,7 +267,7 @@ function CommunityChallenge() {
     const next = new Set([...participatedDays, currentDay])
     setParticipatedDays(next)
     saveParticipatedDays(next)
-    addUserNotification({ title: '챌린지', content: '오늘의 챌린지가 참여되었습니다. 포인트 받아주세요.', path: `/community/challenge/reward?amount=${points}` })
+    addUserNotification({ title: '챌린지', content: '오늘의 챌린지가 참여되었습니다. 포인트 받아주세요.', path: '/community/challenge' })
     navigate(`/community/challenge/reward?amount=${points}`)
   }
 
