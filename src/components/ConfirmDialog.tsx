@@ -1,6 +1,7 @@
 import './ConfirmDialog.css'
 import Alert from './Alert'
 import Button from './html/Button'
+import Title from './Title'
 
 type ConfirmDialogProps = {
   message: string
@@ -30,8 +31,8 @@ function ConfirmDialog({
   return (
     <Alert onClose={onCancel} dialogClassName={dialogClassName}>
       <div className="confirm_dialog_copy">
-        <p className="confirm_dialog_msg">{message}</p>
-        {description ? <p className="confirm_dialog_desc">{description}</p> : null}
+        <Title as="h4" title={message} headingClassName="confirm_dialog_msg" />
+        {description ? <p className="confirm_dialog_desc h5_regular">{description}</p> : null}
       </div>
       <div className="confirm_dialog_btns">
         {!hideCancel ? (

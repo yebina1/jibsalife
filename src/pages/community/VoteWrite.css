@@ -34,9 +34,11 @@
 }
 
 .cw_page_vote .cw_form {
-  gap: 0;
+  flex: 1 1 auto;
+  justify-content: space-between;
+  gap: 24px;
   min-height: 593px;
-  padding-block: 18px 0;
+  padding-block: 18px;
   border-color: #BCBCBC;
   border-radius: 12px;
 }
@@ -57,15 +59,19 @@
 }
 
 .cw_page_vote .cw_board_toggle {
-  padding: 11px 17px 12px;
+  padding: 16px 16px;
   color: #111111;
   font-size: 14px;
   font-weight: 600;
 }
 
+.cw_page_vote .cw_board_toggle span {
+  font-size: 16px;
+}
+
 .cw_page_vote .cw_board_toggle.is_open {
   border-color: #e5e5ec;
-  border-bottom-color: transparent;
+  border-bottom: 1px solid #505050;
   border-radius: 8px 8px 0 0;
   box-shadow: none;
 }
@@ -84,13 +90,35 @@
 }
 
 .cw_page_vote .cw_placeholder {
-  color: #111111;
+  color: #505050;
   font-weight: 500;
+  font-size: 16px;
 }
 
 .cw_page_vote .cw_chevron_icon {
-  color: #111111;
+  color: #505050;
   font-size: 20px;
+}
+
+.vw_form_top_group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vw_title_content_group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.vw_title_content_group .cw_section {
+  border-bottom: 1px solid #E5E5EC;
+}
+
+.vw_title_content_group .cw_section:last-child {
+  border-bottom: 0;
 }
 
 .cw_page_vote .cw_title_input.input_field {
@@ -114,9 +142,14 @@
   background: none;
 }
 
+.cw_page_vote .cw_form:has(.vw_photo_items_section) .cw_content_section {
+  flex: 0 0 auto;
+  min-height: 0;
+}
+
 .cw_page_vote .cw_form:has(.vw_ox_items_section) .cw_content_section {
   flex: 0 0 auto;
-  min-height: 178px;
+  min-height: 0;
 }
 
 .cw_page_vote .cw_content_section::before {
@@ -144,15 +177,19 @@
 .cw_page_vote .cw_content_textarea.input_field {
   position: relative;
   z-index: 1;
-  min-height: 112px;
+  min-height: 65px;
+  max-height: 65px;
   padding: 12px 17px;
   color: #111111;
   font-size: 14px;
   line-height: 1.45;
+  overflow: hidden;
+  resize: none;
 }
 
 /* 투표 기간 선택 */
 .vw_duration_row {
+  order: 999;
   display: flex;
   align-items: center;
   gap: 18px;
@@ -241,12 +278,17 @@
 }
 
 .vw_photo_items_section {
-  gap: 50px;
+  gap: 24px;
   padding: 0;
 }
 
+.vw_items_list {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+
 .vw_photo_items_section .vw_items_title {
-  margin: 0 0 -18px;
   font-size: 20px;
 }
 
@@ -254,12 +296,12 @@
 .vw_item {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 12px;
 }
 
 .vw_item_image_btn {
-  width: calc(100% - 36px);
-  height: 256px;
+  width: 100%;
+  height: 125px;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -280,8 +322,8 @@
 
 .vw_item_image_plus {
   display: inline-flex;
-  width: 64px;
-  height: 64px;
+  width: 50px;
+  height: 50px;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
@@ -314,8 +356,8 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  border-bottom: 1px solid #2C2C2E;
-  padding: 12px 16px;
+  border-bottom: 1px solid #767676;
+  padding: 6px 8px;
 }
 
 .vw_item_label_input.input_field {
@@ -326,7 +368,7 @@
   padding: 0;
   background: transparent;
   color: #111111;
-  font-size: 18px;
+  font-size: 16px;
   box-shadow: none;
   outline: none;
 }
@@ -361,6 +403,6 @@
 }
 
 .vw_item_label_input.input_field::placeholder {
-  color: #111111;
+  color: rgba(80, 80, 80, 0.6);
 }
 

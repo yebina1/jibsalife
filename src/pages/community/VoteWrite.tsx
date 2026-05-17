@@ -20,7 +20,7 @@ import { addUserNotification } from '../../utils/userNotifications'
 import { useActionRowSlot } from '../../contexts/ActionRowContext'
 
 const VOTE_DURATION_OPTIONS = [3, 7, 10] as const
-const VOTE_ITEM_LABEL_MAX_LENGTH = 12
+const VOTE_ITEM_LABEL_MAX_LENGTH = 10
 type VoteDuration = (typeof VOTE_DURATION_OPTIONS)[number]
 
 const VOTE_TYPE_OPTIONS = ['사진 투표', 'OX'] as const
@@ -45,7 +45,19 @@ function VoteWrite() {
   const [pendingPhotoUploadIndex, setPendingPhotoUploadIndex] = useState<number | null>(null)
   const contentTextareaRef = useRef<HTMLTextAreaElement>(null)
   const voteItemFileRefs = useRef<(HTMLInputElement | null)[]>([])
+  const voteTypeSelectRef = useRef<HTMLDivElement>(null)
   const actionRowSlot = useActionRowSlot()
+
+  useEffect(() => {
+    if (!isVoteTypeOpen) return
+    const handleClickOutside = (e: MouseEvent) => {
+      if (!voteTypeSelectRef.current?.contains(e.target as Node)) {
+        setIsVoteTypeOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isVoteTypeOpen])
 
   const isVoteReady =
     voteType !== '' &&
@@ -125,9 +137,11 @@ function VoteWrite() {
       <main className="page cw_page cw_page_vote">
         <div className="cw_form">
 
+          {/* 투표 방식 + 제목/내용 */}
+          <div className="vw_form_top_group">
           {/* 투표 방식 선택 */}
           <div className="cw_section cw_section_no_bottom_space cw_board_section">
-            <div className="cw_board_select">
+            <div className="cw_board_select" ref={voteTypeSelectRef}>
               <button
                 type="button"
                 className={`cw_board_toggle${isVoteTypeOpen ? ' is_open' : ''}`}
@@ -157,31 +171,34 @@ function VoteWrite() {
             </div>
           </div>
 
-          {/* 투표 제목 */}
-          <div className="cw_section cw_section_no_bottom_space">
-            <Input
-              className="cw_title_input"
-              value={voteTitle}
-              onChange={setVoteTitle}
-              placeholder="투표 제목을 입력해 주세요."
-            />
-          </div>
+          {/* 투표 제목 + 내용 */}
+          <div className="vw_title_content_group">
+            <div className="cw_section cw_section_no_bottom_space">
+              <Input
+                className="cw_title_input"
+                value={voteTitle}
+                onChange={setVoteTitle}
+                placeholder="투표 제목을 입력해 주세요."
+              />
+            </div>
 
-          {/* 투표 내용 */}
-          <div
-            className={`cw_section cw_section_no_bottom_space cw_content_section${isContentFocused || voteContent.trim() !== '' ? ' is_bg_hidden' : ''}`}
-            style={{ '--cw-write-bg-image': `url(${communityWriteBg})` } as CSSProperties}
-          >
-            <textarea
-              ref={contentTextareaRef}
-              className="input_field cw_content_textarea"
-              value={voteContent}
-              onChange={(event) => setVoteContent(event.target.value)}
-              placeholder={'사소한 고민부터 진지한 고민까지, 무엇이든 남겨보세요.\n예) 목줄끼고 산책 하시나요, 안 하시나요?'}
-              rows={4}
-              onFocus={() => setIsContentFocused(true)}
-              onBlur={() => setIsContentFocused(false)}
-            />
+            <div
+              className={`cw_section cw_section_no_bottom_space cw_content_section${isContentFocused || voteContent.trim() !== '' ? ' is_bg_hidden' : ''}`}
+              style={{ '--cw-write-bg-image': `url(${communityWriteBg})` } as CSSProperties}
+            >
+              <textarea
+                ref={contentTextareaRef}
+                className="input_field cw_content_textarea"
+                value={voteContent}
+                maxLength={40}
+                onChange={(event) => setVoteContent(event.target.value)}
+                placeholder={'사소한 고민부터 진지한 고민까지, 무엇이든 남겨보세요.\n예) 목줄끼고 산책 하시나요, 안 하시나요?'}
+                rows={2}
+                onFocus={() => setIsContentFocused(true)}
+                onBlur={() => setIsContentFocused(false)}
+              />
+            </div>
+          </div>
           </div>
 
           {/* 투표 기간 */}
@@ -209,6 +226,7 @@ function VoteWrite() {
           {voteType === '사진 투표' && (
             <div className="vw_items_section vw_photo_items_section">
               <strong className="vw_items_title">투표 항목</strong>
+              <div className="vw_items_list">
               {voteItems.map((item, i) => (
                 <div key={item.id} className="vw_item">
                   <button
@@ -235,17 +253,10 @@ function VoteWrite() {
                       onChange={(v) => setVoteItems((prev) => prev.map((it, j) => j === i ? { ...it, label: v.slice(0, VOTE_ITEM_LABEL_MAX_LENGTH) } : it))}
                       placeholder="내용을 입력해 주세요."
                     />
-                    <button
-                      type="button"
-                      className="vw_item_clear_btn"
-                      onClick={() => setVoteItems((prev) => prev.map((it, j) => j === i ? { ...it, label: '' } : it))}
-                      aria-label="내용 지우기"
-                    >
-                      <i className="bx bxs-x-circle" aria-hidden="true" />
-                    </button>
                   </div>
                 </div>
               ))}
+              </div>
             </div>
           )}
 

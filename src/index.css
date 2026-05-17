@@ -154,7 +154,7 @@ select {
 
 /* rg 16px */
 .h5_regular{
-  font-size: var(--font-title-h4);
+  font-size: var(--font-title-h5);
   font-weight: var(--font-weight-rg);
   line-height: var(--app-line-height);
 }
