@@ -74,7 +74,8 @@ function Layout({
   const communitySubParam = searchParams.get('sub')
   const communitySortParam = searchParams.get('sort') ?? 'latest'
   const isCameraPage = pathname === '/health/camera/capture' || pathname === '/health/cam'
-  const isNoLayoutPage = isCameraPage
+  const isSplashPage = pathname === '/splash'
+  const isNoLayoutPage = isCameraPage || isSplashPage
   const isSignupPage = pathname === '/signup'  // ← 추가
   const isLoginPage = pathname === '/login'
   const isOnboardingPage = pathname === '/onboarding'
@@ -105,6 +106,7 @@ function Layout({
   const contentClassName =
     hasContentPadding ? 'layout_content' : 'layout_content layout_content_no_padding'
   const hideFloatingAiButtonPaths = [
+    '/splash',
     '/onboarding',
     '/login',
     '/signup',
@@ -169,7 +171,9 @@ function Layout({
   const isIndicatorOnlyLayout = (!showNav && showFooter) || isPetStoryDetailPage || isKnowledgeDetailPage || isVoteResultPage || isPetStoryWritePage || isVoteWritePage
   const layoutClassName = isCameraPage
     ? 'layout layout_camera'
-    : isMinimal
+    : isSplashPage
+      ? 'layout layout_splash'
+      : isMinimal
       ? `layout layout_minimal ${isLoginPage ? 'layout_login' : ''} ${isSignupPage ? 'layout_signup' : ''} ${
           isOnboardingPage && !hasContentPadding ? 'layout_minimal_no_header_space' : ''
         }`

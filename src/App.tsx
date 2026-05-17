@@ -54,7 +54,14 @@ function isLoggedIn() {
   return localStorage.getItem(AUTH_LOGGED_IN_STORAGE_KEY) === 'true'
 }
 
+const SPLASH_SEEN_KEY = 'jibsalife.splash.seen'
+
+function hasSplashSeen() {
+  return localStorage.getItem(SPLASH_SEEN_KEY) === 'true'
+}
+
 function RootRedirect() {
+  if (!hasSplashSeen()) return <Navigate to="/splash" replace />
   if (isLoggedIn()) return <Navigate to="/home" replace />
   return <Navigate to="/onboarding" replace />
 }

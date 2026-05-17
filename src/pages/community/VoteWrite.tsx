@@ -140,22 +140,20 @@ function VoteWrite() {
                 </span>
                 <i className="bx bx-chevron-down cw_chevron_icon" aria-hidden="true" />
               </button>
-              {isVoteTypeOpen && (
-                <div className="cw_board_menu open" role="listbox">
-                  {VOTE_TYPE_OPTIONS.map((opt) => (
-                    <button
-                      key={opt}
-                      type="button"
-                      className={`cw_board_option${voteType === opt ? ' active' : ''}`}
-                      role="option"
-                      aria-selected={voteType === opt}
-                      onClick={() => { setVoteType(opt); setIsVoteTypeOpen(false) }}
-                    >
-                      {opt}
-                    </button>
-                  ))}
-                </div>
-              )}
+              <div className={`cw_board_menu${isVoteTypeOpen ? ' open' : ''}`} role="listbox">
+                {VOTE_TYPE_OPTIONS.map((opt) => (
+                  <button
+                    key={opt}
+                    type="button"
+                    className={`cw_board_option${voteType === opt ? ' active' : ''}`}
+                    role="option"
+                    aria-selected={voteType === opt}
+                    onClick={() => { setVoteType(opt); setIsVoteTypeOpen(false) }}
+                  >
+                    {opt}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 

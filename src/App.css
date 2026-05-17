@@ -70,6 +70,11 @@
   padding-bottom: 0;
 }
 
+.layout_splash {
+  --layout-header-height: 0px;
+  --layout-footer-height: 0px;
+}
+
 .layout_minimal {
   --layout-header-height: var(--layout-status-bar-height);
   --layout-footer-height: 0px;
