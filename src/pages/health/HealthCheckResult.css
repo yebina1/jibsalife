@@ -177,7 +177,7 @@ letter-spacing: var(--app-line-height);
 }
 
 .hcr_chart_bar {
-  width: 100%;
+  width: 24px;
   border-radius: 4px 4px 0 0;
   background: #c7bffe;
   min-height: 4px;

@@ -15,22 +15,30 @@ import consult3dImage from '../../img/consult_3d.png'
 import { readPetProfiles, readSelectedPetProfileId } from '../../utils/petProfiles'
 import { calculateHealthResult, readStoredHealthResultInput } from '../../utils/healthResultPolicy'
 
-const activityData = [
-  { label: '5/1', minutes: 48 },
-  { label: '5/2', minutes: 55 },
-  { label: '5/3', minutes: 46 },
-  { label: '5/4', minutes: 50 },
-  { label: '5/5', minutes: 44 },
-  { label: '5/6', minutes: 56 },
-  { label: '오늘', minutes: 38 },
-]
+const activityMinutes = [48, 55, 46, 50, 44, 56, 38] as const
 
 const CHART_MAX = 60
 
-const hospitalGuideItems = ['2일 이상 지속', '활동량 급감', '식사량 급감', '구토,설사 반복']
+const hospitalGuideItems = ['2일 이상 지속', '활동량 급감', '식사량 급감', '구토, 설사 반복']
 
 function HealthCheckResult() {
   const navigate = useNavigate()
+
+  const activityData = useMemo(() => {
+    const today = new Date()
+
+    return activityMinutes.map((minutes, index) => {
+      const date = new Date(today)
+      const dayOffset = activityMinutes.length - 1 - index
+      date.setDate(today.getDate() - dayOffset)
+
+      return {
+        label: dayOffset === 0 ? '오늘' : `${date.getMonth() + 1}/${date.getDate()}`,
+        minutes,
+        isToday: dayOffset === 0,
+      }
+    })
+  }, [])
 
   const pets = useMemo(() => readPetProfiles(), [])
   const selectedPetId = useMemo(() => readSelectedPetProfileId(), [])
@@ -64,12 +72,11 @@ function HealthCheckResult() {
         }
       />
       <main className="page health_page health_check_result_page">
-
-        {/* 펫 상태 카드 */}
         <section className="hcr_card hcr_pet_card">
           <img className="hcr_pet_img" src={petImage} alt={petName} />
           <p className="hcr_pet_msg">
-            <strong>{petName}</strong>의 상태는<br />
+            <strong>{petName}</strong>의 상태는
+            <br />
             {result.status.message}.
           </p>
           <span className={`hcr_pet_check${isPositive ? ' is_positive' : ''}`} aria-hidden="true">
@@ -77,7 +84,6 @@ function HealthCheckResult() {
           </span>
         </section>
 
-        {/* 최근 7일 활동량 */}
         <section className="hcr_card hcr_chart_card">
           <div className="hcr_chart_header">
             <div>
@@ -95,25 +101,28 @@ function HealthCheckResult() {
             </div>
             <div className="hcr_chart_plot">
               <div className="hcr_chart_grid">
-                <span /><span /><span /><span />
+                <span />
+                <span />
+                <span />
+                <span />
               </div>
               <div className="hcr_chart_bars">
-                {activityData.map((d) => (
-                  <div key={d.label} className="hcr_chart_bar_col">
+                {activityData.map((item) => (
+                  <div key={item.label} className="hcr_chart_bar_col">
                     <div
-                      className={`hcr_chart_bar${d.label === '오늘' ? ' is_today' : ''}`}
-                      style={{ height: `${(d.minutes / CHART_MAX) * 100}%` }}
+                      className={`hcr_chart_bar${item.isToday ? ' is_today' : ''}`}
+                      style={{ height: `${(item.minutes / CHART_MAX) * 100}%` }}
                     />
                   </div>
                 ))}
               </div>
               <div className="hcr_chart_xlabels">
-                {activityData.map((d) => (
+                {activityData.map((item) => (
                   <span
-                    key={d.label}
-                    className={`hcr_chart_xlabel${d.label === '오늘' ? ' is_today' : ''}`}
+                    key={item.label}
+                    className={`hcr_chart_xlabel${item.isToday ? ' is_today' : ''}`}
                   >
-                    {d.label}
+                    {item.label}
                   </span>
                 ))}
               </div>
@@ -121,7 +130,6 @@ function HealthCheckResult() {
           </div>
         </section>
 
-        {/* 식욕 / 배변 */}
         <section className="hcr_card hcr_status_pair_card">
           <div className="hcr_status_pair_item">
             <img src={mealIcon} alt="" aria-hidden="true" className="hcr_status_pair_img" />
@@ -136,7 +144,6 @@ function HealthCheckResult() {
           </div>
         </section>
 
-        {/* 병원 방문 권장 기준 */}
         <section className="hcr_card hcr_guide_card">
           <div className="hcr_guide_header">
             <img src={healthShieldIcon} alt="" aria-hidden="true" className="hcr_guide_icon_img" />
@@ -152,9 +159,12 @@ function HealthCheckResult() {
           </div>
         </section>
 
-        {/* 하단 액션 버튼 */}
         <div className="hcr_actions">
-          <button type="button" className="hcr_action hcr_action_hospital" disabled>
+          <button
+            type="button"
+            className="hcr_action hcr_action_hospital"
+            onClick={() => navigate('/health/hospitals/list')}
+          >
             <img src={hospital3dImage} alt="" aria-hidden="true" className="hcr_action_img" />
             <div className="hcr_action_content">
               <span className="hcr_action_title">병원 찾기 &gt;</span>
@@ -171,7 +181,8 @@ function HealthCheckResult() {
         </div>
 
         <p className="hcr_notice">
-          ※ 이 결과는 참고용이며,<br />
+          ※ 이 결과는 참고용이며
+          <br />
           정확한 진단은 수의사 상담을 통해 확인해주세요.
         </p>
       </main>

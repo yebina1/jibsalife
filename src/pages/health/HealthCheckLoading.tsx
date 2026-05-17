@@ -22,6 +22,11 @@ const loadingCards = [
   { image: reportImage, label: 'AI 리포트' },
 ] as const
 
+const completedProgressCopy = {
+  title: 'AI 리포트',
+  subtitle: '작성 완료',
+} as const
+
 const statusLabelMap: Record<LoadingCardStatus, string> = {
   waiting: '대기',
   done: '완료',
@@ -41,20 +46,20 @@ function getCardStatus(index: number, progress: number): LoadingCardStatus {
 }
 
 function getActiveMarkerStep(progress: number): ProgressMarkerStep {
-  if (progress > 75) return 3
-  if (progress > 50) return 2
-  if (progress > 25) return 1
+  if (progress >= 75) return 3
+  if (progress >= 50) return 2
+  if (progress >= 25) return 1
   return 0
 }
 
 function HealthCheckLoading() {
   const navigate = useNavigate()
-  const [progress, setProgress] = useState(25)
+  const [progress, setProgress] = useState(0)
   const [isComplete, setIsComplete] = useState(false)
 
   useEffect(() => {
     let frameId = 0
-    const startProgress = 25
+    const startProgress = 0
     const endProgress = 100
     const duration = 3200
     const startTime = performance.now()
@@ -70,6 +75,7 @@ function HealthCheckLoading() {
         return
       }
 
+      setProgress(endProgress)
       setIsComplete(true)
     }
 
@@ -82,7 +88,8 @@ function HealthCheckLoading() {
 
   const roundedProgress = Math.round(progress)
   const activeMarkerStep = getActiveMarkerStep(progress)
-  const activeCopy = progressStepCopy[activeMarkerStep]
+  const activeCopy =
+    roundedProgress >= 100 ? completedProgressCopy : progressStepCopy[activeMarkerStep]
 
   const cardStatuses = useMemo(
     () => loadingCards.map((_, index) => getCardStatus(index, progress)),
@@ -108,7 +115,7 @@ function HealthCheckLoading() {
       <main className="page health_page health_check_loading_page">
         <section className="health_check_loading" aria-label="AI 건강 체크 로딩">
           <header className="health_check_loading_intro">
-            <h1>AI 가 정보를 확인 중이에요</h1>
+            <h1>AI가 정보를 확인 중이에요</h1>
             <p>잠시만 기다려 주세요...</p>
           </header>
 

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Dog } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import './HealthReport.css'
@@ -17,22 +17,30 @@ import blueCheckIcon from '../../img/blue-check-icon.png'
 import checkIcon from '../../img/check-icon.png'
 import { readSelectedPetProfile } from '../../utils/petProfiles'
 
-const chartBars = [
-  { label: '5/1', height: 95, today: false },
-  { label: '5/2', height: 110, today: false },
-  { label: '5/3', height: 95, today: false },
-  { label: '5/4', height: 105, today: false },
-  { label: '5/5', height: 89, today: false },
-  { label: '5/6', height: 110, today: false },
-  { label: '오늘', height: 70, today: true },
-] as const
+const chartHeights = [95, 110, 95, 105, 89, 110, 70] as const
 
 const criteriaLeft = ['2일 이상 지속', '식사량 급감'] as const
-const criteriaRight = ['활동량 급감', '구토,설사 반복'] as const
+const criteriaRight = ['활동량 급감', '구토, 설사 반복'] as const
 
 function HealthReport() {
   const navigate = useNavigate()
   const pet = readSelectedPetProfile()
+
+  const chartBars = useMemo(() => {
+    const today = new Date()
+
+    return chartHeights.map((height, index) => {
+      const date = new Date(today)
+      const dayOffset = chartHeights.length - 1 - index
+      date.setDate(today.getDate() - dayOffset)
+
+      return {
+        label: dayOffset === 0 ? '오늘' : `${date.getMonth() + 1}/${date.getDate()}`,
+        height,
+        today: dayOffset === 0,
+      }
+    })
+  }, [])
 
   useEffect(() => {
     markHealthReportViewed()
@@ -55,8 +63,6 @@ function HealthReport() {
         }
       />
       <main className="page hr_page">
-
-        {/* ── 카드 1: 펫 상태 총평 ── */}
         <div className="hr_card hr_card_pet">
           <div className="hr_pet">
             <div className="hr_pet_avatar">
@@ -76,7 +82,6 @@ function HealthReport() {
           </div>
         </div>
 
-        {/* ── 카드 2: 최근 7일 활동량 차트 ── */}
         <div className="hr_card hr_card_chart">
           <div className="hr_chart_header">
             <div className="hr_chart_header_left">
@@ -87,19 +92,16 @@ function HealthReport() {
           </div>
 
           <div className="hr_chart_inner">
-            {/* Y축 레이블 */}
             <span className="hr_y_label" style={{ top: 0 }}>60분</span>
             <span className="hr_y_label" style={{ top: 40 }}>40분</span>
             <span className="hr_y_label" style={{ top: 80 }}>20분</span>
             <span className="hr_y_label" style={{ top: 120 }}>0분</span>
 
-            {/* 수평 점선 */}
             {([10, 50, 90] as const).map((top) => (
               <div key={top} className="hr_h_line hr_h_line_dashed" style={{ top }} />
             ))}
             <div className="hr_h_line hr_h_line_solid" style={{ top: 130 }} />
 
-            {/* 막대 그룹 */}
             <div className="hr_bars">
               {chartBars.map((bar) => (
                 <div key={bar.label} className="hr_bar_group">
@@ -119,7 +121,6 @@ function HealthReport() {
           </div>
         </div>
 
-        {/* ── 카드 3: 식욕 / 배변 상태 ── */}
         <div className="hr_card hr_card_appetite">
           <div className="hr_appetite_col">
             <div className="hr_appetite_icon_wrap">
@@ -142,7 +143,6 @@ function HealthReport() {
           </div>
         </div>
 
-        {/* ── 카드 4: 병원 방문 권장 기준 ── */}
         <div className="hr_card hr_card_criteria">
           <div className="hr_criteria_header">
             <div className="hr_criteria_shield_wrap">
@@ -170,7 +170,6 @@ function HealthReport() {
           </div>
         </div>
 
-        {/* ── 카드 5: 병원찾기 / 수의사상담 ── */}
         <div className="hr_actions">
           <button
             type="button"
@@ -193,7 +192,12 @@ function HealthReport() {
             aria-disabled="true"
             className="hr_action_card hr_action_consult"
           >
-            <img src={consultImage} alt="" aria-hidden="true" className="hr_action_img hr_action_img_disabled" />
+            <img
+              src={consultImage}
+              alt=""
+              aria-hidden="true"
+              className="hr_action_img hr_action_img_disabled"
+            />
             <div className="hr_action_text">
               <span className="hr_action_title_row">
                 <p className="hr_action_title hr_action_title_disabled">수의사 상담</p>
@@ -205,7 +209,6 @@ function HealthReport() {
             </div>
           </button>
         </div>
-
       </main>
     </>
   )
