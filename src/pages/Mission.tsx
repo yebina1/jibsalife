@@ -31,6 +31,7 @@ import {
   type MissionHistoryRecord,
 } from '../utils/missionHistoryRecords'
 import { showStateBarMessage } from '../utils/stateBarMessage'
+import { addUserNotification } from '../utils/userNotifications'
 
 const weekLabels = ['일', '월', '화', '수', '목', '금', '토']
 const today = new Date()
@@ -915,7 +916,12 @@ function Mission() {
     writeStoredMissionHistoryRecords(nextHistory)
     setHistoryItems(nextHistory)
     window.dispatchEvent(new CustomEvent(MISSION_HISTORY_RECORDS_CHANGE_EVENT, { detail: nextRecords[0] }))
-    showStateBarMessage('우리 아이의 기록이 저장되었어요.')
+    showStateBarMessage(`${petName}의 기록이 저장되었어요.`)
+    addUserNotification({
+      title: '건강 히스토리',
+      content: `${petName}의 기록이 저장되었어요.`,
+      path: '/mission',
+    })
     requestCloseMissionSheet()
   }
 

@@ -996,7 +996,7 @@ function Health() {
                 <button
                   key={pet.id}
                   type="button"
-                  className={`mission_pet_switch_option${pet.id === effectiveSelectedPetId ? ' is_selected' : ''}`}
+                  className={`mission_pet_switch_option${hasExplicitPetSelection && pet.id === selectedPetId ? ' is_selected' : ''}`}
                   onClick={() => handleSelectPet(pet)}
                 >
                   {pet.image ? (

@@ -277,10 +277,10 @@
 
 .health_camera_audio_wave span {
   width: 5px;
-  height: calc(18px + (var(--wave-index) % 7) * 10px);
+  height: var(--wave-h);
   border-radius: 999px;
   background: currentColor;
-  opacity: calc(0.36 + (var(--wave-index) % 5) * 0.1);
+  opacity: var(--wave-op);
 }
 
 .health_camera_audio_meter {
@@ -1412,7 +1412,7 @@
 
   .health_camera_audio_wave span {
     width: 3px;
-    height: calc(12px + (var(--wave-index) % 7) * 6px);
+    height: var(--wave-h-sm);
   }
 
   .health_camera_audio_meter {

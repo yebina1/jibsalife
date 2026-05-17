@@ -27,6 +27,9 @@ import {
   writeMissionSymptomRecord,
 } from '../../utils/missionActivityRecords'
 import { MY_PROFILE_CHANGE_EVENT, readMyProfileName } from '../../utils/myProfile'
+import { showStateBarMessage } from '../../utils/stateBarMessage'
+import { readSelectedPetProfileName } from '../../utils/petProfiles'
+import { addUserNotification } from '../../utils/userNotifications'
 
 type RecordKind = 'meal' | 'poop' | 'symptom' | 'activity'
 
@@ -419,6 +422,12 @@ function HealthQna() {
       if (!kind || !calendarDetail) return
 
       writeMissionRecordByKind(kind, calendarDetail)
+      showStateBarMessage(`${readSelectedPetProfileName()}의 기록이 저장되었어요.`)
+      addUserNotification({
+        title: '건강 기록',
+        content: `${readSelectedPetProfileName()}의 기록이 저장되었어요.`,
+        path: '/mission',
+      })
 
       return [
         {

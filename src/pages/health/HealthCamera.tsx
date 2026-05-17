@@ -25,6 +25,8 @@ import {
   writeStoredMissionHistoryRecords,
 } from '../../utils/missionHistoryRecords'
 import { showStateBarMessage } from '../../utils/stateBarMessage'
+import { readSelectedPetProfileName } from '../../utils/petProfiles'
+import { addUserNotification } from '../../utils/userNotifications'
 
 type GuideMode = 'photo' | 'audio' | 'video' | 'memo'
 type GuideIconType =
@@ -600,10 +602,14 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
   const handleMemoSaveComplete = () => {
     if (!saveMemoToCalendar()) return
 
-    showStateBarMessage('우리 아이의 기록이 저장되었어요.')
+    showStateBarMessage(`${readSelectedPetProfileName()}의 기록이 저장되었어요.`)
+    addUserNotification({
+      title: '건강 기록',
+      content: `${readSelectedPetProfileName()}의 기록이 저장되었어요.`,
+      path: '/mission',
+    })
     resetMemoSheet()
     closeMemoSheet()
-    setIsSaveCompleteDialogOpen(true)
   }
 
   const handleMemoUpload = () => {
@@ -1214,7 +1220,14 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
                   <div className="health_camera_audio_bubble">"밥을 잘 안 먹어요"</div>
                   <div className="health_camera_audio_wave">
                     {Array.from({ length: 34 }).map((_, index) => (
-                      <span key={index} style={{ '--wave-index': index } as CSSProperties} />
+                      <span
+                      key={index}
+                      style={{
+                        '--wave-h': `${18 + (index % 7) * 10}px`,
+                        '--wave-h-sm': `${12 + (index % 7) * 6}px`,
+                        '--wave-op': 0.36 + (index % 5) * 0.1,
+                      } as CSSProperties}
+                    />
                     ))}
                   </div>
                   <div className="health_camera_audio_meter">
@@ -1324,7 +1337,14 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
           <div className="health_camera_audio_capture" aria-hidden="true">
             <div className="health_camera_audio_wave">
               {Array.from({ length: 34 }).map((_, index) => (
-                <span key={index} style={{ '--wave-index': index } as CSSProperties} />
+                <span
+                  key={index}
+                  style={{
+                    '--wave-h': `${18 + (index % 7) * 10}px`,
+                    '--wave-h-sm': `${12 + (index % 7) * 6}px`,
+                    '--wave-op': 0.36 + (index % 5) * 0.1,
+                  } as CSSProperties}
+                />
               ))}
             </div>
             <div className="health_camera_audio_meter">
