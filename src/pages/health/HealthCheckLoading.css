@@ -155,42 +155,32 @@
  letter-spacing: var(--app-line-height);
 }
 
-.health_check_loading_marker {
+.health_check_loading_marker_orbit {
   position: absolute;
   z-index: 5;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform-origin: 0 0;
+  animation: health_marker_orbit 3.2s linear forwards;
+}
+
+.health_check_loading_marker {
+  position: absolute;
   width: 28px;
   height: 28px;
   background: #ffffff;
   clip-path: polygon(14% 50%, 100% 0%, 100% 100%);
-  top: var(--health-marker-top);
-  left: var(--health-marker-left);
-  transform: translate(-50%, -50%) rotate(var(--health-marker-rotate));
-  transform-origin: center;
   border-radius: 2px;
+  left: 53px;
+  top: -14px;
+  transform: rotate(180deg);
 }
 
-.health_check_loading_marker.is_step_0 {
-  --health-marker-left: 28.5%;
-  --health-marker-top: 28.5%;
-  --health-marker-rotate: -45deg;
-}
-
-.health_check_loading_marker.is_step_1 {
-  --health-marker-left: 71.5%;
-  --health-marker-top: 28.5%;
-  --health-marker-rotate: 45deg;
-}
-
-.health_check_loading_marker.is_step_2 {
-  --health-marker-left: 71.5%;
-  --health-marker-top: 71.5%;
-  --health-marker-rotate: 135deg;
-}
-
-.health_check_loading_marker.is_step_3 {
-  --health-marker-left: 28.5%;
-  --health-marker-top: 71.5%;
-  --health-marker-rotate: 225deg;
+@keyframes health_marker_orbit {
+  from { transform: rotate(180deg); }
+  to { transform: rotate(540deg); }
 }
 
 .health_check_loading_cards {
@@ -347,31 +337,6 @@ letter-spacing: var(--app-line-height);
   .health_check_loading_center {
     width: 51%;
     height: 51%;
-  }
-
-  .health_check_loading_marker {
-    width: 12.5%;
-    height: 12.5%;
-  }
-
-  .health_check_loading_marker.is_step_0 {
-    --health-marker-left: 27.5%;
-    --health-marker-top: 27.5%;
-  }
-
-  .health_check_loading_marker.is_step_1 {
-    --health-marker-left: 72.5%;
-    --health-marker-top: 27.5%;
-  }
-
-  .health_check_loading_marker.is_step_2 {
-    --health-marker-left: 72.5%;
-    --health-marker-top: 72.5%;
-  }
-
-  .health_check_loading_marker.is_step_3 {
-    --health-marker-left: 27.5%;
-    --health-marker-top: 72.5%;
   }
 
   .health_check_loading_cards {

@@ -122,7 +122,7 @@ function HealthCheckLoading() {
           <section className="health_check_loading_progress" aria-label="검사 진행 상황">
             <div
               className="health_check_loading_ring"
-              style={{ '--health-progress-value': roundedProgress } as CSSProperties}
+              style={{ '--health-progress-value': progress } as CSSProperties}
               aria-hidden="true"
             >
               <div className="health_check_loading_ring_visual">
@@ -147,10 +147,9 @@ function HealthCheckLoading() {
                   alt=""
                 />
 
-                <span
-                  className={`health_check_loading_marker is_step_${activeMarkerStep}`}
-                  aria-hidden="true"
-                />
+                <div className="health_check_loading_marker_orbit" aria-hidden="true">
+                  <span className="health_check_loading_marker" />
+                </div>
 
                 <div className="health_check_loading_center">
                   <strong>{roundedProgress}%</strong>
