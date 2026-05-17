@@ -74,7 +74,7 @@ function Layout({
   const communitySubParam = searchParams.get('sub')
   const communitySortParam = searchParams.get('sort') ?? 'latest'
   const isCameraPage = pathname === '/health/camera/capture' || pathname === '/health/cam'
-  const isNoLayoutPage = isCameraPage || pathname === '/health/check'
+  const isNoLayoutPage = isCameraPage
   const isSignupPage = pathname === '/signup'  // ← 추가
   const isLoginPage = pathname === '/login'
   const isOnboardingPage = pathname === '/onboarding'
@@ -86,6 +86,7 @@ function Layout({
   const isVoteResultPage = pathname === '/community/vote/result'
   const isVoteWritePage = pathname === '/community/vote/write'
   const isRewardPage = pathname.startsWith('/community/challenge/reward')
+  const isHomePage = pathname === '/home'
   const showCommunityChrome =
     isCommunityPath && !isPetStoryDetailPage && !isPetStoryWritePage && !isKnowledgeDetailPage && !isVoteDetailPage && !isVoteResultPage && !isVoteWritePage && !isRewardPage
   const communitySubTabs = !isPetStoryDetailPage && !isPetStoryWritePage && !isKnowledgeDetailPage && pathname.startsWith('/community/petstory')
@@ -128,6 +129,12 @@ function Layout({
     '/notification',
   ]
   const hideFloatingAiButton = hideFloatingAiButtonPaths.includes(pathname) || isCommunityPath
+  const floatingAiButtonClassName = [
+    isFloatingAiHiddenByScroll ? 'is_scroll_hidden' : null,
+    isHomePage ? 'floating_button_ai_chat_home' : null,
+  ]
+    .filter(Boolean)
+    .join(' ') || undefined
 
   const isCommunityTopTabActive = (to: string, isActive: boolean) => {
     if (pathname === '/community' && to === '/community/overview') return true
@@ -335,7 +342,7 @@ function Layout({
         </div>
         {!isNoLayoutPage ? <StatusMessageBar /> : null}
         {!hideFloatingAiButton ? (
-          <FloatingAiButton className={isFloatingAiHiddenByScroll ? 'is_scroll_hidden' : undefined} />
+          <FloatingAiButton className={floatingAiButtonClassName} />
         ) : null}
         {!isNoLayoutPage && showFooter ? (
           <footer>

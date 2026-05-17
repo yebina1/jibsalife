@@ -73,7 +73,6 @@ const bestPoseVoteItems = voteDetails.find((voteDetail) => voteDetail.id === 'be
 const BEST_POSE_VOTE_ID = 'best-pose'
 const VOTE_REWARD_AMOUNT = 60
 
-const homeVoteDisplayNames = ['콩이', '공심이', '뿡뿡이', '준하', '재석', '명수']
 
 const contentItems = [
   {
@@ -922,7 +921,7 @@ function Home() {
           <div className="best_pose_vote_strip" aria-label="오늘의 베스트 포즈 투표 목록">
             {bestPoseVoteItems.map((item, index) => {
               const isLiked = selectedCardId === item.id
-              const displayName = homeVoteDisplayNames[index] ?? item.name
+              const displayName = item.name
 
               return (
                 <article key={item.id} className="best_pose_vote_card">

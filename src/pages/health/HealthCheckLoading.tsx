@@ -6,8 +6,6 @@ import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
 import BackButton from '../../components/html/BackButton'
 import Button from '../../components/html/Button'
-import StateBar from '../../components/StateBar'
-import HomeIndicator from '../../components/HomeIndicator'
 import healthImage from '../../img/health/health.png'
 import moveImage from '../../img/health/move.png'
 import eatImage from '../../img/health/eat.png'
@@ -52,10 +50,10 @@ function getActiveMarkerStep(progress: number): ProgressMarkerStep {
 function HealthCheckLoading() {
   const navigate = useNavigate()
   const [progress, setProgress] = useState(25)
+  const [isComplete, setIsComplete] = useState(false)
 
   useEffect(() => {
     let frameId = 0
-    let navigateTimer = 0
     const startProgress = 25
     const endProgress = 100
     const duration = 3200
@@ -72,18 +70,15 @@ function HealthCheckLoading() {
         return
       }
 
-      navigateTimer = window.setTimeout(() => {
-        navigate('/health/result', { replace: true })
-      }, 500)
+      setIsComplete(true)
     }
 
     frameId = window.requestAnimationFrame(animate)
 
     return () => {
       window.cancelAnimationFrame(frameId)
-      window.clearTimeout(navigateTimer)
     }
-  }, [navigate])
+  }, [])
 
   const roundedProgress = Math.round(progress)
   const activeMarkerStep = getActiveMarkerStep(progress)
@@ -95,17 +90,16 @@ function HealthCheckLoading() {
   )
 
   return (
-    <div className="health_check_loading_shell">
-      <StateBar />
+    <>
       <PageHeader
         title="AI 건강 체크"
         leftContent={<BackButton />}
         rightContent={
           <>
-            <Button type="button" aria-label="calendar" onClick={() => navigate('/mission')}>
+            <Button type="button" aria-label="캘린더" onClick={() => navigate('/mission')}>
               <HeaderIcon type="calendar" />
             </Button>
-            <Button type="button" aria-label="notification">
+            <Button type="button" aria-label="알림">
               <HeaderIcon type="notification" />
             </Button>
           </>
@@ -180,10 +174,19 @@ function HealthCheckLoading() {
             <br />
             정확한 진단은 수의사 상담을 통해 확인해주세요.
           </p>
+
+          {isComplete && (
+            <button
+              type="button"
+              className="health_check_loading_confirm_btn"
+              onClick={() => navigate('/health/result', { replace: true })}
+            >
+              확인
+            </button>
+          )}
         </section>
       </main>
-      <HomeIndicator />
-    </div>
+    </>
   )
 }
 

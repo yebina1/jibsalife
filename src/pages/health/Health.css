@@ -480,7 +480,7 @@
 .health_cam_tabs {
   display: flex;
   gap: 4px;
-  width: 335px;
+  width: min(335px, calc(100vw - 40px));
   padding: 3px;
   border-radius: 10px;
   background: #f1f1f5;

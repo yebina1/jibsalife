@@ -26,7 +26,7 @@
   font-size: 12px;
   font-weight: 500;
   line-height: 1.4;
-  letter-spacing: -0.3px;
+letter-spacing: var(--app-line-height);
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -56,7 +56,7 @@
   font-size: 15px;
   font-weight: 400;
   line-height: 1.5;
-  letter-spacing: -0.375px;
+letter-spacing: var(--app-line-height);
 }
 
 .hcr_pet_msg strong {
@@ -72,7 +72,7 @@
   flex-shrink: 0;
   color: #d9d9de;
   font-size: 32px;
-  line-height: 1;
+  line-height: 1.3;
 }
 
 .hcr_pet_check.is_positive {
@@ -99,7 +99,7 @@
   color: #111111;
   font-size: 16px;
   font-weight: 600;
-  letter-spacing: -0.025em;
+  letter-spacing: var(--app-line-height);
 }
 
 .hcr_chart_subtitle {
@@ -108,7 +108,7 @@
   font-size: 14px;
   font-weight: 400;
   line-height: 1.4;
-  letter-spacing: -0.3px;
+letter-spacing: var(--app-line-height);
 }
 
 .hcr_chart {
@@ -128,7 +128,7 @@
   font-size: 14px;
   font-weight: 400;
   line-height: 1.45;
-  letter-spacing:  -0.025em;
+letter-spacing: var(--app-line-height);
   text-align: right;
   flex-shrink: 0;
 }
@@ -207,7 +207,7 @@
   font-size: 14px;
   font-weight: 400;
   line-height: 1.45;
-  letter-spacing: -0.025em;
+ letter-spacing: var(--app-line-height);
   white-space: nowrap;
 }
 
@@ -246,7 +246,7 @@
   font-size: 14px;
   font-weight: 600;
   line-height: 1.4;
-  letter-spacing: -0.35px;
+letter-spacing: var(--app-line-height);
 }
 
 .hcr_status_pair_divider {
@@ -284,7 +284,7 @@
   font-size: 15px;
   font-weight: 600;
   line-height: 1.4;
-  letter-spacing: -0.375px;
+letter-spacing: var(--app-line-height);
 }
 
 .hcr_guide_grid {
@@ -314,7 +314,7 @@
   font-size: 13px;
   font-weight: 500;
   line-height: 1.4;
-  letter-spacing: -0.325px;
+letter-spacing: var(--app-line-height);
 }
 
 /* ─── Action buttons ─────────────────────────────────────── */
@@ -353,6 +353,12 @@
   color: #b0b0b8;
 }
 
+.hcr_action:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .hcr_action_img {
   width: 52px;
   height: 52px;
@@ -373,7 +379,7 @@
   font-size: 13px;
   font-weight: 700;
   line-height: 1.4;
-  letter-spacing: -0.325px;
+letter-spacing: var(--app-line-height);
 }
 
 .hcr_action_desc {
@@ -382,7 +388,7 @@
   font-size: 11px;
   font-weight: 400;
   line-height: 1.45;
-  letter-spacing: -0.275px;
+letter-spacing: var(--app-line-height);
 }
 
 /* ─── Notice ─────────────────────────────────────────────── */
@@ -392,7 +398,7 @@
   font-size: 12px;
   font-weight: 400;
   line-height: 1.5;
-  letter-spacing: -0.3px;
+letter-spacing: var(--app-line-height);
   text-align: center;
 }
 

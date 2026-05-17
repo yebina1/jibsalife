@@ -154,14 +154,14 @@ function HealthCheckResult() {
 
         {/* 하단 액션 버튼 */}
         <div className="hcr_actions">
-          <button type="button" className="hcr_action hcr_action_hospital">
+          <button type="button" className="hcr_action hcr_action_hospital" disabled>
             <img src={hospital3dImage} alt="" aria-hidden="true" className="hcr_action_img" />
             <div className="hcr_action_content">
               <span className="hcr_action_title">병원 찾기 &gt;</span>
               <span className="hcr_action_desc">내 주변 병원 검색<br />및 정보 확인</span>
             </div>
           </button>
-          <button type="button" className="hcr_action hcr_action_vet">
+          <button type="button" className="hcr_action hcr_action_vet" disabled>
             <img src={consult3dImage} alt="" aria-hidden="true" className="hcr_action_img" />
             <div className="hcr_action_content">
               <span className="hcr_action_title">수의사 상담 &gt;</span>

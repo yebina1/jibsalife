@@ -136,6 +136,21 @@
   animation: floating-ai-bubble-bounce 1.35s ease-in-out infinite;
 }
 
+.floating_button_ai_chat.floating_button_ai_chat_home .floating_button_icon_frame {
+  width: clamp(104px, 9vw, 148px);
+  height: clamp(108px, 9.5vw, 154px);
+}
+
+.floating_button_ai_chat.floating_button_ai_chat_home .floating_ai_chat_base {
+  width: clamp(76px, 6.6vw, 108px);
+}
+
+.floating_button_ai_chat.floating_button_ai_chat_home .floating_ai_chat_bubble_image {
+  top: clamp(4px, 0.55vw, 10px);
+  right: clamp(2px, 0.4vw, 6px);
+  width: clamp(30px, 2.6vw, 42px);
+}
+
 @keyframes floating-ai-bubble-bounce {
   0%,
   100% {
@@ -252,6 +267,50 @@
 
   .floating_write_container {
     right: max(18px, calc((100vw - var(--layout-max-width, 1440px)) / 2 + 18px));
+  }
+}
+
+@media (min-width: 1200px) {
+  .floating_write_button {
+    width: clamp(56px, 4.5vw, 72px);
+    height: clamp(56px, 4.5vw, 72px);
+  }
+
+  .floating_write_button.is_expanded {
+    width: clamp(104px, 8.2vw, 136px);
+    gap: clamp(4px, 0.45vw, 8px);
+    padding-inline: clamp(16px, 1.15vw, 22px);
+  }
+
+  .floating_write_button .floating_button_icon_frame {
+    flex-basis: clamp(24px, 1.9vw, 30px);
+    width: clamp(24px, 1.9vw, 30px);
+    height: clamp(24px, 1.9vw, 30px);
+  }
+
+  .floating_write_button .floating_button_icon_frame i,
+  .floating_write_button .floating_button_icon_frame i::before {
+    width: clamp(24px, 1.9vw, 30px);
+    height: clamp(24px, 1.9vw, 30px);
+    font-size: clamp(24px, 1.9vw, 30px);
+    line-height: clamp(24px, 1.9vw, 30px);
+  }
+
+  .floating_write_button_label {
+    font-size: clamp(14px, 1vw, 18px);
+  }
+
+  .floating_write_button.is_expanded .floating_write_button_label {
+    max-width: clamp(48px, 4vw, 64px);
+  }
+
+  .floating_write_container {
+    height: clamp(56px, 4.5vw, 72px);
+  }
+
+  .floating_write_menu {
+    bottom: calc(100% + clamp(12px, 1vw, 16px));
+    gap: clamp(8px, 0.8vw, 12px);
   }
 }
 

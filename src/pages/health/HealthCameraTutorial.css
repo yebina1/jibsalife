@@ -1,4 +1,10 @@
 .health_cam_tutorial_layer {
+  --health-cam-layout-width: min(100vw, 1440px);
+  --health-cam-layout-gutter: max(0px, calc((100vw - var(--health-cam-layout-width)) / 2));
+  --health-cam-tutorial-tabs-width: min(335px, calc(100vw - 40px));
+  --health-cam-close-button-size: 36px;
+  --health-cam-close-button-offset: 12px;
+  --health-cam-tab-bottom-offset: calc(34px + env(safe-area-inset-bottom));
   position: fixed;
   top: 0;
   left: 0;
@@ -81,7 +87,7 @@
 .health_cam_tabs_wrapper.health_cam_tutorial_tabs_wrapper {
   position: absolute;
   right: 0;
-  bottom: 34px;
+  bottom: var(--health-cam-tab-bottom-offset);
   left: 0;
   z-index: 13;
   pointer-events: none;
@@ -95,6 +101,7 @@
 
 .health_cam_tabs.health_cam_tutorial_tabs {
   position: relative;
+  width: var(--health-cam-tutorial-tabs-width);
   background: #f1f1f5;
   padding: 3px;
 }
@@ -219,30 +226,33 @@
 }
 
 .health_cam_tutorial_callout_record {
-  right: 56px;
-  bottom: 130px;
-  text-align: right;
-  width: 174px;
+  left: calc(50% + (var(--health-cam-tutorial-tabs-width) * 0.28));
+  bottom: calc(var(--health-cam-tab-bottom-offset) + 82px);
+  width: min(174px, calc(100vw - 32px));
   min-height: 126px;
+  text-align: center;
+  transform: translateX(-50%);
+  animation: healthCamTutorialFadeCentered 240ms ease;
 }
 
 .health_cam_tutorial_callout_record img {
   width: 20px;
   height: 59px;
   aspect-ratio: 20 / 59;
-  top: 82px;
-  right: 44px;
+  top: calc(100% - 48px);
+  left: 50%;
   margin: 0;
+  transform: translateX(-50%);
 }
 
 .health_cam_tutorial_callout_close {
-  top: 84px;
+  top: max(84px, calc(env(safe-area-inset-top) + 44px));
   left: 50%;
   right: auto;
+  width: min(196px, calc(100vw - 88px));
+  min-height: 56px;
   text-align: center;
   transform: translateX(-50%);
-  width: 190px;
-  min-height: 56px;
   animation: healthCamTutorialFadeCentered 240ms ease;
 }
 
@@ -254,13 +264,32 @@
   width: 68px;
   height: 19px;
   aspect-ratio: 68 / 19;
-  top: 5px;
-  right: -37px;
+  top: 2px;
+  right: -18px;
   margin: 0;
 }
 
 .health_cam_tutorial_layer:focus-visible {
   outline: none;
+}
+
+@media (min-width: 768px) {
+  .health_cam_tutorial_callout_close {
+    top: max(84px, calc(env(safe-area-inset-top) + 44px));
+    right: calc(
+      var(--health-cam-layout-gutter) + var(--health-cam-close-button-offset) + var(--health-cam-close-button-size) + 54px
+    );
+    left: auto;
+    width: 168px;
+    text-align: right;
+    transform: none;
+    animation: healthCamTutorialFade 240ms ease;
+  }
+
+  .health_cam_tutorial_callout_close img {
+    top: 6px;
+    right: -34px;
+  }
 }
 
 @media (max-width: 420px) {
@@ -284,6 +313,14 @@
   .health_cam_tutorial_callout_photo img {
     top: 80px;
     left: 70%;
+  }
+
+  .health_cam_tutorial_callout_close {
+    width: min(184px, calc(100vw - 72px));
+  }
+
+  .health_cam_tutorial_callout_close img {
+    right: -24px;
   }
 }
 

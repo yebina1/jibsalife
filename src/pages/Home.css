@@ -336,7 +336,9 @@
 .best_pose_vote_card_media {
   position: relative;
   width: 100%;
-  height: 108px;
+  height: auto;
+  min-height: 108px;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   border-radius: 12px;
   background: #f3f1ec;
@@ -487,11 +489,21 @@
   position: relative;
   overflow: hidden;
   width: 100%;
+  min-height: 130px;
+  aspect-ratio: 1.16 / 1;
   padding: 0;
   border: 0;
   border-radius: 12px;
   background: #f2f3f7;
   cursor: pointer;
+}
+
+.content_card .lazy_img_root,
+.content_card .lazy_img_picture {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .content_card::before {
@@ -514,8 +526,10 @@
 .content_card img {
   display: block;
   width: 100%;
-  height: 130px;
+  height: 100%;
   object-fit: cover;
+  transform: scale(1.06);
+  transform-origin: center;
 }
 
 .content_card_chip {
@@ -527,15 +541,15 @@
   align-items: center;
   justify-content: center;
   width: fit-content;
-  min-height: 24px;
-  padding: 2px 8px;
+  min-height: 28px;
+  padding: 4px 10px;
   box-sizing: border-box;
   border-radius: 999px;
   border: 1px solid #6d59f8;
   background: rgba(244, 241, 255, 0.7);
   color: #6d59f8;
-  font-size: 12px;
-  font-weight: 400;
+  font-size: 13px;
+  font-weight: 500;
   line-height: 1.4;
   letter-spacing: -0.025em;
   white-space: nowrap;
@@ -569,7 +583,10 @@
   word-break: keep-all;
   text-align: center;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.28);
-  white-space: pre-line;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 /* ── 투표 리워드 알럿 ── */
@@ -1029,8 +1046,77 @@
 }
 
 @media (min-width: 768px) {
+  .best_pose_vote_strip {
+    gap: 20px 12px;
+    padding-inline: 16px;
+  }
+
+  .best_pose_vote_card {
+    gap: 14px;
+  }
+
+  .best_pose_vote_card_like {
+    right: 10px;
+    bottom: 10px;
+    width: 34px;
+    height: 34px;
+  }
+
+  .best_pose_vote_card_heart {
+    width: 22px;
+    height: 22px;
+  }
+
+  .content_grid {
+    gap: 14px;
+  }
+
+  .content_card_chip {
+    top: 14px;
+    right: 14px;
+    min-height: 32px;
+    padding: 5px 12px;
+    font-size: 14px;
+  }
+
   .content_overlay {
     padding: 52px 16px 16px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .best_pose_vote_strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px 12px;
+    margin-inline: 0;
+    padding-inline: 0;
+    overflow: visible;
+  }
+
+  .best_pose_vote_card_media {
+    border-radius: 16px;
+  }
+
+  .best_pose_vote_card p {
+    font-size: 18px;
+  }
+
+  .content_grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .content_card {
+    border-radius: 16px;
+  }
+
+  .content_overlay {
+    padding: 64px 20px 20px;
+  }
+
+  .content_overlay p {
+    font-size: 18px;
+    line-height: 1.35;
   }
 }
 
