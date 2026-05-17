@@ -8,7 +8,7 @@ function Splash() {
   const navigate = useNavigate()
 
   const handleEnded = () => {
-    localStorage.setItem(SPLASH_SEEN_KEY, 'true')
+    sessionStorage.setItem(SPLASH_SEEN_KEY, 'true')
     const isLoggedIn = localStorage.getItem(AUTH_LOGGED_IN_STORAGE_KEY) === 'true'
     navigate(isLoggedIn ? '/home' : '/onboarding', { replace: true })
   }

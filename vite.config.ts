@@ -3,6 +3,11 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  server: {
+    proxy: {
+      '/api': 'http://localhost:4000',
+    },
+  },
   build: {
     // 4KB 미만 소형 이미지는 인라인 처리 (기본값), 대형 이미지는 별도 파일로 분리
     assetsInlineLimit: 4096,

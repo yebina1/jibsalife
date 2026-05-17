@@ -349,7 +349,7 @@ function HealthQna() {
     try {
 
   const res = await fetch(
-    "http://localhost:4000/api/chat",
+    "/api/chat",
     {
       method: "POST",
 

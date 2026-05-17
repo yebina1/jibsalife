@@ -57,7 +57,7 @@ function isLoggedIn() {
 const SPLASH_SEEN_KEY = 'jibsalife.splash.seen'
 
 function hasSplashSeen() {
-  return localStorage.getItem(SPLASH_SEEN_KEY) === 'true'
+  return sessionStorage.getItem(SPLASH_SEEN_KEY) === 'true'
 }
 
 function RootRedirect() {
