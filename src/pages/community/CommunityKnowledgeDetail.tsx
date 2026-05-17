@@ -780,6 +780,7 @@ function CommunityKnowledgeDetail() {
         </div>,
         actionRowSlot
       )}
+      <Outlet />
     </>
   )
 }

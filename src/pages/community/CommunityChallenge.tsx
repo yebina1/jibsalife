@@ -1,6 +1,7 @@
 ﻿import './CommunityShared.css'
 import './CommunityChallenge.css'
 import { useEffect, useRef, useState } from 'react'
+import { useSwipeNav } from '../../hooks/useSwipeNav'
 import { checkChallengeDayDone, CHALLENGE_STATUS_CHANGED_EVENT, isDemoChallengeAccount, readCurrentDay, saveCurrentDay } from '../../utils/challengeStatus'
 import { useNavigate } from 'react-router'
 import { addUserNotification } from '../../utils/userNotifications'
@@ -102,6 +103,7 @@ export const challengeDays = [
 ]
 
 function CommunityChallenge() {
+  useSwipeNav('/community/vote', '/community/petstory')
   const navigate = useNavigate()
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const cardRefs = useRef<(HTMLDivElement | null)[]>([])

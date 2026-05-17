@@ -2,6 +2,7 @@
 import './CommunityOverview.css'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
+import { useSwipeNav } from '../../hooks/useSwipeNav'
 import { checkChallengeDayDone, readCurrentDay, saveCurrentDay, claimChallengeDay, calculateChallengeRewardPoints, isChallengeDayClaimed, CHALLENGE_STATUS_CHANGED_EVENT } from '../../utils/challengeStatus'
 import { challengeDays } from './CommunityChallenge'
 import PageHeader from '../../components/PageHeader'
@@ -19,6 +20,7 @@ import { addUserNotification } from '../../utils/userNotifications'
 
 
 function CommunityOverview() {
+  useSwipeNav('/community/petstory')
   const navigate = useNavigate()
   const [currentDay, setCurrentDay] = useState(() => readCurrentDay())
   const [missionDone, setMissionDone] = useState(() => checkChallengeDayDone(readCurrentDay()))

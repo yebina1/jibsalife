@@ -1,8 +1,10 @@
 import './CommunityPetStoryComments.css'
 import { useState } from 'react'
 import { incrementChallengeCommentCount } from '../../utils/challengeStatus'
-import { useLocation, useParams } from 'react-router'
-import PageHeader from '../../components/PageHeader'
+import { useLocation } from 'react-router'
+import Header from '../../components/Header'
+import StateBar from '../../components/StateBar'
+import HomeIndicator from '../../components/HomeIndicator'
 import Title from '../../components/Title'
 import BackButton from '../../components/html/BackButton'
 import CommentInputForm from '../../components/html/CommentInputForm'
@@ -122,8 +124,9 @@ function CommentText({ text }: { text: string }) {
 }
 
 function CommunityPetStoryComments() {
-  const { postId, knowledgeId } = useParams()
   const location = useLocation()
+  const postId = location.pathname.match(/\/petstory\/detail\/([^/]+)\/comments/)?.[1]
+  const knowledgeId = location.pathname.match(/\/petstory\/knowledge\/([^/]+)\/comments/)?.[1]
   const commentsPageState = location.state as CommentsPageState | null
   const initialReplyTo = commentsPageState?.replyTo ?? null
   const commentsFallback = commentsPageState?.initialComments ?? petStoryDetailComments
@@ -236,7 +239,8 @@ function CommunityPetStoryComments() {
   return (
     <>
       <main className="page cpscomments_page">
-        <PageHeader title="댓글" leftContent={<BackButton />} />
+        <StateBar />
+        <Header title="댓글" leftContent={<BackButton />} />
         <section className="cpsdetail_comments" aria-label="댓글">
           <Title as="h4" className="cpsdetail_comments_title" title={`댓글 ${visibleComments.length}`} />
           {topLevel.map((comment) => (
@@ -260,6 +264,7 @@ function CommunityPetStoryComments() {
           onClearReply={() => setReplyTo(null)}
           onSubmit={addComment}
         />
+        <HomeIndicator />
       </footer>
     </>
   )

@@ -1,5 +1,6 @@
 ﻿import './CommunityShared.css'
 import './CommunityPetStory.css'
+import { useSwipeNav } from '../../hooks/useSwipeNav'
 import Title from '../../components/Title'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router'
@@ -207,6 +208,7 @@ function getRelativeTimeText(createdAt: string, nowTime: number) {
 }
 
 function CommunityPetStory() {
+  useSwipeNav('/community/challenge', '/community/overview')
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const [searchParams] = useSearchParams()

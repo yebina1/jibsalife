@@ -1,4 +1,5 @@
 import './App.css'
+import { useRef } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router'
 import type { ReactNode } from 'react'
 import Layout from './layouts/Layout'
@@ -77,11 +78,18 @@ function LoginGuard({ children }: { children: ReactNode }) {
   return <>{children}</>
 }
 
+const COMMENTS_PATH_RE = /\/(petstory\/detail|petstory\/knowledge)\/[^/]+\/comments/
+
 function App() {
+  const location = useLocation()
+  const isComments = COMMENTS_PATH_RE.test(location.pathname)
+  const bgLocationRef = useRef(location)
+  if (!isComments) bgLocationRef.current = location
+
   return (
     <div className="app">
       <ScrollToTop />
-      <Routes>
+      <Routes location={isComments ? bgLocationRef.current : location}>
         <Route element={<Layout showHeader={false} showNav={false} showFooter={false} hasContentPadding={false} />}>
           <Route path="/onboarding" element={<OnboardingGuard><Onboarding /></OnboardingGuard>} />
           <Route path="/splash" element={<Splash />} />
@@ -138,10 +146,8 @@ function App() {
           <Route path="/community/petstory" element={<CommunityPetStory />} />
           <Route path="/community/petstory/daily" element={<CommunityPetStory />} />
           <Route path="/community/petstory/knowledge" element={<CommunityPetStory />} />
-          <Route path="/community/petstory/detail/:postId/comments" element={<CommunityPetStoryComments />} />
           <Route path="/community/petstory/detail/:postId" element={<CommunityPetStoryDetails />} />
           <Route path="/community/petstory/write" element={<CommunityWrite />} />
-          <Route path="/community/petstory/knowledge/:knowledgeId/comments" element={<CommunityPetStoryComments />} />
           <Route path="/community/petstory/knowledge/:knowledgeId" element={<CommunityKnowledgeDetail />} />
           <Route path="/community/challenge" element={<CommunityChallenge />} />
           <Route path="/community/challenge/reward" element={<CommunityReward />} />
@@ -151,6 +157,7 @@ function App() {
           <Route path="/mypage" element={<MyPage />} />
         </Route>
       </Routes>
+      {isComments && <CommunityPetStoryComments />}
     </div>
   )
 }

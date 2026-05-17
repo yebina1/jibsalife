@@ -1,6 +1,7 @@
 ﻿import './CommunityShared.css'
 import './CommunityVote.css'
 import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
+import { useSwipeNav } from '../../hooks/useSwipeNav'
 import { useNavigate, useSearchParams } from 'react-router'
 import { ChevronRight, MoreVertical } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
@@ -72,6 +73,7 @@ function formatParticipants(count: number) {
 
 
 function CommunityVote() {
+  useSwipeNav(undefined, '/community/challenge')
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const sort = (searchParams.get('sort') ?? 'latest') as VoteSort
@@ -272,15 +274,17 @@ function CommunityVote() {
       />
 
       <main className="page cv2_page">
-        <VoteMissionBanner
-          className="cps_vote_banner"
-          backgroundColor="#FFD6D9"
-          timerColor="#BB0600"
-          timeText={formatTimer(subscriberTimer)}
-          title={<>멍스타 모델 도전</>}
-          description="내 반려동물을 스타로 만들어 보세요!"
-          imageSrc={voteBannerImage}
-        />
+        {sub === 'all' && (
+          <VoteMissionBanner
+            className="cps_vote_banner"
+            backgroundColor="#FFD6D9"
+            timerColor="#BB0600"
+            timeText={formatTimer(subscriberTimer)}
+            title={<>멍스타 모델 도전</>}
+            description="내 반려동물을 스타로 만들어 보세요!"
+            imageSrc={voteBannerImage}
+          />
+        )}
         {/* 탭 바 */}
         <section className="community_tab_bar" aria-label="커뮤니티 상위 카테고리">
           {topTabs.map((tab) => (
