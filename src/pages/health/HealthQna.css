@@ -6,6 +6,10 @@
   box-sizing: border-box;
 }
 
+.layout:has(.health_qna_page) .status_message_bar {
+  bottom: 116px;
+}
+
 .health_qna_notification {
   position: relative;
   color: #111111 !important;
