@@ -1,6 +1,5 @@
 import Title from './Title'
 import defaultBannerImage from '../img/2026_05_3weeks_vote/2026_05_3_weeks_dog_star_vote.png'
-import timerIcon from '../svg/timer.svg'
 import './VoteMissionBanner.css'
 
 type VoteMissionBannerProps = {
@@ -42,7 +41,12 @@ function VoteMissionBanner({
               className="vote_mission_banner_timer"
               style={timerColor ? { color: timerColor } : undefined}
             >
-              <img src={timerIcon} alt="" aria-hidden="true" />
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                <circle cx="9" cy="9.75" r="5.25" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M7.5 2.25L10.5 2.25" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M14.25 4.5L12.75 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M9 6.75V9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
               {timeText}
             </span>
           ) : undefined

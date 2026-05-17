@@ -1,18 +1,29 @@
 import '../pages/community/CommunityVote.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import Title from './Title'
-import HeaderIcon from './HeaderIcon'
 import crownIcon from '../svg/crown.svg'
 import timerIcon from '../svg/timer.svg'
 import timerClosedIcon from '../svg/timer_closed.svg'
 import { missionVotes } from '../pages/community/CommunityVoteData'
 import { readVotedMissionIds } from '../utils/communityVoteStatus'
+import { showStateBarMessage } from '../utils/stateBarMessage'
+import { addUserNotification } from '../utils/userNotifications'
+import { formatTimer, getOrCreateEndTime, getRemainingSeconds } from '../utils/subscriberTimer'
 
 function MissionVoteSection() {
   const navigate = useNavigate()
   const [votedIds] = useState(() => readVotedMissionIds())
+  const [notifiedVoteIds, setNotifiedVoteIds] = useState<Set<string>>(() => new Set())
+  const [subscriberTimer, setSubscriberTimer] = useState(() => getRemainingSeconds(getOrCreateEndTime()))
   const activeMissionVotes = missionVotes.filter((v) => v.buttonType !== 'result')
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSubscriberTimer(getRemainingSeconds(getOrCreateEndTime()))
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
 
   const openMissionVote = (voteId: string) => {
     navigate(`/community/vote/detail?voteId=${voteId}`)
@@ -34,7 +45,7 @@ function MissionVoteSection() {
             beforeTitle={
               <span className={`cv2_timer ${vote.buttonType === 'notify' ? 'cv2_timer_closed' : 'cv2_timer_active'}`}>
                 <img src={vote.buttonType === 'notify' ? timerClosedIcon : timerIcon} alt="" aria-hidden="true" />
-                {vote.timeText}
+                {vote.id === 'subscriber' ? formatTimer(subscriberTimer) : vote.timeText}
               </span>
             }
             title={vote.title}
@@ -45,8 +56,25 @@ function MissionVoteSection() {
             </p>
           </Title>
           {vote.buttonType === 'notify' ? (
-            <button type="button" className="cv2_outline_btn">
-              <HeaderIcon type="notification" size={20} />
+            <button
+              type="button"
+              className={`cv2_notify_btn${notifiedVoteIds.has(vote.id) ? ' notified' : ''}`}
+              onClick={() => {
+                if (notifiedVoteIds.has(vote.id)) {
+                  setNotifiedVoteIds(prev => {
+                    const next = new Set(prev)
+                    next.delete(vote.id)
+                    return next
+                  })
+                  showStateBarMessage('투표 알림이 해제되었습니다.', 3000, { placement: 'footer' })
+                  addUserNotification({ title: '투표', content: '투표 알림이 해제되었습니다.', path: '/community/vote' })
+                } else {
+                  showStateBarMessage('투표 알림이 설정되었습니다.', 3000, { placement: 'footer' })
+                  addUserNotification({ title: '투표', content: '투표 알림이 설정되었습니다.', path: '/community/vote' })
+                  setNotifiedVoteIds(prev => new Set([...prev, vote.id]))
+                }
+              }}
+            >
               알림받기
             </button>
           ) : (

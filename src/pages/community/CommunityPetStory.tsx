@@ -29,7 +29,6 @@ import petstoryKnowledgeImg from '../../img/petstory/Knowledge/petstory_Knowledg
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const dailyPosts = [
-  { id: 1, tag: '일상', title: '강아지 산책하러 나가면 자는척 해요', author: '탬블러', createdAt: '2026-05-11T09:00:00', likes: 12, comments: 8, shares: 5, views: 1340, image: null as null | string },
   { id: 2, tag: '일상', title: '강아지 산책하러 나가면 자는척 해요', author: '탬블러', createdAt: '2026-05-10T14:00:00', likes: 38, comments: 20, shares: 14, views: 980, image: life1 },
   { id: 3, tag: '일상', title: '냉전중', author: '장마', createdAt: '2026-05-09T10:00:00', likes: 7, comments: 3, shares: 2, views: 762, image: life2 },
   { id: 4, tag: '일상', title: '강아지 발사탕 스프레이 추천해주세요!', author: '파란꽃', createdAt: '2026-05-06T16:00:00', likes: 25, comments: 11, shares: 9, views: 524, image: life3 },
@@ -492,7 +491,7 @@ function CommunityPetStory() {
           <VoteMissionBanner
             className="cps_vote_banner"
             backgroundColor="#FFD6D9"
-            timerColor="#E03C3C"
+            timerColor="#BB0600"
             timeText="02:18:35 남음"
             title={<>멍스타 모델 도전</>}
             description="내 반려동물을 스타로!"

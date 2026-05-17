@@ -39,12 +39,32 @@ html:has(.cv2_page) {
 }
 
 /* 섹션 */
+.cv2_section_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .cv2_section_title {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 6px;
   margin: 0 0 16px;
+}
+
+.cv2_more_btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 16px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #767676;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
 }
 
 .cv2_crown {

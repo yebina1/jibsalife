@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { dailyPosts } from '../pages/community/CommunityPetStory'
-import dailyThumbnail from '../img/petstory/daily/daily_thumbnail.jpg'
 import { MY_PROFILE_NAME } from '../utils/myProfile'
 import PetStoryFeedItem from './PetStoryFeedItem'
 
@@ -116,7 +115,7 @@ function PetStoryPreviewSection() {
           title={post.title}
           author={post.author}
           time={getRelativeTimeText(post.createdAt, nowTime)}
-          image={post.image ?? dailyThumbnail}
+          image={post.image}
           likes={post.likes}
           comments={post.comments}
           views={post.views ?? 120}

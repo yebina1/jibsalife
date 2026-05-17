@@ -2,7 +2,7 @@
 import './CommunityVote.css'
 import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
-import { MoreVertical } from 'lucide-react'
+import { ChevronRight, MoreVertical } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
 import HeaderIcon from '../../components/HeaderIcon'
 import Title from '../../components/Title'
@@ -26,6 +26,7 @@ import { readProfilePoints, writeProfilePoints } from '../../utils/profilePoints
 import { showStateBarMessage } from '../../utils/stateBarMessage'
 import { addUserNotification } from '../../utils/userNotifications'
 import { missionVotes, regularVoteItems } from './CommunityVoteData'
+import { SUBSCRIBER_TIMER_DURATION, formatTimer, getOrCreateEndTime, getRemainingSeconds, resetEndTime } from '../../utils/subscriberTimer'
 import VoteConfettiEffect from '../../components/effect/VoteConfettiEffect'
 import { deleteUserVote, readUserVotes, calcDeadlineText, type UserVote } from '../../utils/savedVotes'
 import { readModifiedVoteIds, writeModifiedVoteId } from '../../utils/userCommunityVoteModified'
@@ -69,14 +70,6 @@ function formatParticipants(count: number) {
   return count.toLocaleString('ko-KR')
 }
 
-const SUBSCRIBER_TIMER_DURATION = 12 * 60 * 60
-
-function formatTimer(seconds: number) {
-  const h = Math.floor(seconds / 3600)
-  const m = Math.floor((seconds % 3600) / 60)
-  const s = seconds % 60
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} 남음`
-}
 
 function CommunityVote() {
   const navigate = useNavigate()
@@ -106,22 +99,24 @@ function CommunityVote() {
   const [completedVoteId, setCompletedVoteId] = useState<number | null>(null)
   const [claimedVoteRewardIds, setClaimedVoteRewardIds] = useState<Set<number>>(() => new Set())
   const [notifiedVoteIds, setNotifiedVoteIds] = useState<Set<string>>(() => new Set())
-  const [subscriberTimer, setSubscriberTimer] = useState(SUBSCRIBER_TIMER_DURATION)
+  const [subscriberTimer, setSubscriberTimer] = useState(() => getRemainingSeconds(getOrCreateEndTime()))
   const pendingDefaultVoteSelection = useRef<{ voteId: number; optionId: number } | null>(null)
 
   useEffect(() => {
+    let currentEndTime = getOrCreateEndTime()
     const interval = setInterval(() => {
-      setSubscriberTimer(prev => {
-        if (prev <= 1) {
-          showStateBarMessage(
-            '멍스타 모델 지원 오픈!\n지금 바로 우리 아이를 지원해보세요.',
-            5000,
-            { placement: 'footer' },
-          )
-          return SUBSCRIBER_TIMER_DURATION
-        }
-        return prev - 1
-      })
+      const remaining = getRemainingSeconds(currentEndTime)
+      if (remaining <= 0) {
+        showStateBarMessage(
+          '멍스타 모델 지원 오픈!\n지금 바로 우리 아이를 지원해보세요.',
+          5000,
+          { placement: 'footer' },
+        )
+        currentEndTime = resetEndTime()
+        setSubscriberTimer(SUBSCRIBER_TIMER_DURATION)
+      } else {
+        setSubscriberTimer(remaining)
+      }
     }, 1000)
     return () => clearInterval(interval)
   }, [])
@@ -145,6 +140,14 @@ function CommunityVote() {
   const resultRegularItems = sub === 'result'
     ? sortedRegularVoteItems.filter(item => 'resultOnly' in item && item.resultOnly)
     : []
+
+  const isRegularTab = sub === 'regular'
+  const MAX_REGULAR = 3
+  const visibleSavedVotes = isRegularTab ? savedVotes : savedVotes.slice(0, MAX_REGULAR)
+  const visibleActiveItems = isRegularTab
+    ? activeRegularItems
+    : activeRegularItems.slice(0, Math.max(0, MAX_REGULAR - visibleSavedVotes.length))
+  const hasMoreRegular = !isRegularTab && savedVotes.length + activeRegularItems.length > MAX_REGULAR
 
   const openMissionVote = (voteId: string) => {
     navigate(`/community/vote/detail?voteId=${voteId}`)
@@ -272,7 +275,7 @@ function CommunityVote() {
         <VoteMissionBanner
           className="cps_vote_banner"
           backgroundColor="#FFD6D9"
-          timerColor="#E03C3C"
+          timerColor="#BB0600"
           timeText={formatTimer(subscriberTimer)}
           title={<>멍스타 모델 도전</>}
           description="내 반려동물을 스타로 만들어 보세요!"
@@ -445,9 +448,20 @@ function CommunityVote() {
         </section>}
 
         {showRegular && <section className="cv2_section">
-          <Title as="h4" className="cv2_section_title" title="집사 투표" />
+          <div className="cv2_section_header">
+            <Title as="h4" className="cv2_section_title" title="집사 투표" />
+            {hasMoreRegular && (
+              <button
+                type="button"
+                className="cv2_more_btn"
+                onClick={() => navigate('/community/vote?sub=regular')}
+              >
+                더보기 <ChevronRight size={16} />
+              </button>
+            )}
+          </div>
           <div className="cv2_regular_list">
-            {savedVotes.map((vote) => {
+            {visibleSavedVotes.map((vote) => {
               const sel = voteSelections[vote.id]
               const voted = localVotedIds.has(vote.id)
               const deadline = calcDeadlineText(vote.createdAt, vote.voteDuration)
@@ -575,7 +589,7 @@ function CommunityVote() {
               )
             })}
 
-            {activeRegularItems.map((item) => {
+            {visibleActiveItems.map((item) => {
               const sel = voteSelections[item.id]
               const voted = localVotedIds.has(item.id)
               const selectDefaultVote = (optionId: number) => {
