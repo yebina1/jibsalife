@@ -44,6 +44,7 @@ export type DefaultVoteOption = {
   image?: string
   icon?: string
   percentage?: number
+  votes?: number
 }
 
 export type RegularVoteItem = {
@@ -100,8 +101,8 @@ export const regularVoteItems: RegularVoteItem[] = [
     voteType: 'photo',
     modified: true,
     options: [
-      { id: 1, label: '생일파티 실내 사진', color: '#FFD6D9', image: birthPhoto1, percentage: 20 },
-      { id: 2, label: '생일파티 실외 사진', color: '#C7E9F8', image: birthPhoto2, percentage: 80 },
+      { id: 1, label: '생일파티 실내 사진', color: '#FFD6D9', image: birthPhoto1, votes: 65197 },
+      { id: 2, label: '생일파티 실외 사진', color: '#C7E9F8', image: birthPhoto2, votes: 260787 },
     ],
   },
   {
@@ -112,8 +113,8 @@ export const regularVoteItems: RegularVoteItem[] = [
     participants: 325984,
     voteType: 'ox',
     options: [
-      { id: 1, label: 'O', percentage: 68 },
-      { id: 2, label: 'X', percentage: 32 },
+      { id: 1, label: 'O', votes: 221670 },
+      { id: 2, label: 'X', votes: 104314 },
     ],
   },
   {
@@ -125,8 +126,8 @@ export const regularVoteItems: RegularVoteItem[] = [
     voteType: 'bone-result',
     resultOnly: true,
     options: [
-      { id: 1, label: '닭가슴살', percentage: 40, icon: chickenIcon },
-      { id: 2, label: '고구마', percentage: 60, icon: sweetPotatoIcon },
+      { id: 1, label: '닭가슴살', votes: 130394, icon: chickenIcon },
+      { id: 2, label: '고구마', votes: 195590, icon: sweetPotatoIcon },
     ],
   },
 ]

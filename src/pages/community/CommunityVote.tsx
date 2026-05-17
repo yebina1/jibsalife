@@ -26,7 +26,9 @@ import { readProfilePoints, writeProfilePoints } from '../../utils/profilePoints
 import { showStateBarMessage } from '../../utils/stateBarMessage'
 import { addUserNotification } from '../../utils/userNotifications'
 import { missionVotes, regularVoteItems } from './CommunityVoteData'
+import VoteConfettiEffect from '../../components/effect/VoteConfettiEffect'
 import { deleteUserVote, readUserVotes, calcDeadlineText, type UserVote } from '../../utils/savedVotes'
+import { readModifiedVoteIds, writeModifiedVoteId } from '../../utils/userCommunityVoteModified'
 import { readDefaultCommunityVotes, writeDefaultCommunityVotes } from '../../utils/defaultCommunityVotes'
 import {
   deleteUserCommunityVoteSelection,
@@ -87,10 +89,14 @@ function CommunityVote() {
   ]))
   const [voteResults, setVoteResults] = useState<CommunityVoteResults>(() => readCommunityVoteResults())
   const [editingVoteId, setEditingVoteId] = useState<number | null>(null)
+  const [modifiedVoteIds, setModifiedVoteIds] = useState<Set<number>>(() => new Set(readModifiedVoteIds()))
+  const [modifyBlockedVoteId, setModifyBlockedVoteId] = useState<number | null>(null)
+  const [voteAnimKeys, setVoteAnimKeys] = useState<Record<string, number>>({})
   const [deleteVoteId, setDeleteVoteId] = useState<number | null>(null)
   const [isVoteCompleteOpen, setIsVoteCompleteOpen] = useState(false)
   const [completedVoteId, setCompletedVoteId] = useState<number | null>(null)
   const [claimedVoteRewardIds, setClaimedVoteRewardIds] = useState<Set<number>>(() => new Set())
+  const [notifiedVoteIds, setNotifiedVoteIds] = useState<Set<string>>(() => new Set())
   const pendingDefaultVoteSelection = useRef<{ voteId: number; optionId: number } | null>(null)
   const sortedRegularVoteItems = useMemo(() => {
     return [...regularVoteItems].sort((a, b) => {
@@ -288,10 +294,20 @@ function CommunityVote() {
               {vote.buttonType === 'notify' ? (
                 <button
                   type="button"
-                  className="cv2_outline_btn"
+                  className={`cv2_notify_btn${notifiedVoteIds.has(vote.id) ? ' notified' : ''}`}
                   onClick={() => {
-                    showStateBarMessage('투표 알림이 설정되었습니다.')
-                    addUserNotification({ title: '투표', content: '투표 알림이 설정되었습니다.', path: '/community/vote' })
+                    if (notifiedVoteIds.has(vote.id)) {
+                      setNotifiedVoteIds(prev => {
+                        const next = new Set(prev)
+                        next.delete(vote.id)
+                        return next
+                      })
+                      showStateBarMessage('투표 알림이 해제되었습니다.', 3000, { placement: 'footer' })
+                    } else {
+                      showStateBarMessage('투표 알림이 설정되었습니다.', 3000, { placement: 'footer' })
+                      addUserNotification({ title: '투표', content: '투표 알림이 설정되었습니다.', path: '/community/vote' })
+                      setNotifiedVoteIds(prev => new Set([...prev, vote.id]))
+                    }
                   }}
                 >
                   알림받기
@@ -359,33 +375,38 @@ function CommunityVote() {
                   <p className="uvote_card_title">{item.title}</p>
                   {item.description && <p className="uvote_card_desc">{item.description}</p>}
                 </div>
-                {item.voteType === 'bone-result' && (
-                  <div className="uvote_bone_result is_revealed is_right_selected" aria-label={`${item.options[0]?.label} ${item.options[0]?.percentage}%, ${item.options[1]?.label} ${item.options[1]?.percentage}%`}>
-                    <div
-                      className="uvote_bone_track"
-                      style={{
-                        '--uvote-bone-left': `${item.options[0]?.percentage ?? 50}%`,
-                        '--uvote-bone-right': `${item.options[1]?.percentage ?? 50}%`,
-                      } as CSSProperties}
-                    >
-                      <span className="uvote_bone_base" aria-hidden="true" />
-                      <span className="uvote_bone_left_fill" aria-hidden="true" />
-                      <span className="uvote_bone_right_fill" aria-hidden="true" />
-                      <span className="uvote_bone_percent uvote_bone_percent_left">{item.options[0]?.percentage}%</span>
-                      <span className="uvote_bone_percent uvote_bone_percent_right">{item.options[1]?.percentage}%</span>
+                {item.voteType === 'bone-result' && (() => {
+                  const totalVotes = item.options.reduce((sum, o) => sum + (o.votes ?? 0), 0)
+                  const leftPct = totalVotes > 0 ? Math.round((item.options[0]?.votes ?? 0) / totalVotes * 100) : (item.options[0]?.percentage ?? 50)
+                  const rightPct = totalVotes > 0 ? Math.round((item.options[1]?.votes ?? 0) / totalVotes * 100) : (item.options[1]?.percentage ?? 50)
+                  return (
+                    <div className="uvote_bone_result is_revealed is_right_selected" aria-label={`${item.options[0]?.label} ${leftPct}%, ${item.options[1]?.label} ${rightPct}%`}>
+                      <div
+                        className="uvote_bone_track"
+                        style={{
+                          '--uvote-bone-left': `${leftPct}%`,
+                          '--uvote-bone-right': `${rightPct}%`,
+                        } as CSSProperties}
+                      >
+                        <span className="uvote_bone_base" aria-hidden="true" />
+                        <span className="uvote_bone_left_fill" aria-hidden="true" />
+                        <span className="uvote_bone_right_fill" aria-hidden="true" />
+                        <span className="uvote_bone_percent uvote_bone_percent_left">{leftPct}%</span>
+                        <span className="uvote_bone_percent uvote_bone_percent_right">{rightPct}%</span>
+                      </div>
+                      <div className="uvote_bone_result_labels">
+                        <span>
+                          {item.options[0]?.label}
+                          {item.options[0]?.icon && <img src={item.options[0].icon} alt="" aria-hidden="true" />}
+                        </span>
+                        <span>
+                          {item.options[1]?.label}
+                          {item.options[1]?.icon && <img src={item.options[1].icon} alt="" aria-hidden="true" />}
+                        </span>
+                      </div>
                     </div>
-                    <div className="uvote_bone_result_labels">
-                      <span>
-                        {item.options[0]?.label}
-                        {item.options[0]?.icon && <img src={item.options[0].icon} alt="" aria-hidden="true" />}
-                      </span>
-                      <span>
-                        {item.options[1]?.label}
-                        {item.options[1]?.icon && <img src={item.options[1].icon} alt="" aria-hidden="true" />}
-                      </span>
-                    </div>
-                  </div>
-                )}
+                  )
+                })()}
                 <p className="uvote_meta">
                   {item.deadline} <span className="cv2_divider">|</span> 참여자 수 {formatParticipants(item.participants)}명
                 </p>
@@ -502,7 +523,7 @@ function CommunityVote() {
                             )}
                             {sel && (
                               <span className="uvote_photo_result_bar" aria-label={`${item.label} ${percentage}%`}>
-                                <span className="uvote_photo_result_fill" style={{ width: `${percentage}%` }}>
+                                <span key={voteAnimKeys[item.id] ?? 0} className="uvote_photo_result_fill" style={{ '--fill-width': `${percentage}%` } as CSSProperties}>
                                   {percentage}%
                                 </span>
                               </span>
@@ -531,7 +552,12 @@ function CommunityVote() {
               const voted = localVotedIds.has(item.id)
               const selectDefaultVote = (optionId: number) => {
                 if (voted) {
-                  setEditingVoteId(item.id)
+                  pendingDefaultVoteSelection.current = { voteId: item.id, optionId }
+                  if (modifiedVoteIds.has(item.id)) {
+                    setModifyBlockedVoteId(item.id)
+                  } else {
+                    setEditingVoteId(item.id)
+                  }
                   return
                 }
                 pendingDefaultVoteSelection.current = { voteId: item.id, optionId }
@@ -539,7 +565,12 @@ function CommunityVote() {
               }
               const selectBoneVote = (optionId: number) => {
                 if (voted) {
-                  setEditingVoteId(item.id)
+                  pendingDefaultVoteSelection.current = { voteId: item.id, optionId }
+                  if (modifiedVoteIds.has(item.id)) {
+                    setModifyBlockedVoteId(item.id)
+                  } else {
+                    setEditingVoteId(item.id)
+                  }
                   return
                 }
                 pendingDefaultVoteSelection.current = { voteId: item.id, optionId }
@@ -553,66 +584,77 @@ function CommunityVote() {
                     {item.description && <p className="uvote_card_desc">{item.description}</p>}
                   </div>
 
-                  {item.voteType === 'photo' && (
-                    <div className={`uvote_photo_grid${sel ? ' is_revealed' : ''}`}>
-                      {item.options.map((option, index) => {
-                        const isSelected = sel === option.id
-                        return (
-                          <button
-                            key={option.id}
-                            type="button"
-                            className={`uvote_photo_option${isSelected ? ' selected' : ''}`}
-                            onClick={() => selectDefaultVote(option.id)}
-                          >
-                            <span className="uvote_photo_fill" style={{ backgroundColor: option.color }}>
-                              {option.image && <img src={option.image} alt="" aria-hidden="true" />}
-                              <span className="uvote_photo_rank">{index + 1}</span>
-                            </span>
-                            <span className="uvote_photo_label_row">
-                              <span className="uvote_photo_label">{option.label}</span>
-                              <span className={`uvote_photo_radio${isSelected ? ' checked' : ''}`} />
-                            </span>
-                            {sel && (
-                              <span className="uvote_photo_result_bar" aria-label={`${option.label} ${option.percentage}%`}>
-                                <span
-                                  className="uvote_photo_result_fill"
-                                  style={{ width: `${option.percentage ?? 0}%` }}
-                                >
-                                  {option.percentage}%
-                                </span>
-                              </span>
-                            )}
-                          </button>
-                        )
-                      })}
-                    </div>
-                  )}
-
-                  {item.voteType === 'ox' && (
-                    sel ? (
-                      <div className="uvote_ox_result_grid">
-                        {item.options.map((option) => {
-                          const isO = option.id === 1
+                  {item.voteType === 'photo' && (() => {
+                    const totalVotes = item.options.reduce((sum, o) => sum + (o.votes ?? 0), 0)
+                    return (
+                      <div className={`uvote_photo_grid${sel ? ' is_revealed' : ''}`}>
+                        {item.options.map((option, index) => {
+                          const isSelected = sel === option.id
+                          const pct = totalVotes > 0
+                            ? Math.round((option.votes ?? 0) / totalVotes * 100)
+                            : (option.percentage ?? 0)
                           return (
                             <button
                               key={option.id}
                               type="button"
-                              className={`uvote_ox_result_card ${isO ? 'is_o' : 'is_x'}${sel === option.id ? ' selected' : ''}`}
+                              className={`uvote_photo_option${isSelected ? ' selected' : ''}`}
                               onClick={() => selectDefaultVote(option.id)}
                             >
-                              <span
-                                className="uvote_ox_wave"
-                                style={{ height: `${option.percentage ?? 0}%` }}
-                                aria-hidden="true"
-                              />
-                              <img src={isO ? voteOIcon : voteXIcon} alt={option.label} className="uvote_ox_result_icon" />
-                              <span className="uvote_ox_percent">{option.percentage}%</span>
-                              <span className="uvote_ox_count">
-                                {formatParticipants(Math.round(item.participants * ((option.percentage ?? 0) / 100)))}명
+                              <span className="uvote_photo_fill" style={{ backgroundColor: option.color }}>
+                                {option.image && <img src={option.image} alt="" aria-hidden="true" />}
+                                <span className="uvote_photo_rank">{index + 1}</span>
                               </span>
+                              <span className="uvote_photo_label_row">
+                                <span className="uvote_photo_label">{option.label}</span>
+                                <span className={`uvote_photo_radio${isSelected ? ' checked' : ''}`} />
+                              </span>
+                              {sel && (
+                                <span className="uvote_photo_result_bar" aria-label={`${option.label} ${pct}%`}>
+                                  <span
+                                    key={`${option.id}-${voteAnimKeys[`${item.id}-${option.id}`] ?? 0}`}
+                                    className="uvote_photo_result_fill"
+                                    style={{ '--fill-width': `${pct}%` } as CSSProperties}
+                                  >
+                                    {pct}%
+                                  </span>
+                                </span>
+                              )}
                             </button>
                           )
                         })}
+                      </div>
+                    )
+                  })()}
+
+                  {item.voteType === 'ox' && (
+                    sel ? (
+                      <div className="uvote_ox_result_grid">
+                        {(() => {
+                          const totalVotes = item.options.reduce((sum, o) => sum + (o.votes ?? 0), 0)
+                          return item.options.map((option) => {
+                            const isO = option.id === 1
+                            const pct = totalVotes > 0
+                              ? Math.round((option.votes ?? 0) / totalVotes * 100)
+                              : (option.percentage ?? 0)
+                            return (
+                              <button
+                                key={option.id}
+                                type="button"
+                                className={`uvote_ox_result_card ${isO ? 'is_o' : 'is_x'}${sel === option.id ? ' selected' : ''}`}
+                                onClick={() => selectDefaultVote(option.id)}
+                              >
+                                <span
+                                  key={`${option.id}-${voteAnimKeys[`${item.id}-${option.id}`] ?? 0}`}
+                                  className="uvote_ox_wave"
+                                  style={{ height: `${pct}%` }}
+                                  aria-hidden="true"
+                                />
+                                <img src={isO ? voteOIcon : voteXIcon} alt={option.label} className="uvote_ox_result_icon" />
+                                <span className="uvote_ox_percent">{pct}%</span>
+                              </button>
+                            )
+                          })
+                        })()}
                       </div>
                     ) : (
                       <OxVoteOptions
@@ -622,57 +664,62 @@ function CommunityVote() {
                     )
                   )}
 
-                  {item.voteType === 'bone-result' && (
-                    <div
-                      className={`uvote_bone_result${sel ? ' is_revealed' : ''}${sel === item.options[0]?.id ? ' is_left_selected' : ''}${sel === item.options[1]?.id ? ' is_right_selected' : ''}`}
-                      aria-label={`${item.options[0]?.label} ${item.options[0]?.percentage}%, ${item.options[1]?.label} ${item.options[1]?.percentage}%`}
-                    >
+                  {item.voteType === 'bone-result' && (() => {
+                    const totalVotes = item.options.reduce((sum, o) => sum + (o.votes ?? 0), 0)
+                    const leftPct = totalVotes > 0 ? Math.round((item.options[0]?.votes ?? 0) / totalVotes * 100) : (item.options[0]?.percentage ?? 50)
+                    const rightPct = totalVotes > 0 ? Math.round((item.options[1]?.votes ?? 0) / totalVotes * 100) : (item.options[1]?.percentage ?? 50)
+                    return (
                       <div
-                        className="uvote_bone_track"
-                        role="group"
-                        aria-label="간식 재료 선택"
-                        style={{
-                          '--uvote-bone-left': `${item.options[0]?.percentage ?? 50}%`,
-                          '--uvote-bone-right': `${item.options[1]?.percentage ?? 50}%`,
-                        } as CSSProperties}
+                        className={`uvote_bone_result${sel ? ' is_revealed' : ''}${sel === item.options[0]?.id ? ' is_left_selected' : ''}${sel === item.options[1]?.id ? ' is_right_selected' : ''}`}
+                        aria-label={`${item.options[0]?.label} ${leftPct}%, ${item.options[1]?.label} ${rightPct}%`}
                       >
-                        <span className="uvote_bone_base" aria-hidden="true" />
-                        <span className="uvote_bone_left_fill" aria-hidden="true" />
-                        <span className="uvote_bone_right_fill" aria-hidden="true" />
-                        {sel && (
-                          <>
-                            <span className="uvote_bone_percent uvote_bone_percent_left">{item.options[0]?.percentage}%</span>
-                            <span className="uvote_bone_percent uvote_bone_percent_right">{item.options[1]?.percentage}%</span>
-                          </>
-                        )}
-                        <button
-                          type="button"
-                          className="uvote_bone_hit uvote_bone_hit_left"
-                          aria-label={`${item.options[0]?.label} 선택`}
-                          onClick={() => selectBoneVote(item.options[0].id)}
-                        />
-                        <button
-                          type="button"
-                          className="uvote_bone_hit uvote_bone_hit_right"
-                          aria-label={`${item.options[1]?.label} 선택`}
-                          onClick={() => selectBoneVote(item.options[1].id)}
-                        />
+                        <div
+                          className="uvote_bone_track"
+                          role="group"
+                          aria-label="간식 재료 선택"
+                          style={{
+                            '--uvote-bone-left': `${leftPct}%`,
+                            '--uvote-bone-right': `${rightPct}%`,
+                          } as CSSProperties}
+                        >
+                          <span className="uvote_bone_base" aria-hidden="true" />
+                          <span className="uvote_bone_left_fill" aria-hidden="true" />
+                          <span className="uvote_bone_right_fill" aria-hidden="true" />
+                          {sel && (
+                            <>
+                              <span className="uvote_bone_percent uvote_bone_percent_left">{leftPct}%</span>
+                              <span className="uvote_bone_percent uvote_bone_percent_right">{rightPct}%</span>
+                            </>
+                          )}
+                          <button
+                            type="button"
+                            className="uvote_bone_hit uvote_bone_hit_left"
+                            aria-label={`${item.options[0]?.label} 선택`}
+                            onClick={() => selectBoneVote(item.options[0].id)}
+                          />
+                          <button
+                            type="button"
+                            className="uvote_bone_hit uvote_bone_hit_right"
+                            aria-label={`${item.options[1]?.label} 선택`}
+                            onClick={() => selectBoneVote(item.options[1].id)}
+                          />
+                        </div>
+                        <div className="uvote_bone_result_labels">
+                          <span>
+                            {item.options[0]?.label}
+                            {item.options[0]?.icon && <img src={item.options[0].icon} alt="" aria-hidden="true" />}
+                          </span>
+                          <span>
+                            {item.options[1]?.label}
+                            {item.options[1]?.icon && <img src={item.options[1].icon} alt="" aria-hidden="true" />}
+                          </span>
+                        </div>
                       </div>
-                      <div className="uvote_bone_result_labels">
-                        <span>
-                          {item.options[0]?.label}
-                          {item.options[0]?.icon && <img src={item.options[0].icon} alt="" aria-hidden="true" />}
-                        </span>
-                        <span>
-                          {item.options[1]?.label}
-                          {item.options[1]?.icon && <img src={item.options[1].icon} alt="" aria-hidden="true" />}
-                        </span>
-                      </div>
-                    </div>
-                  )}
+                    )
+                  })()}
 
                   <p className="uvote_meta">
-                    {item.deadline} <span className="cv2_divider">|</span> 참여자 수 {formatParticipants(item.participants)}명
+                    {item.deadline} <span className="cv2_divider">|</span> 참여자 수 {formatParticipants(item.participants + (voted ? 1 : 0))}명
                   </p>
                 </div>
               )
@@ -695,8 +742,42 @@ function CommunityVote() {
           accentColor="#FF88C5"
           cancelButtonStyle={{ backgroundColor: '#D9D9D9', border: 'none', color: '#111111' }}
           dialogClassName="confirm_dialog_vote_edit"
-          onCancel={() => setEditingVoteId(null)}
-          onConfirm={() => setEditingVoteId(null)}
+          onCancel={() => {
+            pendingDefaultVoteSelection.current = null
+            setEditingVoteId(null)
+          }}
+          onConfirm={() => {
+            if (editingVoteId !== null) {
+              const pending = pendingDefaultVoteSelection.current
+              if (pending) {
+                saveDefaultVoteSelection(pending.voteId, pending.optionId)
+                pendingDefaultVoteSelection.current = null
+                const animKey = `${editingVoteId}-${pending.optionId}`
+                setVoteAnimKeys(prev => ({ ...prev, [animKey]: (prev[animKey] ?? 0) + 1 }))
+              }
+              writeModifiedVoteId(editingVoteId)
+              setModifiedVoteIds(prev => new Set([...prev, editingVoteId]))
+            }
+            setEditingVoteId(null)
+          }}
+        />
+      ) : null}
+      {modifyBlockedVoteId !== null ? (
+        <ConfirmDialog
+          message="수정이 불가해요"
+          description={(
+            <>
+              투표는 기간 내 1회만
+              <br />
+              수정할 수 있어요.
+            </>
+          )}
+          confirmLabel="확인"
+          hideCancel
+          accentColor="#FF88C5"
+          dialogClassName="confirm_dialog_vote_edit"
+          onCancel={() => setModifyBlockedVoteId(null)}
+          onConfirm={() => setModifyBlockedVoteId(null)}
         />
       ) : null}
       {deleteVoteId !== null ? (
@@ -721,14 +802,7 @@ function CommunityVote() {
       {isVoteCompleteOpen ? (
         <Alert dialogClassName="uvote_complete_dialog" onClose={closeVoteCompleteDialog}>
           <div className="uvote_complete_content">
-            <span className="uvote_confetti c1" />
-            <span className="uvote_confetti c2" />
-            <span className="uvote_confetti c3" />
-            <span className="uvote_confetti c4" />
-            <span className="uvote_confetti c5" />
-            <span className="uvote_confetti c6" />
-            <span className="uvote_confetti c7" />
-            <span className="uvote_confetti c8" />
+            <VoteConfettiEffect />
             <strong className="uvote_complete_title">투표 완료!</strong>
             <span className="uvote_complete_desc">소중한 의견 감사합니다 💗</span>
             <img src={voteGoodImage} alt="" className="uvote_complete_image" />

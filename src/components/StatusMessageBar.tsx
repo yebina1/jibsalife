@@ -6,7 +6,8 @@ import {
   type StateBarMessagePlacement,
 } from '../utils/stateBarMessage'
 
-type StatusMessageState = {
+type ToastItem = {
+  id: number
   message: string
   placement: StateBarMessagePlacement
   closeButton: boolean
@@ -15,85 +16,87 @@ type StatusMessageState = {
 }
 
 function StatusMessageBar() {
-  const [toast, setToast] = useState<StatusMessageState | null>(null)
-  const timeoutRef = useRef<number | null>(null)
+  const [toasts, setToasts] = useState<ToastItem[]>([])
+  const nextIdRef = useRef(0)
 
   useEffect(() => {
-    const clearMessageTimeout = () => {
-      if (timeoutRef.current !== null) {
-        window.clearTimeout(timeoutRef.current)
-        timeoutRef.current = null
-      }
-    }
-
-    const hideMessage = () => {
-      clearMessageTimeout()
-      setToast(null)
+    const removeToast = (id: number) => {
+      setToasts(prev => prev.filter(t => t.id !== id))
     }
 
     const handleMessage = (event: Event) => {
       const detail = (event as CustomEvent<StateBarMessageDetail>).detail
       if (!detail?.message) return
 
-      const resolvedPlacement: StateBarMessagePlacement =
+      const placement: StateBarMessagePlacement =
         detail.placement ?? (detail.message.includes('알림') ? 'notification' : 'footer')
 
-      clearMessageTimeout()
-      setToast({
+      const id = nextIdRef.current++
+      setToasts(prev => [...prev, {
+        id,
         message: detail.message,
-        placement: resolvedPlacement,
+        placement,
         closeButton: detail.closeButton ?? true,
         actionLabel: detail.actionLabel,
         onAction: detail.onAction,
-      })
-      timeoutRef.current = window.setTimeout(() => {
-        setToast(null)
-        timeoutRef.current = null
-      }, detail.duration ?? 3000)
+      }])
+
+      window.setTimeout(() => removeToast(id), detail.duration ?? 3000)
     }
 
     window.addEventListener(STATE_BAR_MESSAGE_EVENT, handleMessage)
-
-    return () => {
-      hideMessage()
-      window.removeEventListener(STATE_BAR_MESSAGE_EVENT, handleMessage)
-    }
+    return () => window.removeEventListener(STATE_BAR_MESSAGE_EVENT, handleMessage)
   }, [])
 
-  if (!toast) return null
+  const remove = (id: number) => setToasts(prev => prev.filter(t => t.id !== id))
+
+  const footerToasts = toasts.filter(t => t.placement === 'footer')
+  const notificationToasts = toasts.filter(t => t.placement === 'notification')
+  const sheetToasts = toasts.filter(t => t.placement === 'sheet')
+
+  const renderInner = (toast: ToastItem) => (
+    <div key={toast.id} className="status_message_bar_inner">
+      <p className="status_message_bar_text">{toast.message}</p>
+      {toast.actionLabel && toast.onAction && (
+        <button
+          type="button"
+          className="status_message_bar_badge"
+          onClick={() => { toast.onAction?.(); remove(toast.id) }}
+        >
+          {toast.actionLabel}
+        </button>
+      )}
+      {toast.closeButton && (
+        <button
+          type="button"
+          className="status_message_bar_close"
+          aria-label="닫기"
+          onClick={() => remove(toast.id)}
+        >
+          ×
+        </button>
+      )}
+    </div>
+  )
 
   return (
-    <div
-      className={`status_message_bar${
-        toast.placement === 'notification' ? ' status_message_bar_notification' : ''
-      }${toast.placement === 'sheet' ? ' status_message_bar_sheet' : ''}`}
-      role="status"
-      aria-live="polite"
-      aria-atomic="true"
-    >
-      <div className="status_message_bar_inner">
-        <p className="status_message_bar_text">{toast.message}</p>
-        {toast.actionLabel && toast.onAction && (
-          <button
-            type="button"
-            className="status_message_bar_badge"
-            onClick={() => { toast.onAction?.(); setToast(null) }}
-          >
-            {toast.actionLabel}
-          </button>
-        )}
-        {toast.closeButton && (
-          <button
-            type="button"
-            className="status_message_bar_close"
-            aria-label="닫기"
-            onClick={() => setToast(null)}
-          >
-            ×
-          </button>
-        )}
-      </div>
-    </div>
+    <>
+      {footerToasts.length > 0 && (
+        <div className="status_message_bar" role="status" aria-live="polite" aria-atomic="false">
+          {footerToasts.map(renderInner)}
+        </div>
+      )}
+      {notificationToasts.map(toast => (
+        <div key={toast.id} className="status_message_bar status_message_bar_notification" role="status" aria-live="polite" aria-atomic="true">
+          {renderInner(toast)}
+        </div>
+      ))}
+      {sheetToasts.map(toast => (
+        <div key={toast.id} className="status_message_bar status_message_bar_sheet" role="status" aria-live="polite" aria-atomic="true">
+          {renderInner(toast)}
+        </div>
+      ))}
+    </>
   )
 }
 
