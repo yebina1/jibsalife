@@ -14,6 +14,7 @@ import ChevronIcon from '../../components/ChevronIcon'
 import BackButton from '../../components/html/BackButton'
 import MissionRecordSheet from '../../components/MissionRecordSheet'
 import StateBar from '../../components/StateBar'
+import StatusMessageBar from '../../components/StatusMessageBar'
 import {
   readPetProfiles,
   readSelectedPetProfileId,
@@ -829,6 +830,7 @@ function Health() {
   return (
     <main className={`health_cam_ui${isCameraTutorialVisible ? ' is_tutorial_active' : ''}`}>
       <StateBar />
+      <StatusMessageBar />
       <section className="health_cam_view" aria-label="카메라 뷰">
         {capturedVideo ? (
           <video className="health_cam_img" src={capturedVideo} controls playsInline />

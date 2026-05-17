@@ -801,6 +801,17 @@ function Home() {
   }
 
   const handleHealthReportClick = () => {
+    const records = readCalendarRecords()
+    const uniqueDays = new Set(records.map((r) => r.date)).size
+
+    if (uniqueDays === 0) {
+      showStateBarMessage('아직 기록이 없어요', 3000, { placement: 'footer' })
+      return
+    }
+    if (uniqueDays < 7) {
+      showStateBarMessage('리포트는 7일 이상 기록 후 확인할 수 있어요', 3000, { placement: 'footer' })
+      return
+    }
     navigate('/health/report')
   }
 
@@ -1251,7 +1262,7 @@ function Home() {
                 </>
               }
               messageBody={
-                '매일 건강을 기록하면 이상 신호 감지와 건강 리포트를 받을 수 있어요.\n프로필에서 반려동물 정보를 추가 입력해보세요!'
+                '매일 건강을 기록하면\n이상 신호 감지와 건강 리포트를 받을 수 있어요.\n프로필에서 반려동물 정보를 추가 입력해보세요!'
               }
             />
           </Alert>

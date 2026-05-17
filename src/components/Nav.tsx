@@ -1,15 +1,12 @@
 import type { CSSProperties } from 'react'
 import './Nav.css'
 import { NavLink, useLocation, useNavigate } from 'react-router'
-import { isCurrentDemoUser } from '../utils/userScopedStorage'
 import navCommunicateOffIcon from '../svg/nav communicate off.svg'
 import navHealthOffIcon from '../svg/nav health off.svg'
 import navHomeActiveIcon from '../svg/nav home active.svg'
 import navHomeOffIcon from '../svg/nav home off.svg'
 import navMypageIcon from '../svg/nav mypage.svg'
 import navMypageOffIcon from '../svg/nav mypage off.svg'
-
-const getHealthPath = () => isCurrentDemoUser() ? '/health/cam' : '/health/result'
 
 const navItems = [
   { path: '/health/cam', label: '건강', icon: 'health' },
@@ -125,7 +122,7 @@ function Nav() {
         {navItems.map((item) => (
           <NavLink
             key={item.path}
-            to={item.icon === 'community' ? '/community/overview' : item.icon === 'health' ? getHealthPath() : item.path}
+            to={item.icon === 'community' ? '/community/overview' : item.path}
             onClick={(event) => {
               if (item.icon !== 'community') return
 

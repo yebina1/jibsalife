@@ -11,6 +11,7 @@ import BackButton from '../../components/html/BackButton'
 import AddSheet from '../../components/AddSheet'
 import ConfirmDialog from '../../components/ConfirmDialog'
 import MissionRecordSheet from '../../components/MissionRecordSheet'
+import StatusMessageBar from '../../components/StatusMessageBar'
 import calendarGuideIcon from '../../svg/calendar.svg?raw'
 import cameraGuideIcon from '../../svg/camera.svg?raw'
 import camcorderGuideIcon from '../../svg/camcorder.svg?raw'
@@ -1290,6 +1291,7 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
           </section>
         </main>
         {memoSheet}
+        <StatusMessageBar />
         {isSaveCompleteDialogOpen ? (
           <ConfirmDialog
             message="캘린더에 등록되었습니다"
@@ -1427,6 +1429,7 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
         </div>
       </div>
       {memoSheet}
+      <StatusMessageBar />
       {isSaveCompleteDialogOpen ? (
         <ConfirmDialog
           message="캘린더에 등록되었습니다"

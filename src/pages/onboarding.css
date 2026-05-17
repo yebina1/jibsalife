@@ -1,7 +1,7 @@
 .onboarding_page {
   --onboarding-action-height: 54px;
   --onboarding-action-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
-  --onboarding-start-image-top: 390px;
+  --onboarding-start-image-top: 358px;
   --onboarding-action-reserved-space: calc(
     var(--onboarding-action-height) + var(--onboarding-action-bottom) + 40px
   );
@@ -196,7 +196,7 @@
 
 .onboarding_page .onboarding_layout:has(.onboarding_action_start) .onboarding_layout_header {
   position: fixed;
-  top: calc(var(--layout-status-bar-height) + 116px);
+  top: calc(var(--layout-status-bar-height) + 84px);
   left: 50%;
   z-index: 30;
   width: min(340px, calc(100vw - 48px));
@@ -432,7 +432,7 @@
 .onboarding_page .onboarding_layout:has(.onboarding_guardian_grid) .onboarding_layout_header,
 .onboarding_page .onboarding_layout:has(.onboarding_name_form) .onboarding_layout_header {
   position: fixed;
-  top: calc(var(--layout-status-bar-height) + 116px);
+  top: calc(var(--layout-status-bar-height) + 84px);
   left: 50%;
   z-index: 30;
   width: min(340px, calc(100vw - 48px));
@@ -449,7 +449,7 @@
 .onboarding_page .onboarding_layout:has(.onboarding_guardian_grid) .onboarding_layout_visual,
 .onboarding_page .onboarding_layout:has(.onboarding_name_form) .onboarding_layout_visual {
   position: fixed;
-  top: calc(var(--layout-status-bar-height) + 218px);
+  top: calc(var(--layout-status-bar-height) + 186px);
   left: 50%;
   z-index: 20;
   overflow: visible;
@@ -467,7 +467,7 @@
 .onboarding_page .onboarding_layout:has(.onboarding_guardian_grid) .onboarding_guardian_name_form,
 .onboarding_page .onboarding_layout:has(.onboarding_name_form) .onboarding_name_form {
   position: fixed;
-  top: calc(var(--layout-status-bar-height) + 552px);
+  top: calc(var(--layout-status-bar-height) + 520px);
   left: 50%;
   z-index: 20;
   width: min(360px, calc(100vw - 32px));
@@ -983,7 +983,7 @@
 
   .onboarding_page .onboarding_layout:has(.onboarding_guardian_grid) .onboarding_layout_header,
   .onboarding_page .onboarding_layout:has(.onboarding_name_form) .onboarding_layout_header {
-    top: calc(var(--layout-status-bar-height) + 112px);
+    top: calc(var(--layout-status-bar-height) + 76px);
     width: min(520px, calc(100vw - 64px));
   }
 
@@ -996,7 +996,7 @@
 
   .onboarding_page .onboarding_layout:has(.onboarding_guardian_grid) .onboarding_layout_visual,
   .onboarding_page .onboarding_layout:has(.onboarding_name_form) .onboarding_layout_visual {
-    top: calc(var(--layout-status-bar-height) + 220px);
+    top: calc(var(--layout-status-bar-height) + 184px);
   }
 
   .onboarding_page .onboarding_layout:has(.onboarding_guardian_grid) .onboarding_layout_visual {
@@ -1009,7 +1009,7 @@
 
   .onboarding_page .onboarding_layout:has(.onboarding_guardian_grid) .onboarding_guardian_name_form,
   .onboarding_page .onboarding_layout:has(.onboarding_name_form) .onboarding_name_form {
-    top: calc(var(--layout-status-bar-height) + 556px);
+    top: calc(var(--layout-status-bar-height) + 520px);
     width: min(520px, calc(100vw - 64px));
   }
 
