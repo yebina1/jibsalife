@@ -243,11 +243,7 @@ function HealthCheckResult() {
             <div className="hcr_guide_grid">
               {hospitalGuideItems.map((item) => (
                 <div key={item} className="hcr_guide_item">
-                  {item === '활동량 급감' ? (
-                    <span className="hcr_guide_warning_icon" aria-hidden="true">⚠️</span>
-                  ) : (
-                    <i className="bx bxs-check-circle hcr_guide_check" aria-hidden="true" />
-                  )}
+                  <i className="bx bxs-check-circle hcr_guide_check" aria-hidden="true" />
                   <span className={item === '활동량 급감' ? 'hcr_guide_warning_text' : undefined}>
                     {item}
                   </span>

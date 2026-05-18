@@ -391,6 +391,7 @@ function MyPage() {
         <section className="mypage_profile_section">
           <div className="mypage_profile_heading">
             <h3>집사 프로필</h3>
+            {isDemoUser ? <span className="mypage_subscription_badge">구독중</span> : null}
           </div>
 
           <div className="mypage_profile_card_wrap">
@@ -398,7 +399,7 @@ function MyPage() {
               image={profileImage}
               imageAlt="프로필 이미지"
               name={profileName}
-              breed={isDemoUser ? '구독중' : ''}
+              breed=""
               details={`포인트: ${profilePoints.toLocaleString()}`}
               careGuideLabel={
                 isDemoUser ? (

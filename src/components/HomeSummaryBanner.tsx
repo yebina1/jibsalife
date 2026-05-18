@@ -13,6 +13,7 @@ type HomeSummaryBannerProps = {
   imageTop?: number
   imageBottom?: number
   imageRight?: number
+  onClick?: () => void
 }
 
 function HomeSummaryBanner({
@@ -27,15 +28,12 @@ function HomeSummaryBanner({
   imageTop = -24,
   imageBottom,
   imageRight = 48,
+  onClick,
 }: HomeSummaryBannerProps) {
   const lines = text.split('\n')
 
-  return (
-    <div
-      className="home_summary_banner"
-      aria-label={ariaLabel}
-      style={{ backgroundColor }}
-    >
+  const content = (
+    <>
       <p className="p_medium home_summary_banner_text">
         {lines.map((line, index) => (
           <Fragment key={`${line}-${index}`}>
@@ -60,6 +58,30 @@ function HomeSummaryBanner({
           right: `${imageRight}px`,
         }}
       />
+    </>
+  )
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        className="home_summary_banner"
+        aria-label={ariaLabel}
+        style={{ backgroundColor }}
+        onClick={onClick}
+      >
+        {content}
+      </button>
+    )
+  }
+
+  return (
+    <div
+      className="home_summary_banner"
+      aria-label={ariaLabel}
+      style={{ backgroundColor }}
+    >
+      {content}
     </div>
   )
 }

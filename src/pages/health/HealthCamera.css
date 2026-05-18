@@ -1062,6 +1062,11 @@
   object-fit: cover;
 }
 
+.health_camera_view video {
+  transform: scale(var(--camera-zoom, 1));
+  transform-origin: center;
+}
+
 .health_camera_placeholder {
   filter: saturate(0.92) contrast(0.92);
 }
@@ -1102,24 +1107,24 @@
   background: #d9d9de;
 }
 
-.health_camera_zoom span,
-.health_camera_zoom strong {
+.health_camera_zoom button {
   display: grid;
   width: 24px;
   height: 24px;
   place-items: center;
+  padding: 0;
+  border: 0;
   border-radius: 50%;
+  background: #4a4a4a;
   color: #ffffff;
+  font-family: var(--app-font-family);
   font-size: 11px;
-  line-height: 1;
-}
-
-.health_camera_zoom span {
-  background: #aaaab0;
   font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
 }
 
-.health_camera_zoom strong {
+.health_camera_zoom button.is_active {
   background: #c3b24a;
   font-weight: 800;
 }
@@ -1168,6 +1173,13 @@
   border-radius: 50%;
   background: #adadad;
   color: #ffffff;
+}
+
+.health_camera_side_button:disabled,
+.health_camera_side_button.is_disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .health_camera_album_input {

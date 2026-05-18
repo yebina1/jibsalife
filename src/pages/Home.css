@@ -546,14 +546,22 @@
   padding: 4px 10px;
   box-sizing: border-box;
   border-radius: 999px;
-  border: 1px solid #6d59f8;
-  background: rgba(244, 241, 255, 0.7);
-  color: #6d59f8;
+  border: 0;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 700;
   line-height: 1.4;
   letter-spacing: -0.025em;
   white-space: nowrap;
+}
+
+.content_card_chip--daily {
+  background: #f1edff;
+  color: #6d59f8;
+}
+
+.content_card_chip--knowledge {
+  color: #0174c8;
+  background: #e0f0fe;
 }
 
 .content_overlay {

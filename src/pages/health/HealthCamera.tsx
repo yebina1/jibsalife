@@ -466,6 +466,8 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
   const albumInputRef = useRef<HTMLInputElement>(null)
   const [cameraError, setCameraError] = useState('')
   const [isRecording, setIsRecording] = useState(false)
+  const [cameraFacingMode, setCameraFacingMode] = useState<'environment' | 'user'>('environment')
+  const [cameraZoom, setCameraZoom] = useState(1)
   const [showGuide] = useState(!captureOnly && searchParams.get('guide') !== 'false')
   const modeParam = searchParams.get('mode')
   const mode: GuideMode =
@@ -481,6 +483,11 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
     { label: 'PHOTO', mode: 'photo' as const },
     { label: 'PORTRAIT' },
     { label: 'PANO' },
+  ]
+  const zoomOptions = [
+    { label: '.5', value: 0.5 },
+    { label: '1x', value: 1 },
+    { label: '3', value: 3 },
   ]
   const [isMemoSheetOpen, setIsMemoSheetOpen] = useState(false)
   const [selectedCategoryId, setSelectedCategoryId] = useState(categoryOptions[0].id)
@@ -879,7 +886,23 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
       return ''
     }
 
-    context.drawImage(video, 0, 0, canvas.width, canvas.height)
+    context.fillStyle = '#000000'
+    context.fillRect(0, 0, canvas.width, canvas.height)
+
+    if (cameraZoom > 1) {
+      const sourceWidth = video.videoWidth / cameraZoom
+      const sourceHeight = video.videoHeight / cameraZoom
+      const sourceX = (video.videoWidth - sourceWidth) / 2
+      const sourceY = (video.videoHeight - sourceHeight) / 2
+      context.drawImage(video, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, canvas.width, canvas.height)
+    } else {
+      const drawWidth = canvas.width * cameraZoom
+      const drawHeight = canvas.height * cameraZoom
+      const drawX = (canvas.width - drawWidth) / 2
+      const drawY = (canvas.height - drawHeight) / 2
+      context.drawImage(video, drawX, drawY, drawWidth, drawHeight)
+    }
+
     return canvas.toDataURL('image/jpeg', 0.92)
   }
 
@@ -891,6 +914,10 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
 
   const handleAlbumClick = () => {
     albumInputRef.current?.click()
+  }
+
+  const handleCameraSwitch = () => {
+    setCameraFacingMode((current) => (current === 'environment' ? 'user' : 'environment'))
   }
 
   const handleAlbumChange = (event: { target: HTMLInputElement }) => {
@@ -1133,8 +1160,9 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
 
     const startCamera = async () => {
       try {
+        setCameraError('')
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: isAudioMode ? false : { facingMode: 'environment' },
+          video: isAudioMode ? false : { facingMode: cameraFacingMode },
           audio: mode === 'video' || isAudioMode,
         })
 
@@ -1171,7 +1199,28 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
       streamRef.current?.getTracks().forEach((track) => track.stop())
       streamRef.current = null
     }
-  }, [mode, showGuide, isCaptureMode, isAudioMode, navigate])
+  }, [mode, showGuide, isCaptureMode, isAudioMode, navigate, cameraFacingMode])
+
+  useEffect(() => {
+    const videoTrack = streamRef.current?.getVideoTracks()[0]
+
+    if (!videoTrack) return
+
+    const capabilities = videoTrack.getCapabilities?.() as MediaTrackCapabilities & {
+      zoom?: { min?: number; max?: number }
+    }
+    const zoomCapability = capabilities?.zoom
+
+    if (!zoomCapability) return
+
+    const minZoom = zoomCapability.min ?? cameraZoom
+    const maxZoom = zoomCapability.max ?? cameraZoom
+    const nextZoom = Math.min(Math.max(cameraZoom, minZoom), maxZoom)
+
+    videoTrack.applyConstraints?.({
+      advanced: [{ zoom: nextZoom } as MediaTrackConstraintSet],
+    }).catch(() => undefined)
+  }, [cameraZoom, cameraFacingMode])
 
   if (showGuide) {
     return (
@@ -1359,15 +1408,29 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
             </div>
           </div>
         ) : (
-          <video ref={videoRef} autoPlay muted playsInline />
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            playsInline
+            style={{ '--camera-zoom': cameraZoom } as CSSProperties}
+          />
         )}
       </section>
 
       <div className="health_camera_actions">
-        <div className="health_camera_zoom" aria-hidden="true">
-          <span>.5</span>
-          <strong>1x</strong>
-          <span>3</span>
+        <div className="health_camera_zoom" aria-label="카메라 배율">
+          {zoomOptions.map((option) => (
+            <button
+              key={option.label}
+              type="button"
+              className={cameraZoom === option.value ? 'is_active' : undefined}
+              aria-pressed={cameraZoom === option.value}
+              onClick={() => setCameraZoom(option.value)}
+            >
+              {option.label}
+            </button>
+          ))}
         </div>
         <div className="health_camera_modes" aria-label="촬영 모드">
           {cameraModes.map((cameraMode) => (
@@ -1413,7 +1476,7 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
             <span className="health_camera_shutter_inner" />
           )}
         </Button>
-          <button type="button" className="health_camera_side_button" aria-label="카메라 전환">
+          <button type="button" className="health_camera_side_button" aria-label="카메라 전환" onClick={handleCameraSwitch}>
             <span className="health_camera_switch_icon" />
           </button>
         </div>

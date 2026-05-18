@@ -819,6 +819,10 @@ function Home() {
     })
   }
 
+  const handleVetConsultBannerClick = () => {
+    showStateBarMessage('준비 중인 기능이에요, 조금만 기다려 주세요!', 3000, { placement: 'footer' })
+  }
+
   return (
     <>
       <PageHeader
@@ -1022,6 +1026,7 @@ function Home() {
           imageHeight={65}
           imageTop={5}
           imageRight={50}
+          onClick={handleVetConsultBannerClick}
         />
 
         <ContentSection className="home_section home_content_section" title="펫스토리">
@@ -1047,7 +1052,11 @@ function Home() {
                   objectFit="cover"
                   priority={item.id <= 2}
                 />
-                <span className="content_card_chip">{item.chip}</span>
+                <span className={`content_card_chip ${
+                  item.chip === '반려상식' ? 'content_card_chip--knowledge' : 'content_card_chip--daily'
+                }`}>
+                  {item.chip}
+                </span>
                 <div className="content_overlay">
                   <p className="p_semibold">{item.title}</p>
                 </div>

@@ -1,13 +1,23 @@
 .home_summary_banner {
   position: relative;
   display: flex;
+  width: calc(100% + 32px);
   min-height: 84px;
   align-items: center;
   margin-inline: -16px;
   padding: 20px;
+  border: 0;
   box-sizing: border-box;
+  appearance: none;
   overflow: visible;
   background: #43779E;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+button.home_summary_banner {
+  cursor: pointer;
 }
 
 .home_summary_banner_text {
@@ -31,6 +41,7 @@
 .home_summary_banner_image {
   position: absolute;
   display: block;
+  pointer-events: none;
   object-fit: contain;
   image-rendering: auto;
   backface-visibility: hidden;

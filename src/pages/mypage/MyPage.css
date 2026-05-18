@@ -92,6 +92,21 @@
   line-height: 1.4;
 }
 
+.mypage_subscription_badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #7b5cff;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
 .mypage_profile_card_wrap {
   position: relative;
 }
