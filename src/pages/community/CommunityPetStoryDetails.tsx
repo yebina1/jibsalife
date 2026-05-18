@@ -748,6 +748,8 @@ function CommunityPetStoryDetails() {
       {editAlertOpen && (
         <ConfirmDialog
           message="수정하시겠습니까?"
+          cancelLabel="취소"
+          confirmLabel="수정하기"
           onCancel={() => { setEditAlertOpen(false); setEditCommentId(null); setEditMentionAuthor(null); setEditCommentInitialText(undefined) }}
           onConfirm={handleEditConfirm}
         />
