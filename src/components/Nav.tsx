@@ -1,12 +1,12 @@
 import type { CSSProperties } from 'react'
 import './Nav.css'
 import { NavLink, useLocation, useNavigate } from 'react-router'
-import navCommunicateOffIcon from '../svg/nav communicate off.svg'
-import navHealthOffIcon from '../svg/nav health off.svg'
-import navHomeActiveIcon from '../svg/nav home active.svg'
-import navHomeOffIcon from '../svg/nav home off.svg'
-import navMypageIcon from '../svg/nav mypage.svg'
-import navMypageOffIcon from '../svg/nav mypage off.svg'
+import navCommunicateOffIcon from '../svg/nav_communicate off.svg'
+import navHealthOffIcon from '../svg/nav_health off.svg'
+import navHomeActiveIcon from '../svg/nav_home active.svg'
+import navHomeOffIcon from '../svg/nav_home off.svg'
+import navMypageIcon from '../svg/nav_mypage.svg'
+import navMypageOffIcon from '../svg/nav_mypage off.svg'
 
 const navItems = [
   { path: '/health/cam', label: '건강', icon: 'health' },

@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router'
 import Title from './Title'
 import LikeButton from './LikeButton'
 import PostMoreSheet from './PostMoreSheet'
-import commentIcon from '../svg/nav communicate.svg'
+import commentIcon from '../svg/nav_communicate.svg'
 
 type PetStoryFeedItemProps = {
   postId?: number | string

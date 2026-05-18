@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import batteryIcon from '../svg/Battery.svg'
-import cellularIcon from '../svg/Combined Shape.svg'
+import cellularIcon from '../svg/Combined_Shape.svg'
 import wifiIcon from '../svg/Wi-Fi.svg'
 import './StateBar.css'
 import Time from './Time'

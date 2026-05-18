@@ -20,7 +20,7 @@ import {
   writeCommunityVoteRewardClaimed,
   writeProfilePoints,
 } from '../../utils/profilePoints'
-import instaIcon from '../../svg/Instagram icon.svg'
+import instaIcon from '../../svg/Instagram_icon.svg'
 import icon1st from '../../img/home/1st-icon.png'
 import icon2nd from '../../img/home/2nd-icon.png'
 import icon3rd from '../../img/home/3rd-icon.png'

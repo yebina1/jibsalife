@@ -86,12 +86,7 @@ export function writeMyProfile(nextProfile: MyProfileStore) {
     return
   }
 
-  const normalizedProfile: MyProfileStore = {
-    ...nextProfile,
-    image: resolveMyProfileImage(nextProfile),
-  }
-
-  window.localStorage.setItem(getUserScopedStorageKey(MY_PROFILE_STORAGE_KEY), JSON.stringify(normalizedProfile))
-  window.dispatchEvent(new CustomEvent(MY_PROFILE_CHANGE_EVENT, { detail: normalizedProfile }))
+  window.localStorage.setItem(getUserScopedStorageKey(MY_PROFILE_STORAGE_KEY), JSON.stringify(nextProfile))
+  window.dispatchEvent(new CustomEvent(MY_PROFILE_CHANGE_EVENT, { detail: nextProfile }))
 }
 

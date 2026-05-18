@@ -7,7 +7,7 @@ import ActionOptionList from '../../components/ActionOptionList'
 import type { ActionOptionItem } from '../../components/ActionOptionList'
 import CloseButton from '../../components/html/CloseButton'
 import BackButton from '../../components/html/BackButton'
-import checkMarkIcon from '../../svg/Check Mark.svg'
+import checkMarkIcon from '../../svg/Check_Mark.svg'
 
 function HealthCheckSummary() {
   const navigate = useNavigate()
