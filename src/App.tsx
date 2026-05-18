@@ -22,7 +22,6 @@ import HealthCameraCapture from './pages/health/HealthCameraCapture'
 import HealthCheckAnalysis from './pages/health/HealthCheckAnalysis'
 import HealthCheckLoading from './pages/health/HealthCheckLoading'
 import HealthHospitalRecommend from './pages/health/HealthHospitalRecommend'
-import HealthReport from './pages/health/HealthReport'
 import HealthCheckResult from './pages/health/HealthCheckResult'
 import HealthCheckSummary from './pages/health/HealthCheckSummary'
 import HealthConnect from './pages/health/HealthConnect'
@@ -136,7 +135,7 @@ function App() {
           <Route path="/mission" element={<Mission />} />
           <Route path="/health/check" element={<HealthCheckLoading />} />
           <Route path="/health/check-analysis" element={<HealthCheckAnalysis />} />
-          <Route path="/health/report" element={<HealthReport />} />
+          <Route path="/health/report" element={<Navigate to="/health/result" replace />} />
           <Route path="/health/hospital" element={<HealthHospitalRecommend />} />
           <Route path="/health/camera" element={<HealthCameraCapture />} />
           <Route path="/health/camera/capture" element={<HealthCameraCapture />} />

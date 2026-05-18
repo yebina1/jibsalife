@@ -1087,6 +1087,8 @@
 }
 
 .health_camera_actions {
+  position: relative;
+  z-index: 4;
   display: grid;
   grid-template-rows: auto auto 1fr;
   align-items: start;
@@ -1098,19 +1100,22 @@
 }
 
 .health_camera_zoom {
+  position: relative;
+  z-index: 5;
   display: inline-flex;
   justify-self: center;
   align-items: center;
   gap: 4px;
-  padding: 4px 6px;
+  padding: 0;
   border-radius: 999px;
-  background: #d9d9de;
+  background: transparent;
+  pointer-events: auto;
 }
 
 .health_camera_zoom button {
   display: grid;
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
   place-items: center;
   padding: 0;
   border: 0;
@@ -1122,6 +1127,8 @@
   font-weight: 700;
   line-height: 1;
   cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
 }
 
 .health_camera_zoom button.is_active {

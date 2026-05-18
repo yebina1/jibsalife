@@ -1053,7 +1053,7 @@ function Home() {
                   priority={item.id <= 2}
                 />
                 <span className={`content_card_chip ${
-                  item.chip === '반려상식' ? 'content_card_chip--knowledge' : 'content_card_chip--daily'
+                  item.path.includes('/knowledge/') ? 'content_card_chip--knowledge' : 'content_card_chip--daily'
                 }`}>
                   {item.chip}
                 </span>

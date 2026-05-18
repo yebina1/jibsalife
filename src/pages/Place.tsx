@@ -8,6 +8,7 @@ import HeaderIcon from '../components/HeaderIcon'
 import BackButton from '../components/html/BackButton'
 import Button from '../components/html/Button'
 import LikeButton from '../components/LikeButton'
+import { showStateBarMessage } from '../utils/stateBarMessage'
 import hospitalImage1 from '../img/hospital/hospital1.png'
 import hospitalImage2 from '../img/hospital/hospital2.png'
 import hospitalImage3 from '../img/hospital/hospital3.png'
@@ -114,9 +115,16 @@ function Place() {
   )
 
   const toggleLike = (name: string) => {
-    setLikedNames((prev) =>
-      prev.includes(name) ? prev.filter((likedName) => likedName !== name) : [...prev, name],
-    )
+    setLikedNames((prev) => {
+      const isLiked = prev.includes(name)
+      showStateBarMessage(
+        isLiked ? '저장한 장소에서 삭제되었어요' : '저장한 장소에 추가되었어요',
+        3000,
+        { placement: 'footer' },
+      )
+
+      return isLiked ? prev.filter((likedName) => likedName !== name) : [...prev, name]
+    })
   }
 
   return (

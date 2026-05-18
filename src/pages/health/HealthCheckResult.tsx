@@ -1,4 +1,4 @@
-﻿import { useMemo } from 'react'
+﻿import { useEffect, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import './Health.css'
 import './HealthCheckResult.css'
@@ -20,10 +20,15 @@ import {
   type MissionHistoryRecord,
 } from '../../utils/missionHistoryRecords'
 import { readMissionActivityRecords } from '../../utils/missionActivityRecords'
+import { markHealthReportViewed } from '../../utils/challengeStatus'
 
 const activityMinutes = [48, 55, 46, 50, 44, 56, 38] as const
 const CHART_MAX = 60
 const hospitalGuideItems = ['2일 이상 지속', '활동량 급감', '식사량 급감', '구토, 설사 반복']
+const hospitalGuideColumns = [
+  [hospitalGuideItems[0], hospitalGuideItems[2]],
+  [hospitalGuideItems[1], hospitalGuideItems[3]],
+] as const
 
 function getTodayDateKey() {
   const today = new Date()
@@ -111,6 +116,10 @@ function HealthCheckResult() {
   const hasMealRecordToday = useMemo(() => todayRecords.some(isMealRecord), [todayRecords])
   const hasPoopRecordToday = useMemo(() => todayRecords.some(isPoopRecord), [todayRecords])
 
+  useEffect(() => {
+    markHealthReportViewed()
+  }, [])
+
   const visibleStatusCards = [
     hasMealRecordToday ? { key: 'meal', image: mealIcon, label: '식욕' } : null,
     hasPoopRecordToday ? { key: 'poop', image: poopIcon, label: '배변·배뇨' } : null,
@@ -151,10 +160,11 @@ function HealthCheckResult() {
               </>
             ) : (
               <>
-                <strong>{petName}</strong>의 상태는<br />
-                활동량이 평소보다 줄었어요.
+                <strong>{petName}</strong>의 상태는
                 <br />
-                {'조금 더 살펴봐 주세요'}.
+                <span className="hcr_pet_msg_emphasis">활동량이 평소보다 줄었어요.</span>
+                <br />
+                조금 더 살펴봐 주세요.
               </>
             )}
           </p>
@@ -241,12 +251,16 @@ function HealthCheckResult() {
               <h2 className="hcr_guide_title">병원 방문 권장 기준</h2>
             </div>
             <div className="hcr_guide_grid">
-              {hospitalGuideItems.map((item) => (
-                <div key={item} className="hcr_guide_item">
-                  <i className="bx bxs-check-circle hcr_guide_check" aria-hidden="true" />
-                  <span className={item === '활동량 급감' ? 'hcr_guide_warning_text' : undefined}>
-                    {item}
-                  </span>
+              {hospitalGuideColumns.map((column, columnIndex) => (
+                <div key={`guide-column-${columnIndex}`} className="hcr_guide_column">
+                  {column.map((item) => (
+                    <div key={item} className="hcr_guide_item">
+                      <i className="bx bxs-check-circle hcr_guide_check" aria-hidden="true" />
+                      <span className={item === '활동량 급감' ? 'hcr_guide_warning_text' : undefined}>
+                        {item}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>

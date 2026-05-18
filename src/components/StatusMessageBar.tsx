@@ -18,6 +18,7 @@ type ToastItem = {
 function StatusMessageBar() {
   const [toasts, setToasts] = useState<ToastItem[]>([])
   const nextIdRef = useRef(0)
+  const processedEventIdsRef = useRef(new Set<number>())
 
   useEffect(() => {
     const removeToast = (id: number) => {
@@ -28,18 +29,41 @@ function StatusMessageBar() {
       const detail = (event as CustomEvent<StateBarMessageDetail>).detail
       if (!detail?.message) return
 
+      if (typeof detail.eventId === 'number') {
+        const globalWindow = window as typeof window & {
+          __processedStateBarMessageIds?: Set<number>
+        }
+        const processedIds = globalWindow.__processedStateBarMessageIds ?? new Set<number>()
+        globalWindow.__processedStateBarMessageIds = processedIds
+
+        if (processedIds.has(detail.eventId) || processedEventIdsRef.current.has(detail.eventId)) {
+          return
+        }
+
+        processedIds.add(detail.eventId)
+        processedEventIdsRef.current.add(detail.eventId)
+
+        window.setTimeout(() => {
+          processedIds.delete(detail.eventId!)
+          processedEventIdsRef.current.delete(detail.eventId!)
+        }, Math.max(detail.duration ?? 3000, 1000))
+      }
+
       const placement: StateBarMessagePlacement =
         detail.placement ?? (detail.message.includes('알림') ? 'notification' : 'footer')
 
       const id = nextIdRef.current++
-      setToasts(prev => [...prev, {
-        id,
-        message: detail.message,
-        placement,
-        closeButton: detail.closeButton ?? true,
-        actionLabel: detail.actionLabel,
-        onAction: detail.onAction,
-      }])
+      setToasts(prev => [
+        ...prev,
+        {
+          id,
+          message: detail.message,
+          placement,
+          closeButton: detail.closeButton ?? true,
+          actionLabel: detail.actionLabel,
+          onAction: detail.onAction,
+        },
+      ])
 
       window.setTimeout(() => removeToast(id), detail.duration ?? 3000)
     }
@@ -61,7 +85,10 @@ function StatusMessageBar() {
         <button
           type="button"
           className="status_message_bar_badge"
-          onClick={() => { toast.onAction?.(); remove(toast.id) }}
+          onClick={() => {
+            toast.onAction?.()
+            remove(toast.id)
+          }}
         >
           {toast.actionLabel}
         </button>
@@ -87,12 +114,24 @@ function StatusMessageBar() {
         </div>
       )}
       {notificationToasts.map(toast => (
-        <div key={toast.id} className="status_message_bar status_message_bar_notification" role="status" aria-live="polite" aria-atomic="true">
+        <div
+          key={toast.id}
+          className="status_message_bar status_message_bar_notification"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
           {renderInner(toast)}
         </div>
       ))}
       {sheetToasts.map(toast => (
-        <div key={toast.id} className="status_message_bar status_message_bar_sheet" role="status" aria-live="polite" aria-atomic="true">
+        <div
+          key={toast.id}
+          className="status_message_bar status_message_bar_sheet"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
           {renderInner(toast)}
         </div>
       ))}

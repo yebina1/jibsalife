@@ -18,6 +18,7 @@ import StatusMessageBar from '../../components/StatusMessageBar'
 import {
   readPetProfiles,
   readSelectedPetProfileId,
+  readSelectedPetProfileName,
   writeSelectedPetProfileId,
   PET_PROFILES_CHANGE_EVENT,
   type PetProfileSummary,
@@ -29,6 +30,7 @@ import {
   type MissionHistoryRecord,
 } from '../../utils/missionHistoryRecords'
 import { showStateBarMessage } from '../../utils/stateBarMessage'
+import { addUserNotification } from '../../utils/userNotifications'
 
 const today = new Date()
 
@@ -420,11 +422,15 @@ function Health() {
   }
 
   const handleSelectPet = (pet: PetProfileSummary) => {
+    const shouldShowChangeToast = pet.id !== selectedPetId
     writeSelectedPetProfileId(pet.id)
     setSelectedPetId(pet.id)
     setHasExplicitPetSelection(true)
     setShowPetModal(false)
     setShowCalendarPetSwitch(false)
+    if (shouldShowChangeToast) {
+      showStateBarMessage(`${pet.name} 반려동물로 대상을 변경했어요`, 3000, { placement: 'footer' })
+    }
   }
 
   // 메모 저장 로직
@@ -747,6 +753,11 @@ function Health() {
   const handleMemoSaveOnly = () => {
     if (!handleCalendarMemoSave()) return
     showStateBarMessage('우리 아이의 기록이 저장되었어요.')
+    addUserNotification({
+      title: '건강 히스토리',
+      content: `${readSelectedPetProfileName()}의 기록이 저장되었어요.`,
+      path: '/mission',
+    })
     setShowMemoSheet(false)
     setShowCalendarMemoSheet(false)
     setIsPeriodPickerOpen(false)

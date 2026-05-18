@@ -612,7 +612,7 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
 
     showStateBarMessage(`${readSelectedPetProfileName()}의 기록이 저장되었어요.`)
     addUserNotification({
-      title: '건강 기록',
+      title: '건강 히스토리',
       content: `${readSelectedPetProfileName()}의 기록이 저장되었어요.`,
       path: '/mission',
     })
@@ -918,6 +918,10 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
 
   const handleCameraSwitch = () => {
     setCameraFacingMode((current) => (current === 'environment' ? 'user' : 'environment'))
+  }
+
+  const handleCameraZoomChange = (zoom: number) => {
+    setCameraZoom(zoom)
   }
 
   const handleAlbumChange = (event: { target: HTMLInputElement }) => {
@@ -1426,7 +1430,11 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
               type="button"
               className={cameraZoom === option.value ? 'is_active' : undefined}
               aria-pressed={cameraZoom === option.value}
-              onClick={() => setCameraZoom(option.value)}
+              onPointerDown={(event) => {
+                event.preventDefault()
+                handleCameraZoomChange(option.value)
+              }}
+              onClick={() => handleCameraZoomChange(option.value)}
             >
               {option.label}
             </button>

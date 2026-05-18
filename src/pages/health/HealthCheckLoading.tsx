@@ -3,9 +3,7 @@ import { useLocation, useNavigate } from 'react-router'
 import './Health.css'
 import './HealthCheckLoading.css'
 import PageHeader from '../../components/PageHeader'
-import HeaderIcon from '../../components/HeaderIcon'
 import BackButton from '../../components/html/BackButton'
-import Button from '../../components/html/Button'
 import healthImage from '../../img/health/health.png'
 import moveImage from '../../img/health/move.png'
 import eatImage from '../../img/health/eat.png'
@@ -34,7 +32,7 @@ const statusLabelMap: Record<LoadingCardStatus, string> = {
 
 const progressStepCopy = [
   { title: '건강 기록', subtitle: '확인 중' },
-  { title: '활동량 확인', subtitle: '확인 중' },
+  { title: '활동량', subtitle: '확인 중' },
   { title: '식사 변화', subtitle: '확인 중' },
   { title: 'AI 리포트', subtitle: '확인 중' },
 ] as const
@@ -88,6 +86,21 @@ function HealthCheckLoading() {
     }
   }, [])
 
+  useEffect(() => {
+    if (!isComplete) return
+
+    const timeoutId = window.setTimeout(() => {
+      navigate('/health/result', {
+        replace: true,
+        state: loadingState?.returnTo ? { returnTo: loadingState.returnTo } : undefined,
+      })
+    }, 250)
+
+    return () => {
+      window.clearTimeout(timeoutId)
+    }
+  }, [isComplete, loadingState?.returnTo, navigate])
+
   const roundedProgress = Math.round(progress)
   const activeMarkerStep = getActiveMarkerStep(progress)
   const activeCopy =
@@ -103,16 +116,6 @@ function HealthCheckLoading() {
       <PageHeader
         title="AI 건강 체크"
         leftContent={<BackButton />}
-        rightContent={
-          <>
-            <Button type="button" aria-label="캘린더" onClick={() => navigate('/mission')}>
-              <HeaderIcon type="calendar" />
-            </Button>
-            <Button type="button" aria-label="알림">
-              <HeaderIcon type="notification" />
-            </Button>
-          </>
-        }
       />
       <main className="page health_page health_check_loading_page">
         <section className="health_check_loading" aria-label="AI 건강 체크 로딩">
@@ -123,7 +126,7 @@ function HealthCheckLoading() {
 
           <section className="health_check_loading_progress" aria-label="검사 진행 상황">
             <div
-              className="health_check_loading_ring"
+              className={`health_check_loading_ring${roundedProgress >= 100 ? ' is_complete' : ''}`}
               style={{ '--health-progress-value': progress } as CSSProperties}
               aria-hidden="true"
             >
@@ -182,21 +185,6 @@ function HealthCheckLoading() {
             <br />
             정확한 진단은 수의사 상담을 통해 확인해주세요.
           </p>
-
-          {isComplete && (
-            <button
-              type="button"
-              className="health_check_loading_confirm_btn"
-              onClick={() =>
-                navigate('/health/result', {
-                  replace: true,
-                  state: loadingState?.returnTo ? { returnTo: loadingState.returnTo } : undefined,
-                })
-              }
-            >
-              확인
-            </button>
-          )}
         </section>
       </main>
     </>

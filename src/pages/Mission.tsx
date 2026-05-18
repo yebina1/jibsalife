@@ -1026,6 +1026,8 @@ function Mission() {
   }
 
   const selectPetProfile = (profileId: number) => {
+    const selectedProfile = petProfiles.find((profile) => profile.id === profileId)
+    const shouldShowChangeToast = profileId !== effectiveSelectedPetProfileId
     setSelectedPetProfileId(profileId)
     setHasExplicitPetSelection(true)
     writeSelectedPetProfileId(profileId)
@@ -1034,6 +1036,9 @@ function Mission() {
       ...readMissionHistoryRecordsWithDefaults(),
     ])
     setIsPetSwitchOpen(false)
+    if (selectedProfile && shouldShowChangeToast) {
+      showStateBarMessage(`${selectedProfile.name} 반려동물로 대상을 변경했어요`, 3000, { placement: 'footer' })
+    }
   }
 
   const goToToday = () => {

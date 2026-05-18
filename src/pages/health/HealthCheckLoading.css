@@ -102,23 +102,23 @@
 }
 
 .health_check_loading_ring_icon.is_top_left {
-  top: 36px;
-  left: 44px;
+  top: 28px;
+  left: 34px;
 }
 
 .health_check_loading_ring_icon.is_top_right {
-  top: 36px;
-  right: 44px;
+  top: 28px;
+  right: 34px;
 }
 
 .health_check_loading_ring_icon.is_bottom_right {
-  right: 44px;
-  bottom: 36px;
+  right: 34px;
+  bottom: 28px;
 }
 
 .health_check_loading_ring_icon.is_bottom_left {
-  bottom: 36px;
-  left: 44px;
+  bottom: 28px;
+  left: 34px;
 }
 
 .health_check_loading_center {
@@ -166,6 +166,10 @@
   animation: health_marker_orbit 3.2s linear forwards;
 }
 
+.health_check_loading_ring.is_complete .health_check_loading_marker_orbit {
+  display: none;
+}
+
 .health_check_loading_marker {
   position: absolute;
   width: 28px;
@@ -195,13 +199,14 @@
 
 .health_check_loading_card {
   display: flex;
+  flex: 1 0 0;
   min-width: 0;
-  min-height: 116px;
+  min-height: 126px;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  padding: 12px 2px;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 12px;
   border: 1px solid #e5e5ec;
   border-radius: 12px;
   background: #ffffff;
@@ -216,8 +221,8 @@
 }
 
 .health_check_loading_card_done {
-  background: #f0eeff;
-  border-color: #c4b8ff;
+  background: rgba(80, 80, 80, 0.30);
+  border-color: 1px solid #E5E5EC;
 }
 
 .health_check_loading_card_done img {
@@ -251,22 +256,27 @@ letter-spacing: var(--app-line-height);
   height: 28px;
   align-items: center;
   justify-content: center;
-  padding: 0 8px;
-  border: 1px solid #d9d9de;
+  border: 1px solid #505050;
   border-radius: 8px;
-  color: #767676;
+  color: #505050;
   font-size: 14px;
   font-weight: 400;
   line-height: 1.45;
-letter-spacing: var(--app-line-height);
+  letter-spacing: var(--app-line-height);
+  white-space: nowrap;
   background: #fff;
   box-sizing: border-box;
 }
 
 .health_check_loading_card_done .health_check_loading_card_status {
-  background: #6d59f8;
-  border-color: #6d59f8;
-  color: #ffffff;
+  display: inline-flex;
+  min-width: 0;
+  padding: 2px 8px;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  align-self: center;
+  background: rgba(80, 80, 80, 0.30);
 }
 
 
@@ -294,6 +304,88 @@ letter-spacing: var(--app-line-height);
   margin-top: 8px;
 }
 
+@media (min-width: 768px) {
+  .health_check_loading {
+    gap: 56px;
+  }
+
+  .health_check_loading_ring {
+    width: clamp(260px, 24vw, 340px);
+    height: clamp(260px, 24vw, 340px);
+  }
+
+  .health_check_loading_ring_visual::after {
+    inset: 26%;
+  }
+
+  .health_check_loading_ring_icon {
+    width: 19%;
+    height: 19%;
+  }
+
+  .health_check_loading_ring_icon.is_top_left {
+    top: 13%;
+    left: 15%;
+  }
+
+  .health_check_loading_ring_icon.is_top_right {
+    top: 13%;
+    right: 15%;
+  }
+
+  .health_check_loading_ring_icon.is_bottom_right {
+    right: 15%;
+    bottom: 13%;
+  }
+
+  .health_check_loading_ring_icon.is_bottom_left {
+    bottom: 13%;
+    left: 15%;
+  }
+
+  .health_check_loading_center {
+    width: 51%;
+    height: 51%;
+    gap: 4px;
+  }
+
+  .health_check_loading_center strong {
+    font-size: clamp(24px, 2vw, 32px);
+  }
+
+  .health_check_loading_center span {
+    font-size: clamp(15px, 1.1vw, 18px);
+  }
+
+  .health_check_loading_cards {
+    gap: 12px;
+  }
+
+  .health_check_loading_card {
+    min-height: clamp(156px, 14vw, 208px);
+    gap: 14px;
+    padding: 24px 16px;
+    border-radius: 16px;
+  }
+
+  .health_check_loading_card img {
+    width: clamp(56px, 4.2vw, 72px);
+    height: clamp(56px, 4.2vw, 72px);
+  }
+
+  .health_check_loading_card strong {
+    font-size: clamp(16px, 1.2vw, 20px);
+  }
+
+  .health_check_loading_card_status {
+    min-width: 62px;
+    height: 34px;
+    padding: 0 12px;
+    font-size: 16px;
+    border-radius: 10px;
+  }
+}
+
 @media (max-width: 420px) {
 
   .health_check_loading {
@@ -315,23 +407,23 @@ letter-spacing: var(--app-line-height);
   }
 
   .health_check_loading_ring_icon.is_top_left {
-    top: 16.5%;
-    left: 20%;
+    top: 13%;
+    left: 15%;
   }
 
   .health_check_loading_ring_icon.is_top_right {
-    top: 16.5%;
-    right: 20%;
+    top: 13%;
+    right: 15%;
   }
 
   .health_check_loading_ring_icon.is_bottom_right {
-    right: 20%;
-    bottom: 16.5%;
+    right: 15%;
+    bottom: 13%;
   }
 
   .health_check_loading_ring_icon.is_bottom_left {
-    bottom: 16.5%;
-    left: 20%;
+    bottom: 13%;
+    left: 15%;
   }
 
   .health_check_loading_center {

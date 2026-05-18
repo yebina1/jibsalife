@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useRef } from 'react'
 import './HomeSummaryBanner.css'
 
 type HomeSummaryBannerProps = {
@@ -31,6 +31,16 @@ function HomeSummaryBanner({
   onClick,
 }: HomeSummaryBannerProps) {
   const lines = text.split('\n')
+  const lastActivationTimeRef = useRef(0)
+
+  const activate = () => {
+    if (!onClick) return
+
+    const now = Date.now()
+    if (now - lastActivationTimeRef.current < 350) return
+    lastActivationTimeRef.current = now
+    onClick()
+  }
 
   const content = (
     <>
@@ -68,7 +78,8 @@ function HomeSummaryBanner({
         className="home_summary_banner"
         aria-label={ariaLabel}
         style={{ backgroundColor }}
-        onClick={onClick}
+        onPointerUp={activate}
+        onClick={activate}
       >
         {content}
       </button>

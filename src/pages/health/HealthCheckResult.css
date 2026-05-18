@@ -68,6 +68,11 @@ letter-spacing: var(--app-line-height);
   font-weight: 700;
 }
 
+.hcr_pet_msg_emphasis {
+  color: #111111;
+  font-weight: 600;
+}
+
 .hcr_pet_check {
   display: none;
   align-items: center;
@@ -292,13 +297,13 @@ letter-spacing: var(--app-line-height);
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 4px;
   width: 100%;
 }
 
 .hcr_guide_icon_img {
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -306,19 +311,29 @@ letter-spacing: var(--app-line-height);
 .hcr_guide_title {
   margin: 0;
   color: #111111;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1.4;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4; 
 letter-spacing: var(--app-line-height);
   text-align: center;
 }
 
 .hcr_guide_grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px 32px;
-  width: min(100%, 311px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 32px;
+  width: min(100%, 224px);
   margin-inline: auto;
+}
+
+.hcr_guide_column {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 16px;
 }
 
 .hcr_guide_item {
@@ -360,6 +375,7 @@ letter-spacing: var(--app-line-height);
 
 .hcr_guide_item .hcr_guide_warning_text {
   color: #A10803;
+  font-weight: 600;
 }
 
 /* ─── Action buttons ─────────────────────────────────────── */
@@ -421,8 +437,8 @@ letter-spacing: var(--app-line-height);
 .hcr_action_title {
   display: block;
   color: #111111;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
   line-height: 1.4;
 letter-spacing: var(--app-line-height);
 }
@@ -430,13 +446,31 @@ letter-spacing: var(--app-line-height);
 .hcr_action_desc {
   display: block;
   color: #505050;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.45;
 letter-spacing: var(--app-line-height);
 }
 
 @media (min-width: 768px) {
+  .hcr_pet_card {
+    gap: 16px;
+    padding: 20px 24px;
+  }
+
+  .hcr_pet_img {
+    width: 76px;
+    height: 76px;
+  }
+
+  .hcr_pet_msg {
+    white-space: nowrap;
+  }
+
+  .hcr_pet_msg br {
+    display: none;
+  }
+
   .hcr_chart {
     gap: 12px;
     height: clamp(180px, 17vw, 320px);
@@ -476,9 +510,6 @@ letter-spacing: var(--app-line-height);
     display: none;
   }
 
-  .hcr_pet_msg br {
-    display: none;
-  }
 }
 
 /* ─── Notice ─────────────────────────────────────────────── */
@@ -526,7 +557,8 @@ letter-spacing: var(--app-line-height);
   }
 
   .hcr_guide_grid {
-    gap: 16px 32px;
+    gap: 32px;
+    width: min(100%, 224px);
   }
 
   .hcr_guide_check,
@@ -550,10 +582,10 @@ letter-spacing: var(--app-line-height);
   }
 
   .hcr_action_title {
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .hcr_action_desc {
-    font-size: 10px;
+    font-size: 12px;
   }
 }

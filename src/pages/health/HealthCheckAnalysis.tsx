@@ -97,7 +97,7 @@ function HealthCheckAnalysis() {
 
   useEffect(() => {
     if (progress >= 100) {
-      const timer = setTimeout(() => navigate('/health/report', { replace: true }), 800)
+      const timer = setTimeout(() => navigate('/health/result', { replace: true }), 800)
       return () => clearTimeout(timer)
     }
   }, [progress, navigate])

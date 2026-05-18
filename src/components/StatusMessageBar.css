@@ -2,7 +2,7 @@
   position: fixed;
   left: 50%;
   bottom: calc(var(--layout-footer-height, 0px) + 12px);
-  z-index: 150;
+  z-index: 1000;
   width: calc(100% - 48px);
   transform: translateX(-50%);
   display: flex;

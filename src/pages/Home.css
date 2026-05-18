@@ -554,12 +554,12 @@
   white-space: nowrap;
 }
 
-.content_card_chip--daily {
+.content_card .content_card_chip--daily {
   background: #f1edff;
   color: #6d59f8;
 }
 
-.content_card_chip--knowledge {
+.content_card .content_card_chip--knowledge {
   color: #0174c8;
   background: #e0f0fe;
 }
