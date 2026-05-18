@@ -17,6 +17,15 @@ type Props = {
 }
 
 function HealthCameraTutorial({ step, isCameraTabActive, isRecordTabActive, onAdvance }: Props) {
+  const tabsClassName = [
+    'health_cam_tabs',
+    'health_cam_tutorial_tabs',
+    step === 'video' || step === 'photo' ? 'show_camera_only' : '',
+    step === 'record' ? 'show_record_only' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
   return (
     <button
       type="button"
@@ -32,7 +41,7 @@ function HealthCameraTutorial({ step, isCameraTabActive, isRecordTabActive, onAd
         className={`health_cam_tabs_wrapper health_cam_tutorial_tabs_wrapper${step === 'close' ? ' is_hidden' : ''}`}
         aria-hidden="true"
       >
-        <span className="health_cam_tabs health_cam_tutorial_tabs">
+        <span className={tabsClassName}>
           <span className={`health_cam_tab${isCameraTabActive ? ' is_active' : ''}`}>
             카메라
           </span>

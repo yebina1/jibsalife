@@ -905,7 +905,7 @@ function Health() {
           <button type="button" className="health_cam_zoom_btn is_disabled" disabled tabIndex={-1}>.5</button>
           <button
             type="button"
-            className="health_cam_zoom_btn health_cam_zoom_lg health_cam_zoom_on is_disabled"
+            className="health_cam_zoom_btn health_cam_zoom_lg is_disabled"
             disabled
             tabIndex={-1}
           >

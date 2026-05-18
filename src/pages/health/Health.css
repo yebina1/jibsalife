@@ -365,10 +365,16 @@
 }
 
 .health_cam_zoom_on {
-  color: #FFE200;
+  color: #ffffff;
 }
 
 .health_cam_zoom_btn.is_disabled {
+  cursor: default;
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.health_cam_shutter_row .health_cam_side:last-child {
   cursor: default;
   opacity: 0.72;
   pointer-events: none;
