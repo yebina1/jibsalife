@@ -1400,11 +1400,23 @@ function Mission() {
                   {item.media && item.media.length > 0 ? (
                     <div className="mission_history_media" aria-label="등록 이미지">
                       {item.media.slice(0, 3).map((media, index) => (
-                        <img
-                          key={`${media.src}-${index}`}
-                          src={media.src}
-                          alt={media.label || `${item.title} 이미지 ${index + 1}`}
-                        />
+                        media.type === 'video' ? (
+                          <video
+                            key={`${media.src}-${index}`}
+                            src={media.src}
+                            aria-label={media.label || `${item.title} 동영상 ${index + 1}`}
+                            controls
+                            muted
+                            playsInline
+                            preload="metadata"
+                          />
+                        ) : (
+                          <img
+                            key={`${media.src}-${index}`}
+                            src={media.src}
+                            alt={media.label || `${item.title} 이미지 ${index + 1}`}
+                          />
+                        )
                       ))}
                     </div>
                   ) : null}

@@ -106,6 +106,10 @@
   padding: 3px;
 }
 
+.health_cam_tabs.health_cam_tutorial_tabs.is_single {
+  width: calc(var(--health-cam-tutorial-tabs-width) * 0.5);
+}
+
 .health_cam_tutorial_tabs.show_camera_only .health_cam_tab:last-child,
 .health_cam_tutorial_tabs.show_record_only .health_cam_tab:first-child {
   visibility: hidden;
@@ -242,7 +246,7 @@
 
 .health_cam_tutorial_callout_record img {
   width: 20px;
-  height: 59px;
+  height: px;
   aspect-ratio: 20 / 59;
   top: calc(100% - 48px);
   left: 50%;

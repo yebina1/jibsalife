@@ -107,6 +107,8 @@ const categoryQuickMessageOptions: Record<string, string[]> = {
   walk: [],
 }
 
+const HEALTH_CAMERA_CALENDAR_RECORD_COLOR = '#A08DFF'
+
 const periodWeekLabels = ['일', '월', '화', '수', '목', '금', '토']
 const periodOptions: Array<{ value: PeriodDateTime['period']; label: string }> = [
   { value: 'AM', label: '오전' },
@@ -416,8 +418,39 @@ function Health() {
     videoRef.current?.play()
   }
 
+  const saveCapturedMediaToCalendar = () => {
+    const mediaSrc = capturedVideo || capturedImage
+    const mediaType = capturedVideo ? 'video' : capturedImage ? 'image' : null
+
+    if (!mediaSrc || !mediaType) {
+      return false
+    }
+
+    const now = new Date()
+    const nextRecord: MissionHistoryRecord = {
+      id: Date.now(),
+      title: mediaType === 'video' ? '동영상 기록' : '사진 기록',
+      detail: mediaType === 'video' ? '건강 체크용 동영상을 업로드했어요.' : '건강 체크용 사진을 업로드했어요.',
+      time: `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`,
+      color: HEALTH_CAMERA_CALENDAR_RECORD_COLOR,
+      date: getDateKey(now.getFullYear(), now.getMonth() + 1, now.getDate()),
+      media: [
+        {
+          type: mediaType,
+          src: mediaSrc,
+          label: mediaType === 'video' ? '건강 체크 동영상' : '건강 체크 사진',
+        },
+      ],
+    }
+
+    writeStoredMissionHistoryRecords([nextRecord, ...readMissionHistoryRecordsWithDefaults()])
+    window.dispatchEvent(new CustomEvent(MISSION_HISTORY_RECORDS_CHANGE_EVENT, { detail: nextRecord }))
+
+    return true
+  }
+
   const handleUpload = () => {
-    // TODO: API 연결 예정 — capturedImage를 서버에 업로드 후 분석 요청
+    saveCapturedMediaToCalendar()
     navigate('/health/check')
   }
 

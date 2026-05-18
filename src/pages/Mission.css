@@ -494,7 +494,8 @@
   margin-top: 8px;
 }
 
-.mission_history_media img {
+.mission_history_media img,
+.mission_history_media video {
   width: 48px;
   height: 48px;
   border-radius: 10px;

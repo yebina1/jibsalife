@@ -11,7 +11,7 @@ export type MissionHistoryRecord = {
   date: string
   source?: 'chat' | 'health'
   media?: {
-    type: 'image'
+    type: 'image' | 'video'
     src: string
     label?: string
   }[]
