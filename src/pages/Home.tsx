@@ -111,7 +111,7 @@ const contentItems = [
   },
 ] as const
 
-const homeCriticalImageSources = [
+export const homeCriticalImageSources = [
   homeRank1Photo,
   homeRank2Photo,
   homeRank3Photo,
