@@ -103,6 +103,7 @@ function CommunityVote() {
   const [notifiedVoteIds, setNotifiedVoteIds] = useState<Set<string>>(() => new Set())
   const [subscriberTimer, setSubscriberTimer] = useState(() => getRemainingSeconds(getOrCreateEndTime()))
   const pendingDefaultVoteSelection = useRef<{ voteId: number; optionId: number } | null>(null)
+  const pendingUserVoteSelection = useRef<{ voteId: number; optionId: number } | null>(null)
 
   useEffect(() => {
     let currentEndTime = getOrCreateEndTime()
@@ -430,8 +431,12 @@ function CommunityVote() {
                         <span className="uvote_bone_percent uvote_bone_percent_right">{rightPct}%</span>
                       </div>
                       <div className="uvote_bone_result_labels">
-                        <span>{item.options[0]?.label}{item.options[0]?.icon}</span>
-                        <span>{item.options[1]?.label}{item.options[1]?.icon}</span>
+                        <span className="uvote_bone_result_label_item">
+                          <span className="uvote_bone_result_label_text">{item.options[0]?.label}{item.options[0]?.icon}</span>
+                        </span>
+                        <span className="uvote_bone_result_label_item">
+                          <span className="uvote_bone_result_label_text">{item.options[1]?.label}{item.options[1]?.icon}</span>
+                        </span>
                       </div>
                     </div>
                   )
@@ -463,7 +468,6 @@ function CommunityVote() {
               const sel = voteSelections[vote.id]
               const voted = localVotedIds.has(vote.id)
               const deadline = calcDeadlineText(vote.createdAt, vote.voteDuration)
-              const hasImages = vote.voteItems.some(it => it.image !== null)
               const storedResult = voteResults[vote.id]
               const resultForDisplay = getVoteTotal(storedResult) > 0
                 ? storedResult
@@ -474,7 +478,12 @@ function CommunityVote() {
 
               const handleDirectVote = (itemId: number) => {
                 if (voted) {
-                  setEditingVoteId(vote.id)
+                  pendingUserVoteSelection.current = { voteId: vote.id, optionId: itemId }
+                  if (modifiedVoteIds.has(vote.id)) {
+                    setModifyBlockedVoteId(vote.id)
+                  } else {
+                    setEditingVoteId(vote.id)
+                  }
                   return
                 }
                 submitUserVoteSelection(vote.id, itemId)
@@ -495,58 +504,8 @@ function CommunityVote() {
                     {vote.content && <p className="uvote_card_desc">{vote.content}</p>}
                   </div>
 
-                  {/* 텍스트만 (이미지 없음) → 투표 전: 텍스트 리스트, 투표 후: 뼈다귀 결과 */}
-                  {vote.voteType === '사진 투표' && !hasImages && (
-                    voted ? (
-                      <div
-                        className={`uvote_bone_result is_revealed${sel === vote.voteItems[0]?.id ? ' is_left_selected' : ''}${sel === vote.voteItems[1]?.id ? ' is_right_selected' : ''}`}
-                        aria-label={`${vote.voteItems[0]?.label} ${getVotePercentage(resultForDisplay, vote.voteItems[0]?.id)}%, ${vote.voteItems[1]?.label} ${getVotePercentage(resultForDisplay, vote.voteItems[1]?.id)}%`}
-                      >
-                        <div
-                          className="uvote_bone_track"
-                          style={{
-                            '--uvote-bone-left': `${getVotePercentage(resultForDisplay, vote.voteItems[0]?.id)}%`,
-                            '--uvote-bone-right': `${getVotePercentage(resultForDisplay, vote.voteItems[1]?.id)}%`,
-                          } as CSSProperties}
-                        >
-                          <span className="uvote_bone_base" aria-hidden="true" />
-                          <span className="uvote_bone_left_fill" aria-hidden="true" />
-                          <span className="uvote_bone_right_fill" aria-hidden="true" />
-                          <span className="uvote_bone_percent uvote_bone_percent_left">{getVotePercentage(resultForDisplay, vote.voteItems[0]?.id)}%</span>
-                          <span className="uvote_bone_percent uvote_bone_percent_right">{getVotePercentage(resultForDisplay, vote.voteItems[1]?.id)}%</span>
-                        </div>
-                        <div className="uvote_bone_result_labels">
-                          <span>{vote.voteItems[0]?.label}</span>
-                          <span>{vote.voteItems[1]?.label}</span>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="uvote_bone_text_list">
-                        <button
-                          type="button"
-                          className="uvote_bone_text_option"
-                          onClick={() => handleDirectVote(vote.voteItems[0].id)}
-                          aria-label={`${vote.voteItems[0]?.label} 선택`}
-                        >
-                          <span className="uvote_bone_text_radio" aria-hidden="true" />
-                          <span className="uvote_bone_text_label">{vote.voteItems[0]?.label}</span>
-                        </button>
-                        <span className="uvote_bone_text_vs" aria-hidden="true">vs</span>
-                        <button
-                          type="button"
-                          className="uvote_bone_text_option"
-                          onClick={() => handleDirectVote(vote.voteItems[1].id)}
-                          aria-label={`${vote.voteItems[1]?.label} 선택`}
-                        >
-                          <span className="uvote_bone_text_radio" aria-hidden="true" />
-                          <span className="uvote_bone_text_label">{vote.voteItems[1]?.label}</span>
-                        </button>
-                      </div>
-                    )
-                  )}
-
-                  {/* 이미지 있는 사진 투표 → 사진 그리드 */}
-                  {vote.voteType === '사진 투표' && hasImages && (
+                  {/* 사진 투표 → 사진 그리드 */}
+                  {vote.voteType === '사진 투표' && (
                     <div className={`uvote_photo_grid${sel ? ' is_revealed' : ''}`}>
                       {vote.voteItems.map(item => {
                         const isSelected = sel === item.id
@@ -587,6 +546,54 @@ function CommunityVote() {
                     />
                   )}
 
+                  {vote.voteType === '일반 투표' && (
+                    voted ? (
+                      <div
+                        className={`uvote_bone_result is_revealed${sel === vote.voteItems[0]?.id ? ' is_left_selected' : ''}${sel === vote.voteItems[1]?.id ? ' is_right_selected' : ''}`}
+                        aria-label={`${vote.voteItems[0]?.label} ${getVotePercentage(resultForDisplay, vote.voteItems[0]?.id)}%, ${vote.voteItems[1]?.label} ${getVotePercentage(resultForDisplay, vote.voteItems[1]?.id)}%`}
+                      >
+                        <div
+                          className="uvote_bone_track"
+                          style={{
+                            '--uvote-bone-left': `${getVotePercentage(resultForDisplay, vote.voteItems[0]?.id)}%`,
+                            '--uvote-bone-right': `${getVotePercentage(resultForDisplay, vote.voteItems[1]?.id)}%`,
+                          } as CSSProperties}
+                        >
+                          <span className="uvote_bone_base" aria-hidden="true" />
+                          <span key={`left-${voteAnimKeys[`${vote.id}-${vote.voteItems[0]?.id}`] ?? 0}`} className="uvote_bone_left_fill" aria-hidden="true" />
+                          <span key={`right-${voteAnimKeys[`${vote.id}-${vote.voteItems[1]?.id}`] ?? 0}`} className="uvote_bone_right_fill" aria-hidden="true" />
+                          <span className="uvote_bone_percent uvote_bone_percent_left">{getVotePercentage(resultForDisplay, vote.voteItems[0]?.id)}%</span>
+                          <span className="uvote_bone_percent uvote_bone_percent_right">{getVotePercentage(resultForDisplay, vote.voteItems[1]?.id)}%</span>
+                          <button type="button" className="uvote_bone_hit uvote_bone_hit_left" onClick={() => handleDirectVote(vote.voteItems[0].id)} aria-label={`${vote.voteItems[0]?.label} 수정`} />
+                          <button type="button" className="uvote_bone_hit uvote_bone_hit_right" onClick={() => handleDirectVote(vote.voteItems[1].id)} aria-label={`${vote.voteItems[1]?.label} 수정`} />
+                        </div>
+                        <div className="uvote_bone_result_labels">
+                          <span className="uvote_bone_result_label_item">
+                            <span className="uvote_bone_result_label_text">{vote.voteItems[0]?.label}</span>
+                            {sel === vote.voteItems[0]?.id && <span className="uvote_bone_my_vote">내 투표</span>}
+                          </span>
+                          <span className="uvote_bone_result_label_item">
+                            <span className="uvote_bone_result_label_text">{vote.voteItems[1]?.label}</span>
+                            {sel === vote.voteItems[1]?.id && <span className="uvote_bone_my_vote">내 투표</span>}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="vw_text_items_list">
+                        {vote.voteItems.map(item => (
+                          <button
+                            key={item.id}
+                            type="button"
+                            className="vw_text_item"
+                            onClick={() => handleDirectVote(item.id)}
+                          >
+                            <span className="vw_text_item_circle" aria-hidden="true" />
+                            <span className="vw_text_item_label">{item.label}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )
+                  )}
 
                   <p className="uvote_meta">{deadline} <span className="cv2_divider">|</span> 참여자 수 {formatParticipants(participantCount)}명</p>
                 </div>
@@ -716,26 +723,19 @@ function CommunityVote() {
                     const rightPct = totalVotes > 0 ? Math.round((item.options[1]?.votes ?? 0) / totalVotes * 100) : (item.options[1]?.percentage ?? 50)
                     if (!sel) {
                       return (
-                        <div className="uvote_bone_text_list">
-                          <button
-                            type="button"
-                            className="uvote_bone_text_option"
-                            onClick={() => selectBoneVote(item.options[0].id)}
-                            aria-label={`${item.options[0]?.label} 선택`}
-                          >
-                            <span className="uvote_bone_text_radio" aria-hidden="true" />
-                            <span className="uvote_bone_text_label">{item.options[0]?.label}{item.options[0]?.icon}</span>
-                          </button>
-                          <span className="uvote_bone_text_vs" aria-hidden="true">vs</span>
-                          <button
-                            type="button"
-                            className="uvote_bone_text_option"
-                            onClick={() => selectBoneVote(item.options[1].id)}
-                            aria-label={`${item.options[1]?.label} 선택`}
-                          >
-                            <span className="uvote_bone_text_radio" aria-hidden="true" />
-                            <span className="uvote_bone_text_label">{item.options[1]?.label}{item.options[1]?.icon}</span>
-                          </button>
+                        <div className="vw_text_items_list">
+                          {item.options.map(option => (
+                            <button
+                              key={option.id}
+                              type="button"
+                              className="vw_text_item"
+                              onClick={() => selectBoneVote(option.id)}
+                              aria-label={`${option.label} 선택`}
+                            >
+                              <span className="vw_text_item_circle" aria-hidden="true" />
+                              <span className="vw_text_item_label">{option.label}{option.icon}</span>
+                            </button>
+                          ))}
                         </div>
                       )
                     }
@@ -752,14 +752,22 @@ function CommunityVote() {
                           } as CSSProperties}
                         >
                           <span className="uvote_bone_base" aria-hidden="true" />
-                          <span className="uvote_bone_left_fill" aria-hidden="true" />
-                          <span className="uvote_bone_right_fill" aria-hidden="true" />
+                          <span key={`left-${voteAnimKeys[`${item.id}-${item.options[0]?.id}`] ?? 0}`} className="uvote_bone_left_fill" aria-hidden="true" />
+                          <span key={`right-${voteAnimKeys[`${item.id}-${item.options[1]?.id}`] ?? 0}`} className="uvote_bone_right_fill" aria-hidden="true" />
                           <span className="uvote_bone_percent uvote_bone_percent_left">{leftPct}%</span>
                           <span className="uvote_bone_percent uvote_bone_percent_right">{rightPct}%</span>
+                          <button type="button" className="uvote_bone_hit uvote_bone_hit_left" onClick={() => selectBoneVote(item.options[0].id)} aria-label={`${item.options[0]?.label} 수정`} />
+                          <button type="button" className="uvote_bone_hit uvote_bone_hit_right" onClick={() => selectBoneVote(item.options[1].id)} aria-label={`${item.options[1]?.label} 수정`} />
                         </div>
                         <div className="uvote_bone_result_labels">
-                          <span>{item.options[0]?.label}{item.options[0]?.icon}</span>
-                          <span>{item.options[1]?.label}{item.options[1]?.icon}</span>
+                          <span className="uvote_bone_result_label_item">
+                            <span className="uvote_bone_result_label_text">{item.options[0]?.label}{item.options[0]?.icon}</span>
+                            {sel === item.options[0]?.id && <span className="uvote_bone_my_vote">내 투표</span>}
+                          </span>
+                          <span className="uvote_bone_result_label_item">
+                            <span className="uvote_bone_result_label_text">{item.options[1]?.label}{item.options[1]?.icon}</span>
+                            {sel === item.options[1]?.id && <span className="uvote_bone_my_vote">내 투표</span>}
+                          </span>
                         </div>
                       </div>
                     )
@@ -791,6 +799,7 @@ function CommunityVote() {
           dialogClassName="confirm_dialog_vote_edit"
           onCancel={() => {
             pendingDefaultVoteSelection.current = null
+            pendingUserVoteSelection.current = null
             setEditingVoteId(null)
           }}
           onConfirm={() => {
@@ -800,6 +809,15 @@ function CommunityVote() {
                 saveDefaultVoteSelection(pending.voteId, pending.optionId)
                 pendingDefaultVoteSelection.current = null
                 const animKey = `${editingVoteId}-${pending.optionId}`
+                setVoteAnimKeys(prev => ({ ...prev, [animKey]: (prev[animKey] ?? 0) + 1 }))
+              }
+              const pendingUser = pendingUserVoteSelection.current
+              if (pendingUser) {
+                deleteCommunityVoteResults(pendingUser.voteId)
+                setVoteResults(addCommunityVoteResult(pendingUser.voteId, pendingUser.optionId))
+                saveUserVoteSelection(pendingUser.voteId, pendingUser.optionId)
+                pendingUserVoteSelection.current = null
+                const animKey = `${editingVoteId}-${pendingUser.optionId}`
                 setVoteAnimKeys(prev => ({ ...prev, [animKey]: (prev[animKey] ?? 0) + 1 }))
               }
               writeModifiedVoteId(editingVoteId)

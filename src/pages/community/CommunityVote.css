@@ -784,25 +784,25 @@ html:has(.cv2_page) {
 }
 
 .uvote_bone_left_fill {
-  background: #F447A8;
+  background: #FFDA82;
   clip-path: inset(0 100% 0 0);
 }
 
 .uvote_bone_right_fill {
-  background: #F447A8;
+  background: #FF88C5;
   clip-path: inset(0 0 0 100%);
 }
 
-.uvote_bone_result.is_left_selected .uvote_bone_left_fill,
-.uvote_bone_result.is_right_selected .uvote_bone_right_fill {
+.uvote_bone_result.is_revealed .uvote_bone_left_fill,
+.uvote_bone_result.is_revealed .uvote_bone_right_fill {
   opacity: 1;
 }
 
-.uvote_bone_result.is_left_selected .uvote_bone_left_fill {
+.uvote_bone_result.is_revealed .uvote_bone_left_fill {
   animation: uvote-bone-fill-left 0.72s cubic-bezier(0.22, 0.88, 0.32, 1) forwards;
 }
 
-.uvote_bone_result.is_right_selected .uvote_bone_right_fill {
+.uvote_bone_result.is_revealed .uvote_bone_right_fill {
   animation: uvote-bone-fill-right 0.72s cubic-bezier(0.22, 0.88, 0.32, 1) forwards;
 }
 
@@ -884,21 +884,57 @@ html:has(.cv2_page) {
   font-weight: 600;
 }
 
-.uvote_bone_result_labels span {
+.uvote_bone_result_label_item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 128px;
+}
+
+.uvote_bone_result_label_text {
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  max-width: 128px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #111;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.uvote_bone_result_labels img {
+.uvote_bone_result_label_text img {
   display: block;
   width: 16px;
   height: 16px;
   object-fit: contain;
+}
+
+.uvote_bone_my_vote {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #FF88C5;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.uvote_bone_my_vote::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #FF88C5;
 }
 
 .alert.uvote_complete_dialog {
@@ -1085,4 +1121,54 @@ html:has(.cv2_page) {
   margin: 0;
   font-size: 14px;
   color: #767676;
+}
+
+/* 일반 투표 항목 (사용자 등록 투표) */
+.uvote_card .vw_text_items_list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.uvote_card .vw_text_item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px;
+  border: 1.5px solid #E5E5EC;
+  border-radius: 12px;
+  background: #ffffff;
+  box-sizing: border-box;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+.uvote_card .vw_text_item.is_selected {
+  border-color: #6D59F8;
+}
+
+.uvote_card .vw_text_item_circle {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #BCBCBC;
+  background: #ffffff;
+  display: block;
+  box-sizing: border-box;
+}
+
+.uvote_card .vw_text_item.is_selected .vw_text_item_circle {
+  border-color: #6D59F8;
+  background: #6D59F8;
+}
+
+.uvote_card .vw_text_item_label {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 500;
+  color: #111111;
+  letter-spacing: -0.025em;
 }

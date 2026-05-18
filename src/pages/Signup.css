@@ -1,5 +1,9 @@
 /* ── Alert ────────────────────────────────────────────── */
 
+.alert.signup_complete_dialog {
+  gap: 24px;
+}
+
 .signup_complete_title {
   gap: 12px;
   align-items: center;

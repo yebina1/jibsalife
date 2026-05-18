@@ -1,10 +1,12 @@
+import { getUserScopedStorageKey } from './userScopedStorage'
+
 const COMMUNITY_VOTE_RESULTS_KEY = 'jibsalife.community.voteResults'
 
 export type CommunityVoteResults = Record<number, Record<number, number>>
 
 export function readCommunityVoteResults(): CommunityVoteResults {
   try {
-    const raw = localStorage.getItem(COMMUNITY_VOTE_RESULTS_KEY)
+    const raw = localStorage.getItem(getUserScopedStorageKey(COMMUNITY_VOTE_RESULTS_KEY))
     return raw ? (JSON.parse(raw) as CommunityVoteResults) : {}
   } catch {
     return {}
@@ -13,7 +15,7 @@ export function readCommunityVoteResults(): CommunityVoteResults {
 
 export function writeCommunityVoteResults(results: CommunityVoteResults): void {
   try {
-    localStorage.setItem(COMMUNITY_VOTE_RESULTS_KEY, JSON.stringify(results))
+    localStorage.setItem(getUserScopedStorageKey(COMMUNITY_VOTE_RESULTS_KEY), JSON.stringify(results))
   } catch { /* noop */ }
 }
 

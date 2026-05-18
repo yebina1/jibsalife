@@ -1,3 +1,5 @@
+import { getUserScopedStorageKey } from './userScopedStorage'
+
 export const SAVED_VOTES_KEY = 'jibsalife.community.userVotes'
 
 export type UserVoteItem = {
@@ -10,7 +12,7 @@ export type UserVote = {
   id: number
   title: string
   content: string
-  voteType: '사진 투표' | 'OX'
+  voteType: '사진 투표' | '일반 투표' | 'OX'
   voteDuration: 3 | 7 | 10
   voteItems: UserVoteItem[]
   createdAt: string
@@ -18,7 +20,7 @@ export type UserVote = {
 
 export function readUserVotes(): UserVote[] {
   try {
-    const raw = localStorage.getItem(SAVED_VOTES_KEY)
+    const raw = localStorage.getItem(getUserScopedStorageKey(SAVED_VOTES_KEY))
     return raw ? (JSON.parse(raw) as UserVote[]) : []
   } catch {
     return []
@@ -28,14 +30,14 @@ export function readUserVotes(): UserVote[] {
 export function saveUserVote(vote: UserVote): void {
   try {
     const existing = readUserVotes()
-    localStorage.setItem(SAVED_VOTES_KEY, JSON.stringify([vote, ...existing]))
+    localStorage.setItem(getUserScopedStorageKey(SAVED_VOTES_KEY), JSON.stringify([vote, ...existing]))
   } catch { /* noop */ }
 }
 
 export function deleteUserVote(voteId: number): void {
   try {
     const nextVotes = readUserVotes().filter((vote) => vote.id !== voteId)
-    localStorage.setItem(SAVED_VOTES_KEY, JSON.stringify(nextVotes))
+    localStorage.setItem(getUserScopedStorageKey(SAVED_VOTES_KEY), JSON.stringify(nextVotes))
   } catch { /* noop */ }
 }
 

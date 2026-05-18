@@ -21,9 +21,10 @@ import { useActionRowSlot } from '../../contexts/ActionRowContext'
 
 const VOTE_DURATION_OPTIONS = [3, 7, 10] as const
 const VOTE_ITEM_LABEL_MAX_LENGTH = 10
+const VOTE_TEXT_LABEL_MAX_LENGTH = 12
 type VoteDuration = (typeof VOTE_DURATION_OPTIONS)[number]
 
-const VOTE_TYPE_OPTIONS = ['사진 투표', 'OX'] as const
+const VOTE_TYPE_OPTIONS = ['일반 투표', '사진 투표', 'OX'] as const
 type VoteType = (typeof VOTE_TYPE_OPTIONS)[number] | ''
 
 type VoteItem = { id: number; image: string | null; label: string }
@@ -63,7 +64,8 @@ function VoteWrite() {
     voteType !== '' &&
     voteTitle.trim() !== '' &&
     voteContent.trim() !== '' &&
-    (voteType === 'OX' || voteItems.every((it) => it.label.trim() !== ''))
+    (voteType === 'OX' || voteItems.every((it) => it.label.trim() !== '')) &&
+    (voteType !== '사진 투표' || voteItems.every((it) => it.image !== null))
 
   const handleVoteItemImageChange = (idx: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -103,7 +105,7 @@ function VoteWrite() {
       id: Date.now(),
       title: voteTitle,
       content: voteContent,
-      voteType: voteType as '사진 투표' | 'OX',
+      voteType: voteType as '사진 투표' | '일반 투표' | 'OX',
       voteDuration,
       voteItems: voteItems.map((item) => ({
         ...item,
@@ -256,6 +258,34 @@ function VoteWrite() {
                   </div>
                 </div>
               ))}
+              </div>
+            </div>
+          )}
+
+          {/* 투표 항목 — 일반 투표 */}
+          {voteType === '일반 투표' && (
+            <div className="vw_items_section vw_text_items_section">
+              <strong className="vw_items_title">투표 항목</strong>
+              <div className="vw_text_items_list">
+                {voteItems.map((item, i) => (
+                  <div key={item.id} className="vw_text_item">
+                    <span className="vw_text_item_circle" aria-hidden="true" />
+                    <input
+                      type="text"
+                      className="vw_text_item_input"
+                      value={item.label}
+                      maxLength={VOTE_TEXT_LABEL_MAX_LENGTH}
+                      onChange={(e) =>
+                        setVoteItems((prev) =>
+                          prev.map((it, j) =>
+                            j === i ? { ...it, label: e.target.value.slice(0, VOTE_TEXT_LABEL_MAX_LENGTH) } : it,
+                          ),
+                        )
+                      }
+                      placeholder="내용을 입력해 주세요."
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           )}

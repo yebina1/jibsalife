@@ -51,7 +51,11 @@
 .cw_page_vote .cw_form:has(.vw_ox_items_section) {
   flex: 0 0 auto;
   min-height: 0;
-  padding-bottom: 38px;
+}
+
+.cw_page_vote .cw_form:has(.vw_text_items_section) {
+  flex: 0 0 auto;
+  min-height: 0;
 }
 
 .cw_page_vote .cw_section {
@@ -147,7 +151,8 @@
   min-height: 0;
 }
 
-.cw_page_vote .cw_form:has(.vw_ox_items_section) .cw_content_section {
+.cw_page_vote .cw_form:has(.vw_ox_items_section) .cw_content_section,
+.cw_page_vote .cw_form:has(.vw_text_items_section) .cw_content_section {
   flex: 0 0 auto;
   min-height: 0;
 }
@@ -263,18 +268,16 @@
 /* 투표 항목 공통 */
 .vw_items_section {
   width: 100%;
-  padding: 0 12px 8px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
   box-sizing: border-box;
 }
 
 .vw_items_title {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 600;
   color: #111111;
-  line-height: 1.4;
 }
 
 .vw_photo_items_section {
@@ -286,10 +289,6 @@
   display: flex;
   flex-direction: row;
   gap: 16px;
-}
-
-.vw_photo_items_section .vw_items_title {
-  font-size: 20px;
 }
 
 /* 사진 투표 항목 */
@@ -404,5 +403,54 @@
 
 .vw_item_label_input.input_field::placeholder {
   color: rgba(80, 80, 80, 0.6);
+}
+
+/* 일반 투표 항목 */
+.vw_text_items_list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vw_text_item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border: 1.5px solid #E5E5EC;
+  border-radius: 12px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.vw_text_item_circle {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #BCBCBC;
+  background: #ffffff;
+  display: block;
+}
+
+.vw_text_item_input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  font-weight: 500;
+  color: #111111;
+  outline: none;
+  font-family: inherit;
+  letter-spacing: -0.025em;
+  min-width: 0;
+}
+
+.vw_text_item_input::placeholder {
+  color: rgba(80, 80, 80, 0.6);
+}
+
+.confirm_dialog_vote_submit {
+  gap: 24px;
 }
 

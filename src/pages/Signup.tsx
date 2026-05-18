@@ -407,7 +407,7 @@ function Signup() {
     </div>
     </div>
     {isSignupCompleteOpen && (
-      <Alert onClose={() => navigate('/login')}>
+      <Alert dialogClassName="signup_complete_dialog" onClose={() => navigate('/login')}>
         <Title as="h3" title="회원가입이 완료되었습니다." className="signup_complete_title">
           <p className="h4_regular">로그인 후 서비스를 이용해보세요.</p>
         </Title>
