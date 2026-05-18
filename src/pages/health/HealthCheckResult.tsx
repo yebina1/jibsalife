@@ -61,7 +61,7 @@ function HealthCheckResult() {
   const navigate = useNavigate()
   const location = useLocation()
   const resultState = (location.state as { returnTo?: string } | null) ?? null
-  const backTarget = resultState?.returnTo ?? '/health/register?section=photo'
+  const backTarget = resultState?.returnTo ?? '/health/cam'
 
   const activityData = useMemo(() => {
     const today = new Date()
@@ -151,9 +151,10 @@ function HealthCheckResult() {
               </>
             ) : (
               <>
-                <strong>{petName}</strong>의 상태는
+                <strong>{petName}</strong>의 상태는<br />
+                활동량이 평소보다 줄었어요.
                 <br />
-                {result.status.message}.
+                {'조금 더 살펴봐 주세요'}.
               </>
             )}
           </p>
@@ -170,7 +171,9 @@ function HealthCheckResult() {
               <h2 className="hcr_chart_title">최근 7일 활동량</h2>
               {!isCollectingReport ? <p className="hcr_chart_subtitle">평균보다 15% 감소</p> : null}
             </div>
-            <span className="hcr_badge">{isCollectingReport ? '기록중' : '정상'}</span>
+            <span className={`hcr_badge${isCollectingReport ? '' : ' hcr_badge_observation'}`}>
+              {isCollectingReport ? '기록중' : '관찰 필요'}
+            </span>
           </div>
           <div className="hcr_chart" aria-hidden="true">
             <div className="hcr_chart_yaxis">
@@ -240,8 +243,14 @@ function HealthCheckResult() {
             <div className="hcr_guide_grid">
               {hospitalGuideItems.map((item) => (
                 <div key={item} className="hcr_guide_item">
-                  <i className="bx bxs-check-circle hcr_guide_check" aria-hidden="true" />
-                  <span>{item}</span>
+                  {item === '활동량 급감' ? (
+                    <span className="hcr_guide_warning_icon" aria-hidden="true">⚠️</span>
+                  ) : (
+                    <i className="bx bxs-check-circle hcr_guide_check" aria-hidden="true" />
+                  )}
+                  <span className={item === '활동량 급감' ? 'hcr_guide_warning_text' : undefined}>
+                    {item}
+                  </span>
                 </div>
               ))}
             </div>

@@ -31,6 +31,11 @@ letter-spacing: var(--app-line-height);
   flex-shrink: 0;
 }
 
+.hcr_badge_observation {
+  border-color: #A10803;
+  color: #A10803;
+}
+
 /* ─── Pet status card ────────────────────────────────────── */
 .hcr_pet_card {
   display: flex;
@@ -64,7 +69,7 @@ letter-spacing: var(--app-line-height);
 }
 
 .hcr_pet_check {
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   width: 32px;
@@ -83,13 +88,13 @@ letter-spacing: var(--app-line-height);
 .hcr_chart_card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .hcr_chart_header {
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
 }
@@ -265,9 +270,9 @@ letter-spacing: var(--app-line-height);
 }
 
 .hcr_status_pair_divider {
-  width: 1px;
+  width: 0;
   height: 72px;
-  background: #e5e5ec;
+  background: transparent;
   flex-shrink: 0;
   margin: 0 8px;
 }
@@ -276,14 +281,18 @@ letter-spacing: var(--app-line-height);
 .hcr_guide_card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  align-items: center;
+  gap: 24px;
+  padding: 32px 30px;
 }
 
 .hcr_guide_header {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
 }
 
 .hcr_guide_icon_img {
@@ -296,40 +305,60 @@ letter-spacing: var(--app-line-height);
 .hcr_guide_title {
   margin: 0;
   color: #111111;
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 700;
   line-height: 1.4;
 letter-spacing: var(--app-line-height);
+  text-align: center;
 }
 
 .hcr_guide_grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 20px 40px;
+  width: 100%;
+  max-width: 460px;
+  margin-inline: auto;
 }
 
 .hcr_guide_item {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 6px;
-  padding: 10px 12px;
-  background: #f5f5f9;
-  border-radius: 10px;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
 }
 
 .hcr_guide_check {
-  color: #6d59f8;
-  font-size: 16px;
+  color: #0070E8;
+  font-size: 22px;
   flex-shrink: 0;
+}
+
+.hcr_guide_warning_icon {
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  line-height: 1;
 }
 
 .hcr_guide_item span {
   color: #111111;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 22px;
+  font-weight: 400;
   line-height: 1.4;
 letter-spacing: var(--app-line-height);
+}
+
+.hcr_guide_item .hcr_guide_warning_text {
+  color: #A10803;
 }
 
 /* ─── Action buttons ─────────────────────────────────────── */
@@ -409,6 +438,23 @@ letter-spacing: var(--app-line-height);
 @media (min-width: 768px) {
   .hcr_chart {
     gap: 12px;
+    height: clamp(180px, 17vw, 320px);
+  }
+
+  .hcr_chart_yaxis {
+    padding-bottom: 24px;
+  }
+
+  .hcr_chart_grid {
+    inset: 0 0 24px 0;
+  }
+
+  .hcr_chart_bars {
+    bottom: 24px;
+  }
+
+  .hcr_chart_xlabels {
+    height: 24px;
   }
 
   .hcr_guide_item {
@@ -472,6 +518,34 @@ letter-spacing: var(--app-line-height);
   .hcr_status_pair_img {
     width: 40px;
     height: 40px;
+  }
+
+  .hcr_guide_card {
+    gap: 18px;
+    padding: 16px;
+  }
+
+  .hcr_guide_title {
+    font-size: 18px;
+  }
+
+  .hcr_guide_grid {
+    gap: 16px;
+  }
+
+  .hcr_guide_check,
+  .hcr_guide_warning_icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+
+  .hcr_guide_item {
+    gap: 10px;
+  }
+
+  .hcr_guide_item span {
+    font-size: 16px;
   }
 
   .hcr_action_img {

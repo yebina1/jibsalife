@@ -1087,10 +1087,35 @@
 
 @media (min-width: 1200px) {
   .summary_slider {
-    width: clamp(390px, 42vw, 438px);
+    width: 100%;
     max-width: 100%;
     margin-inline: 0;
     padding-inline: 0;
+    overflow: visible;
+    cursor: default;
+    touch-action: auto;
+    user-select: auto;
+  }
+
+  .summary_slider:active {
+    cursor: default;
+  }
+
+  .summary_slider_track {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    transform: none !important;
+  }
+
+  .summary_slider_track .summary_profile_card {
+    width: auto;
+    min-width: 0;
+    flex: initial;
+  }
+
+  .summary_slider_dots {
+    display: none;
   }
 
   .best_pose_vote_strip {

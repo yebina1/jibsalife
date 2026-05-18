@@ -31,7 +31,6 @@ import HealthHospitalSearch from './pages/health/HealthHospitalSearch'
 import HealthResultDetail from './pages/health/HealthResultDetail'
 import HealthResultActions from './pages/health/HealthResultActions'
 import HealthQna from './pages/health/HealthQna'
-import HealthRegister from './pages/health/HealthRegister'
 import HealthVetChat from './pages/health/HealthVetChat'
 import Home from './pages/Home'
 import Notification from './pages/Notification'
@@ -141,7 +140,7 @@ function App() {
           <Route path="/health/hospital" element={<HealthHospitalRecommend />} />
           <Route path="/health/camera" element={<HealthCameraCapture />} />
           <Route path="/health/camera/capture" element={<HealthCameraCapture />} />
-          <Route path="/health/register" element={<HealthRegister />} />
+          <Route path="/health/register" element={<Navigate to="/health/cam" replace />} />
           <Route path="/health/check-loading" element={<HealthCheckLoading />} />
           <Route path="/health/result" element={<HealthCheckResult />} />
           <Route path="/health/result/detail" element={<HealthResultDetail />} />

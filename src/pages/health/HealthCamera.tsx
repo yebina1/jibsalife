@@ -838,7 +838,7 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
   ) : null
 
   const returnToRegister = (
-    section: Exclude<GuideMode, 'memo'>,
+    _section: Exclude<GuideMode, 'memo'>,
     state?: {
       capturedEntry?: {
         section: Exclude<GuideMode, 'memo'>
@@ -857,7 +857,7 @@ function HealthCamera({ captureOnly = false }: HealthCameraProps) {
       }
     },
   ) => {
-    navigate(`/health/register?section=${section}`, {
+    navigate('/health/cam', {
       replace: true,
       state,
     })
