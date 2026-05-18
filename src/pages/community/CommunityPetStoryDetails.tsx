@@ -1,4 +1,5 @@
 import './CommunityPetStoryDetails.css'
+import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router'
 import PageHeader from '../../components/PageHeader'
@@ -21,6 +22,7 @@ import emojiIcon from '../../svg/emoji.svg'
 import commentIcon from '../../svg/nav_communicate.svg'
 import { MY_PROFILE_IMAGE, MY_PROFILE_NAME, readMyProfileName } from '../../utils/myProfile'
 import { readCommunityCreatedPosts, writeCommunityCreatedPosts } from '../../utils/communityCreatedPosts'
+import { useActionRowSlot } from '../../contexts/ActionRowContext'
 import { petStoryDetailComments } from './CommunityPetStoryDetailData'
 const likedPostsStorageKey = 'jibsalife.community.likedPostIds'
 const likedCommentIdsStorageKey = 'jibsalife.community.likedCommentIds'
@@ -280,6 +282,7 @@ function CommunityPetStoryDetails() {
   const navigate = useNavigate()
   const { postId } = useParams()
   const location = useLocation()
+  const actionRowSlot = useActionRowSlot()
   const detailState = (location.state as { post?: DetailPost; previousPage?: string; returnTo?: string; restoreScrollY?: number } | null) ?? null
   const statePost = detailState?.post
   const fallbackPost = findFallbackPost(postId)
@@ -319,7 +322,7 @@ function CommunityPetStoryDetails() {
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false)
   const galleryRef = useRef<HTMLDivElement>(null)
-  const footerRef = useRef<HTMLElement>(null)
+  const footerRef = useRef<HTMLDivElement>(null)
   const pageRef = useRef<HTMLElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const viewIncrementedForRef = useRef<number | null>(null)
@@ -361,12 +364,14 @@ function CommunityPetStoryDetails() {
     const footer = footerRef.current
     const page = pageRef.current
     if (!footer || !page) return
-    const observer = new ResizeObserver(() => {
+    const updatePagePadding = () => {
       page.style.paddingBottom = `${footer.offsetHeight}px`
-    })
+    }
+    const observer = new ResizeObserver(updatePagePadding)
+    updatePagePadding()
     observer.observe(footer)
     return () => observer.disconnect()
-  }, [])
+  }, [actionRowSlot])
 
 
   const handleEditConfirm = () => {
@@ -708,34 +713,37 @@ function CommunityPetStoryDetails() {
 
       </main>
 
-      <footer className="cpsdetail_footer" aria-label="댓글 작성 및 반응" ref={footerRef}>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          style={{ display: 'none' }}
-        />
-        <CommentInputForm
-          className="cpsdetail_comment_form"
-          iconButtonClassName="cpsdetail_form_icon"
-          inputWrapClassName="cpsdetail_comment_input"
-          placeholder="메시지를 입력해 주세요."
-          addIcon={addIcon}
-          emojiIcon={emojiIcon}
-          replyTo={editCommentId !== null ? editMentionAuthor : (replyTo?.author ?? null)}
-          onClearReply={editCommentId !== null ? () => setEditMentionAuthor(null) : () => setReplyTo(null)}
-          prefilledText={editCommentText}
-          onAddPhoto={() => setIsPhotoSheetOpen(true)}
-          onSubmit={(text) => {
-            if (editCommentId !== null) {
-              setPendingEditText(text)
-              setEditAlertOpen(true)
-            } else {
-              addComment(text)
-            }
-          }}
-        />
-      </footer>
+      {actionRowSlot && createPortal(
+        <div className="cpsdetail_footer" aria-label="댓글 작성 및 반응" ref={footerRef}>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            style={{ display: 'none' }}
+          />
+          <CommentInputForm
+            className="cpsdetail_comment_form"
+            iconButtonClassName="cpsdetail_form_icon"
+            inputWrapClassName="cpsdetail_comment_input"
+            placeholder="메시지를 입력해 주세요."
+            addIcon={addIcon}
+            emojiIcon={emojiIcon}
+            replyTo={editCommentId !== null ? editMentionAuthor : (replyTo?.author ?? null)}
+            onClearReply={editCommentId !== null ? () => setEditMentionAuthor(null) : () => setReplyTo(null)}
+            prefilledText={editCommentText}
+            onAddPhoto={() => setIsPhotoSheetOpen(true)}
+            onSubmit={(text) => {
+              if (editCommentId !== null) {
+                setPendingEditText(text)
+                setEditAlertOpen(true)
+              } else {
+                addComment(text)
+              }
+            }}
+          />
+        </div>,
+        actionRowSlot
+      )}
 
       {editAlertOpen && (
         <ConfirmDialog
