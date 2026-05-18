@@ -17,7 +17,7 @@ import cameraGuideIcon from '../../svg/camera.svg?raw'
 import camcorderGuideIcon from '../../svg/camcorder.svg?raw'
 import guideExampleImage from '../../img/ex.png'
 import guideVideoImage from '../../img/guide_video.png'
-import communicateGuideIcon from '../../svg/nav communicate off.svg?raw'
+import communicateGuideIcon from '../../svg/nav_communicate off.svg?raw'
 import memoGuideIcon from '../../svg/memo.svg?raw'
 import {
   MISSION_HISTORY_RECORDS_CHANGE_EVENT,
