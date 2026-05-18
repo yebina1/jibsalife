@@ -397,14 +397,9 @@
 }
 
 .cpsdetail_footer {
-  position: fixed;
-  left: 50%;
-  bottom: var(--layout-footer-height);
-  z-index: 90;
-  width: min(100%, var(--layout-max-width, 1440px));
+  width: 100%;
   box-sizing: border-box;
   background: #ffffff;
-  transform: translateX(-50%);
 }
 
 

@@ -1,5 +1,5 @@
 import './CommunityPetStoryComments.css'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { incrementChallengeCommentCount } from '../../utils/challengeStatus'
 import { useLocation } from 'react-router'
 import Header from '../../components/Header'
@@ -10,6 +10,7 @@ import BackButton from '../../components/html/BackButton'
 import CommentInputForm from '../../components/html/CommentInputForm'
 import addIcon from '../../svg/add_icon.svg'
 import emojiIcon from '../../svg/emoji.svg'
+import commentIcon from '../../svg/nav_communicate.svg'
 import { MY_PROFILE_IMAGE, MY_PROFILE_NAME } from '../../utils/myProfile'
 import { petStoryDetailComments } from './CommunityPetStoryDetailData'
 
@@ -125,6 +126,8 @@ function CommentText({ text }: { text: string }) {
 
 function CommunityPetStoryComments() {
   const location = useLocation()
+  const footerRef = useRef<HTMLElement>(null)
+  const pageRef = useRef<HTMLElement>(null)
   const postId = location.pathname.match(/\/petstory\/detail\/([^/]+)\/comments/)?.[1]
   const knowledgeId = location.pathname.match(/\/petstory\/knowledge\/([^/]+)\/comments/)?.[1]
   const commentsPageState = location.state as CommentsPageState | null
@@ -143,6 +146,19 @@ function CommunityPetStoryComments() {
     readLikedCommentIds(likedCommentIdsStorageKey),
   )
   const [replyTo, setReplyTo] = useState<{ author: string; commentId: number } | null>(initialReplyTo)
+
+  useEffect(() => {
+    const footer = footerRef.current
+    const page = pageRef.current
+    if (!footer || !page) return
+    const updatePagePadding = () => {
+      page.style.paddingBottom = `${footer.offsetHeight}px`
+    }
+    const observer = new ResizeObserver(updatePagePadding)
+    updatePagePadding()
+    observer.observe(footer)
+    return () => observer.disconnect()
+  }, [])
 
   const toggleCommentLike = (commentId: number) => {
     const willLike = !likedCommentIds.includes(commentId)
@@ -227,7 +243,7 @@ function CommunityPetStoryComments() {
               <span>좋아요 {comment.likes || ''}</span>
             </button>
             <button type="button" onClick={() => startReply(comment)}>
-              <i className="bx bx-message-rounded-dots" aria-hidden="true" />
+              <img src={commentIcon} className="cpscomments_reply_icon" alt="" aria-hidden="true" />
               <span>답글쓰기{replyCount > 0 ? ` ${replyCount}` : ''}</span>
             </button>
           </div>
@@ -238,9 +254,11 @@ function CommunityPetStoryComments() {
 
   return (
     <>
-      <main className="page cpscomments_page">
-        <StateBar />
-        <Header title="댓글" leftContent={<BackButton />} />
+      <main className="page cpscomments_page" ref={pageRef}>
+        <div className="cpscomments_header">
+          <StateBar />
+          <Header title="댓글" leftContent={<BackButton />} />
+        </div>
         <section className="cpsdetail_comments" aria-label="댓글">
           <Title as="h4" className="cpsdetail_comments_title" title={`댓글 ${visibleComments.length}`} />
           {topLevel.map((comment) => (
@@ -252,7 +270,7 @@ function CommunityPetStoryComments() {
         </section>
       </main>
 
-      <footer className="cpscomments_footer" aria-label="댓글 작성">
+      <footer className="cpscomments_footer" aria-label="댓글 작성" ref={footerRef}>
         <CommentInputForm
           className="cpsdetail_comment_form is_visible"
           iconButtonClassName="cpsdetail_form_icon"

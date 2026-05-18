@@ -309,7 +309,7 @@ function CommunityWrite() {
               <img src={tagsIcon} className="cw_action_icon" alt="태그" />
               태그
             </button>
-            <button type="button" className="p_regular">
+            <button type="button" className="p_regular cw_action_place_btn" disabled>
               <img src={locationIcon} className="cw_action_icon" alt="위" />
               위치
             </button>
