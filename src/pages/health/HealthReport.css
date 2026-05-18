@@ -135,6 +135,9 @@
 }
 
 .hr_chart_inner {
+  --hr-plot-top: 10px;
+  --hr-plot-bottom: 27px;
+  --hr-plot-height: calc(100% - var(--hr-plot-top) - var(--hr-plot-bottom));
   height: 157px;
   position: relative;
   margin-top: 16px;
@@ -154,6 +157,7 @@
   line-height: 1;
   letter-spacing: -0.025em;
   white-space: nowrap;
+  transform: translateY(-50%);
 }
 
 /* 수평선 */
@@ -178,18 +182,21 @@
 .hr_bars {
   position: absolute;
   left: 39px;
-  top: 20px;
+  top: var(--hr-plot-top);
+  height: var(--hr-plot-height);
   display: flex;
   gap: 17px;
   align-items: flex-end;
 }
 
 .hr_bar_group {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 7px;
+  justify-content: flex-end;
   width: 24px;
+  height: 100%;
 }
 
 .hr_bar {
@@ -198,6 +205,10 @@
 }
 
 .hr_bar_label {
+  position: absolute;
+  top: calc(100% + 7px);
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 14px;
   font-weight: 400;
   color: #767676;
@@ -492,7 +503,9 @@
   }
 
   .hr_chart_inner {
-    height: 190px;
+    --hr-plot-top: 14px;
+    --hr-plot-bottom: 32px;
+    height: clamp(220px, 17vw, 340px);
     margin-top: 20px;
   }
 
@@ -516,10 +529,10 @@
   }
 
   .hr_bars {
-    left: 110px;
-    right: auto;
-    justify-content: flex-start;
-    gap: 40px;
+    left: 56px;
+    right: 0;
+    justify-content: space-between;
+    gap: 16px;
   }
 
   .hr_bar_group,

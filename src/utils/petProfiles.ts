@@ -86,27 +86,36 @@ export function readPetProfiles() {
     return defaultPetProfiles
   }
 
+  if (isCurrentDemoUser()) {
+    return defaultPetProfiles
+  }
+
   const savedValue = window.localStorage.getItem(getUserScopedStorageKey(PET_PROFILES_STORAGE_KEY))
   if (!savedValue) {
-    return isCurrentDemoUser() ? defaultPetProfiles : []
+    return []
   }
 
   try {
     const parsedValue = JSON.parse(savedValue) as Partial<PetProfileSummary>[]
     if (!Array.isArray(parsedValue) || parsedValue.length === 0) {
-      return isCurrentDemoUser() ? defaultPetProfiles : []
+      return []
     }
 
     return parsedValue.map((profile, index) =>
       normalizePetProfile(profile, defaultPetProfiles[index] ?? defaultPetProfiles[0]),
     )
   } catch {
-    return isCurrentDemoUser() ? defaultPetProfiles : []
+    return []
   }
 }
 
 export function writePetProfiles(nextProfiles: PetProfileSummary[]) {
   if (typeof window === 'undefined') {
+    return
+  }
+
+  if (isCurrentDemoUser()) {
+    window.dispatchEvent(new CustomEvent(PET_PROFILES_CHANGE_EVENT, { detail: defaultPetProfiles }))
     return
   }
 

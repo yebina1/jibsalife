@@ -119,7 +119,6 @@ function Layout({
     '/health/cam',
     '/health/camera',
     '/health/camera/capture',
-    '/health/register',
     '/health/qna',
     '/health/vet-chat',
     '/health/check',

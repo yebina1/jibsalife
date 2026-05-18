@@ -198,15 +198,15 @@ function HealthReport() {
           </div>
 
           <div className="hr_chart_inner">
-            <span className="hr_y_label" style={{ top: 0 }}>60분</span>
-            <span className="hr_y_label" style={{ top: 40 }}>40분</span>
-            <span className="hr_y_label" style={{ top: 80 }}>20분</span>
-            <span className="hr_y_label" style={{ top: 120 }}>0분</span>
+            <span className="hr_y_label" style={{ top: 'var(--hr-plot-top)' }}>60분</span>
+            <span className="hr_y_label" style={{ top: '32%' }}>40분</span>
+            <span className="hr_y_label" style={{ top: '57%' }}>20분</span>
+            <span className="hr_y_label" style={{ top: 'calc(var(--hr-plot-top) + var(--hr-plot-height))' }}>0분</span>
 
-            {([10, 50, 90] as const).map((top) => (
+            {(['32%', '57%'] as const).map((top) => (
               <div key={top} className="hr_h_line hr_h_line_dashed" style={{ top }} />
             ))}
-            <div className="hr_h_line hr_h_line_solid" style={{ top: 130 }} />
+            <div className="hr_h_line hr_h_line_solid" style={{ top: 'calc(var(--hr-plot-top) + var(--hr-plot-height))' }} />
 
             <div className="hr_bars">
               {chartBars.map((bar) => (
@@ -214,7 +214,7 @@ function HealthReport() {
                   <div
                     className="hr_bar"
                     style={{
-                      height: `${chartMax > 0 ? (bar.minutes / chartMax) * 110 : 0}px`,
+                      height: `${chartMax > 0 ? (bar.minutes / chartMax) * 100 : 0}%`,
                       backgroundColor: bar.isToday ? '#6D59F8' : '#C4B5FD',
                     }}
                   />

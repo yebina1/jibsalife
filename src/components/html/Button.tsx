@@ -111,7 +111,7 @@ export default function Button(props: Buttonprops) {
       onClick={(event) => {
         onClick?.(event)
         if (!event.defaultPrevented && isNotificationIconButton && !onClick) {
-          navigate('/mission')
+          navigate('/notification')
         }
       }}
     >
