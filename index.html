@@ -26,8 +26,27 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="집사인생">
+  <style>
+    #html-splash {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      z-index: 9999;
+    }
+    #html-splash img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+    }
+  </style>
   </head>
   <body>
+    <div id="html-splash">
+      <img src="/icon-512.png" alt="집사인생">
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

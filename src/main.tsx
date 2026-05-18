@@ -5,6 +5,8 @@ import './index.css'
 import App from './App.tsx'
 import { HashRouter } from 'react-router'
 
+document.getElementById('html-splash')?.remove()
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <HashRouter><App /></HashRouter>
