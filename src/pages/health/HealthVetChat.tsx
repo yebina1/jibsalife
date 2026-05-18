@@ -44,6 +44,7 @@ function HealthVetChat() {
           helpText="도움이 되셨나요?"
           ariaLabel="수의사 상담 채팅"
           inputAriaLabel="상담 메시지"
+          showToolButton={false}
         />
       </main>
     </>

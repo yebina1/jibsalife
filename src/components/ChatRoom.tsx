@@ -37,6 +37,7 @@ type ChatRoomProps = {
   inputAriaLabel: string
   botName?: string
   botAvatarSrc?: string
+  showToolButton?: boolean
   feedbackSelections?: Record<number, FeedbackType>
   onChipSelect?: (chip: string) => void | ChatMessage | ChatMessage[]
   onMessageSubmit?: (
@@ -61,6 +62,7 @@ function ChatRoom({
   inputAriaLabel,
   botName = 'AI 챗봇',
   botAvatarSrc,
+  showToolButton = true,
   feedbackSelections,
   onChipSelect,
   onMessageSubmit,
@@ -385,13 +387,15 @@ function ChatRoom({
           handleSubmit()
         }}
       >
-        <button type="button" className="chat_room_tool_button" aria-label="추가 기능">
-          <svg viewBox="0 0 28 28" fill="none" aria-hidden="true">
-            <circle cx="14" cy="14" r="11.25" stroke="currentColor" strokeWidth="1.5" />
-            <path d="M14 9V19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M9 14H19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-        </button>
+        {showToolButton ? (
+          <button type="button" className="chat_room_tool_button" aria-label="추가 기능">
+            <svg viewBox="0 0 28 28" fill="none" aria-hidden="true">
+              <circle cx="14" cy="14" r="11.25" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M14 9V19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              <path d="M9 14H19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </button>
+        ) : null}
 
         <div className="chat_room_input_shell">
           <input

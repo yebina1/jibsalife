@@ -588,13 +588,17 @@
 
 .content_overlay p {
   margin: 0;
+  width: 100%;
   color: #ffffff;
   word-break: keep-all;
+  white-space: normal;
   text-align: center;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.28);
-  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   max-width: 100%;
 }
 
