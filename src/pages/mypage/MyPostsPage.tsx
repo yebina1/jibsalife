@@ -16,6 +16,7 @@ import {
   type CommunityCreatedPost,
 } from '../../utils/communityCreatedPosts'
 import emptyPostImage from '../../img/mypage/empty_post_.png'
+import dailyThumbnail from '../../img/petstory/daily/daily_thumbnail.jpg'
 
 const UI = {
   title: '내가 작성한 글',
@@ -238,7 +239,7 @@ function MyPostsPage() {
                 title={post.title}
                 author={post.author ?? readMyProfileName()}
                 time={post.timeLabel}
-                image={post.image}
+                image={post.image ?? dailyThumbnail}
                 likes={post.likes ?? 0}
                 comments={post.commentCount}
                 views={post.viewCount}

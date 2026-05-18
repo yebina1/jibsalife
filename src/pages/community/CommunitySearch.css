@@ -1,20 +1,34 @@
-.layout_indicator_only:has(.cs_page) {
-  background: #ffffff;
-}
-
-.layout_indicator_only .layout_content:has(.cs_page) {
-  padding-bottom: 0;
-  background: #ffffff;
-}
-
 .cs_page {
-  min-height: calc(100dvh - var(--layout-header-height, 41px) - var(--layout-footer-height, 34px));
-  margin-inline: calc(var(--layout-inline-padding, 16px) * -1);
+  position: fixed;
+  inset: 0;
+  z-index: 200;
   background: #ffffff;
   color: #111111;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  animation: cs_slide_in 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
-/* 헤더 */
+@keyframes cs_slide_in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* 헤더 (sticky) */
+.cs_sticky_header {
+  background: #ffffff;
+}
+
+.cs_sticky_header--active {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
 .cs_header {
   height: 56px;
   display: flex;

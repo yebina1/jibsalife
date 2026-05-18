@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router'
-import { useHeaderSlot } from '../../contexts/HeaderSlotContext'
+import StateBar from '../../components/StateBar'
 import PetStoryFeedItem from '../../components/PetStoryFeedItem'
 import { dailyPosts, knowledgeFeedItems } from './CommunityPetStory'
+import { readCommunityCreatedPosts } from '../../utils/communityCreatedPosts'
+import dailyThumbnail from '../../img/petstory/daily/daily_thumbnail.jpg'
 import './CommunitySearch.css'
 
 const RECENT_SEARCHES_KEY = 'jibsalife.community.recentSearches'
 const MAX_RECENT = 10
-const POPULAR_SEARCHES = ['#여행', '#진드기', '#강아지 사료', '#고양이 배변훈련']
+const POPULAR_SEARCHES = ['#여행', '#산책', '#기록', '#관리법']
 
 type MainTab = '전체' | '펫스토리' | '챌린지' | '투표'
 type PetSubTab = '전체' | '일상' | '반려상식'
@@ -89,34 +90,52 @@ function CommunitySearch() {
     return () => document.removeEventListener('mousedown', handle)
   }, [isMoreOpen, isSortOpen])
 
-  const { dailyItems, knowledgeItems } = useMemo(() => ({
-    dailyItems: dailyPosts.map((p): SearchItem => ({
-      id: p.id,
-      tag: p.tag,
-      title: p.title,
-      author: p.author,
-      time: getRelativeTime(p.createdAt),
-      image: p.image,
-      likes: p.likes,
-      comments: p.comments,
-      views: p.views,
-      createdAt: p.createdAt,
-      path: `/community/petstory/detail/${p.id}`,
-    })),
-    knowledgeItems: knowledgeFeedItems.map((k): SearchItem => ({
-      id: k.id,
-      tag: k.tag,
-      title: k.title,
-      author: '집사인생',
-      time: getRelativeTime(k.createdAt),
-      image: k.image,
-      likes: k.likes,
-      comments: k.comments,
-      views: k.viewsText,
-      createdAt: k.createdAt,
-      path: k.path,
-    })),
-  }), [])
+  const { dailyItems, knowledgeItems } = useMemo(() => {
+    const createdPosts = readCommunityCreatedPosts()
+    return {
+      dailyItems: [
+        ...dailyPosts.map((p): SearchItem => ({
+          id: p.id,
+          tag: p.tag,
+          title: p.title,
+          author: p.author,
+          time: getRelativeTime(p.createdAt),
+          image: p.image,
+          likes: p.likes,
+          comments: p.comments,
+          views: p.views,
+          createdAt: p.createdAt,
+          path: `/community/petstory/detail/${p.id}`,
+        })),
+        ...createdPosts.map((p): SearchItem => ({
+          id: p.id,
+          tag: p.tag ?? '일상',
+          title: p.title,
+          author: p.author ?? '나',
+          time: getRelativeTime(p.createdAt ?? new Date().toISOString()),
+          image: p.image ?? dailyThumbnail,
+          likes: p.likes ?? 0,
+          comments: p.comments ?? 0,
+          views: p.views ?? 0,
+          createdAt: p.createdAt ?? new Date().toISOString(),
+          path: `/community/petstory/detail/${p.id}`,
+        })),
+      ],
+      knowledgeItems: knowledgeFeedItems.map((k): SearchItem => ({
+        id: k.id,
+        tag: '반려상식',
+        title: k.title,
+        author: '집사인생',
+        time: getRelativeTime(k.createdAt),
+        image: k.image,
+        likes: k.likes,
+        comments: k.comments,
+        views: k.viewsText,
+        createdAt: k.createdAt,
+        path: k.path,
+      })),
+    }
+  }, [])
 
   const filteredResults = useMemo((): SearchItem[] => {
     if (!hasSearched) return []
@@ -174,80 +193,78 @@ function CommunitySearch() {
     setQuery(trimmed)
   }
 
-  const headerSlot = useHeaderSlot()
   const showSubControls = hasSearched && activeTab === '펫스토리'
 
-  const headerContent = (
-    <>
-      <div className="cs_header">
-        <button
-          type="button"
-          className="cs_back_btn"
-          aria-label="뒤로가기"
-          onClick={() => navigate(-1)}
-        >
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path
-              d="M15 18l-6-6 6-6"
-              stroke="#111111"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-        <div className="cs_input_wrap">
-          <input
-            ref={inputRef}
-            className="cs_input"
-            type="search"
-            placeholder="검색어를 입력해주세요"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') handleSearch(query)
-            }}
-          />
+  return (
+    <div className="cs_page">
+      <StateBar />
+      <div className={`cs_sticky_header${hasSearched ? ' cs_sticky_header--active' : ''}`}>
+        <div className="cs_header">
           <button
             type="button"
-            className="cs_search_icon_btn"
-            aria-label="검색"
-            onClick={() => handleSearch(query)}
+            className="cs_back_btn"
+            aria-label="뒤로가기"
+            onClick={() => navigate(-1)}
           >
-            <svg viewBox="0 0 28 28" fill="none" aria-hidden="true">
-              <circle cx="12.25" cy="12.25" r="6.75" stroke="#111111" strokeWidth="1.5" />
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path
-                d="m17.25 17.25 5.25 5.25"
+                d="M15 18l-6-6 6-6"
                 stroke="#111111"
                 strokeWidth="1.5"
                 strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </svg>
           </button>
+          <div className="cs_input_wrap">
+            <input
+              ref={inputRef}
+              className="cs_input"
+              type="search"
+              placeholder="검색어를 입력해주세요"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleSearch(query)
+              }}
+            />
+            <button
+              type="button"
+              className="cs_search_icon_btn"
+              aria-label="검색"
+              onClick={() => handleSearch(query)}
+            >
+              <svg viewBox="0 0 28 28" fill="none" aria-hidden="true">
+                <circle cx="12.25" cy="12.25" r="6.75" stroke="#111111" strokeWidth="1.5" />
+                <path
+                  d="m17.25 17.25 5.25 5.25"
+                  stroke="#111111"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
+
+        {hasSearched && (
+          <div className="cs_tabs" role="tablist">
+            {MAIN_TABS.map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                role="tab"
+                className={`cs_tab${activeTab === tab ? ' is_active' : ''}`}
+                aria-selected={activeTab === tab}
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
-      <div className="cs_tabs" role="tablist">
-        {MAIN_TABS.map((tab) => (
-          <button
-            key={tab}
-            type="button"
-            role="tab"
-            className={`cs_tab${activeTab === tab ? ' is_active' : ''}`}
-            aria-selected={activeTab === tab}
-            onClick={() => setActiveTab(tab)}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
-    </>
-  )
-
-  return (
-    <>
-      {headerSlot && createPortal(headerContent, headerSlot)}
-      <div className="cs_page">
       <main className="cs_content">
         {hasSearched ? (
           <>
@@ -429,8 +446,7 @@ function CommunitySearch() {
           </>
         )}
       </main>
-      </div>
-    </>
+    </div>
   )
 }
 
