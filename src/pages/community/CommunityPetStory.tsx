@@ -118,7 +118,8 @@ const postData: CommunityPost[] = [
   { id: 6, tag: '일상', title: '귀여우면 다야?', author: '크림빵', date: '2026.04.30', timeText: '3시간 전', likes: 19, comments: 6, shares: 5, createdAt: '2026-04-30T08:40:00', image: life6 },
 ]
 
-const knowledgeFeedItems = [
+// eslint-disable-next-line react-refresh/only-export-components
+export const knowledgeFeedItems = [
   { id: 1, tag: '산책', title: '강아지 산책 안 하면 생기는 문제점', image: knowledge1, likes: 8, comments: 3, viewsText: '1201', objectPosition: '61% center', path: '/community/petstory/knowledge/walkproblems', createdAt: '2026-05-02T09:00:00' },
   { id: 2, tag: '건강', title: '고양이 점프의 숨겨진 비밀', image: knowledge2, likes: 8, comments: 3, viewsText: '968', objectPosition: '64% center', path: '/community/petstory/knowledge/catjumpsecret', createdAt: '2026-05-01T10:00:00' },
   { id: 3, tag: '일상', title: '고양이에게 절대 주면 안 되는 음식 7가지', titleLines: ['고양이에게 절대 주면', '안 되는 음식 7가지'], image: knowledge3, likes: 8, comments: 3, viewsText: '860', objectPosition: '43% center', path: '/community/petstory/knowledge/forbiddenfoods', createdAt: '2026-04-30T11:00:00' },
@@ -484,7 +485,7 @@ function CommunityPetStory() {
         title="집사인생"
         rightContent={
           <>
-            <Button type="button" aria-label="검색" className="community_header_search">
+            <Button type="button" aria-label="검색" className="community_header_search" onClick={() => navigate('/community/search')}>
               <HeaderIcon type="search" />
             </Button>
             <Button type="button" aria-label="캘린더" onClick={() => navigate('/mission')}>

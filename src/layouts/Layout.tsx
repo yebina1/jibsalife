@@ -9,6 +9,7 @@ import StateBar from '../components/StateBar'
 import StatusMessageBar from '../components/StatusMessageBar'
 import { HeaderContext, type HeaderConfig } from '../contexts/HeaderContext'
 import { ActionRowContext } from '../contexts/ActionRowContext'
+import { HeaderSlotContext } from '../contexts/HeaderSlotContext'
 
 type LayoutProps = {
   showHeader?: boolean
@@ -63,6 +64,7 @@ function Layout({
 }: LayoutProps) {
   const [header, setHeader] = useState<HeaderConfig>(null)
   const [actionRowSlot, setActionRowSlot] = useState<HTMLElement | null>(null)
+  const [headerSlot, setHeaderSlot] = useState<HTMLElement | null>(null)
   const [isCommunitySortOpen, setIsCommunitySortOpen] = useState(false)
   const navigate = useNavigate()
   const [isFloatingAiHiddenByScroll, setIsFloatingAiHiddenByScroll] = useState(false)
@@ -87,9 +89,10 @@ function Layout({
   const isVoteResultPage = pathname === '/community/vote/result'
   const isVoteWritePage = pathname === '/community/vote/write'
   const isRewardPage = pathname.startsWith('/community/challenge/reward')
+  const isSearchPage = pathname === '/community/search'
   const isHomePage = pathname === '/home'
   const showCommunityChrome =
-    isCommunityPath && !isPetStoryDetailPage && !isPetStoryWritePage && !isKnowledgeDetailPage && !isVoteDetailPage && !isVoteResultPage && !isVoteWritePage && !isRewardPage
+    isCommunityPath && !isPetStoryDetailPage && !isPetStoryWritePage && !isKnowledgeDetailPage && !isVoteDetailPage && !isVoteResultPage && !isVoteWritePage && !isRewardPage && !isSearchPage
   const communitySubTabs = !isPetStoryDetailPage && !isPetStoryWritePage && !isKnowledgeDetailPage && pathname.startsWith('/community/petstory')
     ? petStorySubTabs
     : !isPetStoryDetailPage && !isKnowledgeDetailPage && pathname.startsWith('/community/vote') && pathname !== '/community/vote/detail' && !isVoteResultPage
@@ -237,11 +240,13 @@ function Layout({
 
   return (
     <ActionRowContext.Provider value={actionRowSlot}>
+    <HeaderSlotContext.Provider value={headerSlot}>
     <HeaderContext.Provider value={setHeader}>
       <div className={layoutClassName} ref={layoutRef}>
         {!isNoLayoutPage ? (
           <header ref={headerRef}>
             <StateBar />
+            <div ref={setHeaderSlot} />
             {/* 회원가입 페이지는 StateBar만, Header(집사인생 타이틀)는 표시 안 함 */}
             {showHeader && header && <Header {...header} />}
             {showCommunityChrome ? (
@@ -357,6 +362,7 @@ function Layout({
         ) : null}
       </div>
     </HeaderContext.Provider>
+    </HeaderSlotContext.Provider>
     </ActionRowContext.Provider>
   )
 }

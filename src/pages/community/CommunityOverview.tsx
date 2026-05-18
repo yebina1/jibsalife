@@ -48,7 +48,7 @@ function CommunityOverview() {
         title="집사인생"
         rightContent={
           <>
-            <Button type="button" aria-label="검색" className="community_header_search">
+            <Button type="button" aria-label="검색" className="community_header_search" onClick={() => navigate('/community/search')}>
               <HeaderIcon type="search" />
             </Button>
             <Button type="button" aria-label="calendar" onClick={() => navigate('/mission')}>

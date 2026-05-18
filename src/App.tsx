@@ -13,6 +13,7 @@ import CommunityWrite from './pages/community/CommunityWrite'
 import VoteWrite from './pages/community/VoteWrite'
 import CommunityPetStoryDetails from './pages/community/CommunityPetStoryDetails'
 import CommunityReward from './pages/community/CommunityReward'
+import CommunitySearch from './pages/community/CommunitySearch'
 import CommunityVote from './pages/community/CommunityVote'
 import CommunityVoteDetail from './pages/community/CommunityVoteDetail'
 import CommunityVoteResult from './pages/community/CommunityVoteResult'
@@ -112,6 +113,7 @@ function App() {
         </Route>
         <Route element={<Layout showHeader={false} showNav={false} />}>
           <Route path="/notification" element={<Notification />} />
+          <Route path="/community/search" element={<CommunitySearch />} />
         </Route>
         <Route element={<Layout />}>
           <Route path="/mypage/posts" element={<MyPostsPage />} />
