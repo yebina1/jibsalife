@@ -902,11 +902,16 @@ function Health() {
         </button>
 
         <div className="health_cam_zoom" aria-hidden="true">
-          <span className="health_cam_zoom_btn">.5</span>
-          <span className="health_cam_zoom_btn health_cam_zoom_lg health_cam_zoom_on">
+          <button type="button" className="health_cam_zoom_btn is_disabled" disabled tabIndex={-1}>.5</button>
+          <button
+            type="button"
+            className="health_cam_zoom_btn health_cam_zoom_lg health_cam_zoom_on is_disabled"
+            disabled
+            tabIndex={-1}
+          >
             <span>1</span><span>x</span>
-          </span>
-          <span className="health_cam_zoom_btn">3</span>
+          </button>
+          <button type="button" className="health_cam_zoom_btn is_disabled" disabled tabIndex={-1}>3</button>
         </div>
 
         <div className="health_cam_modes" role="tablist" aria-label="촬영 모드">

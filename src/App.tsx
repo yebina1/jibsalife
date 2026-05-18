@@ -129,7 +129,6 @@ function App() {
           <Route path="/health/cam" element={<Health />} />
         </Route>
         <Route element={<Layout />}>
-          <Route path="/" element={<RootRedirect />} />
           <Route path="/home" element={<Home />} />
           <Route path="/place" element={<Place />} />
           <Route path="/mission" element={<Mission />} />
@@ -162,6 +161,9 @@ function App() {
           <Route path="/community/vote/detail" element={<CommunityVoteDetail />} />
           <Route path="/community/vote/result" element={<CommunityVoteResult />} />
           <Route path="/mypage" element={<MyPage />} />
+        </Route>
+        <Route element={<Layout />}>
+          <Route path="/" element={<RootRedirect />} />
         </Route>
       </Routes>
       {isComments && <CommunityPetStoryComments />}
